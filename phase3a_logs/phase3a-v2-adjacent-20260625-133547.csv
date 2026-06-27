@@ -1,0 +1,1 @@
+run_id,capture,frame_id,pattern,polarity,i_plus,i_minus,v_plus,v_minus,voltage_mv,current_ua,quality,dac_code,settle_ms,sample_count

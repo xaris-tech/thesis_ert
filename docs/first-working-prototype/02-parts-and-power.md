@@ -1,5 +1,12 @@
 # Parts and Power
 
+## Visual Wiring Guide
+
+![Prototype 1 power wiring](visuals/power-wiring.svg)
+
+Follow the diagram from left to right. Qualify the converter outputs with a
+multimeter before connecting the OPA2134PA.
+
 ## Core Parts
 
 | Quantity | Part | Role |
@@ -52,4 +59,3 @@ Before attaching the OPA2134:
 
 Switching-converter noise is acceptable for initial DC ERT only after baseline
 stability tests pass. Portable power is a later revision.
-

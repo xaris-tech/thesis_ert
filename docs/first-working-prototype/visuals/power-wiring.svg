@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="850" viewBox="0 0 1400 850">
+  <defs>
+    <style>
+      .title { font: 700 34px 'Segoe UI', sans-serif; fill: #17202a; }
+      .subtitle { font: 400 19px 'Segoe UI', sans-serif; fill: #52616b; }
+      .box-title { font: 700 22px 'Segoe UI', sans-serif; fill: #17202a; }
+      .label { font: 600 17px 'Segoe UI', sans-serif; fill: #17202a; }
+      .small { font: 400 15px 'Segoe UI', sans-serif; fill: #34495e; }
+      .wire { fill: none; stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; }
+      .thin { stroke-width: 4; }
+    </style>
+    <marker id="arrow-red" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 Z" fill="#d64541"/>
+    </marker>
+    <marker id="arrow-blue" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 Z" fill="#2471a3"/>
+    </marker>
+    <marker id="arrow-green" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 Z" fill="#239b56"/>
+    </marker>
+    <marker id="arrow-black" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 Z" fill="#2c3e50"/>
+    </marker>
+  </defs>
+
+  <rect width="1400" height="850" fill="#f5f1e8"/>
+  <text x="70" y="65" class="title">Prototype 1 Power Wiring</text>
+  <text x="70" y="98" class="subtitle">Two power paths, one shared reference ground</text>
+
+  <rect x="65" y="160" width="235" height="120" rx="20" fill="#d6eaf8" stroke="#2471a3" stroke-width="4"/>
+  <text x="182" y="205" text-anchor="middle" class="box-title">Windows Laptop</text>
+  <text x="182" y="240" text-anchor="middle" class="label">USB power + serial</text>
+
+  <rect x="430" y="145" width="245" height="150" rx="20" fill="#d5f5e3" stroke="#239b56" stroke-width="4"/>
+  <text x="552" y="188" text-anchor="middle" class="box-title">ESP32-S3</text>
+  <text x="552" y="225" text-anchor="middle" class="label">USB input</text>
+  <text x="552" y="255" text-anchor="middle" class="label">3V3 + GND output</text>
+
+  <rect x="830" y="145" width="390" height="150" rx="20" fill="#e8f8f5" stroke="#148f77" stroke-width="4"/>
+  <text x="1025" y="188" text-anchor="middle" class="box-title">3.3 V Modules</text>
+  <text x="1025" y="225" text-anchor="middle" class="label">MCP4725 + ADS1115</text>
+  <text x="1025" y="255" text-anchor="middle" class="label">CD74HC4067 x4</text>
+
+  <path d="M300 220 H430" class="wire" stroke="#2471a3" marker-end="url(#arrow-blue)"/>
+  <text x="365" y="205" text-anchor="middle" class="label">USB</text>
+  <path d="M675 200 H830" class="wire" stroke="#239b56" marker-end="url(#arrow-green)"/>
+  <text x="750" y="185" text-anchor="middle" class="label">3V3</text>
+  <path d="M675 260 H830" class="wire thin" stroke="#2c3e50" marker-end="url(#arrow-black)"/>
+  <text x="750" y="285" text-anchor="middle" class="label">GND</text>
+
+  <rect x="65" y="440" width="235" height="120" rx="20" fill="#fdebd0" stroke="#d68910" stroke-width="4"/>
+  <text x="182" y="483" text-anchor="middle" class="box-title">12 V DC Adapter</text>
+  <text x="182" y="520" text-anchor="middle" class="label">Router-style, ≥1 A</text>
+
+  <rect x="410" y="400" width="300" height="200" rx="20" fill="#fef9e7" stroke="#b7950b" stroke-width="4"/>
+  <text x="560" y="445" text-anchor="middle" class="box-title">± Converter Module</text>
+  <text x="450" y="492" class="label">INPUT:</text>
+  <text x="565" y="492" class="small">VIN + GND</text>
+  <text x="450" y="530" class="label">OUTPUT:</text>
+  <text x="565" y="530" class="small">V+ / GND / V−</text>
+  <text x="560" y="570" text-anchor="middle" class="label">Adjust to +9 V / 0 V / −9 V</text>
+
+  <rect x="910" y="400" width="310" height="200" rx="20" fill="#f5eef8" stroke="#7d3c98" stroke-width="4"/>
+  <text x="1065" y="445" text-anchor="middle" class="box-title">OPA2134PA</text>
+  <text x="950" y="492" class="label">Pin 8:</text>
+  <text x="1040" y="492" class="small">+9 V</text>
+  <text x="950" y="530" class="label">Pin 4:</text>
+  <text x="1040" y="530" class="small">−9 V</text>
+  <text x="950" y="568" class="label">Reference:</text>
+  <text x="1055" y="568" class="small">system GND</text>
+
+  <path d="M300 500 H410" class="wire" stroke="#d68910" marker-end="url(#arrow-red)"/>
+  <text x="355" y="482" text-anchor="middle" class="label">12 V</text>
+
+  <path d="M710 445 H910" class="wire" stroke="#d64541" marker-end="url(#arrow-red)"/>
+  <text x="810" y="426" text-anchor="middle" class="label">V+ = +9 V → pin 8</text>
+  <path d="M710 555 H910" class="wire" stroke="#2471a3" marker-end="url(#arrow-blue)"/>
+  <text x="810" y="585" text-anchor="middle" class="label">V− = −9 V → pin 4</text>
+
+  <circle cx="770" cy="665" r="12" fill="#2c3e50"/>
+  <text x="770" y="705" text-anchor="middle" class="box-title">ONE COMMON GROUND POINT</text>
+  <path d="M560 600 V665 H758" class="wire thin" stroke="#2c3e50"/>
+  <path d="M552 295 V340 H770 V653" class="wire thin" stroke="#2c3e50"/>
+  <path d="M1065 600 V665 H782" class="wire thin" stroke="#2c3e50"/>
+
+  <rect x="70" y="745" width="1260" height="70" rx="16" fill="#fadbd8" stroke="#c0392b" stroke-width="3"/>
+  <text x="700" y="775" text-anchor="middle" class="label" fill="#922b21">NEVER connect V− (−9 V) to ESP32 GND, 3V3, GPIO, ADC, DAC, or mux pins.</text>
+  <text x="700" y="800" text-anchor="middle" class="small">The converter's center GND is the only node that joins system ground.</text>
+</svg>
