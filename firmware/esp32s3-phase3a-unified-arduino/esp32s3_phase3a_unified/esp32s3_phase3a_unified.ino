@@ -15,7 +15,7 @@ constexpr float MAX_CURRENT_UA = 1200.0f;
 constexpr float MAX_MUX_VOLTAGE_MV = 3000.0f;
 
 constexpr uint16_t DEFAULT_DAC_CODE = 100;
-constexpr uint16_t MAX_DAC_CODE_RS10 = 620;
+constexpr uint16_t MAX_DAC_CODE = 620;
 constexpr uint16_t DEFAULT_SETTLE_MS = 10;
 constexpr uint16_t DEFAULT_FRAME_PERIOD_MS = 1000;
 constexpr uint8_t DEFAULT_SAMPLE_COUNT = 4;
@@ -87,7 +87,7 @@ void disableAllMuxes() {
 }
 
 void setDacRaw(uint16_t code) {
-  dac.setVoltage(min<uint16_t>(code, MAX_DAC_CODE_RS10), false);
+  dac.setVoltage(min<uint16_t>(code, MAX_DAC_CODE), false);
 }
 
 void enterSafeIdle() {
@@ -223,13 +223,13 @@ void emitFrame() {
 }
 
 void setRequestedDac(uint16_t code) {
-  requestedDacCode = min<uint16_t>(code, MAX_DAC_CODE_RS10);
+  requestedDacCode = min<uint16_t>(code, MAX_DAC_CODE);
   enterSafeIdle();
   Serial.print("[DAC] requested=");
   Serial.print(requestedDacCode);
   Serial.println(" idle_output=0");
-  if (code > MAX_DAC_CODE_RS10) {
-    Serial.println("[LIMIT] clipped to code 620 for Rs=10 ohm");
+  if (code > MAX_DAC_CODE) {
+    Serial.println("[LIMIT] clipped to code 620");
   }
 }
 
@@ -241,7 +241,30 @@ void printStatus() {
   Serial.print(",SETTLE,");
   Serial.print(muxSettleMs);
   Serial.print(",SAMPLES,");
-  Serial.println(sampleCount);
+  Serial.print(sampleCount);
+  Serial.print(",SHUNT_OHMS,");
+  Serial.print(SHUNT_OHMS, 1);
+  Serial.print(",MIN_CURRENT_UA,");
+  Serial.print(MIN_CURRENT_UA, 1);
+  Serial.print(",MAX_CURRENT_UA,");
+  Serial.println(MAX_CURRENT_UA, 1);
+}
+
+void printI2CScan() {
+  Serial.println("I2C_SCAN,BEGIN");
+  uint8_t found = 0;
+  for (uint8_t address = 1; address < 127; ++address) {
+    Wire.beginTransmission(address);
+    const uint8_t error = Wire.endTransmission();
+    if (error == 0) {
+      Serial.print("I2C_DEVICE,0x");
+      if (address < 16) Serial.print("0");
+      Serial.println(address, HEX);
+      ++found;
+    }
+  }
+  Serial.print("I2C_SCAN,END,FOUND,");
+  Serial.println(found);
 }
 
 void printHelp() {
@@ -256,6 +279,7 @@ void printHelp() {
   Serial.println("g       continuous frames on");
   Serial.println("x       stop and force safe idle");
   Serial.println("rN      set continuous frame interval in ms");
+  Serial.println("i       scan I2C bus for MCP4725 and ADS1115");
   Serial.println("?       print status");
   Serial.println("h       print help");
 }
@@ -290,6 +314,7 @@ void handleCommand(String line) {
     case 't': muxSettleMs = max<uint16_t>(value, 1); printStatus(); break;
     case 'n': sampleCount = constrain(value, 1, 32); printStatus(); break;
     case 'r': framePeriodMs = max<uint16_t>(value, 100); printStatus(); break;
+    case 'i': printI2CScan(); break;
     case '?': printStatus(); break;
     case 'h': printHelp(); break;
     default: Serial.println("[ERROR] unknown command; send h"); break;

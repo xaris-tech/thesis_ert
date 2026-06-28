@@ -48,6 +48,12 @@ class TestUnifiedFirmwareSource(unittest.TestCase):
         self.assertIn('line == "ma"', self.source)
         self.assertIn('line == "mo"', self.source)
 
+    def test_status_and_i2c_diagnostic_include_hardware_constants(self):
+        self.assertIn('Serial.print(",SHUNT_OHMS,")', self.source)
+        self.assertIn("void printI2CScan()", self.source)
+        self.assertIn('Serial.println("I2C_SCAN,BEGIN")', self.source)
+        self.assertIn("case 'i': printI2CScan(); break;", self.source)
+
     def test_frame_records_include_voltage_current_and_quality(self):
         for field in ('",V,"', '",I,"', '",Q,"'):
             self.assertIn(field, self.source)

@@ -608,7 +608,7 @@ def parse_args() -> argparse.Namespace:
 def main() -> None:
     args = parse_args()
     if args.dac < 0 or args.dac > 620:
-        raise ValueError("--dac must be between 0 and 620 for Rs=10 ohm")
+        raise ValueError("--dac must be between 0 and 620")
     if min(args.baseline_frames, args.frames, args.samples, args.settle_ms) <= 0:
         raise ValueError("Frame, sample, and settling values must be positive")
     if args.warmup_frames < 0:

@@ -44,6 +44,7 @@ Use Serial Monitor at 115200 baud with newline enabled.
 | `n4` | average four ADC conversions |
 | `g` | start continuous frames |
 | `x` | stop and force DAC/muxes idle |
+| `i` | scan I2C bus for MCP4725 and ADS1115 |
 | `?` | print status |
 | `h` | print help |
 
@@ -67,9 +68,8 @@ They must be updated before using this v2 record format for reconstruction.
 
 ## Safety Limits
 
-- Firmware assumes `Rs = 10 ohm` and clips DAC commands to code 620.
+- Firmware calculates current using a 100-ohm return shunt and clips DAC commands to code 620.
 - Start with `p100`.
 - Never allow any CD74HC4067 analog pin or ADS1115 input outside 0-3.3 V.
 - Verify I_SRC_OUT remains below 3.0 V with a multimeter before mux connection.
 - `x` or reset forces a zero DAC command and disables all muxes.
-
