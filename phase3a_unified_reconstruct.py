@@ -26,6 +26,9 @@ DEFAULT_SETTLE_MS = 30
 MAX_BASELINE_RELATIVE_RMS_PERCENT = 2.0
 MAX_BASELINE_ABSOLUTE_RMS_KOHM = 0.002
 MIN_BASELINE_CORRELATION = 0.995
+MAX_RECON_BASELINE_PAIR_RMS_KOHM = 0.03
+MAX_RECON_PAIR_DELTA_KOHM = 0.05
+MIN_RECON_KEPT_PAIR_RATIO = 0.75
 
 
 @dataclass(frozen=True)
@@ -84,6 +87,33 @@ class ControlDriftReport:
     frames: list[ControlFrameMetric]
     pairs: list[ControlPairMetric]
     electrodes: list[ControlElectrodeMetric]
+
+
+@dataclass(frozen=True)
+class PairHealthScore:
+    index: int
+    i_pair: tuple[int, int]
+    v_pair: tuple[int, int]
+    baseline_rms_kohm: float
+    max_abs_kohm: float
+
+
+@dataclass(frozen=True)
+class FrameHealthScore:
+    kept_pairs: int
+    dropped_pairs: int
+    kept_ratio: float
+    current_median_ua: float
+    current_spread_ua: float
+    quality_label: str
+
+
+@dataclass(frozen=True)
+class FilteredVectorResult:
+    filtered_vector: np.ndarray
+    dropped_indexes: list[int]
+    kept_indexes: list[int]
+    frame_health: FrameHealthScore
 
 
 def parse_header(line: str) -> tuple[int, str, int, int, int]:
@@ -217,6 +247,88 @@ def protocol_vector_keys(protocol) -> list[tuple[tuple[int, int], tuple[int, int
     return keys
 
 
+def analyze_baseline_pair_health(
+    baseline_vectors: list[np.ndarray],
+    protocol,
+) -> list[PairHealthScore]:
+    baseline = average_vectors(baseline_vectors)
+    deltas = np.stack([vector - baseline for vector in baseline_vectors])
+    pair_rms = np.sqrt(np.mean(deltas ** 2, axis=0))
+    pair_max = np.max(np.abs(deltas), axis=0)
+    keys = protocol_vector_keys(protocol)
+    scores = [
+        PairHealthScore(
+            index=index,
+            i_pair=key[0],
+            v_pair=key[1],
+            baseline_rms_kohm=float(pair_rms[index]),
+            max_abs_kohm=float(pair_max[index]),
+        )
+        for index, key in enumerate(keys)
+    ]
+    scores.sort(key=lambda item: item.baseline_rms_kohm, reverse=True)
+    return scores
+
+
+def filter_frame_vector_best_effort(
+    baseline: np.ndarray,
+    current: np.ndarray,
+    pair_scores: list[PairHealthScore],
+    current_median_ua: float,
+    current_spread_ua: float = 0.0,
+) -> FilteredVectorResult:
+    if baseline.shape != current.shape:
+        raise ValueError("Baseline and current vectors must share the same shape")
+
+    filtered = np.array(current, copy=True)
+    dropped_indexes: list[int] = []
+    kept_indexes: list[int] = []
+
+    for score in pair_scores:
+        delta = abs(float(current[score.index] - baseline[score.index]))
+        unstable_baseline = score.baseline_rms_kohm > MAX_RECON_BASELINE_PAIR_RMS_KOHM
+        unstable_delta = delta > MAX_RECON_PAIR_DELTA_KOHM
+        if unstable_baseline or unstable_delta:
+            filtered[score.index] = baseline[score.index]
+            dropped_indexes.append(score.index)
+        else:
+            kept_indexes.append(score.index)
+
+    kept_pairs = len(kept_indexes)
+    dropped_pairs = len(dropped_indexes)
+    total_pairs = len(pair_scores)
+    kept_ratio = kept_pairs / total_pairs if total_pairs else 0.0
+    quality_label = "ok"
+    if dropped_pairs:
+        quality_label = "debug-best-effort"
+    if kept_ratio < MIN_RECON_KEPT_PAIR_RATIO:
+        quality_label = "debug-low-confidence"
+
+    frame_health = FrameHealthScore(
+        kept_pairs=kept_pairs,
+        dropped_pairs=dropped_pairs,
+        kept_ratio=kept_ratio,
+        current_median_ua=float(current_median_ua),
+        current_spread_ua=float(current_spread_ua),
+        quality_label=quality_label,
+    )
+    return FilteredVectorResult(filtered, dropped_indexes, kept_indexes, frame_health)
+
+
+def summarize_top_unstable_pairs(
+    pair_scores: list[PairHealthScore],
+    limit: int = 5,
+) -> str:
+    summary: list[str] = []
+    for score in pair_scores[:limit]:
+        summary.append(
+            f"I={base.index_to_electrode(score.i_pair[0])}-{base.index_to_electrode(score.i_pair[1])} "
+            f"V={base.index_to_electrode(score.v_pair[0])}-{base.index_to_electrode(score.v_pair[1])} "
+            f"rms={score.baseline_rms_kohm:.6f}kOhm"
+        )
+    return "; ".join(summary)
+
+
 def _vector_correlation(left: np.ndarray, right: np.ndarray) -> float:
     if np.std(left) == 0.0 or np.std(right) == 0.0:
         return 1.0 if np.allclose(left, right) else 0.0
@@ -322,6 +434,10 @@ def control_report_path(csv_path: Path) -> Path:
     return csv_path.with_name(f"{csv_path.stem}-stability.csv")
 
 
+def consistency_report_path(csv_path: Path) -> Path:
+    return csv_path.with_name(f"{csv_path.stem}-consistency.csv")
+
+
 def reconstruction_title(base_title: str, diameter_cm: float | None = None) -> str:
     if diameter_cm is None:
         return base_title
@@ -417,6 +533,38 @@ def save_reconstruction_images(
     base.plt.close(avg_fig)
 
 
+def write_consistency_report(
+    path: Path,
+    pair_scores: list[PairHealthScore],
+    frame_healths: list[FrameHealthScore],
+) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.writer(handle)
+        writer.writerow([
+            "record_type", "rank", "frame", "i_plus", "i_minus", "v_plus",
+            "v_minus", "baseline_rms_kohm", "max_abs_kohm", "kept_pairs",
+            "dropped_pairs", "kept_ratio", "current_median_ua",
+            "current_spread_ua", "quality_label",
+        ])
+        for frame_index, metric in enumerate(frame_healths, start=1):
+            writer.writerow([
+                "frame", "", frame_index, "", "", "", "", "", "",
+                metric.kept_pairs, metric.dropped_pairs, f"{metric.kept_ratio:.6f}",
+                f"{metric.current_median_ua:.6f}", f"{metric.current_spread_ua:.6f}",
+                metric.quality_label,
+            ])
+        for rank, score in enumerate(pair_scores, start=1):
+            writer.writerow([
+                "pair", rank, "", base.index_to_electrode(score.i_pair[0]),
+                base.index_to_electrode(score.i_pair[1]),
+                base.index_to_electrode(score.v_pair[0]),
+                base.index_to_electrode(score.v_pair[1]),
+                f"{score.baseline_rms_kohm:.9f}", f"{score.max_abs_kohm:.9f}",
+                "", "", "", "", "", "",
+            ])
+
+
 def read_one_v2_frame(ser: serial.Serial) -> UnifiedFrame:
     lines: list[str] = []
     in_frame = False
@@ -475,6 +623,26 @@ def request_frame(ser: serial.Serial) -> UnifiedFrame:
     return read_one_v2_frame(ser)
 
 
+def discard_warmup_frames(
+    ser: serial.Serial,
+    count: int,
+    expected_pattern: str,
+) -> None:
+    for index in range(1, count + 1):
+        frame = request_frame(ser)
+        if frame.pattern != expected_pattern:
+            raise ValueError(
+                f"Firmware returned {frame.pattern}, expected {expected_pattern}"
+            )
+        currents = np.asarray([abs(record.current_ua) for record in frame.records])
+        qualities = sorted({record.quality for record in frame.records})
+        print(
+            f"[warmup {index}/{count}] frame={frame.frame_id} "
+            f"current_median={np.median(currents):.2f}uA "
+            f"qualities={','.join(qualities)}"
+        )
+
+
 def assess_baseline_stability(vectors: list[np.ndarray]) -> BaselineStability:
     baseline = average_vectors(vectors)
     baseline_rms = float(np.sqrt(np.mean(baseline ** 2)))
@@ -510,9 +678,14 @@ def assess_baseline_stability(vectors: list[np.ndarray]) -> BaselineStability:
     )
 
 
-def require_stable_baseline(vectors: list[np.ndarray]) -> BaselineStability:
+def require_stable_baseline(
+    vectors: list[np.ndarray],
+    allow_unstable: bool = False,
+) -> BaselineStability:
     result = assess_baseline_stability(vectors)
     if not result.stable:
+        if allow_unstable:
+            return result
         raise ValueError(
             "Baseline is unstable: "
             f"max relative RMS={result.max_relative_rms_percent:.2f}% "
@@ -602,6 +775,11 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Do not pause between baseline and comparison capture",
     )
+    parser.add_argument(
+        "--allow-unstable-baseline",
+        action="store_true",
+        help="Bypass the baseline stability gate temporarily and continue anyway",
+    )
     return parser.parse_args()
 
 
@@ -630,6 +808,7 @@ def main() -> None:
     ser.reset_input_buffer()
     fig = None
     reconstructions: list[np.ndarray] = []
+    frame_healths: list[FrameHealthScore] = []
 
     try:
         ser.write(mode_command)
@@ -639,23 +818,29 @@ def main() -> None:
 
         if args.warmup_frames:
             print(f"[Warmup] Discarding {args.warmup_frames} settling frames")
-            capture_vectors(
-                ser, protocol, args.warmup_frames, args.pattern,
-                None, run_id, "warmup",
-            )
+            discard_warmup_frames(ser, args.warmup_frames, args.pattern)
 
         print(f"[Baseline] Capturing {args.baseline_frames} averaged frames")
         baseline_vectors = capture_vectors(
             ser, protocol, args.baseline_frames, args.pattern,
             logger, run_id, "baseline",
         )
-        stability = require_stable_baseline(baseline_vectors)
+        stability = require_stable_baseline(
+            baseline_vectors,
+            allow_unstable=args.allow_unstable_baseline,
+        )
         baseline = average_vectors(baseline_vectors)
+        baseline_status = "Stable" if stability.stable else "UNSTABLE - BYPASSED"
         print(
-            "[Baseline] Stable: "
+            f"[Baseline] {baseline_status}: "
             f"max_relative_rms={stability.max_relative_rms_percent:.2f}% "
             f"max_absolute_rms={stability.max_absolute_rms_kohm:.6f}kOhm "
             f"min_correlation={stability.min_correlation:.5f}"
+        )
+        baseline_pair_scores = analyze_baseline_pair_health(baseline_vectors, protocol)
+        print(
+            "[Baseline] Top unstable pairs: "
+            f"{summarize_top_unstable_pairs(baseline_pair_scores)}"
         )
 
         if args.control:
@@ -698,16 +883,31 @@ def main() -> None:
             fig, ax = base.create_reconstruction_plot()
             print(f"[Run] Capturing {args.frames} comparison frames")
             for frame_index in range(1, args.frames + 1):
-                current = capture_average(
-                    ser, protocol, 1, args.pattern,
-                    logger, run_id, f"comparison-{frame_index}",
+                frame = request_frame(ser)
+                if frame.pattern != args.pattern:
+                    raise ValueError(
+                        f"Firmware returned {frame.pattern}, expected {args.pattern}"
+                    )
+                if logger is not None:
+                    logger.write(run_id, f"comparison-{frame_index}", frame)
+                current = frame_to_vector(frame, protocol)
+                currents = np.asarray([abs(record.current_ua) for record in frame.records])
+                filtered = filter_frame_vector_best_effort(
+                    baseline=baseline,
+                    current=current,
+                    pair_scores=baseline_pair_scores,
+                    current_median_ua=float(np.median(currents)),
+                    current_spread_ua=float(np.max(currents) - np.min(currents)),
                 )
-                ds = base.reconstruct_difference(baseline, current, solver)
+                frame_healths.append(filtered.frame_health)
+                ds = base.reconstruct_difference(baseline, filtered.filtered_vector, solver)
                 reconstructions.append(ds)
-                delta_rms = float(np.sqrt(np.mean((current - baseline) ** 2)))
+                delta_rms = float(np.sqrt(np.mean((filtered.filtered_vector - baseline) ** 2)))
                 print(
                     f"[Frame {frame_index}/{args.frames}] "
-                    f"transfer_delta_rms={delta_rms:.6f} kOhm"
+                    f"transfer_delta_rms={delta_rms:.6f} kOhm "
+                    f"kept={filtered.frame_health.kept_pairs}/{len(baseline_pair_scores)} "
+                    f"quality={filtered.frame_health.quality_label}"
                 )
                 base.update_reconstruction_plot(
                     fig,
@@ -715,7 +915,8 @@ def main() -> None:
                     eit_mesh,
                     ds,
                     reconstruction_title(
-                        f"Phase 3A {args.pattern.title()} V2 Reconstruction",
+                        f"Phase 3A {args.pattern.title()} V2 Reconstruction "
+                        f"[{filtered.frame_health.quality_label}]",
                         args.diameter_cm,
                     ),
                 )
@@ -728,6 +929,14 @@ def main() -> None:
         if logger is not None:
             logger.close()
             print(f"[Log] saved {logger.frames_written} frames to {logger.path}")
+            if frame_healths:
+                report_path = consistency_report_path(logger.path)
+                write_consistency_report(
+                    report_path,
+                    baseline_pair_scores,
+                    frame_healths,
+                )
+                print(f"[Consistency] saved report to {report_path}")
 
     if reconstructions:
         contact_path, average_path = reconstruction_image_paths(run_csv_path)

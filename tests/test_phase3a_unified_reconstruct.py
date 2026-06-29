@@ -1,6 +1,7 @@
 import unittest
 from pathlib import Path
 from unittest.mock import patch
+from unittest.mock import MagicMock
 from tempfile import TemporaryDirectory
 
 import numpy as np
@@ -58,6 +59,15 @@ class TestUnifiedProtocolMapping(unittest.TestCase):
 
         self.assertEqual(args.diameter_cm, 16.5)
 
+    def test_cli_can_bypass_baseline_stability_gate(self):
+        with patch("sys.argv", [
+            "phase3a_unified_reconstruct.py",
+            "--allow-unstable-baseline",
+        ]):
+            args = unified.parse_args()
+
+        self.assertTrue(args.allow_unstable_baseline)
+
     def test_pattern_selects_matching_protocol_and_serial_command(self):
         adjacent, adjacent_command = unified.protocol_and_command("adjacent")
         opposite, opposite_command = unified.protocol_and_command("opposite")
@@ -82,6 +92,19 @@ class TestUnifiedProtocolMapping(unittest.TestCase):
 
         self.assertEqual(len(prompts), 1)
         self.assertIn("target", prompts[0].lower())
+
+    def test_warmup_discards_low_current_frame_without_raising(self):
+        protocol, _ = unified.protocol_and_command("adjacent")
+        invalid_frame = unified.parse_v2_frame([
+            "FRAME,2,1,ADJACENT,DAC,100,SETTLE,10,SAMPLES,4",
+            "M,P,FWD,I+,E1,I-,E2,V+,E3,V-,E4,V,20.000,I,0.100,Q,I_LOW",
+            "M,P,REV,I+,E2,I-,E1,V+,E3,V-,E4,V,-18.000,I,0.100,Q,I_LOW",
+            "END,1",
+        ])
+
+        with patch.object(unified, "request_frame", return_value=invalid_frame):
+            ser = MagicMock()
+            unified.discard_warmup_frames(ser, 1, "adjacent")
 
 
 class TestBaselineStability(unittest.TestCase):
@@ -129,12 +152,31 @@ class TestBaselineStability(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Baseline is unstable"):
             unified.require_stable_baseline(vectors)
 
+    def test_unstable_baseline_can_be_allowed_temporarily(self):
+        vectors = [
+            np.array([1.0, 2.0, 3.0]),
+            np.array([3.0, 1.0, 0.5]),
+            np.array([0.5, 4.0, 1.0]),
+        ]
+
+        result = unified.require_stable_baseline(
+            vectors,
+            allow_unstable=True,
+        )
+
+        self.assertFalse(result.stable)
+
 
 class TestControlDriftAnalysis(unittest.TestCase):
     def test_control_report_path_follows_run_csv_name(self):
         path = unified.control_report_path(Path("logs/phase3a-v2-adjacent-run.csv"))
 
         self.assertEqual(path.name, "phase3a-v2-adjacent-run-stability.csv")
+
+    def test_consistency_report_path_follows_run_csv_name(self):
+        path = unified.consistency_report_path(Path("logs/phase3a-v2-adjacent-run.csv"))
+
+        self.assertEqual(path.name, "phase3a-v2-adjacent-run-consistency.csv")
 
     def test_ranks_unstable_measurement_and_its_electrodes(self):
         protocol, _ = unified.protocol_and_command("adjacent")
@@ -168,6 +210,53 @@ class TestControlDriftAnalysis(unittest.TestCase):
         self.assertIn("frame,", text)
         self.assertIn("pair,", text)
         self.assertIn("electrode,", text)
+
+
+class TestBestEffortFiltering(unittest.TestCase):
+    def test_ranks_baseline_pair_instability(self):
+        protocol, _ = unified.protocol_and_command("adjacent")
+        baseline_vectors = [
+            np.ones(108),
+            np.ones(108),
+            np.ones(108),
+        ]
+        baseline_vectors[0][0] += 0.30
+        baseline_vectors[1][0] -= 0.20
+        baseline_vectors[2][10] += 0.05
+
+        scores = unified.analyze_baseline_pair_health(baseline_vectors, protocol)
+
+        self.assertEqual(scores[0].index, 0)
+        self.assertEqual(scores[0].i_pair, (0, 1))
+        self.assertEqual(scores[0].v_pair, (2, 3))
+        self.assertGreater(scores[0].baseline_rms_kohm, scores[1].baseline_rms_kohm)
+
+    def test_best_effort_filter_replaces_bad_pairs_with_baseline_values(self):
+        protocol, _ = unified.protocol_and_command("adjacent")
+        baseline_vectors = [
+            np.ones(108),
+            np.ones(108),
+            np.ones(108),
+        ]
+        scores = unified.analyze_baseline_pair_health(baseline_vectors, protocol)
+        current = np.ones(108)
+        current[0] = 1.50
+        current[1] = 1.01
+
+        result = unified.filter_frame_vector_best_effort(
+            baseline=np.ones(108),
+            current=current,
+            pair_scores=scores,
+            current_median_ua=180.0,
+            current_spread_ua=12.5,
+        )
+
+        self.assertEqual(result.dropped_indexes, [0])
+        self.assertAlmostEqual(result.filtered_vector[0], 1.0)
+        self.assertAlmostEqual(result.filtered_vector[1], 1.01)
+        self.assertEqual(result.frame_health.quality_label, "debug-best-effort")
+        self.assertEqual(result.frame_health.kept_pairs, 107)
+        self.assertEqual(result.frame_health.current_spread_ua, 12.5)
 
 
 class TestReconstructionImageSaving(unittest.TestCase):
