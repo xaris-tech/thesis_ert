@@ -34,6 +34,16 @@ class TestPhase3AProtocol(unittest.TestCase):
         self.assertEqual(protocol.meas_mat.shape, (12, 8, 2))
         self.assertTrue(np.array_equal(protocol.meas_mat[0][0], np.array([2, 1])))
 
+    def test_build_skip_one_protocol_uses_one_skipped_electrode_between_drive_pair(self):
+        protocol = phase3a.build_skip_one_protocol(12)
+
+        self.assertEqual(protocol.ex_mat.shape, (12, 2))
+        self.assertTrue(np.array_equal(protocol.ex_mat[0], np.array([0, 2])))
+        self.assertTrue(np.array_equal(protocol.ex_mat[1], np.array([1, 3])))
+        self.assertTrue(np.array_equal(protocol.ex_mat[-1], np.array([11, 1])))
+        self.assertEqual(protocol.meas_mat.shape, (12, 8, 2))
+        self.assertTrue(np.array_equal(protocol.meas_mat[0][0], np.array([4, 3])))
+
 
 class TestPhase3AParsing(unittest.TestCase):
     def test_parse_frame_records_maps_values_to_protocol_order(self):
@@ -55,6 +65,14 @@ class TestPhase3AParsing(unittest.TestCase):
         ]
 
         with self.assertRaisesRegex(ValueError, "opposite-drive"):
+            phase3a.records_to_vector(records, phase3a.build_adjacent_protocol(12))
+
+    def test_protocol_mismatch_identifies_skip_one_drive_frame(self):
+        records = [
+            phase3a.FrameRecord(i_pair=(0, 2), v_pair=(3, 4), voltage_mv=-1.5),
+        ]
+
+        with self.assertRaisesRegex(ValueError, "skip-1-drive"):
             phase3a.records_to_vector(records, phase3a.build_adjacent_protocol(12))
 
 

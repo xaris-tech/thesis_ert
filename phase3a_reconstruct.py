@@ -111,6 +111,10 @@ def build_adjacent_protocol(n_el: int = N_ELECTRODES) -> protocol_module.PyEITPr
     return build_protocol(n_el=n_el, injection_distance=1)
 
 
+def build_skip_one_protocol(n_el: int = N_ELECTRODES) -> protocol_module.PyEITProtocol:
+    return build_protocol(n_el=n_el, injection_distance=2)
+
+
 def build_opposite_protocol(n_el: int = N_ELECTRODES) -> protocol_module.PyEITProtocol:
     if n_el % 2 != 0:
         raise ValueError("Opposite protocol requires an even electrode count")
@@ -170,6 +174,8 @@ def identify_drive_pattern(records: list[FrameRecord], n_el: int = N_ELECTRODES)
     distances = {(record.i_pair[1] - record.i_pair[0]) % n_el for record in records}
     if distances == {1}:
         return "adjacent-drive"
+    if distances == {2}:
+        return "skip-1-drive"
     if n_el % 2 == 0 and distances == {n_el // 2}:
         return "opposite-drive"
     return f"unknown drive spacing {sorted(distances)}"

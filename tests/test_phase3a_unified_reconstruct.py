@@ -26,6 +26,16 @@ class TestUnifiedFrameParsing(unittest.TestCase):
         self.assertEqual(frame.records[0].voltage_mv, 20.0)
         self.assertEqual(frame.records[0].current_ua, 200.0)
 
+    def test_parses_skip_one_v2_header(self):
+        frame = unified.parse_v2_frame([
+            "FRAME,2,8,SKIP-1,DAC,150,SETTLE,100,SAMPLES,10",
+            "M,P,FWD,I+,E1,I-,E3,V+,E4,V-,E5,V,20.000,I,200.000,Q,OK",
+            "M,P,REV,I+,E3,I-,E1,V+,E4,V-,E5,V,-18.000,I,180.000,Q,OK",
+            "END,8",
+        ])
+
+        self.assertEqual(frame.pattern, "skip-1")
+
     def test_forward_reverse_pair_produces_transfer_resistance(self):
         frame = unified.parse_v2_frame([
             "FRAME,2,7,ADJACENT,DAC,100,SETTLE,10,SAMPLES,4",
@@ -71,11 +81,15 @@ class TestUnifiedProtocolMapping(unittest.TestCase):
     def test_pattern_selects_matching_protocol_and_serial_command(self):
         adjacent, adjacent_command = unified.protocol_and_command("adjacent")
         opposite, opposite_command = unified.protocol_and_command("opposite")
+        skip_one, skip_one_command = unified.protocol_and_command("skip-1")
 
         self.assertEqual(adjacent.meas_mat.shape, (12, 9, 2))
         self.assertEqual(opposite.meas_mat.shape, (12, 8, 2))
+        self.assertEqual(skip_one.ex_mat[0].tolist(), [0, 2])
+        self.assertEqual(skip_one.meas_mat.shape, (12, 8, 2))
         self.assertEqual(adjacent_command, b"ma\n")
         self.assertEqual(opposite_command, b"mo\n")
+        self.assertEqual(skip_one_command, b"ms\n")
 
     def test_average_vectors_requires_matching_shapes(self):
         result = unified.average_vectors([np.array([1.0, 3.0]), np.array([3.0, 5.0])])

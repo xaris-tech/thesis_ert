@@ -40,6 +40,7 @@ const char* ELECTRODES[ELECTRODE_COUNT] = {
 
 enum class DrivePattern {
   ADJACENT,
+  SKIP_1,
   OPPOSITE,
 };
 
@@ -61,11 +62,21 @@ uint8_t wrapElectrode(int value) {
 }
 
 const char* patternName() {
-  return drivePattern == DrivePattern::ADJACENT ? "ADJACENT" : "OPPOSITE";
+  switch (drivePattern) {
+    case DrivePattern::ADJACENT: return "ADJACENT";
+    case DrivePattern::SKIP_1: return "SKIP-1";
+    case DrivePattern::OPPOSITE: return "OPPOSITE";
+  }
+  return "UNKNOWN";
 }
 
 uint8_t injectionDistance() {
-  return drivePattern == DrivePattern::ADJACENT ? 1 : ELECTRODE_COUNT / 2;
+  switch (drivePattern) {
+    case DrivePattern::ADJACENT: return 1;
+    case DrivePattern::SKIP_1: return 2;
+    case DrivePattern::OPPOSITE: return ELECTRODE_COUNT / 2;
+  }
+  return 1;
 }
 
 void writeMuxAddress(const MuxPins& mux, uint8_t channel) {
@@ -272,6 +283,7 @@ void printHelp() {
   Serial.println("ESP32-S3 Phase 3A Unified ERT Scanner v2");
   Serial.println("s       capture one forward/reverse frame");
   Serial.println("ma      select adjacent drive");
+  Serial.println("ms      select skip-1 drive");
   Serial.println("mo      select opposite drive");
   Serial.println("pN      set requested DAC code 0..620; output remains idle");
   Serial.println("tN      set mux settle time in ms");
@@ -291,6 +303,12 @@ void handleCommand(String line) {
 
   if (line == "ma") {
     drivePattern = DrivePattern::ADJACENT;
+    enterSafeIdle();
+    printStatus();
+    return;
+  }
+  if (line == "ms") {
+    drivePattern = DrivePattern::SKIP_1;
     enterSafeIdle();
     printStatus();
     return;
