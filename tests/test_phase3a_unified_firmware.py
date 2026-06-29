@@ -41,14 +41,16 @@ class TestUnifiedFirmwareSource(unittest.TestCase):
         self.assertIn('emitPolarity("REV"', self.source)
         self.assertIn("iRet, iSrc", self.source)
 
-    def test_supports_adjacent_opposite_and_skip_one_runtime_modes(self):
+    def test_supports_adjacent_opposite_skip_one_and_skip_two_runtime_modes(self):
         self.assertIn("enum class DrivePattern", self.source)
         self.assertIn("DrivePattern::ADJACENT", self.source)
         self.assertIn("DrivePattern::OPPOSITE", self.source)
         self.assertIn("DrivePattern::SKIP_1", self.source)
+        self.assertIn("DrivePattern::SKIP_2", self.source)
         self.assertIn('line == "ma"', self.source)
         self.assertIn('line == "mo"', self.source)
         self.assertIn('line == "ms"', self.source)
+        self.assertIn('line == "mk"', self.source)
 
     def test_status_and_i2c_diagnostic_include_hardware_constants(self):
         self.assertIn('Serial.print(",SHUNT_OHMS,")', self.source)

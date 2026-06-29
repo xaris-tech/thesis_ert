@@ -123,7 +123,7 @@ def parse_header(line: str) -> tuple[int, str, int, int, int]:
     if parts[4] != "DAC" or parts[6] != "SETTLE" or parts[8] != "SAMPLES":
         raise ValueError(f"Malformed frame header: {line}")
     pattern = parts[3].lower()
-    if pattern not in {"adjacent", "opposite", "skip-1"}:
+    if pattern not in {"adjacent", "opposite", "skip-1", "skip-2"}:
         raise ValueError(f"Unsupported drive pattern: {parts[3]}")
     return int(parts[2]), pattern, int(parts[5]), int(parts[7]), int(parts[9])
 
@@ -211,6 +211,8 @@ def protocol_and_command(pattern: str):
         return base.build_opposite_protocol(), b"mo\n"
     if normalized == "skip-1":
         return base.build_skip_one_protocol(), b"ms\n"
+    if normalized == "skip-2":
+        return base.build_skip_two_protocol(), b"mk\n"
     raise ValueError(f"Unsupported pattern: {pattern}")
 
 
@@ -750,7 +752,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--port", default=DEFAULT_PORT)
     parser.add_argument("--baud", type=int, default=DEFAULT_BAUD)
-    parser.add_argument("--pattern", choices=("adjacent", "opposite", "skip-1"), default="adjacent")
+    parser.add_argument("--pattern", choices=("adjacent", "opposite", "skip-1", "skip-2"), default="adjacent")
     parser.add_argument("--dac", type=int, default=100)
     parser.add_argument("--settle-ms", type=int, default=DEFAULT_SETTLE_MS)
     parser.add_argument("--samples", type=int, default=4)

@@ -6,7 +6,7 @@ Arduino IDE firmware for the complete 12-electrode Phase 3A breadboard:
 - MCP4725-controlled OPA2134 Improved Howland current pump;
 - ADS1115 A0-A1 differential electrode voltage;
 - ADS1115 A2-A3 differential voltage across a 100-ohm return shunt;
-- adjacent, skip-1, or opposite drive selected at runtime; and
+- adjacent, skip-1, skip-2, or opposite drive selected at runtime; and
 - automatic forward/reverse injection records.
 
 ## Required Libraries
@@ -39,6 +39,7 @@ Use Serial Monitor at 115200 baud with newline enabled.
 | `s` | capture one complete forward/reverse frame |
 | `ma` | select adjacent drive |
 | `ms` | select skip-1 drive |
+| `mk` | select skip-2 drive |
 | `mo` | select opposite drive |
 | `p100` | request DAC code 100 during measurements |
 | `t10` | set 10 ms settling time |
