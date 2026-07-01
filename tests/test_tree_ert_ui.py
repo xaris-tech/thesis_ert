@@ -31,13 +31,15 @@ class TestTreeErtUiEntrypoint(unittest.TestCase):
     def test_reconstruction_figure_has_map_and_vector_axes(self):
         from tree_ert.ui import build_reconstruction_figure
 
-        figure, map_ax, vector_ax = build_reconstruction_figure()
+        figure, map_ax, vector_ax, scan_axes = build_reconstruction_figure()
 
-        self.assertEqual(len(figure.axes), 2)
+        self.assertEqual(len(figure.axes), 6)
         self.assertIs(figure.axes[0], map_ax)
         self.assertIs(figure.axes[1], vector_ax)
+        self.assertEqual(tuple(figure.axes[2:]), scan_axes)
         self.assertEqual(map_ax.get_title(), "Average 2D map")
         self.assertEqual(vector_ax.get_title(), "Average reconstruction vector")
+        self.assertEqual(scan_axes[0].get_title(), "Scan 1")
 
     def test_average_reconstruction_vector_averages_frames(self):
         import numpy as np
@@ -55,6 +57,13 @@ class TestTreeErtUiEntrypoint(unittest.TestCase):
 
         self.assertEqual(debug_tab_titles(), ("Reconstruction", "Health", "Serial", "Files"))
         self.assertNotIn("Status", debug_tab_titles())
+
+    def test_preview_indices_spread_across_reconstructions(self):
+        from tree_ert.ui import preview_scan_indices
+
+        self.assertEqual(preview_scan_indices(0), ())
+        self.assertEqual(preview_scan_indices(3), (0, 1, 2))
+        self.assertEqual(preview_scan_indices(20), (0, 6, 13, 19))
 
 
 if __name__ == "__main__":

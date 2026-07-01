@@ -23,18 +23,31 @@ def average_reconstruction_vector(reconstructions: list[np.ndarray]) -> np.ndarr
     return np.mean(np.stack(reconstructions), axis=0)
 
 
-def build_reconstruction_figure() -> tuple[Figure, object, object]:
-    figure = Figure(figsize=(10, 5), dpi=100)
-    map_ax = figure.add_subplot(1, 2, 1)
-    vector_ax = figure.add_subplot(1, 2, 2)
+def build_reconstruction_figure() -> tuple[Figure, object, object, tuple[object, ...]]:
+    figure = Figure(figsize=(10, 6.5), dpi=100)
+    grid = figure.add_gridspec(2, 4, height_ratios=(3.0, 1.15))
+    map_ax = figure.add_subplot(grid[0, 0:2])
+    vector_ax = figure.add_subplot(grid[0, 2:4])
+    scan_axes = tuple(figure.add_subplot(grid[1, index]) for index in range(4))
     map_ax.set_title("Average 2D map")
     map_ax.set_aspect("equal")
     map_ax.set_axis_off()
     vector_ax.set_title("Average reconstruction vector")
     vector_ax.set_xlabel("Vector index")
     vector_ax.set_ylabel("Difference")
+    for index, axis in enumerate(scan_axes, start=1):
+        axis.set_title(f"Scan {index}")
+        axis.set_axis_off()
     figure.tight_layout()
-    return figure, map_ax, vector_ax
+    return figure, map_ax, vector_ax, scan_axes
+
+
+def preview_scan_indices(scan_count: int, preview_count: int = 4) -> tuple[int, ...]:
+    if scan_count <= 0:
+        return ()
+    if scan_count <= preview_count:
+        return tuple(range(scan_count))
+    return tuple(int(round(index)) for index in np.linspace(0, scan_count - 1, preview_count))
 
 
 def debug_tab_titles() -> tuple[str, ...]:
@@ -134,7 +147,7 @@ class DebugApp(tk.Tk):
         self.health_text = tk.Text(notebook, height=10, wrap="word")
         self.files_text = tk.Text(notebook, height=10, wrap="word")
 
-        self.figure, self.map_ax, self.vector_ax = build_reconstruction_figure()
+        self.figure, self.map_ax, self.vector_ax, self.scan_axes = build_reconstruction_figure()
         self.canvas = FigureCanvasTkAgg(self.figure, master=reconstruction_tab)
         self.canvas.get_tk_widget().grid(row=0, column=0, sticky="nsew")
 
@@ -264,6 +277,7 @@ class DebugApp(tk.Tk):
             self.status_var.set(f"{event} complete")
         self._append(self.status_text, f"{event} complete.\n")
         if event == "baseline":
+            self._draw_baseline_reference(payload.baseline)
             self._append(self.health_text, f"Baseline: {payload.stability}\n")
         elif event == "control":
             self._append(self.health_text, f"Control frames: {len(payload.frames)}\n")
@@ -279,6 +293,36 @@ class DebugApp(tk.Tk):
         average = average_reconstruction_vector(reconstructions)
         self._draw_average_map(average)
         self._draw_average_vector(average)
+        self._draw_scan_previews(reconstructions)
+        self.figure.tight_layout()
+        self.canvas.draw_idle()
+
+    def _draw_baseline_reference(self, baseline: np.ndarray) -> None:
+        self.map_ax.clear()
+        self.map_ax.set_title("Baseline reference")
+        self.map_ax.set_aspect("equal")
+        self.map_ax.set_axis_off()
+        self.map_ax.text(
+            0.5,
+            0.5,
+            "Baseline vs itself = zero difference\nUse this as reference, not target image",
+            ha="center",
+            va="center",
+            transform=self.map_ax.transAxes,
+        )
+        self.vector_ax.clear()
+        self.vector_ax.set_title("Baseline measurement vector")
+        self.vector_ax.set_xlabel("Measurement index")
+        self.vector_ax.set_ylabel("Transfer resistance")
+        if baseline.size:
+            self.vector_ax.plot(baseline)
+            self.vector_ax.axhline(0.0, color="black", linewidth=0.8, alpha=0.5)
+        else:
+            self.vector_ax.text(0.5, 0.5, "No baseline data", ha="center", va="center")
+        for axis in self.scan_axes:
+            axis.clear()
+            axis.set_axis_off()
+            axis.text(0.5, 0.5, "Run target\nto compare scans", ha="center", va="center")
         self.figure.tight_layout()
         self.canvas.draw_idle()
 
@@ -327,6 +371,37 @@ class DebugApp(tk.Tk):
             self.vector_ax.axhline(0.0, color="black", linewidth=0.8, alpha=0.5)
         else:
             self.vector_ax.text(0.5, 0.5, "No reconstruction data", ha="center", va="center")
+
+    def _draw_scan_previews(self, reconstructions: list[np.ndarray]) -> None:
+        indices = preview_scan_indices(len(reconstructions), len(self.scan_axes))
+        values = [reconstructions[index] for index in indices]
+        limit = max(
+            [float(np.max(np.abs(value))) for value in values if value.size] or [np.finfo(float).eps],
+        )
+        mesh = self.controller.mesh
+        for preview_position, axis in enumerate(self.scan_axes):
+            axis.clear()
+            axis.set_axis_off()
+            if preview_position >= len(indices):
+                axis.set_title("Scan")
+                axis.text(0.5, 0.5, "No scan", ha="center", va="center")
+                continue
+            scan_index = indices[preview_position]
+            value = reconstructions[scan_index]
+            axis.set_title(f"Scan {scan_index + 1}")
+            if mesh is None or len(value) != len(mesh.element):
+                axis.text(0.5, 0.5, "Map unavailable", ha="center", va="center")
+                continue
+            axis.tripcolor(
+                mesh.node[:, 0],
+                mesh.node[:, 1],
+                mesh.element,
+                value,
+                shading="flat",
+                cmap="coolwarm",
+                vmin=-limit,
+                vmax=limit,
+            )
 
     def _on_close(self) -> None:
         try:
