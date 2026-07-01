@@ -37,6 +37,10 @@ def build_reconstruction_figure() -> tuple[Figure, object, object]:
     return figure, map_ax, vector_ax
 
 
+def debug_tab_titles() -> tuple[str, ...]:
+    return ("Reconstruction", "Health", "Serial", "Files")
+
+
 class DebugApp(tk.Tk):
     def __init__(self, demo: bool, port: str) -> None:
         super().__init__()
@@ -122,20 +126,31 @@ class DebugApp(tk.Tk):
         ).pack(fill="x", pady=12)
 
     def _build_tabs(self, notebook: ttk.Notebook) -> None:
-        self.status_text = tk.Text(notebook, height=10, wrap="word")
+        reconstruction_tab = ttk.Frame(notebook)
+        reconstruction_tab.columnconfigure(0, weight=1)
+        reconstruction_tab.rowconfigure(0, weight=1)
+
         self.serial_text = tk.Text(notebook, height=10, wrap="word")
         self.health_text = tk.Text(notebook, height=10, wrap="word")
         self.files_text = tk.Text(notebook, height=10, wrap="word")
 
         self.figure, self.map_ax, self.vector_ax = build_reconstruction_figure()
-        self.canvas = FigureCanvasTkAgg(self.figure, master=notebook)
+        self.canvas = FigureCanvasTkAgg(self.figure, master=reconstruction_tab)
+        self.canvas.get_tk_widget().grid(row=0, column=0, sticky="nsew")
 
-        for title, widget in (
-            ("Status", self.status_text),
-            ("Reconstruction", self.canvas.get_tk_widget()),
-            ("Health", self.health_text),
-            ("Serial", self.serial_text),
-            ("Files", self.files_text),
+        status_frame = ttk.LabelFrame(reconstruction_tab, text="Live status stream", padding=(6, 4))
+        status_frame.grid(row=1, column=0, sticky="ew", padx=6, pady=(0, 6))
+        status_frame.columnconfigure(0, weight=1)
+        self.status_text = tk.Text(status_frame, height=6, wrap="word")
+        self.status_text.grid(row=0, column=0, sticky="ew")
+        status_scroll = ttk.Scrollbar(status_frame, orient="vertical", command=self.status_text.yview)
+        status_scroll.grid(row=0, column=1, sticky="ns")
+        self.status_text.configure(yscrollcommand=status_scroll.set)
+
+        for title, widget in zip(
+            debug_tab_titles(),
+            (reconstruction_tab, self.health_text, self.serial_text, self.files_text),
+            strict=True,
         ):
             notebook.add(widget, text=title)
 

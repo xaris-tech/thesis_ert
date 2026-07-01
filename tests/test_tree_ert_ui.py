@@ -50,6 +50,12 @@ class TestTreeErtUiEntrypoint(unittest.TestCase):
 
         self.assertTrue(np.allclose(average, np.array([2.0, 4.0, 6.0])))
 
+    def test_status_is_embedded_in_reconstruction_tab(self):
+        from tree_ert.ui import debug_tab_titles
+
+        self.assertEqual(debug_tab_titles(), ("Reconstruction", "Health", "Serial", "Files"))
+        self.assertNotIn("Status", debug_tab_titles())
+
 
 if __name__ == "__main__":
     unittest.main()
