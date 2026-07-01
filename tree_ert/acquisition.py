@@ -23,13 +23,19 @@ class DemoAcquisition:
     stopped: bool = False
     frame_id: int = 0
     pattern: str = "adjacent"
+    dac_code: int = 100
+    settle_ms: int = 30
+    sample_count: int = 4
 
     def connect(self, settings: UiSettings) -> None:
-        self.pattern = settings.pattern
+        self.configure(settings)
         self.stopped = False
 
     def configure(self, settings: UiSettings) -> None:
         self.pattern = settings.pattern
+        self.dac_code = settings.dac
+        self.settle_ms = settings.settle_ms
+        self.sample_count = settings.samples
 
     def capture_frame(self) -> unified.UnifiedFrame:
         self.frame_id += 1
@@ -63,9 +69,9 @@ class DemoAcquisition:
         return unified.UnifiedFrame(
             frame_id=self.frame_id,
             pattern=self.pattern,
-            dac_code=100,
-            settle_ms=30,
-            sample_count=4,
+            dac_code=self.dac_code,
+            settle_ms=self.settle_ms,
+            sample_count=self.sample_count,
             records=records,
         )
 
@@ -109,6 +115,8 @@ class SerialAcquisition:
 
     def close(self) -> None:
         if self._serial is not None:
-            self.stop()
-            self._serial.close()
-            self._serial = None
+            try:
+                self.stop()
+            finally:
+                self._serial.close()
+                self._serial = None
