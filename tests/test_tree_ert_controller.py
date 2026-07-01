@@ -140,6 +140,8 @@ class TestDebugController(unittest.TestCase):
 
         controller.connect(settings)
         self.assertIsNone(controller.baseline_result)
+        with self.assertRaisesRegex(RuntimeError, "configure"):
+            controller.capture_baseline(settings)
 
         controller.configure(settings)
         controller.capture_baseline(settings)

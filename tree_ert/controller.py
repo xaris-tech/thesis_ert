@@ -50,7 +50,7 @@ class DebugController:
     def connect(self, settings: UiSettings) -> None:
         settings.validate()
         self._stop_requested = False
-        self._clear_baseline()
+        self._clear_configuration()
         self.acquisition.connect(settings)
         self.state = ControllerState.CONNECTED
 
@@ -143,11 +143,15 @@ class DebugController:
             self.acquisition.close()
         finally:
             self._stop_requested = False
-            self._clear_baseline()
+            self._clear_configuration()
             self.state = ControllerState.DISCONNECTED
 
     def _require_configured(self) -> None:
-        if self.protocol is None or self.solver is None:
+        if self.state not in {
+            ControllerState.CONFIGURED,
+            ControllerState.BASELINE_READY,
+            ControllerState.TARGET_READY,
+        } or self.protocol is None or self.solver is None:
             raise RuntimeError("configure before capture")
 
     def _raise_if_stopped(self) -> None:
@@ -156,6 +160,12 @@ class DebugController:
 
     def _clear_baseline(self) -> None:
         self.baseline_result = None
+
+    def _clear_configuration(self) -> None:
+        self.protocol = None
+        self.solver = None
+        self.mesh = None
+        self._clear_baseline()
 
     @staticmethod
     def _verify_pattern(frame: unified.UnifiedFrame, expected: str) -> None:
