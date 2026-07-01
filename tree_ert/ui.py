@@ -11,9 +11,30 @@ import numpy as np
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 
+from phase3a_reconstruct import N_ELECTRODES
 from tree_ert.acquisition import DemoAcquisition, SerialAcquisition
 from tree_ert.controller import DebugController
 from tree_ert.settings import UiSettings, parse_float_field, parse_int_field
+
+
+def average_reconstruction_vector(reconstructions: list[np.ndarray]) -> np.ndarray:
+    if not reconstructions:
+        return np.asarray([], dtype=float)
+    return np.mean(np.stack(reconstructions), axis=0)
+
+
+def build_reconstruction_figure() -> tuple[Figure, object, object]:
+    figure = Figure(figsize=(10, 5), dpi=100)
+    map_ax = figure.add_subplot(1, 2, 1)
+    vector_ax = figure.add_subplot(1, 2, 2)
+    map_ax.set_title("Average 2D map")
+    map_ax.set_aspect("equal")
+    map_ax.set_axis_off()
+    vector_ax.set_title("Average reconstruction vector")
+    vector_ax.set_xlabel("Vector index")
+    vector_ax.set_ylabel("Difference")
+    figure.tight_layout()
+    return figure, map_ax, vector_ax
 
 
 class DebugApp(tk.Tk):
@@ -106,11 +127,7 @@ class DebugApp(tk.Tk):
         self.health_text = tk.Text(notebook, height=10, wrap="word")
         self.files_text = tk.Text(notebook, height=10, wrap="word")
 
-        self.figure = Figure(figsize=(6, 5), dpi=100)
-        self.ax = self.figure.add_subplot(111)
-        self.ax.set_title("Average reconstruction vector")
-        self.ax.set_xlabel("Vector index")
-        self.ax.set_ylabel("Difference")
+        self.figure, self.map_ax, self.vector_ax = build_reconstruction_figure()
         self.canvas = FigureCanvasTkAgg(self.figure, master=notebook)
 
         for title, widget in (
@@ -240,16 +257,57 @@ class DebugApp(tk.Tk):
         messagebox.showerror("ERT UI Error", message)
 
     def _draw_average(self, reconstructions: list[np.ndarray]) -> None:
-        self.ax.clear()
-        if reconstructions:
-            average = np.mean(np.stack(reconstructions), axis=0)
-            self.ax.plot(average)
-            self.ax.set_title("Average reconstruction vector")
-        else:
-            self.ax.set_title("No reconstruction data")
-        self.ax.set_xlabel("Vector index")
-        self.ax.set_ylabel("Difference")
+        average = average_reconstruction_vector(reconstructions)
+        self._draw_average_map(average)
+        self._draw_average_vector(average)
+        self.figure.tight_layout()
         self.canvas.draw_idle()
+
+    def _draw_average_map(self, average: np.ndarray) -> None:
+        self.map_ax.clear()
+        self.map_ax.set_title("Average 2D map")
+        self.map_ax.set_aspect("equal")
+        self.map_ax.set_axis_off()
+        mesh = self.controller.mesh
+        if average.size == 0:
+            self.map_ax.text(0.5, 0.5, "No reconstruction data", ha="center", va="center")
+            return
+        if mesh is None or len(average) != len(mesh.element):
+            self.map_ax.text(0.5, 0.5, "Map unavailable", ha="center", va="center")
+            return
+        limit = max(float(np.max(np.abs(average))), np.finfo(float).eps)
+        self.map_ax.tripcolor(
+            mesh.node[:, 0],
+            mesh.node[:, 1],
+            mesh.element,
+            average,
+            shading="flat",
+            cmap="coolwarm",
+            vmin=-limit,
+            vmax=limit,
+        )
+        for index in range(N_ELECTRODES):
+            angle = 2.0 * np.pi * index / N_ELECTRODES
+            self.map_ax.text(
+                1.12 * np.cos(angle),
+                1.12 * np.sin(angle),
+                f"E{index + 1}",
+                ha="center",
+                va="center",
+                fontsize=7,
+                fontweight="bold",
+            )
+
+    def _draw_average_vector(self, average: np.ndarray) -> None:
+        self.vector_ax.clear()
+        self.vector_ax.set_title("Average reconstruction vector")
+        self.vector_ax.set_xlabel("Vector index")
+        self.vector_ax.set_ylabel("Difference")
+        if average.size:
+            self.vector_ax.plot(average)
+            self.vector_ax.axhline(0.0, color="black", linewidth=0.8, alpha=0.5)
+        else:
+            self.vector_ax.text(0.5, 0.5, "No reconstruction data", ha="center", va="center")
 
     def _on_close(self) -> None:
         try:
