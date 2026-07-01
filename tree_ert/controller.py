@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from enum import Enum
 from collections.abc import Callable
 
@@ -36,6 +36,64 @@ class BaselineResult:
 class TargetResult:
     reconstructions: list[np.ndarray]
     frame_healths: list[unified.FrameHealthScore]
+
+
+@dataclass(frozen=True)
+class DriftTuneAttempt:
+    settings: UiSettings
+    report: unified.ControlDriftReport | None
+    error: str | None = None
+
+    @property
+    def max_relative_rms_percent(self) -> float:
+        if self.report is None or not self.report.frames:
+            return float("inf")
+        return max(frame.relative_rms_percent for frame in self.report.frames)
+
+    @property
+    def max_rms_kohm(self) -> float:
+        if self.report is None or not self.report.frames:
+            return float("inf")
+        return max(frame.rms_kohm for frame in self.report.frames)
+
+    @property
+    def min_correlation(self) -> float:
+        if self.report is None or not self.report.frames:
+            return 0.0
+        return min(frame.correlation for frame in self.report.frames)
+
+
+@dataclass(frozen=True)
+class DriftTuneResult:
+    attempts: list[DriftTuneAttempt]
+    best: DriftTuneAttempt | None
+
+
+def drift_tuning_candidates(settings: UiSettings) -> list[UiSettings]:
+    profiles = (
+        (settings.settle_ms, settings.samples, settings.warmup_frames, settings.baseline_frames, settings.frames),
+        (max(settings.settle_ms, 50), max(settings.samples, 8), max(settings.warmup_frames, 5), max(settings.baseline_frames, 5), max(5, min(settings.frames, 10))),
+        (max(settings.settle_ms, 100), max(settings.samples, 16), max(settings.warmup_frames, 10), max(settings.baseline_frames, 10), max(5, min(settings.frames, 10))),
+        (max(settings.settle_ms, 200), max(settings.samples, 16), max(settings.warmup_frames, 10), max(settings.baseline_frames, 15), max(10, min(settings.frames, 15))),
+    )
+    candidates: list[UiSettings] = []
+    seen: set[tuple[int, int, int, int, int]] = set()
+    for settle_ms, samples, warmup_frames, baseline_frames, frames in profiles:
+        key = (settle_ms, samples, warmup_frames, baseline_frames, frames)
+        if key in seen:
+            continue
+        seen.add(key)
+        candidates.append(
+            replace(
+                settings,
+                settle_ms=settle_ms,
+                samples=samples,
+                warmup_frames=warmup_frames,
+                baseline_frames=baseline_frames,
+                frames=frames,
+            ).validate()
+        )
+    return candidates
 
 
 class DebugController:
@@ -156,6 +214,57 @@ class DebugController:
         self.state = ControllerState.TARGET_READY
         self._emit("Target reconstruction ready")
         return TargetResult(reconstructions, healths)
+
+    def tune_drift(self, settings: UiSettings) -> DriftTuneResult:
+        settings.validate()
+        attempts: list[DriftTuneAttempt] = []
+        candidates = drift_tuning_candidates(settings)
+        for index, candidate in enumerate(candidates, start=1):
+            self._raise_if_stopped()
+            self._emit(
+                f"Tune attempt {index}/{len(candidates)}: "
+                f"settle={candidate.settle_ms}ms samples={candidate.samples} "
+                f"warmup={candidate.warmup_frames} baseline={candidate.baseline_frames} "
+                f"control_frames={candidate.frames}"
+            )
+            try:
+                self.configure(candidate)
+                self.capture_baseline(candidate)
+                report = self.capture_control(candidate)
+            except Exception as exc:
+                attempts.append(DriftTuneAttempt(candidate, None, str(exc)))
+                self._emit(f"Tune attempt {index} failed: {exc}")
+                continue
+            attempt = DriftTuneAttempt(candidate, report)
+            attempts.append(attempt)
+            self._emit(
+                f"Tune attempt {index} result: "
+                f"max_relative={attempt.max_relative_rms_percent:.2f}% "
+                f"max_rms={attempt.max_rms_kohm:.6f}kOhm "
+                f"min_corr={attempt.min_correlation:.6f}"
+            )
+        successful = [attempt for attempt in attempts if attempt.report is not None]
+        best = min(
+            successful,
+            key=lambda attempt: (
+                attempt.max_relative_rms_percent,
+                attempt.max_rms_kohm,
+                -attempt.min_correlation,
+            ),
+            default=None,
+        )
+        if best is not None:
+            self._emit(
+                "Tune best: "
+                f"settle={best.settings.settle_ms}ms samples={best.settings.samples} "
+                f"warmup={best.settings.warmup_frames} baseline={best.settings.baseline_frames} "
+                f"control_frames={best.settings.frames} "
+                f"max_relative={best.max_relative_rms_percent:.2f}% "
+                f"min_corr={best.min_correlation:.6f}"
+            )
+        else:
+            self._emit("Tune failed: no successful drift attempts")
+        return DriftTuneResult(attempts, best)
 
     def stop(self) -> None:
         self._stop_requested = True

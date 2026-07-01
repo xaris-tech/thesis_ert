@@ -101,6 +101,35 @@ class TestTreeErtUiEntrypoint(unittest.TestCase):
         self.assertIn("worst_pair=I=E1-E2 V=E3-E4", summary)
         self.assertIn("worst_electrode=E3", summary)
 
+    def test_drift_tune_summary_reports_best_settings(self):
+        import phase3a_unified_reconstruct as unified
+        from tree_ert.controller import DriftTuneAttempt, DriftTuneResult
+        from tree_ert.settings import UiSettings
+        from tree_ert.ui import format_drift_tune_summary
+
+        report = unified.ControlDriftReport(
+            frames=[
+                unified.ControlFrameMetric(
+                    frame=1,
+                    rms_kohm=0.001,
+                    relative_rms_percent=0.5,
+                    correlation=0.999,
+                )
+            ],
+            pairs=[],
+            electrodes=[],
+        )
+        attempt = DriftTuneAttempt(
+            UiSettings.default(),
+            report,
+        )
+        summary = format_drift_tune_summary(DriftTuneResult([attempt], attempt))
+
+        self.assertIn("Drift tuning result", summary)
+        self.assertIn("best_settle=30ms", summary)
+        self.assertIn("best_samples=4", summary)
+        self.assertIn("max_relative=0.50%", summary)
+
 
 if __name__ == "__main__":
     unittest.main()

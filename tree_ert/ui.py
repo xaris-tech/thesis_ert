@@ -15,7 +15,7 @@ import phase3a_reconstruct as base
 import phase3a_unified_reconstruct as unified
 from phase3a_reconstruct import N_ELECTRODES
 from tree_ert.acquisition import DemoAcquisition, SerialAcquisition
-from tree_ert.controller import DebugController
+from tree_ert.controller import DebugController, DriftTuneAttempt, DriftTuneResult
 from tree_ert.settings import UiSettings, parse_float_field, parse_int_field
 
 
@@ -87,6 +87,39 @@ def format_control_drift_summary(report: unified.ControlDriftReport) -> str:
             f"electrode_mean_rms={electrode.mean_pair_rms_kohm:.6f}kOhm"
         )
     return summary
+
+
+def format_drift_tune_summary(result: DriftTuneResult) -> str:
+    if result.best is None:
+        return f"Drift tuning result: no successful attempts out of {len(result.attempts)}"
+    best = result.best
+    return (
+        "Drift tuning result: "
+        f"best_settle={best.settings.settle_ms}ms "
+        f"best_samples={best.settings.samples} "
+        f"best_warmup={best.settings.warmup_frames} "
+        f"best_baseline={best.settings.baseline_frames} "
+        f"best_control_frames={best.settings.frames} "
+        f"max_relative={best.max_relative_rms_percent:.2f}% "
+        f"max_rms={best.max_rms_kohm:.6f}kOhm "
+        f"min_corr={best.min_correlation:.6f}"
+    )
+
+
+def format_drift_tune_attempt(attempt: DriftTuneAttempt) -> str:
+    settings = attempt.settings
+    prefix = (
+        f"Tune attempt settle={settings.settle_ms}ms samples={settings.samples} "
+        f"warmup={settings.warmup_frames} baseline={settings.baseline_frames} "
+        f"control_frames={settings.frames}"
+    )
+    if attempt.error:
+        return f"{prefix}: failed {attempt.error}"
+    return (
+        f"{prefix}: max_relative={attempt.max_relative_rms_percent:.2f}% "
+        f"max_rms={attempt.max_rms_kohm:.6f}kOhm "
+        f"min_corr={attempt.min_correlation:.6f}"
+    )
 
 
 class DebugApp(tk.Tk):
@@ -162,6 +195,7 @@ class DebugApp(tk.Tk):
             ("Configure", self.configure),
             ("Baseline", self.capture_baseline),
             ("Control Drift", self.capture_control),
+            ("Tune Drift", self.tune_drift),
             ("Target Run", self.capture_target),
             ("Export", self.export_placeholder),
         ):
@@ -236,6 +270,9 @@ class DebugApp(tk.Tk):
 
     def capture_control(self) -> None:
         self._run_with_settings("control", self.controller.capture_control)
+
+    def tune_drift(self) -> None:
+        self._run_with_settings("tune", self.controller.tune_drift)
 
     def capture_target(self) -> None:
         self._run_with_settings("target", self.controller.capture_target)
@@ -325,6 +362,8 @@ class DebugApp(tk.Tk):
             summary = format_control_drift_summary(payload)
             self._append(self.status_text, f"{summary}\n")
             self._append(self.health_text, f"{summary}\n")
+        elif event == "tune":
+            self._handle_tune_result(payload)
         elif event == "target":
             self._draw_average(payload.reconstructions)
             self._append(self.health_text, f"Target frames: {len(payload.reconstructions)}\n")
@@ -332,6 +371,22 @@ class DebugApp(tk.Tk):
     def _handle_error(self, message: str) -> None:
         self._append(self.status_text, f"ERROR {message}\n")
         messagebox.showerror("ERT UI Error", message)
+
+    def _handle_tune_result(self, result: DriftTuneResult) -> None:
+        summary = format_drift_tune_summary(result)
+        self._append(self.status_text, f"{summary}\n")
+        self._append(self.health_text, f"{summary}\n")
+        for attempt in result.attempts:
+            self._append(self.health_text, f"{format_drift_tune_attempt(attempt)}\n")
+        if result.best is not None:
+            self._apply_settings_to_fields(result.best.settings)
+
+    def _apply_settings_to_fields(self, settings: UiSettings) -> None:
+        self.settle_var.set(str(settings.settle_ms))
+        self.samples_var.set(str(settings.samples))
+        self.warmup_var.set(str(settings.warmup_frames))
+        self.baseline_var.set(str(settings.baseline_frames))
+        self.frames_var.set(str(settings.frames))
 
     def _draw_average(self, reconstructions: list[np.ndarray]) -> None:
         average = average_reconstruction_vector(reconstructions)

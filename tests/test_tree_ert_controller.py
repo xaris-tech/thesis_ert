@@ -41,6 +41,19 @@ class FailingStopSerial:
 
 
 class TestDebugController(unittest.TestCase):
+    def test_tune_drift_runs_candidate_settings_and_picks_best(self):
+        messages = []
+        controller = DebugController(DemoAcquisition(), progress=messages.append)
+        settings = replace(UiSettings.default(), warmup_frames=0, baseline_frames=2, frames=2)
+
+        controller.connect(settings)
+        result = controller.tune_drift(settings)
+
+        self.assertGreaterEqual(len(result.attempts), 2)
+        self.assertIsNotNone(result.best)
+        self.assertIn("Tune attempt", "\n".join(messages))
+        self.assertIn("Tune best", "\n".join(messages))
+
     def test_controller_emits_live_progress_messages(self):
         messages = []
         controller = DebugController(DemoAcquisition(), progress=messages.append)
