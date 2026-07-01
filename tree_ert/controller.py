@@ -39,7 +39,12 @@ class TargetResult:
 
 
 class DebugController:
-    def __init__(self, acquisition: Acquisition, progress: Callable[[str], None] | None = None) -> None:
+    def __init__(
+        self,
+        acquisition: Acquisition,
+        progress: Callable[[str], None] | None = None,
+        target_preview: Callable[[list[np.ndarray]], None] | None = None,
+    ) -> None:
         self.acquisition = acquisition
         self.state = ControllerState.DISCONNECTED
         self.protocol = None
@@ -48,6 +53,7 @@ class DebugController:
         self.baseline_result: BaselineResult | None = None
         self._stop_requested = False
         self._progress = progress or (lambda _message: None)
+        self._target_preview = target_preview or (lambda _reconstructions: None)
 
     def connect(self, settings: UiSettings) -> None:
         settings.validate()
@@ -139,14 +145,14 @@ class DebugController:
                 current_median_ua=float(np.median(currents)),
                 current_spread_ua=float(np.max(currents) - np.min(currents)),
             )
-            reconstructions.append(
-                base.reconstruct_difference(
-                    self.baseline_result.baseline,
-                    filtered.filtered_vector,
-                    self.solver,
-                )
+            reconstruction = base.reconstruct_difference(
+                self.baseline_result.baseline,
+                filtered.filtered_vector,
+                self.solver,
             )
+            reconstructions.append(reconstruction)
             healths.append(filtered.frame_health)
+            self._target_preview(list(reconstructions))
         self.state = ControllerState.TARGET_READY
         self._emit("Target reconstruction ready")
         return TargetResult(reconstructions, healths)

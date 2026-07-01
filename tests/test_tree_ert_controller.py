@@ -59,6 +59,19 @@ class TestDebugController(unittest.TestCase):
         self.assertIn("Control drift frame 2/2", messages)
         self.assertIn("Target frame 2/2", messages)
 
+    def test_controller_streams_target_reconstructions_as_they_are_created(self):
+        previews = []
+        controller = DebugController(DemoAcquisition(), target_preview=previews.append)
+        settings = replace(UiSettings.default(), warmup_frames=0, baseline_frames=2, frames=3)
+
+        controller.connect(settings)
+        controller.configure(settings)
+        controller.capture_baseline(settings)
+        target = controller.capture_target(settings)
+
+        self.assertEqual([len(preview) for preview in previews], [1, 2, 3])
+        self.assertEqual(len(target.reconstructions), 3)
+
     def test_demo_controller_captures_baseline_then_target(self):
         controller = DebugController(DemoAcquisition())
         settings = UiSettings.default()

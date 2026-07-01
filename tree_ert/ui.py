@@ -61,7 +61,11 @@ class DebugApp(tk.Tk):
         self.geometry("1180x760")
         self.events: queue.Queue[tuple[str, object]] = queue.Queue()
         acquisition = DemoAcquisition() if demo else SerialAcquisition()
-        self.controller = DebugController(acquisition, progress=self._post_status)
+        self.controller = DebugController(
+            acquisition,
+            progress=self._post_status,
+            target_preview=self._post_target_preview,
+        )
         self.demo = demo
         self._worker_active = False
         self._build_vars(port)
@@ -264,6 +268,9 @@ class DebugApp(tk.Tk):
         if event == "status":
             self._append(self.status_text, f"{payload}\n")
             return
+        if event == "target_preview":
+            self._draw_average(payload)
+            return
 
         self._worker_active = False
         if event == "error":
@@ -417,6 +424,9 @@ class DebugApp(tk.Tk):
 
     def _post_status(self, message: str) -> None:
         self.events.put(("status", message))
+
+    def _post_target_preview(self, reconstructions: list[np.ndarray]) -> None:
+        self.events.put(("target_preview", reconstructions))
 
 
 def run_app(demo: bool = False, port: str = "COM3") -> None:
