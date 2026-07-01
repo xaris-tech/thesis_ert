@@ -2,8 +2,6 @@ from __future__ import annotations
 
 import argparse
 
-from tree_ert.ui import run_app
-
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Phase 3A ERT hybrid debug UI")
@@ -14,6 +12,8 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
+    from tree_ert.ui import run_app
+
     run_app(demo=args.demo, port=args.port)
 
 

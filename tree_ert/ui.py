@@ -160,12 +160,19 @@ class DebugApp(tk.Tk):
         self._append(self.files_text, "Export uses phase3a_logs outputs from capture runs.\n")
 
     def stop(self) -> None:
+        worker_was_active = self._worker_active
         try:
             self.controller.stop()
         except Exception as exc:
             self.status_var.set("Stop error")
             self._handle_error(f"stop: {exc}")
             return
+        if worker_was_active:
+            self.status_var.set("STOP requested")
+            self._append(
+                self.status_text,
+                "STOP requested; waiting for active capture to finish...\n",
+            )
         else:
             self.status_var.set("STOPPED / CURRENT IDLE")
             self._append(self.status_text, "STOP / CURRENT IDLE sent.\n")
@@ -180,7 +187,10 @@ class DebugApp(tk.Tk):
 
     def _run_worker(self, name: str, fn: Callable[[], Any]) -> None:
         if self._worker_active:
-            self._append(self.status_text, f"{name} skipped: another action is still running.\n")
+            self._append(
+                self.status_text,
+                f"{name} skipped: active capture still finishing.\n",
+            )
             return
         self._worker_active = True
         self.status_var.set(f"{name} running")
@@ -212,7 +222,10 @@ class DebugApp(tk.Tk):
             self._handle_error(str(payload))
             return
 
-        self.status_var.set(f"{event} complete")
+        if event in {"baseline", "control", "target"} and "stopped" in str(payload).lower():
+            self.status_var.set("STOPPED / CURRENT IDLE")
+        else:
+            self.status_var.set(f"{event} complete")
         self._append(self.status_text, f"{event} complete.\n")
         if event == "baseline":
             self._append(self.health_text, f"Baseline: {payload.stability}\n")
