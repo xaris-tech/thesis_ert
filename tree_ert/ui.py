@@ -48,7 +48,7 @@ class DebugApp(tk.Tk):
         self.geometry("1180x760")
         self.events: queue.Queue[tuple[str, object]] = queue.Queue()
         acquisition = DemoAcquisition() if demo else SerialAcquisition()
-        self.controller = DebugController(acquisition)
+        self.controller = DebugController(acquisition, progress=self._post_status)
         self.demo = demo
         self._worker_active = False
         self._build_vars(port)
@@ -248,6 +248,10 @@ class DebugApp(tk.Tk):
         self.after(100, self._drain_events)
 
     def _handle_event(self, event: str, payload: object) -> None:
+        if event == "status":
+            self._append(self.status_text, f"{payload}\n")
+            return
+
         self._worker_active = False
         if event == "error":
             self.status_var.set("Error")
@@ -335,6 +339,9 @@ class DebugApp(tk.Tk):
     def _append(widget: tk.Text, text: str) -> None:
         widget.insert("end", text)
         widget.see("end")
+
+    def _post_status(self, message: str) -> None:
+        self.events.put(("status", message))
 
 
 def run_app(demo: bool = False, port: str = "COM3") -> None:

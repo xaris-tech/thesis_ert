@@ -41,6 +41,24 @@ class FailingStopSerial:
 
 
 class TestDebugController(unittest.TestCase):
+    def test_controller_emits_live_progress_messages(self):
+        messages = []
+        controller = DebugController(DemoAcquisition(), progress=messages.append)
+        settings = replace(UiSettings.default(), warmup_frames=1, baseline_frames=2, frames=2)
+
+        controller.connect(settings)
+        controller.configure(settings)
+        controller.capture_baseline(settings)
+        controller.capture_control(settings)
+        controller.capture_target(settings)
+
+        self.assertIn("Connecting to demo acquisition", messages)
+        self.assertIn("Configuring pattern=adjacent dac=100 settle=30ms samples=4", messages)
+        self.assertIn("Warmup frame 1/1", messages)
+        self.assertIn("Baseline frame 2/2", messages)
+        self.assertIn("Control drift frame 2/2", messages)
+        self.assertIn("Target frame 2/2", messages)
+
     def test_demo_controller_captures_baseline_then_target(self):
         controller = DebugController(DemoAcquisition())
         settings = UiSettings.default()
