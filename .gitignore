@@ -11,3 +11,6 @@ env/
 # Editor/system noise
 .DS_Store
 Thumbs.db
+
+# Local brainstorming companion files
+.superpowers/
