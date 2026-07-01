@@ -1,0 +1,256 @@
+from __future__ import annotations
+
+import queue
+import threading
+import tkinter as tk
+from collections.abc import Callable
+from tkinter import messagebox, ttk
+from typing import Any
+
+import numpy as np
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.figure import Figure
+
+from tree_ert.acquisition import DemoAcquisition, SerialAcquisition
+from tree_ert.controller import DebugController
+from tree_ert.settings import UiSettings, parse_float_field, parse_int_field
+
+
+class DebugApp(tk.Tk):
+    def __init__(self, demo: bool, port: str) -> None:
+        super().__init__()
+        self.title("Phase 3A ERT Hybrid Debug UI")
+        self.geometry("1180x760")
+        self.events: queue.Queue[tuple[str, object]] = queue.Queue()
+        acquisition = DemoAcquisition() if demo else SerialAcquisition()
+        self.controller = DebugController(acquisition)
+        self.demo = demo
+        self._worker_active = False
+        self._build_vars(port)
+        self._build_layout()
+        self.protocol("WM_DELETE_WINDOW", self._on_close)
+        self.after(100, self._drain_events)
+
+    def _build_vars(self, port: str) -> None:
+        defaults = UiSettings.default()
+        self.port_var = tk.StringVar(value=port)
+        self.pattern_var = tk.StringVar(value=defaults.pattern)
+        self.dac_var = tk.StringVar(value=str(defaults.dac))
+        self.settle_var = tk.StringVar(value=str(defaults.settle_ms))
+        self.samples_var = tk.StringVar(value=str(defaults.samples))
+        self.warmup_var = tk.StringVar(value=str(defaults.warmup_frames))
+        self.baseline_var = tk.StringVar(value=str(defaults.baseline_frames))
+        self.frames_var = tk.StringVar(value=str(defaults.frames))
+        self.diameter_var = tk.StringVar(value="")
+        self.status_var = tk.StringVar(value="Demo mode" if self.demo else "Disconnected")
+
+    def _build_layout(self) -> None:
+        self.columnconfigure(1, weight=1)
+        self.rowconfigure(0, weight=1)
+
+        left = ttk.Frame(self, padding=10)
+        left.grid(row=0, column=0, sticky="ns")
+        right = ttk.Notebook(self)
+        right.grid(row=0, column=1, sticky="nsew")
+
+        self._build_controls(left)
+        self._build_tabs(right)
+
+    def _build_controls(self, parent: ttk.Frame) -> None:
+        ttk.Label(parent, text="Connection").pack(anchor="w")
+        ttk.Label(parent, textvariable=self.status_var, foreground="#444444").pack(anchor="w", pady=(0, 8))
+        ttk.Entry(parent, textvariable=self.port_var, width=18).pack(fill="x", pady=2)
+        ttk.Combobox(
+            parent,
+            textvariable=self.pattern_var,
+            values=("adjacent", "opposite", "skip-1", "skip-2"),
+            width=16,
+            state="readonly",
+        ).pack(fill="x", pady=2)
+
+        for label, var in (
+            ("DAC", self.dac_var),
+            ("Settle ms", self.settle_var),
+            ("Samples", self.samples_var),
+            ("Warmup frames", self.warmup_var),
+            ("Baseline frames", self.baseline_var),
+            ("Run frames", self.frames_var),
+            ("Diameter cm", self.diameter_var),
+        ):
+            ttk.Label(parent, text=label).pack(anchor="w", pady=(8, 0))
+            ttk.Entry(parent, textvariable=var, width=18).pack(fill="x", pady=2)
+
+        for label, action in (
+            ("Connect", self.connect),
+            ("Configure", self.configure),
+            ("Baseline", self.capture_baseline),
+            ("Control Drift", self.capture_control),
+            ("Target Run", self.capture_target),
+            ("Export", self.export_placeholder),
+        ):
+            ttk.Button(parent, text=label, command=action).pack(fill="x", pady=4)
+
+        tk.Button(
+            parent,
+            text="STOP / CURRENT IDLE",
+            command=self.stop,
+            bg="#b00020",
+            fg="white",
+            activebackground="#7f0018",
+            activeforeground="white",
+        ).pack(fill="x", pady=12)
+
+    def _build_tabs(self, notebook: ttk.Notebook) -> None:
+        self.status_text = tk.Text(notebook, height=10, wrap="word")
+        self.serial_text = tk.Text(notebook, height=10, wrap="word")
+        self.health_text = tk.Text(notebook, height=10, wrap="word")
+        self.files_text = tk.Text(notebook, height=10, wrap="word")
+
+        self.figure = Figure(figsize=(6, 5), dpi=100)
+        self.ax = self.figure.add_subplot(111)
+        self.ax.set_title("Average reconstruction vector")
+        self.ax.set_xlabel("Vector index")
+        self.ax.set_ylabel("Difference")
+        self.canvas = FigureCanvasTkAgg(self.figure, master=notebook)
+
+        for title, widget in (
+            ("Status", self.status_text),
+            ("Reconstruction", self.canvas.get_tk_widget()),
+            ("Health", self.health_text),
+            ("Serial", self.serial_text),
+            ("Files", self.files_text),
+        ):
+            notebook.add(widget, text=title)
+
+        self._append(self.status_text, "Ready.\n")
+        if self.demo:
+            self._append(self.serial_text, "Demo acquisition selected; no serial port will be opened.\n")
+
+    def settings(self) -> UiSettings:
+        diameter_text = self.diameter_var.get().strip()
+        diameter = parse_float_field("diameter_cm", diameter_text, minimum=0.1) if diameter_text else None
+        return UiSettings(
+            port=self.port_var.get().strip(),
+            pattern=self.pattern_var.get().strip(),
+            dac=parse_int_field("dac", self.dac_var.get(), 0, 620),
+            settle_ms=parse_int_field("settle_ms", self.settle_var.get(), 1, 10000),
+            samples=parse_int_field("samples", self.samples_var.get(), 1, 1000),
+            warmup_frames=parse_int_field("warmup_frames", self.warmup_var.get(), 0, 1000),
+            baseline_frames=parse_int_field("baseline_frames", self.baseline_var.get(), 1, 1000),
+            frames=parse_int_field("frames", self.frames_var.get(), 1, 1000),
+            diameter_cm=diameter,
+        ).validate()
+
+    def connect(self) -> None:
+        self._run_with_settings("connect", self.controller.connect)
+
+    def configure(self) -> None:
+        self._run_with_settings("configure", self.controller.configure)
+
+    def capture_baseline(self) -> None:
+        self._run_with_settings("baseline", self.controller.capture_baseline)
+
+    def capture_control(self) -> None:
+        self._run_with_settings("control", self.controller.capture_control)
+
+    def capture_target(self) -> None:
+        self._run_with_settings("target", self.controller.capture_target)
+
+    def export_placeholder(self) -> None:
+        self._append(self.files_text, "Export uses phase3a_logs outputs from capture runs.\n")
+
+    def stop(self) -> None:
+        try:
+            self.controller.stop()
+        except Exception as exc:
+            self.status_var.set("Stop error")
+            self._handle_error(f"stop: {exc}")
+            return
+        else:
+            self.status_var.set("STOPPED / CURRENT IDLE")
+            self._append(self.status_text, "STOP / CURRENT IDLE sent.\n")
+
+    def _run_with_settings(self, name: str, action: Callable[[UiSettings], Any]) -> None:
+        try:
+            settings = self.settings()
+        except Exception as exc:
+            self._handle_error(f"{name}: {exc}")
+            return
+        self._run_worker(name, lambda: action(settings))
+
+    def _run_worker(self, name: str, fn: Callable[[], Any]) -> None:
+        if self._worker_active:
+            self._append(self.status_text, f"{name} skipped: another action is still running.\n")
+            return
+        self._worker_active = True
+        self.status_var.set(f"{name} running")
+        self._append(self.status_text, f"{name} started.\n")
+
+        def worker() -> None:
+            try:
+                result = fn()
+            except Exception as exc:
+                self.events.put(("error", f"{name}: {exc}"))
+            else:
+                self.events.put((name, result))
+
+        threading.Thread(target=worker, daemon=True).start()
+
+    def _drain_events(self) -> None:
+        while True:
+            try:
+                event, payload = self.events.get_nowait()
+            except queue.Empty:
+                break
+            self._handle_event(event, payload)
+        self.after(100, self._drain_events)
+
+    def _handle_event(self, event: str, payload: object) -> None:
+        self._worker_active = False
+        if event == "error":
+            self.status_var.set("Error")
+            self._handle_error(str(payload))
+            return
+
+        self.status_var.set(f"{event} complete")
+        self._append(self.status_text, f"{event} complete.\n")
+        if event == "baseline":
+            self._append(self.health_text, f"Baseline: {payload.stability}\n")
+        elif event == "control":
+            self._append(self.health_text, f"Control frames: {len(payload.frames)}\n")
+        elif event == "target":
+            self._draw_average(payload.reconstructions)
+            self._append(self.health_text, f"Target frames: {len(payload.reconstructions)}\n")
+
+    def _handle_error(self, message: str) -> None:
+        self._append(self.status_text, f"ERROR {message}\n")
+        messagebox.showerror("ERT UI Error", message)
+
+    def _draw_average(self, reconstructions: list[np.ndarray]) -> None:
+        self.ax.clear()
+        if reconstructions:
+            average = np.mean(np.stack(reconstructions), axis=0)
+            self.ax.plot(average)
+            self.ax.set_title("Average reconstruction vector")
+        else:
+            self.ax.set_title("No reconstruction data")
+        self.ax.set_xlabel("Vector index")
+        self.ax.set_ylabel("Difference")
+        self.canvas.draw_idle()
+
+    def _on_close(self) -> None:
+        try:
+            self.controller.close()
+        except Exception as exc:
+            self._append(self.status_text, f"ERROR close: {exc}\n")
+        self.destroy()
+
+    @staticmethod
+    def _append(widget: tk.Text, text: str) -> None:
+        widget.insert("end", text)
+        widget.see("end")
+
+
+def run_app(demo: bool = False, port: str = "COM3") -> None:
+    app = DebugApp(demo=demo, port=port)
+    app.mainloop()
