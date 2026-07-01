@@ -11,6 +11,8 @@ import numpy as np
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 
+import phase3a_reconstruct as base
+import phase3a_unified_reconstruct as unified
 from phase3a_reconstruct import N_ELECTRODES
 from tree_ert.acquisition import DemoAcquisition, SerialAcquisition
 from tree_ert.controller import DebugController
@@ -52,6 +54,39 @@ def preview_scan_indices(scan_count: int, preview_count: int = 4) -> tuple[int, 
 
 def debug_tab_titles() -> tuple[str, ...]:
     return ("Reconstruction", "Health", "Serial", "Files")
+
+
+def format_control_drift_summary(report: unified.ControlDriftReport) -> str:
+    if not report.frames:
+        return "Control drift result: no frames analyzed"
+    max_rms = max(frame.rms_kohm for frame in report.frames)
+    max_relative = max(frame.relative_rms_percent for frame in report.frames)
+    min_correlation = min(frame.correlation for frame in report.frames)
+    summary = (
+        "Control drift result: "
+        f"frames={len(report.frames)} "
+        f"max_rms={max_rms:.6f}kOhm "
+        f"max_relative={max_relative:.2f}% "
+        f"min_corr={min_correlation:.6f}"
+    )
+    if report.pairs:
+        pair = report.pairs[0]
+        summary += (
+            " "
+            f"worst_pair=I={base.index_to_electrode(pair.i_pair[0])}-"
+            f"{base.index_to_electrode(pair.i_pair[1])} "
+            f"V={base.index_to_electrode(pair.v_pair[0])}-"
+            f"{base.index_to_electrode(pair.v_pair[1])} "
+            f"pair_rms={pair.rms_kohm:.6f}kOhm"
+        )
+    if report.electrodes:
+        electrode = report.electrodes[0]
+        summary += (
+            " "
+            f"worst_electrode={base.index_to_electrode(electrode.electrode)} "
+            f"electrode_mean_rms={electrode.mean_pair_rms_kohm:.6f}kOhm"
+        )
+    return summary
 
 
 class DebugApp(tk.Tk):
@@ -287,7 +322,9 @@ class DebugApp(tk.Tk):
             self._draw_baseline_reference(payload.baseline)
             self._append(self.health_text, f"Baseline: {payload.stability}\n")
         elif event == "control":
-            self._append(self.health_text, f"Control frames: {len(payload.frames)}\n")
+            summary = format_control_drift_summary(payload)
+            self._append(self.status_text, f"{summary}\n")
+            self._append(self.health_text, f"{summary}\n")
         elif event == "target":
             self._draw_average(payload.reconstructions)
             self._append(self.health_text, f"Target frames: {len(payload.reconstructions)}\n")

@@ -65,6 +65,42 @@ class TestTreeErtUiEntrypoint(unittest.TestCase):
         self.assertEqual(preview_scan_indices(3), (0, 1, 2))
         self.assertEqual(preview_scan_indices(20), (0, 6, 13, 19))
 
+    def test_control_drift_summary_reports_result(self):
+        import phase3a_unified_reconstruct as unified
+        from tree_ert.ui import format_control_drift_summary
+
+        report = unified.ControlDriftReport(
+            frames=[
+                unified.ControlFrameMetric(
+                    frame=1,
+                    rms_kohm=0.001,
+                    relative_rms_percent=0.5,
+                    correlation=0.999,
+                )
+            ],
+            pairs=[
+                unified.ControlPairMetric(
+                    index=0,
+                    i_pair=(0, 1),
+                    v_pair=(2, 3),
+                    rms_kohm=0.002,
+                    max_abs_kohm=0.003,
+                )
+            ],
+            electrodes=[
+                unified.ControlElectrodeMetric(electrode=2, mean_pair_rms_kohm=0.002),
+            ],
+        )
+
+        summary = format_control_drift_summary(report)
+
+        self.assertIn("Control drift result", summary)
+        self.assertIn("max_rms=0.001000kOhm", summary)
+        self.assertIn("max_relative=0.50%", summary)
+        self.assertIn("min_corr=0.999000", summary)
+        self.assertIn("worst_pair=I=E1-E2 V=E3-E4", summary)
+        self.assertIn("worst_electrode=E3", summary)
+
 
 if __name__ == "__main__":
     unittest.main()
