@@ -72,9 +72,10 @@ class DriftTuneResult:
 def drift_tuning_candidates(settings: UiSettings) -> list[UiSettings]:
     profiles = (
         (settings.settle_ms, settings.samples, settings.warmup_frames, settings.baseline_frames, settings.frames),
-        (max(settings.settle_ms, 50), max(settings.samples, 8), max(settings.warmup_frames, 5), max(settings.baseline_frames, 5), max(5, min(settings.frames, 10))),
-        (max(settings.settle_ms, 100), max(settings.samples, 16), max(settings.warmup_frames, 10), max(settings.baseline_frames, 10), max(5, min(settings.frames, 10))),
-        (max(settings.settle_ms, 200), max(settings.samples, 16), max(settings.warmup_frames, 10), max(settings.baseline_frames, 15), max(10, min(settings.frames, 15))),
+        (max(settings.settle_ms, 100), max(settings.samples, 16), max(settings.warmup_frames, 20), max(settings.baseline_frames, 10), max(10, min(settings.frames, 10))),
+        (max(settings.settle_ms, 100), max(settings.samples, 16), max(settings.warmup_frames, 30), max(settings.baseline_frames, 15), max(10, min(settings.frames, 10))),
+        (max(settings.settle_ms, 150), max(settings.samples, 16), max(settings.warmup_frames, 30), max(settings.baseline_frames, 20), max(10, min(settings.frames, 10))),
+        (max(settings.settle_ms, 200), max(settings.samples, 32), max(settings.warmup_frames, 30), max(settings.baseline_frames, 20), max(10, min(settings.frames, 10))),
     )
     candidates: list[UiSettings] = []
     seen: set[tuple[int, int, int, int, int]] = set()

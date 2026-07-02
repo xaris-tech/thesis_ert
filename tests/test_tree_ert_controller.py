@@ -2,7 +2,7 @@ from dataclasses import replace
 import unittest
 
 from tree_ert.acquisition import DemoAcquisition, SerialAcquisition
-from tree_ert.controller import DebugController, ControllerState
+from tree_ert.controller import DebugController, ControllerState, drift_tuning_candidates
 from tree_ert.settings import UiSettings
 
 
@@ -41,6 +41,26 @@ class FailingStopSerial:
 
 
 class TestDebugController(unittest.TestCase):
+    def test_drift_tuning_candidates_focus_near_stable_profile(self):
+        settings = replace(UiSettings.default(), settle_ms=30, samples=4, warmup_frames=10, baseline_frames=10, frames=20)
+
+        candidates = drift_tuning_candidates(settings)
+        profiles = [
+            (
+                candidate.settle_ms,
+                candidate.samples,
+                candidate.warmup_frames,
+                candidate.baseline_frames,
+                candidate.frames,
+            )
+            for candidate in candidates
+        ]
+
+        self.assertIn((100, 16, 20, 10, 10), profiles)
+        self.assertIn((100, 16, 30, 15, 10), profiles)
+        self.assertIn((150, 16, 30, 20, 10), profiles)
+        self.assertIn((200, 32, 30, 20, 10), profiles)
+
     def test_tune_drift_runs_candidate_settings_and_picks_best(self):
         messages = []
         controller = DebugController(DemoAcquisition(), progress=messages.append)
