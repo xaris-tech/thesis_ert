@@ -375,7 +375,7 @@ class DebugApp(tk.Tk):
             self._append(self.health_text, f"Target frames: {len(payload.reconstructions)}\n")
         elif event == "live":
             self._draw_average(payload.reconstructions)
-            self._append(self.health_text, f"Live frames: {len(payload.reconstructions)}\n")
+            self._append(self.health_text, f"Live frames: {payload.total_frames}\n")
 
     def _handle_error(self, message: str) -> None:
         self._append(self.status_text, f"ERROR {message}\n")

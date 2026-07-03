@@ -118,13 +118,33 @@ class TestDebugController(unittest.TestCase):
         controller.connect(settings)
         controller.configure(settings)
         controller.capture_baseline(settings)
-        live = controller.live_reconstruction(settings, max_frames=3)
+        live = controller.live_reconstruction(settings, max_frames=3, frame_interval_s=0.0)
 
         self.assertEqual([len(preview) for preview in previews], [1, 2, 3])
         self.assertEqual(len(live.reconstructions), 3)
+        self.assertEqual(live.total_frames, 3)
         self.assertEqual(controller.state, ControllerState.TARGET_READY)
         self.assertIn("Live frame 3", messages)
         self.assertIn("Live reconstruction stopped after 3 frames", messages)
+
+    def test_live_reconstruction_limits_display_history(self):
+        previews = []
+        controller = DebugController(DemoAcquisition(), target_preview=previews.append)
+        settings = replace(UiSettings.default(), warmup_frames=0, baseline_frames=2, frames=3)
+
+        controller.connect(settings)
+        controller.configure(settings)
+        controller.capture_baseline(settings)
+        live = controller.live_reconstruction(
+            settings,
+            max_frames=6,
+            frame_interval_s=0.0,
+            max_display_frames=3,
+        )
+
+        self.assertEqual([len(preview) for preview in previews], [1, 2, 3, 3, 3, 3])
+        self.assertEqual(len(live.reconstructions), 3)
+        self.assertEqual(live.total_frames, 6)
 
     def test_live_reconstruction_requires_baseline(self):
         controller = DebugController(DemoAcquisition())
@@ -133,7 +153,7 @@ class TestDebugController(unittest.TestCase):
         controller.configure(settings)
 
         with self.assertRaisesRegex(RuntimeError, "baseline"):
-            controller.live_reconstruction(settings, max_frames=1)
+            controller.live_reconstruction(settings, max_frames=1, frame_interval_s=0.0)
 
     def test_demo_controller_captures_baseline_then_target(self):
         controller = DebugController(DemoAcquisition())

@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass, replace
 from enum import Enum
-from collections.abc import Callable
+import time
 
 import numpy as np
 
@@ -42,6 +43,7 @@ class TargetResult:
 class LiveReconstructionResult:
     reconstructions: list[np.ndarray]
     frame_healths: list[unified.FrameHealthScore]
+    total_frames: int
 
 
 @dataclass(frozen=True)
@@ -213,6 +215,8 @@ class DebugController:
         self,
         settings: UiSettings,
         max_frames: int | None = None,
+        frame_interval_s: float = 0.15,
+        max_display_frames: int = 60,
     ) -> LiveReconstructionResult:
         if self.baseline_result is None:
             raise RuntimeError("baseline is required before live reconstruction")
@@ -234,10 +238,15 @@ class DebugController:
             reconstruction, frame_health = self._reconstruct_frame(frame)
             reconstructions.append(reconstruction)
             healths.append(frame_health)
+            if len(reconstructions) > max_display_frames:
+                reconstructions = reconstructions[-max_display_frames:]
+                healths = healths[-max_display_frames:]
             self._target_preview(list(reconstructions))
+            if frame_interval_s > 0:
+                time.sleep(frame_interval_s)
         self.state = ControllerState.STOPPED if self._stop_requested else ControllerState.TARGET_READY
-        self._emit(f"Live reconstruction stopped after {len(reconstructions)} frames")
-        return LiveReconstructionResult(reconstructions, healths)
+        self._emit(f"Live reconstruction stopped after {frame_index} frames")
+        return LiveReconstructionResult(reconstructions, healths, frame_index)
 
     def tune_drift(self, settings: UiSettings) -> DriftTuneResult:
         settings.validate()
