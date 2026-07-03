@@ -196,6 +196,7 @@ class DebugApp(tk.Tk):
             ("Baseline", self.capture_baseline),
             ("Control Drift", self.capture_control),
             ("Tune Drift", self.tune_drift),
+            ("Live Feed", self.live_reconstruction),
             ("Target Run", self.capture_target),
             ("Export", self.export_placeholder),
         ):
@@ -277,6 +278,9 @@ class DebugApp(tk.Tk):
     def capture_target(self) -> None:
         self._run_with_settings("target", self.controller.capture_target)
 
+    def live_reconstruction(self) -> None:
+        self._run_with_settings("live", self.controller.live_reconstruction)
+
     def export_placeholder(self) -> None:
         self._append(self.files_text, "Export uses phase3a_logs outputs from capture runs.\n")
 
@@ -350,7 +354,9 @@ class DebugApp(tk.Tk):
             self._handle_error(str(payload))
             return
 
-        if event in {"baseline", "control", "target"} and "stopped" in str(payload).lower():
+        if event == "live" and self.controller.state.value == "stopped":
+            self.status_var.set("STOPPED / CURRENT IDLE")
+        elif event in {"baseline", "control", "target"} and "stopped" in str(payload).lower():
             self.status_var.set("STOPPED / CURRENT IDLE")
         else:
             self.status_var.set(f"{event} complete")
@@ -367,6 +373,9 @@ class DebugApp(tk.Tk):
         elif event == "target":
             self._draw_average(payload.reconstructions)
             self._append(self.health_text, f"Target frames: {len(payload.reconstructions)}\n")
+        elif event == "live":
+            self._draw_average(payload.reconstructions)
+            self._append(self.health_text, f"Live frames: {len(payload.reconstructions)}\n")
 
     def _handle_error(self, message: str) -> None:
         self._append(self.status_text, f"ERROR {message}\n")

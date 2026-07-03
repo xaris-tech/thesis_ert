@@ -39,6 +39,12 @@ class TargetResult:
 
 
 @dataclass(frozen=True)
+class LiveReconstructionResult:
+    reconstructions: list[np.ndarray]
+    frame_healths: list[unified.FrameHealthScore]
+
+
+@dataclass(frozen=True)
 class DriftTuneAttempt:
     settings: UiSettings
     report: unified.ControlDriftReport | None
@@ -195,26 +201,43 @@ class DebugController:
             frame = self.acquisition.capture_frame()
             self._raise_if_stopped()
             self._verify_pattern(frame, settings.pattern)
-            current = unified.frame_to_vector(frame, self.protocol)
-            currents = np.asarray([abs(record.current_ua) for record in frame.records])
-            filtered = unified.filter_frame_vector_best_effort(
-                baseline=self.baseline_result.baseline,
-                current=current,
-                pair_scores=self.baseline_result.pair_scores,
-                current_median_ua=float(np.median(currents)),
-                current_spread_ua=float(np.max(currents) - np.min(currents)),
-            )
-            reconstruction = base.reconstruct_difference(
-                self.baseline_result.baseline,
-                filtered.filtered_vector,
-                self.solver,
-            )
+            reconstruction, frame_health = self._reconstruct_frame(frame)
             reconstructions.append(reconstruction)
-            healths.append(filtered.frame_health)
+            healths.append(frame_health)
             self._target_preview(list(reconstructions))
         self.state = ControllerState.TARGET_READY
         self._emit("Target reconstruction ready")
         return TargetResult(reconstructions, healths)
+
+    def live_reconstruction(
+        self,
+        settings: UiSettings,
+        max_frames: int | None = None,
+    ) -> LiveReconstructionResult:
+        if self.baseline_result is None:
+            raise RuntimeError("baseline is required before live reconstruction")
+        settings.validate()
+        self._stop_requested = False
+        reconstructions = []
+        healths = []
+        frame_index = 0
+        self._emit("Live reconstruction started")
+        while not self._stop_requested:
+            if max_frames is not None and frame_index >= max_frames:
+                break
+            frame_index += 1
+            self._emit(f"Live frame {frame_index}")
+            frame = self.acquisition.capture_frame()
+            if self._stop_requested:
+                break
+            self._verify_pattern(frame, settings.pattern)
+            reconstruction, frame_health = self._reconstruct_frame(frame)
+            reconstructions.append(reconstruction)
+            healths.append(frame_health)
+            self._target_preview(list(reconstructions))
+        self.state = ControllerState.STOPPED if self._stop_requested else ControllerState.TARGET_READY
+        self._emit(f"Live reconstruction stopped after {len(reconstructions)} frames")
+        return LiveReconstructionResult(reconstructions, healths)
 
     def tune_drift(self, settings: UiSettings) -> DriftTuneResult:
         settings.validate()
@@ -304,6 +327,28 @@ class DebugController:
 
     def _emit(self, message: str) -> None:
         self._progress(message)
+
+    def _reconstruct_frame(
+        self,
+        frame: unified.UnifiedFrame,
+    ) -> tuple[np.ndarray, unified.FrameHealthScore]:
+        if self.baseline_result is None:
+            raise RuntimeError("baseline is required before reconstruction")
+        current = unified.frame_to_vector(frame, self.protocol)
+        currents = np.asarray([abs(record.current_ua) for record in frame.records])
+        filtered = unified.filter_frame_vector_best_effort(
+            baseline=self.baseline_result.baseline,
+            current=current,
+            pair_scores=self.baseline_result.pair_scores,
+            current_median_ua=float(np.median(currents)),
+            current_spread_ua=float(np.max(currents) - np.min(currents)),
+        )
+        reconstruction = base.reconstruct_difference(
+            self.baseline_result.baseline,
+            filtered.filtered_vector,
+            self.solver,
+        )
+        return reconstruction, filtered.frame_health
 
     @staticmethod
     def _verify_pattern(frame: unified.UnifiedFrame, expected: str) -> None:

@@ -105,6 +105,36 @@ class TestDebugController(unittest.TestCase):
         self.assertEqual([len(preview) for preview in previews], [1, 2, 3])
         self.assertEqual(len(target.reconstructions), 3)
 
+    def test_controller_streams_live_reconstructions_until_max_frames(self):
+        previews = []
+        messages = []
+        controller = DebugController(
+            DemoAcquisition(),
+            progress=messages.append,
+            target_preview=previews.append,
+        )
+        settings = replace(UiSettings.default(), warmup_frames=0, baseline_frames=2, frames=3)
+
+        controller.connect(settings)
+        controller.configure(settings)
+        controller.capture_baseline(settings)
+        live = controller.live_reconstruction(settings, max_frames=3)
+
+        self.assertEqual([len(preview) for preview in previews], [1, 2, 3])
+        self.assertEqual(len(live.reconstructions), 3)
+        self.assertEqual(controller.state, ControllerState.TARGET_READY)
+        self.assertIn("Live frame 3", messages)
+        self.assertIn("Live reconstruction stopped after 3 frames", messages)
+
+    def test_live_reconstruction_requires_baseline(self):
+        controller = DebugController(DemoAcquisition())
+        settings = UiSettings.default()
+        controller.connect(settings)
+        controller.configure(settings)
+
+        with self.assertRaisesRegex(RuntimeError, "baseline"):
+            controller.live_reconstruction(settings, max_frames=1)
+
     def test_demo_controller_captures_baseline_then_target(self):
         controller = DebugController(DemoAcquisition())
         settings = UiSettings.default()
