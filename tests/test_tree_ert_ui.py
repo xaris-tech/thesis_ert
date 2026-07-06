@@ -41,6 +41,16 @@ class TestTreeErtUiEntrypoint(unittest.TestCase):
         self.assertEqual(vector_ax.get_title(), "Average measurement-difference vector")
         self.assertEqual(scan_axes[0].get_title(), "Scan 1")
 
+    def test_live_reconstruction_can_show_current_frame_only(self):
+        from tree_ert.ui import DebugApp
+
+        app = DebugApp(demo=True, port="COM3")
+        try:
+            app._draw_live_placeholder_panels()
+            self.assertEqual(app.scan_axes[0].get_title(), "Live")
+        finally:
+            app.destroy()
+
     def test_reading_figure_has_current_and_vector_axes(self):
         from tree_ert.ui import build_reading_figure
 

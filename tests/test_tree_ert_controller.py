@@ -137,7 +137,7 @@ class TestDebugController(unittest.TestCase):
         controller = DebugController(
             DemoAcquisition(),
             progress=messages.append,
-            target_preview=previews.append,
+            live_preview=previews.append,
         )
         settings = replace(UiSettings.default(), warmup_frames=0, baseline_frames=2, frames=3)
 
@@ -146,7 +146,9 @@ class TestDebugController(unittest.TestCase):
         controller.capture_baseline(settings)
         live = controller.live_reconstruction(settings, max_frames=3, frame_interval_s=0.0)
 
-        self.assertEqual([len(preview) for preview in previews], [1, 2, 3])
+        self.assertEqual(len(previews), 3)
+        self.assertTrue(all(len(preview) == len(previews[0]) for preview in previews))
+        self.assertGreater(len(previews[0]), 0)
         self.assertEqual(len(live.reconstructions), 3)
         self.assertEqual(live.total_frames, 3)
         self.assertEqual(controller.state, ControllerState.TARGET_READY)
@@ -155,7 +157,7 @@ class TestDebugController(unittest.TestCase):
 
     def test_live_reconstruction_limits_display_history(self):
         previews = []
-        controller = DebugController(DemoAcquisition(), target_preview=previews.append)
+        controller = DebugController(DemoAcquisition(), live_preview=previews.append)
         settings = replace(UiSettings.default(), warmup_frames=0, baseline_frames=2, frames=3)
 
         controller.connect(settings)
@@ -168,7 +170,9 @@ class TestDebugController(unittest.TestCase):
             max_display_frames=3,
         )
 
-        self.assertEqual([len(preview) for preview in previews], [1, 2, 3, 3, 3, 3])
+        self.assertEqual(len(previews), 6)
+        self.assertTrue(all(len(preview) == len(previews[0]) for preview in previews))
+        self.assertGreater(len(previews[0]), 0)
         self.assertEqual(len(live.reconstructions), 3)
         self.assertEqual(live.total_frames, 6)
 

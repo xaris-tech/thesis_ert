@@ -111,6 +111,7 @@ class DebugController:
         acquisition: Acquisition,
         progress: Callable[[str], None] | None = None,
         target_preview: Callable[[list[np.ndarray]], None] | None = None,
+        live_preview: Callable[[np.ndarray], None] | None = None,
         frame_preview: Callable[[unified.UnifiedFrame], None] | None = None,
     ) -> None:
         self.acquisition = acquisition
@@ -122,6 +123,7 @@ class DebugController:
         self._stop_requested = False
         self._progress = progress or (lambda _message: None)
         self._target_preview = target_preview or (lambda _reconstructions: None)
+        self._live_preview = live_preview or (lambda _reconstruction: None)
         self._frame_preview = frame_preview or (lambda _frame: None)
 
     def connect(self, settings: UiSettings) -> None:
@@ -247,7 +249,7 @@ class DebugController:
             if len(reconstructions) > max_display_frames:
                 reconstructions = reconstructions[-max_display_frames:]
                 healths = healths[-max_display_frames:]
-            self._target_preview(list(reconstructions))
+            self._live_preview(reconstruction)
             if frame_interval_s > 0:
                 time.sleep(frame_interval_s)
         self.state = ControllerState.STOPPED if self._stop_requested else ControllerState.TARGET_READY

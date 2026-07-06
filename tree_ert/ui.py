@@ -148,6 +148,7 @@ class DebugApp(tk.Tk):
             acquisition,
             progress=self._post_status,
             target_preview=self._post_target_preview,
+            live_preview=self._post_live_preview,
             frame_preview=self._post_frame_preview,
         )
         self.demo = demo
@@ -374,6 +375,9 @@ class DebugApp(tk.Tk):
         if event == "target_preview":
             self._draw_average(payload)
             return
+        if event == "live_preview":
+            self._draw_live_reconstruction(payload)
+            return
         if event == "frame_preview":
             self._draw_latest_frame(payload)
             return
@@ -404,7 +408,6 @@ class DebugApp(tk.Tk):
             self._draw_average(payload.reconstructions)
             self._append(self.health_text, f"Target frames: {len(payload.reconstructions)}\n")
         elif event == "live":
-            self._draw_average(payload.reconstructions)
             self._append(self.health_text, f"Live frames: {payload.total_frames}\n")
 
     def _handle_error(self, message: str) -> None:
@@ -432,6 +435,13 @@ class DebugApp(tk.Tk):
         self._draw_average_map(average)
         self._draw_average_vector(average)
         self._draw_scan_previews(reconstructions)
+        self.figure.tight_layout()
+        self.canvas.draw_idle()
+
+    def _draw_live_reconstruction(self, reconstruction: np.ndarray) -> None:
+        self._draw_current_map(reconstruction)
+        self._draw_current_vector(reconstruction)
+        self._draw_live_placeholder_panels()
         self.figure.tight_layout()
         self.canvas.draw_idle()
 
@@ -467,21 +477,43 @@ class DebugApp(tk.Tk):
     def _draw_average_map(self, average: np.ndarray) -> None:
         self.map_ax.clear()
         self.map_ax.set_title("Average difference reconstruction")
+        self._draw_map_values(average)
+
+    def _draw_average_vector(self, average: np.ndarray) -> None:
+        self.vector_ax.clear()
+        self.vector_ax.set_title("Average measurement-difference vector")
+        self.vector_ax.set_xlabel("Vector index")
+        self.vector_ax.set_ylabel("Delta transfer resistance")
+        self._draw_vector_values(average)
+
+    def _draw_current_map(self, reconstruction: np.ndarray) -> None:
+        self.map_ax.clear()
+        self.map_ax.set_title("Current live reconstruction")
+        self._draw_map_values(reconstruction)
+
+    def _draw_current_vector(self, reconstruction: np.ndarray) -> None:
+        self.vector_ax.clear()
+        self.vector_ax.set_title("Current live difference vector")
+        self.vector_ax.set_xlabel("Vector index")
+        self.vector_ax.set_ylabel("Delta transfer resistance")
+        self._draw_vector_values(reconstruction)
+
+    def _draw_map_values(self, values: np.ndarray) -> None:
         self.map_ax.set_aspect("equal")
         self.map_ax.set_axis_off()
         mesh = self.controller.mesh
-        if average.size == 0:
+        if values.size == 0:
             self.map_ax.text(0.5, 0.5, "No reconstruction data", ha="center", va="center")
             return
-        if mesh is None or len(average) != len(mesh.element):
+        if mesh is None or len(values) != len(mesh.element):
             self.map_ax.text(0.5, 0.5, "Map unavailable", ha="center", va="center")
             return
-        limit = max(float(np.max(np.abs(average))), np.finfo(float).eps)
+        limit = max(float(np.max(np.abs(values))), np.finfo(float).eps)
         self.map_ax.tripcolor(
             mesh.node[:, 0],
             mesh.node[:, 1],
             mesh.element,
-            average,
+            values,
             shading="flat",
             cmap="coolwarm",
             vmin=-limit,
@@ -499,13 +531,9 @@ class DebugApp(tk.Tk):
                 fontweight="bold",
             )
 
-    def _draw_average_vector(self, average: np.ndarray) -> None:
-        self.vector_ax.clear()
-        self.vector_ax.set_title("Average measurement-difference vector")
-        self.vector_ax.set_xlabel("Vector index")
-        self.vector_ax.set_ylabel("Delta transfer resistance")
-        if average.size:
-            self.vector_ax.plot(average)
+    def _draw_vector_values(self, values: np.ndarray) -> None:
+        if values.size:
+            self.vector_ax.plot(values)
             self.vector_ax.axhline(0.0, color="black", linewidth=0.8, alpha=0.5)
         else:
             self.vector_ax.text(0.5, 0.5, "No reconstruction data", ha="center", va="center")
@@ -539,6 +567,19 @@ class DebugApp(tk.Tk):
                 cmap="coolwarm",
                 vmin=-limit,
                 vmax=limit,
+            )
+
+    def _draw_live_placeholder_panels(self) -> None:
+        for axis in self.scan_axes:
+            axis.clear()
+            axis.set_axis_off()
+            axis.set_title("Live")
+            axis.text(
+                0.5,
+                0.5,
+                "Live view shows\ncurrent reconstruction only",
+                ha="center",
+                va="center",
             )
 
     def _draw_latest_frame(self, frame: unified.UnifiedFrame) -> None:
@@ -588,6 +629,9 @@ class DebugApp(tk.Tk):
 
     def _post_target_preview(self, reconstructions: list[np.ndarray]) -> None:
         self.events.put(("target_preview", reconstructions))
+
+    def _post_live_preview(self, reconstruction: np.ndarray) -> None:
+        self.events.put(("live_preview", reconstruction))
 
     def _post_frame_preview(self, frame: unified.UnifiedFrame) -> None:
         self.events.put(("frame_preview", frame))
