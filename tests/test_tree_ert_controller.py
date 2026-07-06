@@ -1,5 +1,6 @@
 from dataclasses import replace
 import unittest
+from unittest.mock import MagicMock
 
 from tree_ert.acquisition import DemoAcquisition, SerialAcquisition
 from tree_ert.controller import DebugController, ControllerState, drift_tuning_candidates
@@ -38,6 +39,18 @@ class FailingStopSerial:
 
     def close(self) -> None:
         self.closed = True
+
+
+class CancelReadSerial:
+    def __init__(self) -> None:
+        self.cancelled = False
+        self.writes: list[bytes] = []
+
+    def cancel_read(self) -> None:
+        self.cancelled = True
+
+    def write(self, data: bytes) -> None:
+        self.writes.append(data)
 
 
 class TestDebugController(unittest.TestCase):
@@ -297,6 +310,27 @@ class TestDebugController(unittest.TestCase):
 
         self.assertTrue(fake_serial.closed)
         self.assertIsNone(acquisition._serial)
+
+    def test_serial_stop_cancels_blocked_read_before_sending_idle(self):
+        acquisition = SerialAcquisition()
+        fake_serial = CancelReadSerial()
+        acquisition._serial = fake_serial
+
+        acquisition.stop()
+
+        self.assertTrue(fake_serial.cancelled)
+        self.assertEqual(fake_serial.writes, [b"x\n"])
+
+    def test_serial_configure_sets_frame_timeout_from_pattern_and_timing(self):
+        acquisition = SerialAcquisition()
+        fake_serial = MagicMock()
+        acquisition._serial = fake_serial
+        settings = replace(UiSettings.default(), pattern="adjacent", settle_ms=30, samples=4)
+
+        acquisition.configure(settings)
+
+        self.assertGreater(acquisition._frame_timeout_s, 7.0)
+        self.assertEqual(fake_serial.write.call_count, 4)
 
 
 if __name__ == "__main__":

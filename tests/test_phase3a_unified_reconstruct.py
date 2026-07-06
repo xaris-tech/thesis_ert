@@ -67,6 +67,21 @@ class TestUnifiedFrameParsing(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "current"):
             unified.validate_record(tiny_current)
 
+    def test_read_one_v2_frame_can_abort_while_waiting(self):
+        ser = MagicMock()
+        ser.readline.return_value = b""
+
+        with self.assertRaisesRegex(RuntimeError, "stopped"):
+            unified.read_one_v2_frame(ser, timeout_s=0.01, should_abort=lambda: True)
+
+    def test_request_frame_times_out_when_firmware_never_replies(self):
+        ser = MagicMock()
+        ser.timeout = 0.01
+        ser.readline.return_value = b""
+
+        with self.assertRaisesRegex(TimeoutError, "Timed out"):
+            unified.request_frame(ser, timeout_s=0.01)
+
 
 class TestUnifiedProtocolMapping(unittest.TestCase):
     def test_cli_accepts_positive_diameter_cm(self):

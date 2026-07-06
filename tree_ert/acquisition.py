@@ -85,15 +85,23 @@ class DemoAcquisition:
 class SerialAcquisition:
     def __init__(self) -> None:
         self._serial: serial.Serial | None = None
+        self._stopped = False
+        self._frame_timeout_s = 15.0
 
     def connect(self, settings: UiSettings) -> None:
         self._serial = serial.Serial(settings.port, settings.baud, timeout=1.0)
         self._serial.reset_input_buffer()
+        self._stopped = False
 
     def configure(self, settings: UiSettings) -> None:
         if self._serial is None:
             raise RuntimeError("serial connection is not open")
-        _, mode_command = unified.protocol_and_command(settings.pattern)
+        self._stopped = False
+        protocol, mode_command = unified.protocol_and_command(settings.pattern)
+        measurement_count = sum(len(per_excitation) for per_excitation in protocol.meas_mat) * 2
+        per_measurement_ms = settings.settle_ms + settings.samples + 3
+        estimated_frame_s = (measurement_count * per_measurement_ms) / 1000.0
+        self._frame_timeout_s = max(15.0, estimated_frame_s + 5.0)
         self._serial.write(mode_command)
         self._serial.write(f"p{settings.dac}\n".encode())
         self._serial.write(f"t{settings.settle_ms}\n".encode())
@@ -102,7 +110,12 @@ class SerialAcquisition:
     def capture_frame(self) -> unified.UnifiedFrame:
         if self._serial is None:
             raise RuntimeError("serial connection is not open")
-        return unified.request_frame(self._serial)
+        self._stopped = False
+        return unified.request_frame(
+            self._serial,
+            timeout_s=self._frame_timeout_s,
+            should_abort=lambda: self._stopped,
+        )
 
     def send_command(self, command: str) -> None:
         if self._serial is None:
@@ -110,7 +123,11 @@ class SerialAcquisition:
         self._serial.write(f"{command.strip()}\n".encode())
 
     def stop(self) -> None:
+        self._stopped = True
         if self._serial is not None:
+            cancel_read = getattr(self._serial, "cancel_read", None)
+            if callable(cancel_read):
+                cancel_read()
             self._serial.write(b"x\n")
 
     def close(self) -> None:

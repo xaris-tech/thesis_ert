@@ -569,10 +569,19 @@ def write_consistency_report(
             ])
 
 
-def read_one_v2_frame(ser: serial.Serial) -> UnifiedFrame:
+def read_one_v2_frame(
+    ser: serial.Serial,
+    timeout_s: float | None = None,
+    should_abort=None,
+) -> UnifiedFrame:
     lines: list[str] = []
     in_frame = False
+    deadline = None if timeout_s is None else time.monotonic() + timeout_s
     while True:
+        if should_abort is not None and should_abort():
+            raise RuntimeError("capture stopped")
+        if deadline is not None and time.monotonic() >= deadline:
+            raise TimeoutError("Timed out waiting for FRAME,2 data from firmware")
         line = ser.readline().decode(errors="ignore").strip()
         if not line:
             continue
@@ -622,9 +631,18 @@ class RawFrameLogger:
         self._handle.close()
 
 
-def request_frame(ser: serial.Serial) -> UnifiedFrame:
+def request_frame(
+    ser: serial.Serial,
+    timeout_s: float | None = None,
+    should_abort=None,
+) -> UnifiedFrame:
     ser.write(b"s\n")
-    return read_one_v2_frame(ser)
+    effective_timeout = timeout_s
+    if effective_timeout is None:
+        serial_timeout = getattr(ser, "timeout", None)
+        if serial_timeout is not None:
+            effective_timeout = max(3.0, float(serial_timeout) * 6.0)
+    return read_one_v2_frame(ser, timeout_s=effective_timeout, should_abort=should_abort)
 
 
 def discard_warmup_frames(
