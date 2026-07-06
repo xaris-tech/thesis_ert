@@ -37,9 +37,20 @@ class TestTreeErtUiEntrypoint(unittest.TestCase):
         self.assertIs(figure.axes[0], map_ax)
         self.assertIs(figure.axes[1], vector_ax)
         self.assertEqual(tuple(figure.axes[2:]), scan_axes)
-        self.assertEqual(map_ax.get_title(), "Average 2D map")
-        self.assertEqual(vector_ax.get_title(), "Average reconstruction vector")
+        self.assertEqual(map_ax.get_title(), "Average difference reconstruction")
+        self.assertEqual(vector_ax.get_title(), "Average measurement-difference vector")
         self.assertEqual(scan_axes[0].get_title(), "Scan 1")
+
+    def test_reading_figure_has_current_and_vector_axes(self):
+        from tree_ert.ui import build_reading_figure
+
+        figure, current_ax, vector_ax = build_reading_figure()
+
+        self.assertEqual(len(figure.axes), 2)
+        self.assertIs(figure.axes[0], current_ax)
+        self.assertIs(figure.axes[1], vector_ax)
+        self.assertEqual(current_ax.get_title(), "Latest measured current by record")
+        self.assertEqual(vector_ax.get_title(), "Latest normalized transfer-resistance vector")
 
     def test_average_reconstruction_vector_averages_frames(self):
         import numpy as np
@@ -55,7 +66,7 @@ class TestTreeErtUiEntrypoint(unittest.TestCase):
     def test_status_is_embedded_in_reconstruction_tab(self):
         from tree_ert.ui import debug_tab_titles
 
-        self.assertEqual(debug_tab_titles(), ("Reconstruction", "Health", "Serial", "Files"))
+        self.assertEqual(debug_tab_titles(), ("Reconstruction", "Live Readings", "Health", "Serial", "Files"))
         self.assertNotIn("Status", debug_tab_titles())
 
     def test_preview_indices_spread_across_reconstructions(self):

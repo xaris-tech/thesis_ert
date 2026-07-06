@@ -111,6 +111,7 @@ class DebugController:
         acquisition: Acquisition,
         progress: Callable[[str], None] | None = None,
         target_preview: Callable[[list[np.ndarray]], None] | None = None,
+        frame_preview: Callable[[unified.UnifiedFrame], None] | None = None,
     ) -> None:
         self.acquisition = acquisition
         self.state = ControllerState.DISCONNECTED
@@ -121,6 +122,7 @@ class DebugController:
         self._stop_requested = False
         self._progress = progress or (lambda _message: None)
         self._target_preview = target_preview or (lambda _reconstructions: None)
+        self._frame_preview = frame_preview or (lambda _frame: None)
 
     def connect(self, settings: UiSettings) -> None:
         settings.validate()
@@ -160,6 +162,7 @@ class DebugController:
             frame = self.acquisition.capture_frame()
             self._raise_if_stopped()
             self._verify_pattern(frame, settings.pattern)
+            self._frame_preview(frame)
             vectors.append(unified.frame_to_vector(frame, self.protocol))
         self._emit("Checking baseline stability")
         stability = unified.require_stable_baseline(
@@ -184,6 +187,7 @@ class DebugController:
             frame = self.acquisition.capture_frame()
             self._raise_if_stopped()
             self._verify_pattern(frame, settings.pattern)
+            self._frame_preview(frame)
             controls.append(unified.frame_to_vector(frame, self.protocol))
         self._emit("Analyzing control drift")
         return unified.analyze_control_drift(
@@ -203,6 +207,7 @@ class DebugController:
             frame = self.acquisition.capture_frame()
             self._raise_if_stopped()
             self._verify_pattern(frame, settings.pattern)
+            self._frame_preview(frame)
             reconstruction, frame_health = self._reconstruct_frame(frame)
             reconstructions.append(reconstruction)
             healths.append(frame_health)
@@ -235,6 +240,7 @@ class DebugController:
             if self._stop_requested:
                 break
             self._verify_pattern(frame, settings.pattern)
+            self._frame_preview(frame)
             reconstruction, frame_health = self._reconstruct_frame(frame)
             reconstructions.append(reconstruction)
             healths.append(frame_health)
@@ -337,6 +343,12 @@ class DebugController:
     def _emit(self, message: str) -> None:
         self._progress(message)
 
+    def _verify_pattern(self, frame: unified.UnifiedFrame, expected_pattern: str) -> None:
+        if frame.pattern != expected_pattern:
+            raise ValueError(
+                f"Received {frame.pattern} frame while configured for {expected_pattern}"
+            )
+
     def _reconstruct_frame(
         self,
         frame: unified.UnifiedFrame,
@@ -358,8 +370,3 @@ class DebugController:
             self.solver,
         )
         return reconstruction, filtered.frame_health
-
-    @staticmethod
-    def _verify_pattern(frame: unified.UnifiedFrame, expected: str) -> None:
-        if frame.pattern != expected:
-            raise ValueError(f"Firmware returned {frame.pattern}, expected {expected}")

@@ -31,17 +31,32 @@ def build_reconstruction_figure() -> tuple[Figure, object, object, tuple[object,
     map_ax = figure.add_subplot(grid[0, 0:2])
     vector_ax = figure.add_subplot(grid[0, 2:4])
     scan_axes = tuple(figure.add_subplot(grid[1, index]) for index in range(4))
-    map_ax.set_title("Average 2D map")
+    map_ax.set_title("Average difference reconstruction")
     map_ax.set_aspect("equal")
     map_ax.set_axis_off()
-    vector_ax.set_title("Average reconstruction vector")
+    vector_ax.set_title("Average measurement-difference vector")
     vector_ax.set_xlabel("Vector index")
-    vector_ax.set_ylabel("Difference")
+    vector_ax.set_ylabel("Delta transfer resistance")
     for index, axis in enumerate(scan_axes, start=1):
         axis.set_title(f"Scan {index}")
         axis.set_axis_off()
     figure.tight_layout()
     return figure, map_ax, vector_ax, scan_axes
+
+
+def build_reading_figure() -> tuple[Figure, object, object]:
+    figure = Figure(figsize=(10, 6.5), dpi=100)
+    grid = figure.add_gridspec(2, 1, height_ratios=(1.0, 1.5))
+    current_ax = figure.add_subplot(grid[0, 0])
+    vector_ax = figure.add_subplot(grid[1, 0])
+    current_ax.set_title("Latest measured current by record")
+    current_ax.set_xlabel("Record index")
+    current_ax.set_ylabel("Current (uA)")
+    vector_ax.set_title("Latest normalized transfer-resistance vector")
+    vector_ax.set_xlabel("Measurement index")
+    vector_ax.set_ylabel("Transfer resistance (kOhm)")
+    figure.tight_layout()
+    return figure, current_ax, vector_ax
 
 
 def preview_scan_indices(scan_count: int, preview_count: int = 4) -> tuple[int, ...]:
@@ -53,7 +68,7 @@ def preview_scan_indices(scan_count: int, preview_count: int = 4) -> tuple[int, 
 
 
 def debug_tab_titles() -> tuple[str, ...]:
-    return ("Reconstruction", "Health", "Serial", "Files")
+    return ("Reconstruction", "Live Readings", "Health", "Serial", "Files")
 
 
 def format_control_drift_summary(report: unified.ControlDriftReport) -> str:
@@ -133,6 +148,7 @@ class DebugApp(tk.Tk):
             acquisition,
             progress=self._post_status,
             target_preview=self._post_target_preview,
+            frame_preview=self._post_frame_preview,
         )
         self.demo = demo
         self._worker_active = False
@@ -215,18 +231,29 @@ class DebugApp(tk.Tk):
     def _build_tabs(self, notebook: ttk.Notebook) -> None:
         reconstruction_tab = ttk.Frame(notebook)
         reconstruction_tab.columnconfigure(0, weight=1)
-        reconstruction_tab.rowconfigure(0, weight=1)
+        reconstruction_tab.rowconfigure(1, weight=1)
+        reading_tab = ttk.Frame(notebook)
+        reading_tab.columnconfigure(0, weight=1)
+        reading_tab.rowconfigure(0, weight=1)
 
         self.serial_text = tk.Text(notebook, height=10, wrap="word")
         self.health_text = tk.Text(notebook, height=10, wrap="word")
         self.files_text = tk.Text(notebook, height=10, wrap="word")
 
+        action_frame = ttk.Frame(reconstruction_tab, padding=(6, 6, 6, 0))
+        action_frame.grid(row=0, column=0, sticky="ew")
+        ttk.Button(action_frame, text="Stop Live Run", command=self.stop).pack(anchor="e")
+
         self.figure, self.map_ax, self.vector_ax, self.scan_axes = build_reconstruction_figure()
         self.canvas = FigureCanvasTkAgg(self.figure, master=reconstruction_tab)
-        self.canvas.get_tk_widget().grid(row=0, column=0, sticky="nsew")
+        self.canvas.get_tk_widget().grid(row=1, column=0, sticky="nsew")
+
+        self.reading_figure, self.current_ax, self.reading_vector_ax = build_reading_figure()
+        self.reading_canvas = FigureCanvasTkAgg(self.reading_figure, master=reading_tab)
+        self.reading_canvas.get_tk_widget().grid(row=0, column=0, sticky="nsew")
 
         status_frame = ttk.LabelFrame(reconstruction_tab, text="Live status stream", padding=(6, 4))
-        status_frame.grid(row=1, column=0, sticky="ew", padx=6, pady=(0, 6))
+        status_frame.grid(row=2, column=0, sticky="ew", padx=6, pady=(0, 6))
         status_frame.columnconfigure(0, weight=1)
         self.status_text = tk.Text(status_frame, height=6, wrap="word")
         self.status_text.grid(row=0, column=0, sticky="ew")
@@ -236,7 +263,7 @@ class DebugApp(tk.Tk):
 
         for title, widget in zip(
             debug_tab_titles(),
-            (reconstruction_tab, self.health_text, self.serial_text, self.files_text),
+            (reconstruction_tab, reading_tab, self.health_text, self.serial_text, self.files_text),
             strict=True,
         ):
             notebook.add(widget, text=title)
@@ -347,6 +374,9 @@ class DebugApp(tk.Tk):
         if event == "target_preview":
             self._draw_average(payload)
             return
+        if event == "frame_preview":
+            self._draw_latest_frame(payload)
+            return
 
         self._worker_active = False
         if event == "error":
@@ -436,7 +466,7 @@ class DebugApp(tk.Tk):
 
     def _draw_average_map(self, average: np.ndarray) -> None:
         self.map_ax.clear()
-        self.map_ax.set_title("Average 2D map")
+        self.map_ax.set_title("Average difference reconstruction")
         self.map_ax.set_aspect("equal")
         self.map_ax.set_axis_off()
         mesh = self.controller.mesh
@@ -471,9 +501,9 @@ class DebugApp(tk.Tk):
 
     def _draw_average_vector(self, average: np.ndarray) -> None:
         self.vector_ax.clear()
-        self.vector_ax.set_title("Average reconstruction vector")
+        self.vector_ax.set_title("Average measurement-difference vector")
         self.vector_ax.set_xlabel("Vector index")
-        self.vector_ax.set_ylabel("Difference")
+        self.vector_ax.set_ylabel("Delta transfer resistance")
         if average.size:
             self.vector_ax.plot(average)
             self.vector_ax.axhline(0.0, color="black", linewidth=0.8, alpha=0.5)
@@ -511,6 +541,36 @@ class DebugApp(tk.Tk):
                 vmax=limit,
             )
 
+    def _draw_latest_frame(self, frame: unified.UnifiedFrame) -> None:
+        protocol = self.controller.protocol
+        self.current_ax.clear()
+        self.current_ax.set_title(
+            f"Latest measured current by record (Frame {frame.frame_id}, {frame.pattern})"
+        )
+        self.current_ax.set_xlabel("Record index")
+        self.current_ax.set_ylabel("Current (uA)")
+        currents = np.asarray([record.current_ua for record in frame.records], dtype=float)
+        if currents.size:
+            colors = ["#1f77b4" if record.polarity == "FWD" else "#ff7f0e" for record in frame.records]
+            self.current_ax.bar(np.arange(currents.size), currents, color=colors, width=0.9)
+            self.current_ax.axhline(0.0, color="black", linewidth=0.8, alpha=0.5)
+        else:
+            self.current_ax.text(0.5, 0.5, "No current records", ha="center", va="center")
+
+        self.reading_vector_ax.clear()
+        self.reading_vector_ax.set_title("Latest normalized transfer-resistance vector")
+        self.reading_vector_ax.set_xlabel("Measurement index")
+        self.reading_vector_ax.set_ylabel("Transfer resistance (kOhm)")
+        if protocol is None:
+            self.reading_vector_ax.text(0.5, 0.5, "Configure first", ha="center", va="center")
+        else:
+            vector = unified.frame_to_vector(frame, protocol)
+            self.reading_vector_ax.plot(vector, color="#2c7a7b")
+            self.reading_vector_ax.axhline(0.0, color="black", linewidth=0.8, alpha=0.5)
+
+        self.reading_figure.tight_layout()
+        self.reading_canvas.draw_idle()
+
     def _on_close(self) -> None:
         try:
             self.controller.close()
@@ -528,6 +588,9 @@ class DebugApp(tk.Tk):
 
     def _post_target_preview(self, reconstructions: list[np.ndarray]) -> None:
         self.events.put(("target_preview", reconstructions))
+
+    def _post_frame_preview(self, frame: unified.UnifiedFrame) -> None:
+        self.events.put(("frame_preview", frame))
 
 
 def run_app(demo: bool = False, port: str = "COM3") -> None:

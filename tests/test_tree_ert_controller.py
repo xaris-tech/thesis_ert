@@ -105,6 +105,19 @@ class TestDebugController(unittest.TestCase):
         self.assertEqual([len(preview) for preview in previews], [1, 2, 3])
         self.assertEqual(len(target.reconstructions), 3)
 
+    def test_controller_streams_latest_frames_for_live_reading_view(self):
+        frames = []
+        controller = DebugController(DemoAcquisition(), frame_preview=frames.append)
+        settings = replace(UiSettings.default(), warmup_frames=0, baseline_frames=2, frames=3)
+
+        controller.connect(settings)
+        controller.configure(settings)
+        controller.capture_baseline(settings)
+        controller.live_reconstruction(settings, max_frames=3, frame_interval_s=0.0)
+
+        self.assertGreaterEqual(len(frames), 5)
+        self.assertEqual(frames[-1].frame_id, 5)
+
     def test_controller_streams_live_reconstructions_until_max_frames(self):
         previews = []
         messages = []
