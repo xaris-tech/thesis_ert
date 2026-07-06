@@ -73,7 +73,7 @@ const char* patternName() {
 }
 
 uint8_t injectionDistance() {
-  switch (drivePattern) {
+  switch (drivePattern) {s
     case DrivePattern::ADJACENT: return 1;
     case DrivePattern::SKIP_1: return 2;
     case DrivePattern::SKIP_2: return 3;
