@@ -16,6 +16,8 @@ The active system is now Phase 3A:
 
 For Phase 3A, read this handover plus:
 
+- `docs/handoff-2026-08-11.md` — most recent session: what changed, what is
+  decided but unbuilt, and what to do next
 - `AGENTS.md` — repo orientation and the invariants that must not be broken
 - `CONTEXT.md` — project vocabulary
 - `docs/adr/` — the reasoning behind contested decisions; an ADR outranks any other doc
