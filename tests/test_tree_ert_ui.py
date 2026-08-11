@@ -131,5 +131,47 @@ class TestTreeErtUiEntrypoint(unittest.TestCase):
         self.assertIn("max_relative=0.50%", summary)
 
 
+class TestSerialPortDetection(unittest.TestCase):
+    def test_bluetooth_and_audio_ports_are_not_treated_as_hardware(self):
+        from tree_ert.ui import is_likely_usb_serial
+
+        for port in (
+            "/dev/cu.Bluetooth-Incoming-Port",
+            "/dev/cu.SOUNDPEATSC30",
+            "/dev/cu.debug-console",
+            "COMPANION",
+        ):
+            self.assertFalse(is_likely_usb_serial(port), port)
+
+    def test_usb_serial_devices_are_recognised(self):
+        from tree_ert.ui import is_likely_usb_serial
+
+        for port in (
+            "/dev/cu.usbmodem1101",
+            "/dev/cu.usbserial-0001",
+            "/dev/cu.wchusbserial56780",
+            "/dev/ttyUSB0",
+            "/dev/ttyACM0",
+            "COM3",
+        ):
+            self.assertTrue(is_likely_usb_serial(port), port)
+
+    def test_preferred_port_skips_bluetooth_and_picks_the_usb_device(self):
+        from tree_ert.ui import preferred_port
+
+        ports = (
+            "/dev/cu.Bluetooth-Incoming-Port",
+            "/dev/cu.SOUNDPEATSC30",
+            "/dev/cu.usbmodem1101",
+        )
+
+        self.assertEqual(preferred_port(ports), "/dev/cu.usbmodem1101")
+
+    def test_preferred_port_is_none_when_no_hardware_is_present(self):
+        from tree_ert.ui import preferred_port
+
+        self.assertIsNone(preferred_port(("/dev/cu.Bluetooth-Incoming-Port",)))
+
+
 if __name__ == "__main__":
     unittest.main()

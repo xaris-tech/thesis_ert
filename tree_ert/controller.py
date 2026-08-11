@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, replace
+from datetime import datetime
 from enum import Enum
+from pathlib import Path
 from collections.abc import Callable
 
 import numpy as np
@@ -27,6 +29,7 @@ class BaselineResult:
     baseline: np.ndarray
     stability: unified.BaselineStability
     pair_scores: list[unified.PairHealthScore]
+    log_path: Path | None = None
 
     def __len__(self) -> int:
         return len(self.baseline)
@@ -36,6 +39,7 @@ class BaselineResult:
 class TargetResult:
     reconstructions: list[np.ndarray]
     frame_healths: list[unified.FrameHealthScore]
+    log_path: Path | None = None
 
 
 @dataclass(frozen=True)
@@ -92,6 +96,9 @@ def drift_tuning_candidates(settings: UiSettings) -> list[UiSettings]:
                 warmup_frames=warmup_frames,
                 baseline_frames=baseline_frames,
                 frames=frames,
+                # Tuning hunts for settings rather than collecting specimen data;
+                # logging it would bury real ladder scans under stray CSVs.
+                log_enabled=False,
             ).validate()
         )
     return candidates
@@ -138,21 +145,48 @@ class DebugController:
         self.state = ControllerState.CONFIGURED
         self._emit("Configuration ready")
 
+    def _open_logger(
+        self,
+        settings: UiSettings,
+        kind: str,
+        max_frames: int,
+    ) -> tuple[unified.RawFrameLogger | None, str]:
+        """Open a labelled CSV for this capture, or none if logging is off."""
+        run_id = datetime.now().strftime("%Y%m%d-%H%M%S")
+        if not settings.log_enabled:
+            return None, run_id
+        name = f"phase3a-ui-{settings.slug}-{settings.pattern}-{kind}-{run_id}.csv"
+        logger = unified.RawFrameLogger(
+            Path(settings.log_dir) / name,
+            max_frames,
+            specimen=settings.specimen.strip(),
+            stage=settings.stage.strip(),
+        )
+        self._emit(f"Logging to {logger.path}")
+        return logger, run_id
+
     def capture_baseline(self, settings: UiSettings) -> BaselineResult:
         self._require_configured()
         self._clear_baseline()
         vectors = []
-        for index in range(settings.warmup_frames):
-            self._raise_if_stopped()
-            self._emit(f"Warmup frame {index + 1}/{settings.warmup_frames}")
-            self.acquisition.capture_frame()
-        for index in range(settings.baseline_frames):
-            self._raise_if_stopped()
-            self._emit(f"Baseline frame {index + 1}/{settings.baseline_frames}")
-            frame = self.acquisition.capture_frame()
-            self._raise_if_stopped()
-            self._verify_pattern(frame, settings.pattern)
-            vectors.append(unified.frame_to_vector(frame, self.protocol))
+        logger, run_id = self._open_logger(settings, "baseline", settings.baseline_frames)
+        try:
+            for index in range(settings.warmup_frames):
+                self._raise_if_stopped()
+                self._emit(f"Warmup frame {index + 1}/{settings.warmup_frames}")
+                self.acquisition.capture_frame()
+            for index in range(settings.baseline_frames):
+                self._raise_if_stopped()
+                self._emit(f"Baseline frame {index + 1}/{settings.baseline_frames}")
+                frame = self.acquisition.capture_frame()
+                self._raise_if_stopped()
+                self._verify_pattern(frame, settings.pattern)
+                if logger is not None:
+                    logger.write(run_id, "baseline", frame)
+                vectors.append(unified.frame_to_vector(frame, self.protocol))
+        finally:
+            if logger is not None:
+                logger.close()
         self._emit("Checking baseline stability")
         stability = unified.require_stable_baseline(
             vectors,
@@ -160,7 +194,12 @@ class DebugController:
         )
         baseline = unified.average_vectors(vectors)
         pair_scores = unified.analyze_baseline_pair_health(vectors, self.protocol)
-        result = BaselineResult(baseline, stability, pair_scores)
+        result = BaselineResult(
+            baseline,
+            stability,
+            pair_scores,
+            log_path=logger.path if logger is not None else None,
+        )
         self.baseline_result = result
         self.state = ControllerState.BASELINE_READY
         self._emit("Baseline ready")
@@ -189,32 +228,43 @@ class DebugController:
             raise RuntimeError("baseline is required before target capture")
         reconstructions = []
         healths = []
-        for index in range(settings.frames):
-            self._raise_if_stopped()
-            self._emit(f"Target frame {index + 1}/{settings.frames}")
-            frame = self.acquisition.capture_frame()
-            self._raise_if_stopped()
-            self._verify_pattern(frame, settings.pattern)
-            current = unified.frame_to_vector(frame, self.protocol)
-            currents = np.asarray([abs(record.current_ua) for record in frame.records])
-            filtered = unified.filter_frame_vector_best_effort(
-                baseline=self.baseline_result.baseline,
-                current=current,
-                pair_scores=self.baseline_result.pair_scores,
-                current_median_ua=float(np.median(currents)),
-                current_spread_ua=float(np.max(currents) - np.min(currents)),
-            )
-            reconstruction = base.reconstruct_difference(
-                self.baseline_result.baseline,
-                filtered.filtered_vector,
-                self.solver,
-            )
-            reconstructions.append(reconstruction)
-            healths.append(filtered.frame_health)
-            self._target_preview(list(reconstructions))
+        logger, run_id = self._open_logger(settings, "target", settings.frames)
+        try:
+            for index in range(settings.frames):
+                self._raise_if_stopped()
+                self._emit(f"Target frame {index + 1}/{settings.frames}")
+                frame = self.acquisition.capture_frame()
+                self._raise_if_stopped()
+                self._verify_pattern(frame, settings.pattern)
+                if logger is not None:
+                    logger.write(run_id, "target", frame)
+                current = unified.frame_to_vector(frame, self.protocol)
+                currents = np.asarray([abs(record.current_ua) for record in frame.records])
+                filtered = unified.filter_frame_vector_best_effort(
+                    baseline=self.baseline_result.baseline,
+                    current=current,
+                    pair_scores=self.baseline_result.pair_scores,
+                    current_median_ua=float(np.median(currents)),
+                    current_spread_ua=float(np.max(currents) - np.min(currents)),
+                )
+                reconstruction = base.reconstruct_difference(
+                    self.baseline_result.baseline,
+                    filtered.filtered_vector,
+                    self.solver,
+                )
+                reconstructions.append(reconstruction)
+                healths.append(filtered.frame_health)
+                self._target_preview(list(reconstructions))
+        finally:
+            if logger is not None:
+                logger.close()
         self.state = ControllerState.TARGET_READY
         self._emit("Target reconstruction ready")
-        return TargetResult(reconstructions, healths)
+        return TargetResult(
+            reconstructions,
+            healths,
+            log_path=logger.path if logger is not None else None,
+        )
 
     def tune_drift(self, settings: UiSettings) -> DriftTuneResult:
         settings.validate()

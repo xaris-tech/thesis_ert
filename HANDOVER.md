@@ -14,14 +14,20 @@ The active system is now Phase 3A:
 - OPA2134PA Improved Howland Current Pump
 - Python reconstruction script using PyEIT-style difference reconstruction
 
-Important: `AGENTS.md` still contains older Phase 2 assumptions in places, especially the old 8-electrode fixed-injection `SCAN:` format. For Phase 3A, prefer this handover plus:
+For Phase 3A, read this handover plus:
 
-- `docs/first-working-prototype/README.md`
-- `docs/first-working-prototype/04-complete-pinout-and-wiring.md`
-- `firmware/esp32s3-phase3a-unified-arduino/README.md`
-- `firmware/esp32s3-phase3a-unified-arduino/esp32s3_phase3a_unified/esp32s3_phase3a_unified.ino`
-- `phase3a_unified_reconstruct.py`
-- `PHASE_3A_PINOUT_TABLES.md`
+- `AGENTS.md` — repo orientation and the invariants that must not be broken
+- `CONTEXT.md` — project vocabulary
+- `docs/adr/` — the reasoning behind contested decisions; an ADR outranks any other doc
+- `docs/chapter-3-methodology-draft.md` — full methodology and validation ladder
+- `docs/prd-aiot-ert-coconut-validation.md` — product requirements and scope
+- `docs/current-setup-validation-runbook.md` — hardware bring-up order
+- `PHASE_3A_PINOUT_TABLES.md` — complete wiring tables
+- `docs/first-working-prototype/README.md` and `04-complete-pinout-and-wiring.md`
+- `firmware/esp32s3-phase3a-unified-arduino/` — the only current firmware
+- `phase3a_unified_reconstruct.py` — active acquisition and reconstruction
+
+`docs/archive/` is kept for provenance only. Do not build or wire from it.
 
 ## Thesis-Safe Claim
 

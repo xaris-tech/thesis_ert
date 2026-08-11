@@ -2,214 +2,168 @@
 
 ## Purpose
 
-This repo is an experimental ERT/EIT prototype.
+This repo is a student-built DC Electrical Resistance Tomography prototype for
+assessing coconut palm health categories. The active system is **Phase 3A**: 12
+electrodes, ESP32-S3, four multiplexers, switched injection and sensing.
 
-The current project state is:
+Agents working here should optimise for:
 
-- live acquisition in Python works
-- Phase 2 firmware exists for an `ESP32-S3`
-- hardware is an `8-electrode scanner` with fixed injection
-- full tomography reconstruction hardware is **not** complete yet
+- honest limits about what the prototype can and cannot show
+- measurement repeatability over visualisation polish
+- small, test-backed changes across firmware, Python and docs together
 
-Agents working in this repo should optimize for:
+## Read this first
 
-- accurate hardware/software handoff
-- honest limits about what the current setup can and cannot do
-- safe incremental changes to Python analysis and ESP32 firmware
+| Read | For |
+|---|---|
+| `HANDOVER.md` | The built system: hardware, wiring, grounding rules, current state |
+| `CONTEXT.md` | Project vocabulary. Use these terms; they are deliberate |
+| `docs/adr/` | Why contested decisions were made. Do not silently reverse these |
+| `docs/chapter-3-methodology-draft.md` | The full methodology and validation ladder |
+| `docs/prd-aiot-ert-coconut-validation.md` | Product requirements and scope boundaries |
+| `docs/current-setup-validation-runbook.md` | Hardware bring-up order when anything misbehaves |
+| `PHASE_3A_PINOUT_TABLES.md` | Complete wiring tables |
 
-## Read This First
+`docs/archive/` is provenance only. Never build or wire from it.
 
-Start with:
+## Current hardware
 
-- [PROJECT_CONTEXT.md](/C:/Users/Vidad/Documents/ERT/PROJECT_CONTEXT.md)
-- [ert.py](/C:/Users/Vidad/Documents/ERT/ert.py)
-- [tests/test_ert.py](/C:/Users/Vidad/Documents/ERT/tests/test_ert.py)
+| Part | Role |
+|---|---|
+| ESP32-S3 | I2C, mux address pins, serial protocol |
+| MCP4725 (`0x60`) | Sets the current-pump command voltage |
+| ADS1115 (`0x48`) | Measures electrode voltage and current-shunt voltage |
+| OPA2134PA | Improved Howland current pump |
+| 4x CD74HC4067 | Switch current source, current return, voltage positive, voltage negative |
+| 100 ohm shunt | Converts return current to measurable voltage |
+| 12 stainless steel screws | Electrodes E1 to E12 |
 
-For firmware:
+Measurement is **tetrapolar**: current is injected through one electrode pair
+while voltage is measured across a different pair, and the injected current is
+measured rather than assumed.
 
-- Arduino IDE version:
-  - [esp32s3_phase2.ino](/C:/Users/Vidad/Documents/ERT/firmware/esp32s3-phase2-arduino/esp32s3_phase2/esp32s3_phase2.ino)
-  - [README.md](/C:/Users/Vidad/Documents/ERT/firmware/esp32s3-phase2-arduino/README.md)
-- PlatformIO version:
-  - [main.cpp](/C:/Users/Vidad/Documents/ERT/firmware/esp32s3-phase2/src/main.cpp)
-  - [platformio.ini](/C:/Users/Vidad/Documents/ERT/firmware/esp32s3-phase2/platformio.ini)
+**Critical power rule.** One signal ground reference shared by ESP32, MCP4725,
+ADS1115, all mux GND pins, the converter output common, the shunt bottom and
+ADS1115 A3. The op-amp negative rail `V-` is **not** system ground and must never
+be tied to it.
 
-## Current Hardware Model
+## GPIO map (Phase 3A unified)
 
-Known parts:
+```
+PIN_SDA = 8, PIN_SCL = 9
 
-- `ESP32-S3`
-- `MCP4725`
-- `ADS1115`
-- `LM358`
-- `CD74HC4067`
-- `8` electrodes
+MUX_I_SRC = s0:4  s1:5  s2:6  s3:7  en:37
+MUX_I_RET = s0:10 s1:11 s2:12 s3:13 en:38
+MUX_VP    = s0:15 s1:16 s2:17 s3:18 en:39
+MUX_VN    = s0:36 s1:35 s2:41 s3:42 en:40
+```
 
-Current Phase 2 behavior:
+Do not change these without updating `PHASE_3A_PINOUT_TABLES.md`, the firmware
+README and the firmware tests.
 
-- fixed current injection pair:
-  - `E1` = drive electrode
-  - `E5` = return/reference electrode
-- voltage sensing is scanned through one `CD74HC4067`
-- the mux selects which electrode is measured
-- the current path is **not** routed through the mux common
+## Serial protocol contract
 
-Important:
-
-- `E1` is both the drive electrode and connected to mux channel `C0`
-- this is intentional and electrically allowed
-- one `CD74HC4067` is enough for scanning sensed voltages
-- one `CD74HC4067` is **not** enough for full switched EIT tomography
-
-## Truths Agents Should Preserve
-
-Do not overclaim.
-
-The current setup can do:
-
-- multi-electrode live scanning
-- baseline vs current comparison
-- per-electrode delta analysis
-- offline export to CSV/NPZ
-- firmware-driven 8-channel scan frames
-
-The current setup does **not** yet do:
-
-- proper multi-pattern current injection
-- full `PyEIT` reconstruction input completeness
-- physically rigorous tomography inversion
-
-If asked whether this reconstructs already, the answer should be:
-
-- acquisition/scanning: yes
-- real reconstruction: not yet
-
-## Serial Protocol Contract
-
-The Python side expects scan frames in this exact shape:
+Frames are the v2 format, **not** the old Phase 2 `SCAN:` format:
 
 ```text
-SCAN:
-0,E1,123.456
-1,E2,120.987
-2,E3,118.200
-3,E4,119.600
-4,E5,0.000
-5,E6,126.400
-6,E7,129.800
-7,E8,131.100
-END
+FRAME,2,<frame_id>,<pattern>,DAC,<code>,SETTLE,<ms>,SAMPLES,<n>
+M,P,FWD,I+,E1,I-,E2,V+,E3,V-,E4,V,13.250,I,335.625,Q,OK
+M,P,REV,I+,E2,I-,E1,V+,E3,V-,E4,V,-13.125,I,335.313,Q,OK
+...
+END,<frame_id>
 ```
 
-Do not casually change this format unless you also update the Python parser and tests.
+Changing this format means updating the firmware, the Python parser in
+`phase3a_unified_reconstruct.py`, and `tests/test_phase3a_unified_firmware.py`
+in the same change.
 
-## Python Workflow
+Firmware commands:
 
-[ert.py](/C:/Users/Vidad/Documents/ERT/ert.py) is the main live acquisition tool.
-
-Current responsibilities:
-
-- serial reading
-- scan parsing
-- baseline/session management
-- plotting
-- export to CSV / `.npz`
-
-It now supports multi-electrode views and recent delta history.
-
-If modifying it:
-
-- keep pure logic testable
-- extend tests in [tests/test_ert.py](/C:/Users/Vidad/Documents/ERT/tests/test_ert.py)
-- preserve export compatibility unless intentionally versioning it
-
-Preferred verification:
-
-```powershell
-.\.venv\Scripts\python.exe -m unittest tests.test_ert -v
-.\.venv\Scripts\python.exe -c "import ert; print('import ok')"
-.\.venv\Scripts\python.exe .\ert.py --help
+```
+s     capture one forward/reverse frame
+ma    adjacent drive        ms   skip-1 drive
+mk    skip-2 drive          mo   opposite drive
+pN    set DAC code 0..620 (output stays idle until a scan)
+tN    set mux settle time in ms
+nN    set samples per ADC reading, 1..32
+g     continuous frames on   x    stop and force safe idle
+rN    set continuous frame interval in ms
+i     scan I2C bus           ?    print status         h    help
 ```
 
-## Firmware Workflow
+## Invariants agents must not break
 
-There are two firmware variants:
+These are decisions with reasoning recorded in `docs/adr/`. Reversing one
+silently will corrupt results in ways that are hard to notice.
 
-- Arduino IDE
-- PlatformIO
+1. **Logging requires labels.** Every CSV row carries `specimen` and `stage`.
+   Acquisition refuses to run with logging enabled and no labels. A scan whose
+   subject is only inferable from a timestamp is unusable, and cut-trunk defect
+   stages cannot be re-scanned to recover the label.
+2. **Never mask a measurement for changing a lot.** Excluding pairs that wobble
+   while nothing is changing is legitimate noise rejection. Excluding pairs with
+   a large delta deletes exactly the defect signal being looked for. Large
+   deltas are counted as `large_delta_pairs`, never overwritten.
+3. **Voltage channel is `GAIN_EIGHT`, shunt channel is `GAIN_SIXTEEN`.** Signals
+   are around 13 mV; `GAIN_ONE` wastes 8x of the ADC range and puts quantisation
+   error above the stability limit on nearly a tenth of measurements. The PGA
+   setting does not change the ADS1115's absolute input limits.
+4. **Frame duration is a drift driver.** Configure injection once per injection
+   pair and hold it while the voltage muxes sweep. Do not reintroduce a
+   per-measurement teardown of the injection path.
+5. **Field baselines are quality control, never an imaging reference.** A tree
+   cannot be scanned before it became diseased, so subtracting two same-session
+   tree scans yields drift, not anatomy. Difference reconstruction is for the
+   phantom and for consecutive cut-trunk defect stages only.
+6. **No overclaiming.** The prototype does not diagnose disease, detect a named
+   disease, replace Philippine Coconut Authority expert evaluation, or produce
+   absolute conductivity maps.
 
-Prefer keeping them behaviorally aligned.
+## Python workflow
 
-If updating commands, scan format, or GPIO behavior:
+| File | Role |
+|---|---|
+| `phase3a_unified_reconstruct.py` | Active acquisition and reconstruction. CLI entry point |
+| `phase3a_reconstruct.py` | Protocol, mesh and solver helpers, imported as `base` |
+| `tree_ert/` + `tree_ert_app.py` | Tkinter acquisition UI |
+| `ert.py`, `pyeit_analyzer.py` | Legacy Phase 2 tools. Still tested and useful for export analysis; not the current path |
 
-- update both firmware variants if possible
-- update the corresponding README
-- keep the serial command contract documented
+Verification (macOS/Linux):
 
-Current firmware commands:
+```bash
+.venv/bin/python -m unittest discover -s tests
+.venv/bin/python tree_ert_app.py --demo        # UI without hardware
+```
 
-- `s` single scan
-- `g` continuous scanning on
-- `x` continuous scanning off
-- `p<number>` set DAC raw value
-- `t<number>` set mux settle time in ms
-- `r<number>` set continuous scan period in ms
-- `h` print help
+Setup if `.venv` is missing:
 
-## GPIO Map
+```bash
+python3 -m venv .venv && .venv/bin/python -m pip install -r requirements.txt
+```
 
-Current Phase 2 GPIO assignments:
+`--demo` uses `DemoAcquisition`, so UI and controller changes can be exercised
+with no board attached. Tests must stay hardware-free and must not write into
+`phase3a_logs/`.
 
-- `GPIO8` -> `SDA`
-- `GPIO9` -> `SCL`
-- `GPIO4` -> `CD74HC4067 S0`
-- `GPIO5` -> `CD74HC4067 S1`
-- `GPIO6` -> `CD74HC4067 S2`
-- `GPIO7` -> `CD74HC4067 S3`
-- `GPIO15` -> `CD74HC4067 EN`
+## Firmware workflow
 
-Do not silently change these without updating firmware docs and project context.
+Only one firmware is current:
+`firmware/esp32s3-phase3a-unified-arduino/`. The Phase 2, adjacent-only and
+opposite-only variants were removed; `firmware/esp32s3-hcp-test-arduino/`
+remains as a current-pump bench tool for the dummy-load step.
 
-## Testing Guidance
+When changing firmware, update in the same change: the `.ino`, the firmware
+README, `PHASE_3A_PINOUT_TABLES.md` if pins move, and
+`tests/test_phase3a_unified_firmware.py`, which asserts against firmware source
+because that is the only automated seam available for Arduino code here.
 
-Good current test media:
+## Working style
 
-- saline sponge
-- lightly salted water
-
-Saline sponge is acceptable for bench validation, but it is not a final tomography medium.
-
-Use it for:
-
-- contact testing
-- switching verification
-- stability checks
-- repeatability checks
-
-Not for:
-
-- claiming reconstruction quality
-- claiming proper geometry for `PyEIT`
-
-## Preferred Next Work
-
-Good next tasks in this repo:
-
-- improve Python offline analysis of exported scans
-- add stability metrics and noise summaries
-- add a separate `PyEIT`-prep/analyzer tool that stops short of fake reconstruction
-- improve firmware robustness and documentation
-- prepare hardware/firmware for more complete switching later
-
-Avoid jumping straight to “image reconstruction” unless the hardware assumptions have changed.
-
-## Working Style
-
-When changing code:
-
-- prefer small, test-backed edits
-- preserve the user's current wiring assumptions unless explicitly changing hardware design
-- keep docs in sync with code
-- if a result is experimental or approximate, label it clearly
-
-If adding new analysis files, keep them separate from `ert.py` unless they are truly part of the live acquisition loop.
+- Prefer small, test-backed edits. Add a test for any behaviour that was
+  silently wrong before.
+- Look up facts in the repo and in the logs under `phase3a_logs/` rather than
+  assuming. Several long-standing problems here were visible in the data.
+- Keep firmware, Python and docs behaviourally aligned; a change in one layer
+  can silently invalidate another.
+- Label experimental or approximate results clearly.
+- When a doc contradicts an ADR, the ADR wins and the doc needs updating.

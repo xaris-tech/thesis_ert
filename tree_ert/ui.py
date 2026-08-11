@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import queue
+import re
 import threading
 import tkinter as tk
 from collections.abc import Callable
@@ -16,7 +17,65 @@ import phase3a_unified_reconstruct as unified
 from phase3a_reconstruct import N_ELECTRODES
 from tree_ert.acquisition import DemoAcquisition, SerialAcquisition
 from tree_ert.controller import DebugController, DriftTuneAttempt, DriftTuneResult
-from tree_ert.settings import UiSettings, parse_float_field, parse_int_field
+from tree_ert.settings import (
+    LADDER_STAGES,
+    VALID_STAGES,
+    UiSettings,
+    parse_float_field,
+    parse_int_field,
+)
+
+
+# Substrings that mark a port as a real USB serial adapter rather than a
+# Bluetooth audio device or a system debug console. Matched case-insensitively
+# against the whole device path, so they must not be short enough to appear
+# inside unrelated words.
+USB_SERIAL_HINTS = (
+    "usbserial", "usbmodem", "wchusbserial", "slab", "cp210",
+    "ttyusb", "ttyacm",
+)
+
+# Bluetooth devices expose serial ports and would otherwise be auto-selected.
+EXCLUDED_PORT_HINTS = ("bluetooth", "debug-console")
+
+# Windows ports are named COM1, COM2 and so on. Anchored, because the bare
+# string "com" also appears inside names like "Bluetooth-Incoming-Port".
+WINDOWS_PORT_PATTERN = re.compile(r"^COM\d+$", re.IGNORECASE)
+
+
+def detect_serial_ports() -> tuple[str, ...]:
+    """Serial ports the OS can currently see, likely USB devices first."""
+    try:
+        from serial.tools import list_ports
+    except Exception:
+        return ()
+    try:
+        ports = sorted(port.device for port in list_ports.comports())
+    except Exception:
+        return ()
+    likely = [port for port in ports if is_likely_usb_serial(port)]
+    return tuple(likely + [port for port in ports if port not in likely])
+
+
+def is_likely_usb_serial(port: str) -> bool:
+    lowered = port.lower()
+    if any(hint in lowered for hint in EXCLUDED_PORT_HINTS):
+        return False
+    if WINDOWS_PORT_PATTERN.match(port.strip()):
+        return True
+    return any(hint in lowered for hint in USB_SERIAL_HINTS)
+
+
+def preferred_port(ports: tuple[str, ...]) -> str | None:
+    """The port worth auto-selecting, or None if nothing looks like hardware.
+
+    Bluetooth headsets show up as serial ports too, so picking the first
+    detected port would silently point the UI at a pair of earbuds.
+    """
+    for port in ports:
+        if is_likely_usb_serial(port):
+            return port
+    return None
 
 
 def average_reconstruction_vector(reconstructions: list[np.ndarray]) -> np.ndarray:
@@ -143,7 +202,12 @@ class DebugApp(tk.Tk):
 
     def _build_vars(self, port: str) -> None:
         defaults = UiSettings.default()
+        # A Windows default on a Mac just guarantees a failed connect.
+        if port == "COM3":
+            port = preferred_port(detect_serial_ports()) or port
         self.port_var = tk.StringVar(value=port)
+        self.specimen_var = tk.StringVar(value="")
+        self.stage_var = tk.StringVar(value=LADDER_STAGES[0])
         self.pattern_var = tk.StringVar(value=defaults.pattern)
         self.dac_var = tk.StringVar(value=str(defaults.dac))
         self.settle_var = tk.StringVar(value=str(defaults.settle_ms))
@@ -153,6 +217,7 @@ class DebugApp(tk.Tk):
         self.frames_var = tk.StringVar(value=str(defaults.frames))
         self.diameter_var = tk.StringVar(value="")
         self.status_var = tk.StringVar(value="Demo mode" if self.demo else "Disconnected")
+        self.saved_var = tk.StringVar(value="No scan saved yet")
 
     def _build_layout(self) -> None:
         self.columnconfigure(1, weight=1)
@@ -167,16 +232,43 @@ class DebugApp(tk.Tk):
         self._build_tabs(right)
 
     def _build_controls(self, parent: ttk.Frame) -> None:
-        ttk.Label(parent, text="Connection").pack(anchor="w")
-        ttk.Label(parent, textvariable=self.status_var, foreground="#444444").pack(anchor="w", pady=(0, 8))
-        ttk.Entry(parent, textvariable=self.port_var, width=18).pack(fill="x", pady=2)
+        # What is being scanned comes first: a scan whose specimen and stage are
+        # unknown cannot be used later, and defect stages cannot be re-scanned.
+        session = ttk.LabelFrame(parent, text="1. What are you scanning?", padding=(8, 6))
+        session.pack(fill="x", pady=(0, 8))
+        ttk.Label(session, text="Specimen").pack(anchor="w")
+        ttk.Entry(session, textvariable=self.specimen_var, width=18).pack(fill="x", pady=(0, 4))
+        ttk.Label(session, text="Stage").pack(anchor="w")
         ttk.Combobox(
-            parent,
+            session,
+            textvariable=self.stage_var,
+            values=VALID_STAGES,
+            width=16,
+            state="readonly",
+        ).pack(fill="x")
+
+        connection = ttk.LabelFrame(parent, text="2. Connection", padding=(8, 6))
+        connection.pack(fill="x", pady=(0, 8))
+        ttk.Label(connection, textvariable=self.status_var, foreground="#444444").pack(anchor="w")
+        self.port_box = ttk.Combobox(
+            connection,
+            textvariable=self.port_var,
+            values=detect_serial_ports(),
+            width=16,
+        )
+        self.port_box.pack(fill="x", pady=2)
+        ttk.Button(connection, text="Rescan ports", command=self.refresh_ports).pack(fill="x", pady=2)
+
+        acquisition = ttk.LabelFrame(parent, text="3. Acquisition", padding=(8, 6))
+        acquisition.pack(fill="x", pady=(0, 8))
+        ttk.Label(acquisition, text="Pattern").pack(anchor="w")
+        ttk.Combobox(
+            acquisition,
             textvariable=self.pattern_var,
             values=("adjacent", "opposite", "skip-1", "skip-2"),
             width=16,
             state="readonly",
-        ).pack(fill="x", pady=2)
+        ).pack(fill="x", pady=(0, 2))
 
         for label, var in (
             ("DAC", self.dac_var),
@@ -187,9 +279,11 @@ class DebugApp(tk.Tk):
             ("Run frames", self.frames_var),
             ("Diameter cm", self.diameter_var),
         ):
-            ttk.Label(parent, text=label).pack(anchor="w", pady=(8, 0))
-            ttk.Entry(parent, textvariable=var, width=18).pack(fill="x", pady=2)
+            ttk.Label(acquisition, text=label).pack(anchor="w")
+            ttk.Entry(acquisition, textvariable=var, width=18).pack(fill="x", pady=(0, 2))
 
+        actions = ttk.LabelFrame(parent, text="4. Run", padding=(8, 6))
+        actions.pack(fill="x")
         for label, action in (
             ("Connect", self.connect),
             ("Configure", self.configure),
@@ -197,9 +291,8 @@ class DebugApp(tk.Tk):
             ("Control Drift", self.capture_control),
             ("Tune Drift", self.tune_drift),
             ("Target Run", self.capture_target),
-            ("Export", self.export_placeholder),
         ):
-            ttk.Button(parent, text=label, command=action).pack(fill="x", pady=4)
+            ttk.Button(actions, text=label, command=action).pack(fill="x", pady=2)
 
         tk.Button(
             parent,
@@ -209,7 +302,28 @@ class DebugApp(tk.Tk):
             fg="white",
             activebackground="#7f0018",
             activeforeground="white",
-        ).pack(fill="x", pady=12)
+        ).pack(fill="x", pady=10)
+
+        ttk.Label(
+            parent,
+            textvariable=self.saved_var,
+            foreground="#0a6b2e",
+            wraplength=190,
+            justify="left",
+        ).pack(anchor="w")
+
+    def refresh_ports(self) -> None:
+        ports = detect_serial_ports()
+        self.port_box.configure(values=ports)
+        best = preferred_port(ports)
+        if best is not None and not is_likely_usb_serial(self.port_var.get().strip()):
+            self.port_var.set(best)
+        self._append(self.status_text, f"Ports detected: {', '.join(ports) or 'none'}\n")
+        if best is None:
+            self._append(
+                self.status_text,
+                "No USB serial device found. Check the cable and that the ESP32-S3 is powered.\n",
+            )
 
     def _build_tabs(self, notebook: ttk.Notebook) -> None:
         reconstruction_tab = ttk.Frame(notebook)
@@ -249,6 +363,8 @@ class DebugApp(tk.Tk):
         diameter = parse_float_field("diameter_cm", diameter_text, minimum=0.1) if diameter_text else None
         return UiSettings(
             port=self.port_var.get().strip(),
+            specimen=self.specimen_var.get().strip(),
+            stage=self.stage_var.get().strip(),
             pattern=self.pattern_var.get().strip(),
             dac=parse_int_field("dac", self.dac_var.get(), 0, 620),
             settle_ms=parse_int_field("settle_ms", self.settle_var.get(), 1, 10000),
@@ -276,9 +392,6 @@ class DebugApp(tk.Tk):
 
     def capture_target(self) -> None:
         self._run_with_settings("target", self.controller.capture_target)
-
-    def export_placeholder(self) -> None:
-        self._append(self.files_text, "Export uses phase3a_logs outputs from capture runs.\n")
 
     def stop(self) -> None:
         worker_was_active = self._worker_active
@@ -358,6 +471,7 @@ class DebugApp(tk.Tk):
         if event == "baseline":
             self._draw_baseline_reference(payload.baseline)
             self._append(self.health_text, f"Baseline: {payload.stability}\n")
+            self._note_saved(payload.log_path)
         elif event == "control":
             summary = format_control_drift_summary(payload)
             self._append(self.status_text, f"{summary}\n")
@@ -367,6 +481,15 @@ class DebugApp(tk.Tk):
         elif event == "target":
             self._draw_average(payload.reconstructions)
             self._append(self.health_text, f"Target frames: {len(payload.reconstructions)}\n")
+            self._note_saved(payload.log_path)
+
+    def _note_saved(self, log_path: object) -> None:
+        if log_path is None:
+            self.saved_var.set("NOT SAVED - logging is off")
+            self._append(self.files_text, "Capture finished but logging was disabled.\n")
+            return
+        self.saved_var.set(f"Saved: {getattr(log_path, 'name', log_path)}")
+        self._append(self.files_text, f"{log_path}\n")
 
     def _handle_error(self, message: str) -> None:
         self._append(self.status_text, f"ERROR {message}\n")

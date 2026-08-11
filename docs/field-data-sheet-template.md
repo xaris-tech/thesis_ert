@@ -36,8 +36,8 @@ Use one sheet per final standing living coconut tree.
 | Electrode spacing | circumference / 12 = ____ |
 | E1 landmark | |
 | Label direction | Clockwise from E1 |
-| Electrode material | Iron nails |
-| Starting insertion depth | about 1 cm |
+| Electrode material | 304/316 stainless steel screws |
+| Starting insertion depth | about 1 cm, screwed not hammered |
 | Actual/adjusted insertion notes | |
 
 ## Scan Runs

@@ -13,6 +13,13 @@ constexpr float SHUNT_OHMS = 100.0f;
 constexpr float MIN_CURRENT_UA = 1.0f;
 constexpr float MAX_CURRENT_UA = 1200.0f;
 constexpr float MAX_MUX_VOLTAGE_MV = 3000.0f;
+// Differential full scale of the voltage channel's PGA setting (GAIN_EIGHT).
+// A reading at or near this value is saturated, and saturation is silently
+// wrong rather than merely imprecise, so it must be flagged. The 3.3 V mux
+// limit above can no longer be reached on this channel and is kept only as a
+// record of the analog rail constraint.
+constexpr float VOLTAGE_FSR_MV = 512.0f;
+constexpr float VOLTAGE_CLIP_MV = 0.98f * VOLTAGE_FSR_MV;
 
 constexpr uint16_t DEFAULT_DAC_CODE = 100;
 constexpr uint16_t MAX_DAC_CODE = 620;
@@ -151,7 +158,13 @@ float readAveragedDifferentialMv(uint8_t pair) {
 }
 
 float readVoltageMv() {
-  ads.setGain(GAIN_ONE);  // +/-4.096 V; mux signals must remain below 3.3 V.
+  // +/-0.512 V, 15.6 uV per count. Electrode voltages are single- to
+  // triple-digit millivolts, so GAIN_ONE spent only ~106 of 32768 counts on a
+  // median reading and its quantisation alone exceeded the stability budget.
+  // Observed peak across existing logs is 317 mV, leaving headroom here.
+  // The PGA does not change the ADS1115 absolute input limits, only the
+  // differential span, so this does not expose the inputs to anything new.
+  ads.setGain(GAIN_EIGHT);
   return readAveragedDifferentialMv(0);
 }
 
@@ -165,7 +178,7 @@ const char* qualityFlag(float voltageMv, float currentUa) {
   if (fabsf(currentUa) < MIN_CURRENT_UA) return "I_LOW";
   if (fabsf(currentUa) > MAX_CURRENT_UA) return "I_HIGH";
   if (currentUa < 0.0f) return "I_REVERSED";
-  if (fabsf(voltageMv) > MAX_MUX_VOLTAGE_MV) return "V_RANGE";
+  if (fabsf(voltageMv) >= VOLTAGE_CLIP_MV) return "V_RANGE";
   return "OK";
 }
 

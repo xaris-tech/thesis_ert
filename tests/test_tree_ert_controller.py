@@ -1,9 +1,21 @@
-from dataclasses import replace
+import csv
+import tempfile
 import unittest
+from dataclasses import replace
+from pathlib import Path
 
 from tree_ert.acquisition import DemoAcquisition, SerialAcquisition
 from tree_ert.controller import DebugController, ControllerState, drift_tuning_candidates
 from tree_ert.settings import UiSettings
+
+
+def default_settings() -> UiSettings:
+    """Base settings for controller tests.
+
+    Logging is off: these tests exercise capture and state behaviour, not run
+    labelling, and must not write CSV files into phase3a_logs as a side effect.
+    """
+    return replace(UiSettings.default(), log_enabled=False)
 
 
 class StopDuringCaptureAcquisition(DemoAcquisition):
@@ -42,7 +54,7 @@ class FailingStopSerial:
 
 class TestDebugController(unittest.TestCase):
     def test_drift_tuning_candidates_focus_near_stable_profile(self):
-        settings = replace(UiSettings.default(), settle_ms=30, samples=4, warmup_frames=10, baseline_frames=10, frames=20)
+        settings = replace(default_settings(), settle_ms=30, samples=4, warmup_frames=10, baseline_frames=10, frames=20)
 
         candidates = drift_tuning_candidates(settings)
         profiles = [
@@ -64,7 +76,7 @@ class TestDebugController(unittest.TestCase):
     def test_tune_drift_runs_candidate_settings_and_picks_best(self):
         messages = []
         controller = DebugController(DemoAcquisition(), progress=messages.append)
-        settings = replace(UiSettings.default(), warmup_frames=0, baseline_frames=2, frames=2)
+        settings = replace(default_settings(), warmup_frames=0, baseline_frames=2, frames=2)
 
         controller.connect(settings)
         result = controller.tune_drift(settings)
@@ -77,7 +89,7 @@ class TestDebugController(unittest.TestCase):
     def test_controller_emits_live_progress_messages(self):
         messages = []
         controller = DebugController(DemoAcquisition(), progress=messages.append)
-        settings = replace(UiSettings.default(), warmup_frames=1, baseline_frames=2, frames=2)
+        settings = replace(default_settings(), warmup_frames=1, baseline_frames=2, frames=2)
 
         controller.connect(settings)
         controller.configure(settings)
@@ -95,7 +107,7 @@ class TestDebugController(unittest.TestCase):
     def test_controller_streams_target_reconstructions_as_they_are_created(self):
         previews = []
         controller = DebugController(DemoAcquisition(), target_preview=previews.append)
-        settings = replace(UiSettings.default(), warmup_frames=0, baseline_frames=2, frames=3)
+        settings = replace(default_settings(), warmup_frames=0, baseline_frames=2, frames=3)
 
         controller.connect(settings)
         controller.configure(settings)
@@ -107,7 +119,7 @@ class TestDebugController(unittest.TestCase):
 
     def test_demo_controller_captures_baseline_then_target(self):
         controller = DebugController(DemoAcquisition())
-        settings = UiSettings.default()
+        settings = default_settings()
         controller.connect(settings)
         controller.configure(settings)
         baseline = controller.capture_baseline(settings)
@@ -119,7 +131,7 @@ class TestDebugController(unittest.TestCase):
 
     def test_target_requires_baseline(self):
         controller = DebugController(DemoAcquisition())
-        settings = UiSettings.default()
+        settings = default_settings()
         controller.connect(settings)
         controller.configure(settings)
         with self.assertRaisesRegex(RuntimeError, "baseline"):
@@ -136,7 +148,7 @@ class TestDebugController(unittest.TestCase):
         acquisition = StopDuringCaptureAcquisition(stop_on_capture=2)
         controller = DebugController(acquisition)
         acquisition.controller = controller
-        settings = replace(UiSettings.default(), warmup_frames=0, baseline_frames=5)
+        settings = replace(default_settings(), warmup_frames=0, baseline_frames=5)
         controller.connect(settings)
         controller.configure(settings)
 
@@ -152,7 +164,7 @@ class TestDebugController(unittest.TestCase):
         acquisition = StopDuringCaptureAcquisition(stop_on_capture=22)
         controller = DebugController(acquisition)
         acquisition.controller = controller
-        settings = UiSettings.default()
+        settings = default_settings()
         controller.connect(settings)
         controller.configure(settings)
         controller.capture_baseline(settings)
@@ -168,7 +180,7 @@ class TestDebugController(unittest.TestCase):
         acquisition = StopDuringCaptureAcquisition(stop_on_capture=22)
         controller = DebugController(acquisition)
         acquisition.controller = controller
-        settings = UiSettings.default()
+        settings = default_settings()
         controller.connect(settings)
         controller.configure(settings)
         controller.capture_baseline(settings)
@@ -182,7 +194,7 @@ class TestDebugController(unittest.TestCase):
 
     def test_configure_invalidates_stale_baseline(self):
         controller = DebugController(DemoAcquisition())
-        settings = UiSettings.default()
+        settings = default_settings()
         controller.connect(settings)
         controller.configure(settings)
         controller.capture_baseline(settings)
@@ -197,7 +209,7 @@ class TestDebugController(unittest.TestCase):
     def test_connect_and_close_clear_baseline(self):
         acquisition = DemoAcquisition()
         controller = DebugController(acquisition)
-        settings = UiSettings.default()
+        settings = default_settings()
         controller.connect(settings)
         controller.configure(settings)
         controller.capture_baseline(settings)
@@ -215,7 +227,7 @@ class TestDebugController(unittest.TestCase):
 
     def test_demo_frame_reflects_current_settings(self):
         acquisition = DemoAcquisition()
-        settings = replace(UiSettings.default(), dac=321, settle_ms=45, samples=7)
+        settings = replace(default_settings(), dac=321, settle_ms=45, samples=7)
         acquisition.connect(settings)
 
         frame = acquisition.capture_frame()
@@ -234,6 +246,74 @@ class TestDebugController(unittest.TestCase):
 
         self.assertTrue(fake_serial.closed)
         self.assertIsNone(acquisition._serial)
+
+
+class TestCaptureLogging(unittest.TestCase):
+    """Captures made through the UI controller must reach disk, labelled.
+
+    Before this existed the controller computed reconstructions in memory and
+    discarded every frame, so UI sessions left no data behind at all.
+    """
+
+    def _settings(self, log_dir: str):
+        return replace(
+            UiSettings.default(),
+            warmup_frames=0,
+            baseline_frames=2,
+            frames=2,
+            specimen="trunk-a",
+            stage="s2-side-3cm",
+            log_dir=Path(log_dir),
+            log_enabled=True,
+        )
+
+    def test_baseline_and_target_write_labelled_csv_files(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            settings = self._settings(tmp)
+            controller = DebugController(DemoAcquisition())
+            controller.connect(settings)
+            controller.configure(settings)
+
+            baseline = controller.capture_baseline(settings)
+            target = controller.capture_target(settings)
+
+            for path in (baseline.log_path, target.log_path):
+                self.assertIsNotNone(path)
+                self.assertTrue(path.exists())
+                with path.open(newline="") as handle:
+                    rows = list(csv.DictReader(handle))
+                self.assertTrue(rows, f"{path} contains only a header")
+                self.assertEqual({row["specimen"] for row in rows}, {"trunk-a"})
+                self.assertEqual({row["stage"] for row in rows}, {"s2-side-3cm"})
+
+            self.assertIn("trunk-a", baseline.log_path.name)
+            self.assertIn("s2-side-3cm", baseline.log_path.name)
+            self.assertNotEqual(baseline.log_path, target.log_path)
+
+    def test_logging_disabled_writes_nothing(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            settings = replace(self._settings(tmp), log_enabled=False)
+            controller = DebugController(DemoAcquisition())
+            controller.connect(settings)
+            controller.configure(settings)
+
+            baseline = controller.capture_baseline(settings)
+
+            self.assertIsNone(baseline.log_path)
+            self.assertEqual(list(Path(tmp).iterdir()), [])
+
+    def test_every_baseline_frame_is_written(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            settings = replace(self._settings(tmp), baseline_frames=4)
+            controller = DebugController(DemoAcquisition())
+            controller.connect(settings)
+            controller.configure(settings)
+
+            baseline = controller.capture_baseline(settings)
+
+            with baseline.log_path.open(newline="") as handle:
+                rows = list(csv.DictReader(handle))
+            self.assertEqual(len({row["frame_id"] for row in rows}), 4)
 
 
 if __name__ == "__main__":

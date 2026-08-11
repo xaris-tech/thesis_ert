@@ -106,6 +106,9 @@ class FrameHealthScore:
     current_median_ua: float
     current_spread_ua: float
     quality_label: str
+    # Pairs that moved further than MAX_RECON_PAIR_DELTA_KOHM from baseline.
+    # These are reported, not masked: on a real defect they are the signal.
+    large_delta_pairs: int = 0
 
 
 @dataclass(frozen=True)
@@ -287,12 +290,17 @@ def filter_frame_vector_best_effort(
     filtered = np.array(current, copy=True)
     dropped_indexes: list[int] = []
     kept_indexes: list[int] = []
+    large_delta_indexes: list[int] = []
 
     for score in pair_scores:
         delta = abs(float(current[score.index] - baseline[score.index]))
-        unstable_baseline = score.baseline_rms_kohm > MAX_RECON_BASELINE_PAIR_RMS_KOHM
-        unstable_delta = delta > MAX_RECON_PAIR_DELTA_KOHM
-        if unstable_baseline or unstable_delta:
+        # Noisiness is measured while nothing is changing, so it is genuinely
+        # noise and the pair is excluded. A large delta is NOT noise: a drilled
+        # defect moves the nearby pairs most, so masking on delta would erase
+        # exactly the signal being looked for. Record it, never overwrite it.
+        if delta > MAX_RECON_PAIR_DELTA_KOHM:
+            large_delta_indexes.append(score.index)
+        if score.baseline_rms_kohm > MAX_RECON_BASELINE_PAIR_RMS_KOHM:
             filtered[score.index] = baseline[score.index]
             dropped_indexes.append(score.index)
         else:
@@ -315,6 +323,7 @@ def filter_frame_vector_best_effort(
         current_median_ua=float(current_median_ua),
         current_spread_ua=float(current_spread_ua),
         quality_label=quality_label,
+        large_delta_pairs=len(large_delta_indexes),
     )
     return FilteredVectorResult(filtered, dropped_indexes, kept_indexes, frame_health)
 
@@ -588,14 +597,22 @@ def read_one_v2_frame(ser: serial.Serial) -> UnifiedFrame:
 
 class RawFrameLogger:
     HEADER = [
-        "run_id", "capture", "frame_id", "pattern", "polarity",
+        "run_id", "specimen", "stage", "capture", "frame_id", "pattern", "polarity",
         "i_plus", "i_minus", "v_plus", "v_minus", "voltage_mv",
         "current_ua", "quality", "dac_code", "settle_ms", "sample_count",
     ]
 
-    def __init__(self, path: Path, max_frames: int) -> None:
+    def __init__(
+        self,
+        path: Path,
+        max_frames: int,
+        specimen: str = "",
+        stage: str = "",
+    ) -> None:
         self.path = path
         self.max_frames = max_frames
+        self.specimen = specimen
+        self.stage = stage
         self.frames_written = 0
         path.parent.mkdir(parents=True, exist_ok=True)
         self._handle = path.open("w", encoding="utf-8", newline="")
@@ -607,7 +624,8 @@ class RawFrameLogger:
             return
         for record in frame.records:
             self._writer.writerow([
-                run_id, capture, frame.frame_id, frame.pattern, record.polarity,
+                run_id, self.specimen, self.stage,
+                capture, frame.frame_id, frame.pattern, record.polarity,
                 base.index_to_electrode(record.i_pair[0]),
                 base.index_to_electrode(record.i_pair[1]),
                 base.index_to_electrode(record.v_pair[0]),
@@ -766,6 +784,16 @@ def parse_args() -> argparse.Namespace:
         help="Real trunk or phantom diameter in centimeters; used for plot/run labeling",
     )
     parser.add_argument("--startup-wait", type=float, default=1.5)
+    parser.add_argument(
+        "--specimen",
+        default="",
+        help="What is being scanned, e.g. trunk-a or phantom. Required with --log",
+    )
+    parser.add_argument(
+        "--stage",
+        default="",
+        help="Defect stage, e.g. s1-intact or s3-side-8cm. Required with --log",
+    )
     parser.add_argument("--log", action="store_true")
     parser.add_argument("--log-dir", default=str(DEFAULT_LOG_DIR))
     parser.add_argument("--max-log-frames", type=int, default=30)
@@ -797,19 +825,31 @@ def main() -> None:
         raise ValueError("--warmup-frames cannot be negative")
     if args.diameter_cm is not None and args.diameter_cm <= 0:
         raise ValueError("--diameter-cm must be positive when provided")
+    if args.log and not (args.specimen.strip() and args.stage.strip()):
+        raise ValueError("--specimen and --stage are required with --log")
 
     protocol, mode_command = protocol_and_command(args.pattern)
     eit_mesh, solver = base.create_solver(protocol)
     run_id = datetime.now().strftime("%Y%m%d-%H%M%S")
     logger = None
-    run_csv_path = Path(args.log_dir) / f"phase3a-v2-{args.pattern}-{run_id}.csv"
-    if args.log:
-        logger = RawFrameLogger(run_csv_path, args.max_log_frames)
+    label = "-".join(part for part in (args.specimen.strip(), args.stage.strip()) if part)
+    name = f"phase3a-v2-{label}-{args.pattern}-{run_id}" if label else f"phase3a-v2-{args.pattern}-{run_id}"
+    run_csv_path = Path(args.log_dir) / f"{name}.csv"
 
     print(f"[Serial] Connecting to {args.port} at {args.baud} baud")
     ser = serial.Serial(args.port, args.baud, timeout=1.0)
     time.sleep(args.startup_wait)
     ser.reset_input_buffer()
+
+    # Opened only once the port is actually up, so a failed connection cannot
+    # leave a confusing header-only CSV behind.
+    if args.log:
+        logger = RawFrameLogger(
+            run_csv_path,
+            args.max_log_frames,
+            specimen=args.specimen.strip(),
+            stage=args.stage.strip(),
+        )
     fig = None
     reconstructions: list[np.ndarray] = []
     frame_healths: list[FrameHealthScore] = []

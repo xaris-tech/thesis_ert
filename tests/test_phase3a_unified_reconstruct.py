@@ -259,16 +259,19 @@ class TestBestEffortFiltering(unittest.TestCase):
         self.assertEqual(scores[0].v_pair, (2, 3))
         self.assertGreater(scores[0].baseline_rms_kohm, scores[1].baseline_rms_kohm)
 
-    def test_best_effort_filter_replaces_bad_pairs_with_baseline_values(self):
+    def test_large_changes_are_reported_but_never_erased(self):
+        """A big move is signal, not noise.
+
+        Drilling a defect moves the pairs nearest it most. Masking on delta
+        would delete exactly the measurements that detected the defect, so a
+        large delta is counted and reported while its value passes through.
+        """
         protocol, _ = unified.protocol_and_command("adjacent")
-        baseline_vectors = [
-            np.ones(108),
-            np.ones(108),
-            np.ones(108),
-        ]
+        # Identical baseline frames: no pair wobbles, so none is noisy.
+        baseline_vectors = [np.ones(108), np.ones(108), np.ones(108)]
         scores = unified.analyze_baseline_pair_health(baseline_vectors, protocol)
         current = np.ones(108)
-        current[0] = 1.50
+        current[0] = 1.50  # far beyond MAX_RECON_PAIR_DELTA_KOHM
         current[1] = 1.01
 
         result = unified.filter_frame_vector_best_effort(
@@ -279,12 +282,36 @@ class TestBestEffortFiltering(unittest.TestCase):
             current_spread_ua=12.5,
         )
 
-        self.assertEqual(result.dropped_indexes, [0])
-        self.assertAlmostEqual(result.filtered_vector[0], 1.0)
+        self.assertEqual(result.dropped_indexes, [])
+        self.assertAlmostEqual(result.filtered_vector[0], 1.50)
         self.assertAlmostEqual(result.filtered_vector[1], 1.01)
-        self.assertEqual(result.frame_health.quality_label, "debug-best-effort")
-        self.assertEqual(result.frame_health.kept_pairs, 107)
+        self.assertEqual(result.frame_health.large_delta_pairs, 1)
+        self.assertEqual(result.frame_health.kept_pairs, 108)
         self.assertEqual(result.frame_health.current_spread_ua, 12.5)
+
+    def test_noisy_pairs_are_still_replaced_with_baseline_values(self):
+        """Wobble measured while nothing changes is genuine noise, and is masked."""
+        protocol, _ = unified.protocol_and_command("adjacent")
+        noisy = np.ones(108)
+        noisy[0] = 1.20
+        quiet = np.ones(108)
+        quiet[0] = 0.80
+        scores = unified.analyze_baseline_pair_health([noisy, quiet, np.ones(108)], protocol)
+        baseline = unified.average_vectors([noisy, quiet, np.ones(108)])
+        current = np.array(baseline, copy=True)
+        current[0] = 5.0
+
+        result = unified.filter_frame_vector_best_effort(
+            baseline=baseline,
+            current=current,
+            pair_scores=scores,
+            current_median_ua=180.0,
+            current_spread_ua=1.0,
+        )
+
+        self.assertIn(0, result.dropped_indexes)
+        self.assertAlmostEqual(result.filtered_vector[0], baseline[0])
+        self.assertEqual(result.frame_health.quality_label, "debug-best-effort")
 
 
 class TestReconstructionImageSaving(unittest.TestCase):

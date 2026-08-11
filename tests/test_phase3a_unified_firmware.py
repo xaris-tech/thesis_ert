@@ -63,7 +63,26 @@ class TestUnifiedFirmwareSource(unittest.TestCase):
             self.assertIn(field, self.source)
 
     def test_voltage_range_check_allows_negative_differential_values(self):
-        self.assertIn("fabsf(voltageMv) > MAX_MUX_VOLTAGE_MV", self.source)
+        self.assertIn("fabsf(voltageMv) >= VOLTAGE_CLIP_MV", self.source)
+
+    def test_voltage_channel_uses_high_gain_and_shunt_keeps_its_own(self):
+        """Electrode voltages are millivolts; GAIN_ONE wastes 8x of the range.
+
+        The shunt channel must keep GAIN_SIXTEEN because 300 uA across
+        100 ohm produces only 30 mV.
+        """
+        self.assertIn("ads.setGain(GAIN_EIGHT)", self.source)
+        self.assertIn("ads.setGain(GAIN_SIXTEEN)", self.source)
+        self.assertNotIn("ads.setGain(GAIN_ONE)", self.source)
+
+    def test_clip_guard_is_tied_to_the_voltage_channel_full_scale(self):
+        """A saturated reading is silently wrong, so it must be flagged.
+
+        The 3.3 V mux limit cannot be reached once the PGA span is 512 mV,
+        so the guard has to track the PGA full scale instead.
+        """
+        self.assertIn("VOLTAGE_FSR_MV = 512.0f", self.source)
+        self.assertIn("VOLTAGE_CLIP_MV = 0.98f * VOLTAGE_FSR_MV", self.source)
 
     def test_current_quality_uses_magnitude_and_reports_reversed_polarity(self):
         self.assertIn("fabsf(currentUa) < MIN_CURRENT_UA", self.source)

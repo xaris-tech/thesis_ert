@@ -6,6 +6,18 @@ from pathlib import Path
 
 VALID_PATTERNS = ("adjacent", "opposite", "skip-1", "skip-2")
 
+# The four cut-trunk defect stages, in the order they are drilled. Stages are
+# cumulative and cannot be revisited, so the stage recorded with a scan is the
+# only way to know what the electrodes were looking at.
+LADDER_STAGES = (
+    "s1-intact",
+    "s2-side-3cm",
+    "s3-side-8cm",
+    "s4-center-8cm",
+)
+
+VALID_STAGES = LADDER_STAGES + ("phantom", "phantom-target", "bench", "tree")
+
 
 def parse_int_field(name: str, value: str, minimum: int, maximum: int) -> int:
     try:
@@ -31,6 +43,8 @@ def parse_float_field(name: str, value: str, minimum: float | None = None) -> fl
 class UiSettings:
     port: str = "COM3"
     baud: int = 115200
+    specimen: str = ""
+    stage: str = ""
     pattern: str = "adjacent"
     dac: int = 100
     settle_ms: int = 30
@@ -46,6 +60,18 @@ class UiSettings:
     @classmethod
     def default(cls) -> "UiSettings":
         return cls()
+
+    @property
+    def slug(self) -> str:
+        """Filename-safe identifier for this specimen and stage."""
+        parts = [self.specimen.strip(), self.stage.strip()]
+        cleaned = []
+        for part in parts:
+            safe = "".join(char if char.isalnum() or char in "-_" else "-" for char in part)
+            safe = "-".join(chunk for chunk in safe.split("-") if chunk)
+            if safe:
+                cleaned.append(safe)
+        return "-".join(cleaned) or "unlabelled"
 
     def validate(self) -> "UiSettings":
         if not self.port.strip():
@@ -68,4 +94,12 @@ class UiSettings:
             raise ValueError("frames must be positive")
         if self.diameter_cm is not None and self.diameter_cm <= 0:
             raise ValueError("diameter_cm must be positive")
+        if self.log_enabled:
+            # A scan that cannot say what it looked at is unusable later, and the
+            # cut-trunk stages cannot be re-scanned to find out. Checked last so
+            # that malformed acquisition values still report themselves first.
+            if not self.specimen.strip():
+                raise ValueError("specimen is required while logging is enabled")
+            if self.stage not in VALID_STAGES:
+                raise ValueError(f"stage must be one of {', '.join(VALID_STAGES)}")
         return self

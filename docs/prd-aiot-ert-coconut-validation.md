@@ -1,169 +1,158 @@
-# PRD: AIoT-Ready ERT Coconut Palm Validation System
+# PRD: AIoT-Ready ERT Coconut Palm System
+
+This is the single product definition for the project. It absorbs the former
+`phase3a-aiot-ert-prototype-prd.md`. Methodology lives in
+`docs/chapter-3-methodology-draft.md`, vocabulary in `CONTEXT.md`, and the
+reasoning behind contested decisions in `docs/adr/`.
 
 Intended issue label: `ready-for-agent`
 
 ## Problem Statement
 
-The project needs a defensible path from the current Phase 3A ERT prototype to a working thesis system for coconut palm health-category assessment. The user needs the prototype to work on actual standing living coconut trees, but the system must not overclaim disease diagnosis, absolute conductivity mapping, or validated AI classification from a very small field dataset.
+The project needs a defensible path from the current Phase 3A ERT prototype to a working thesis system for coconut palm health-category assessment, supporting the thesis:
 
-The current prototype has promising pieces: ESP32-S3 firmware, MCP4725-controlled current drive, ADS1115 voltage/current measurement, four-mux 12-electrode switching, Python reconstruction tooling, existing logs showing useful current levels, and a thesis methodology. What is missing is a productized validation workflow that turns those pieces into a repeatable end-to-end process: bench calibration, saline phantom validation, cut-trunk pilot testing, living-tree scans, local Raspberry Pi storage, Google Drive sync, feature extraction, and clear pass/fail evidence.
+> Development of an AIoT-Enabled Electrical Resistivity Tomography (ERT)-Based Tree Health Classification System for Coconut Palm (*Cocos nucifera*)
 
-The user needs the system to support a thesis titled:
+The prototype has working pieces: ESP32-S3 firmware, MCP4725-controlled current drive, ADS1115 voltage and current measurement, four-mux 12-electrode switching, Python reconstruction tooling, and logs showing usable current levels. What is missing is a repeatable end-to-end workflow — bench calibration, phantom validation, cut-trunk verification against known ground truth, field scans, local storage, cloud sync, feature extraction, and clear pass/fail evidence — that produces results without overclaiming disease diagnosis, absolute conductivity mapping, or validated AI classification.
 
-> Development of an AIoT-Enabled Electrical Resistivity Tomography (ERT)-Based Tree Health Classification System for Coconut Palm (Cocos nucifera)
+The immediate technical risk is not visualisation polish but **measurement repeatability**: grounding, shunt correctness, ADC resolution, frame duration, current magnitude, contact quality, mux-path health, and protocol consistency. Baseline stability failed every tuning preset through July 2026, and the causes turned out to be configuration rather than fundamentals (ADR 0004).
 
-The work must preserve the agreed domain boundary: the ERT prototype produces conductivity variation patterns and classifier-ready features, while Philippine Coconut Authority expert evaluation provides the healthy, asymptomatic, and diseased category labels.
+The domain boundary is fixed: the ERT prototype produces conductivity variation patterns and classifier-ready features; Philippine Coconut Authority expert evaluation provides the healthy, asymptomatic and diseased category labels.
 
 ## Solution
 
-Build and validate an AIoT-ready Phase 3A ERT workflow that can acquire stable 12-electrode measurements, produce repeatable difference reconstructions, extract classifier-ready features, and organize field outputs for later health-category classification work.
+A staged system, not a single field scan:
 
-The solution is a staged system, not a single field scan:
+1. Calibrate the current path with dummy loads and multimeter confirmation.
+2. Validate electrode switching and reconstruction response in a saline phantom, and measure the reference target response that sets the stability gate.
+3. Verify against known ground truth using cut-trunk pilots run through a four-stage defect ladder, with the drilled sector varied across trunks.
+4. Scan expert-evaluated standing living coconut trees observationally.
+5. Store outputs locally on a Raspberry Pi, syncing to Google Drive when connectivity allows.
+6. Extract summary features and train and evaluate a classifier on the cut-trunk ground-truth dataset.
 
-1. Calibrate the current path using dummy-load verification with multimeter confirmation.
-2. Validate electrode switching and reconstruction response in a saline phantom with a plastic phantom target.
-3. Validate coconut trunk material behavior using a cut-trunk pilot with top-drilled side-sector and center defects.
-4. Perform observational living-tree scans on expert-evaluated healthy, asymptomatic, and diseased coconut trees.
-5. Store field outputs locally on a Raspberry Pi and synchronize them to Google Drive when internet is available.
-6. Extract combined ERT feature sets from raw measurements and reconstruction summaries for a future prototype classifier component.
+Success is not a named disease diagnosis. The safe success claim is in `docs/chapter-3-methodology-draft.md` section 3.18.
 
-The success of the thesis system is not a named disease diagnosis. The safe success claim is that the AIoT-ready DC ERT prototype acquired repeatable 12-electrode measurements from coconut palm samples and standing living coconut trees, produced difference reconstructions showing category-associated conductivity variation patterns, and generated classifier-ready features for future health-category classification.
+## Requirements
 
-## User Stories
+### Hardware
 
-1. As a thesis researcher, I want a staged validation ladder, so that I can prove the prototype works before scanning standing living coconut trees.
-2. As a thesis researcher, I want dummy-load verification with known resistors, so that I can confirm current output before using biological samples.
-3. As a thesis researcher, I want multimeter-confirmed shunt current checks, so that I can verify the firmware-reported current is credible.
-4. As a thesis researcher, I want the firmware and documentation to agree on the 100 ohm current shunt, so that current readings are not misinterpreted by 10x.
-5. As a thesis researcher, I want an I2C diagnostic command on the firmware, so that I can confirm the MCP4725 and ADS1115 are detected before scanning.
-6. As a thesis researcher, I want a safe idle command, so that I can force the DAC output to zero and disable muxes before rewiring.
-7. As a thesis researcher, I want a direct dummy-load path, so that I can test the current source without mux complexity.
-8. As a thesis researcher, I want a mux path check after direct dummy-load validation, so that I can isolate mux or channel failures.
-9. As a thesis researcher, I want a provisional 100-500 uA current range with about 300 uA as the initial target, so that field testing starts from a realistic operating point.
-10. As a thesis researcher, I want current thresholds to be finalized from actual dummy-load and tree readings, so that the method reflects real hardware behavior.
-11. As a thesis researcher, I want the system to reject or flag unstable current, so that bad measurements do not become misleading reconstruction images.
-12. As a thesis researcher, I want saline phantom testing, so that I can validate response movement in a controlled conductive medium.
-13. As a thesis researcher, I want to use a plastic phantom target, so that I can create a known non-conductive contrast without implying disease simulation.
-14. As a thesis researcher, I want three phantom target positions, so that I can test side-sector, opposite-sector, and center responses.
-15. As a thesis researcher, I want a cut-trunk pilot, so that I can test coconut trunk material before standing living trees.
-16. As a thesis researcher, I want a cut-trunk before-after scan sequence, so that the same trunk can serve as its own reference.
-17. As a thesis researcher, I want a top-drilled side-sector defect in the cut trunk, so that I can test coarse electrode-sector localization.
-18. As a thesis researcher, I want a top-drilled center defect in the cut trunk, so that I can test central internal variation response.
-19. As a thesis researcher, I want artificial defects to be described as known contrast targets, so that the thesis does not confuse them with natural disease.
-20. As a thesis researcher, I want final living-tree scans to be observational only, so that standing living coconut trees are not drilled or hollowed.
-21. As a thesis researcher, I want to use only minimally invasive nail electrodes on living trees, so that field testing stays within the agreed permission boundary.
-22. As a thesis researcher, I want a 12-electrode ring around each tree, so that the final field method matches the Phase 3A hardware.
-23. As a thesis researcher, I want the electrode ring at 1.3 m above ground, so that scans use a repeatable forestry-based trunk band.
-24. As a thesis researcher, I want equal arc spacing from circumference divided by 12, so that electrode placement adapts to different trunk sizes.
-25. As a thesis researcher, I want E1 placed toward a fixed visible landmark, so that reconstruction sectors have a recorded orientation.
-26. As a thesis researcher, I want nail insertion to start around 1 cm and adjust only for stable contact, so that electrode placement is repeatable without overclaiming a biological depth.
-27. As a thesis researcher, I want contact adjustments to restart the full run, so that partial runs before and after electrode changes are not mixed.
-28. As a thesis researcher, I want one backup tree per category if possible, so that unstable contact on one tree does not collapse the whole field study.
-29. As a thesis researcher, I want PCA expert evaluation to assign healthy, asymptomatic, and diseased labels, so that category labels do not come from the ERT image alone.
-30. As a thesis researcher, I want the device not to claim named disease detection, so that the thesis remains scientifically defensible.
-31. As a thesis researcher, I want each tree reconstructed against its own baseline, so that cross-tree differences in size, moisture, and contact do not dominate the result.
-32. As a thesis researcher, I want localization reported by electrode sector, so that the output matches the practical resolution of the 12-electrode prototype.
-33. As a thesis researcher, I want three adjacent-drive runs per tree, so that repeatability is assessed instead of relying on a single image.
-34. As a thesis researcher, I want adjacent drive as the primary pattern, so that the thesis depends on the most stable supported acquisition path.
-35. As a thesis researcher, I want opposite drive only as supplemental data, so that optional exploratory scans do not endanger the success condition.
-36. As a thesis researcher, I want baseline stability checks, so that reconstructions are blocked when the reference condition is unstable.
-37. As a thesis researcher, I want raw CSV logs, so that field measurements can be reviewed and reprocessed later.
-38. As a thesis researcher, I want reconstruction images and averaged reconstruction images, so that results can be interpreted visually and compared across runs.
-39. As a thesis researcher, I want feature summary files, so that the system prepares data for future classifier development.
-40. As a thesis researcher, I want completed field data sheets, so that scan metadata and expert observations are preserved.
-41. As a thesis researcher, I want photos of the tree and electrode setup, so that field placement and orientation can be audited.
-42. As a thesis researcher, I want optional environmental notes, so that rain, trunk wetness, soil wetness, and weather can explain unusual conductivity behavior.
-43. As a thesis researcher, I want Raspberry Pi local storage, so that field acquisition does not depend on internet connectivity.
-44. As a thesis researcher, I want USB serial from ESP32-S3 to Raspberry Pi, so that the acquisition link uses the already working structured serial protocol.
-45. As a thesis researcher, I want Google Drive sync after local capture, so that field outputs are backed up and shareable when internet becomes available.
-46. As a thesis researcher, I want the classifier treated as a prototype component, so that small-sample field results are not presented as validated AI performance.
-47. As a thesis researcher, I want combined ERT features from raw values and reconstruction summaries, so that future classification has more useful inputs than images alone.
-48. As a thesis adviser, I want clear out-of-scope claims, so that the thesis does not imply diagnostic reliability beyond the evidence.
-49. As a PCA expert, I want the system to preserve expert labels separately from ERT outputs, so that expert evaluation is not replaced by the prototype.
-50. As a future agent, I want a current setup validation runbook, so that hardware debugging starts at port/I2C/current checks before reconstruction.
-51. As a future agent, I want tests around firmware diagnostic constants and serial records, so that firmware documentation and parser assumptions do not drift.
-52. As a future agent, I want dependency setup documented, so that Python tests and reconstruction tools can run reproducibly.
-53. As a future agent, I want failure conditions defined, so that unstable scans are documented as inconclusive rather than forced into positive evidence.
-54. As a future agent, I want the final results table shape defined, so that Chapter 4 can compare categories consistently.
-55. As a future agent, I want issue-ready implementation boundaries, so that validation work can be split into independently testable tasks.
+- Use the active Phase 3A 12-electrode switched architecture as the product target: ESP32-S3, MCP4725, ADS1115, OPA2134-based improved Howland current pump, four CD74HC4067 multiplexers, a 100 ohm return shunt, and a 12-electrode ring labeled E1 to E12.
+- Switch current source, current return, voltage positive and voltage negative independently, so that reconstruction-capable tetrapolar measurements are possible.
+- Use 304/316 stainless steel screw electrodes, not iron nails, so that contact impedance does not drift as the electrode corrodes in sap (ADR 0004).
+- Preserve the 100 ohm shunt in both hardware and firmware, so that reported current cannot be misread by a factor of ten.
+- Keep every analog node inside the multiplexer supply range. Measured trunk resistance of about 1.5 kOhm leaves roughly six times the headroom needed at 300 uA, so the 3.3 V rail is adequate; a subject above about 9 kOhm would require raising it.
+- Maintain one signal ground reference, and never tie the op-amp negative rail to logic ground.
 
-## Implementation Decisions
+### Firmware
 
-- Use the current Phase 3A unified 12-electrode system as the active prototype target.
-- Preserve the 100 ohm current shunt as the physical and firmware current-measurement basis.
-- Add or preserve firmware diagnostics that expose the shunt constant and scan the I2C bus for the MCP4725 and ADS1115.
-- Keep the serial protocol as the primary ESP32-S3 to host interface.
-- Use USB serial as the first ESP32-S3 to Raspberry Pi acquisition link.
-- Use the Raspberry Pi as the field computer for local acquisition, storage, reconstruction/post-processing, and later cloud synchronization.
-- Use Google Drive as the initial cloud synchronization target.
-- Use local-first storage; cloud availability must not be required to acquire field data.
-- Keep adjacent-drive scanning as the required primary field pattern.
-- Treat opposite-drive scanning as optional supplemental data only when measurements are stable.
-- Use a staged validation ladder: dummy-load verification, saline phantom testing, cut-trunk pilot testing, and final three-tree comparison.
-- Use direct dummy-load calibration before mux-path dummy-load calibration.
-- Use 1 kOhm, 4.7 kOhm, and 10 kOhm dummy loads for current-source calibration.
-- Use DAC codes 50, 100, 200, 300, and 400 during dummy-load calibration, stopping early if unsafe behavior appears.
+- Emit complete frame records carrying drive pattern, DAC code, settling time, sample count, polarity, current pair, voltage pair, voltage, current and quality flag, so the host parser can validate rather than guess.
+- Support adjacent and opposite drive patterns selectable at runtime, without reflashing.
+- Emit forward and reverse injection records per measurement, so transfer resistance can be normalised against polarity bias.
+- Provide explicit safe idle that forces DAC output to zero and disables all multiplexers.
+- Provide I2C diagnostics that detect the MCP4725 and ADS1115, so wiring and grounding faults stop work early.
+- Flag low, high, reversed and out-of-range measurements, so bad analog behaviour is treated as a hardware problem and not as reconstruction evidence.
+- Use `GAIN_EIGHT` for the voltage channel and `GAIN_SIXTEEN` for the shunt channel. Measuring roughly 13 mV signals at `GAIN_ONE` wasted 8x of available resolution and put quantisation error above the stability limit on nearly a tenth of measurements (ADR 0004).
+- Configure injection once per injection pair and hold it while the voltage multiplexers sweep, rather than rebuilding the injection path for every measurement. Frame duration is a drift driver, and the old structure re-triggered electrode polarization 216 times per frame (ADR 0004).
+- Average over a whole number of mains cycles, so 60 Hz pickup cancels rather than leaving a per-measurement residue.
+
+### Acquisition software
+
+- Run a complete session from one command or one UI action: open the port, configure the board, capture warmup frames, collect baseline frames, then run comparison or control captures.
+- Check baseline stability before reconstruction, against a gate derived from the measured phantom target response rather than an inherited fixed percentage.
+- Provide control-mode drift analysis without moving the target, so contact drift is distinguishable from a real anomaly response.
+- Compute paired transfer resistance from forward and reverse records.
+- Highlight the most unstable electrodes and measurement pairs, so debugging targets the weakest part of the ring.
+- Report per-frame current summaries during capture, so unusably low current is noticed while scanning rather than afterwards.
+- Never mask a measurement for having changed a lot. Noisy-pair exclusion measured while nothing is changing is legitimate; excluding large deltas deletes exactly the defect signal being looked for. Large deltas are counted and reported.
+- Save raw CSV logs, per-frame reconstruction images, averaged reconstruction images, and control stability reports for every run, so each session leaves an auditable trail.
+- Keep protocol parsing, frame validation, transfer-resistance normalisation, baseline stability assessment, control drift analysis, reconstruction orchestration and raw log writing as separate modules with narrow interfaces.
+- Preserve the split between active Phase 3A protocol handling and legacy Phase 2 `SCAN:`-style handling, so assumptions cannot mix.
+- Keep the legacy Phase 2 acquisition and export-analysis tools as support utilities. They remain useful for stability summaries and dataset preparation, and must not be presented as proof of tomography completeness.
+
+### Data recording and labelling
+
+- Record specimen identifier and defect stage in every raw CSV row and in every log filename. A scan whose subject can only be inferred from a timestamp is unusable, and cut-trunk stages cannot be re-scanned to recover the label. Logging must refuse to run unlabelled.
+- Record the actual measured position of each electrode, not only the intended equal spacing, because placement error dominates the geometric error budget for absolute reconstruction.
+- Record trunk circumference, scan height, E1 landmark, insertion notes, current statistics, quality flags, baseline stability, strongest sector and photos per subject.
+- Record environmental notes — recent rain, trunk and soil wetness, weather — because moisture directly affects conductivity.
+- Keep a per-stage written record for cut-trunk sessions holding run identifier, hole dimensions, drill depth, elapsed session time and any contact problems.
+
+### Validation
+
+- Enforce the ladder in order: dummy load, mux-path check, saline phantom, cut-trunk pilot, standing-tree field study.
+- Use direct dummy-load calibration before mux-path calibration, with 1 kOhm, 4.7 kOhm and 10 kOhm loads and DAC codes 50, 100, 200, 300, 400, stopping early on unsafe behaviour.
 - Use multimeter-confirmed shunt voltage as the bench reference for current validation.
-- Treat 100-500 uA, with about 300 uA as an initial target, as provisional until real dummy-load and tree values are measured.
-- Treat very low current, saturated current, reversed current, or voltage range flags as acquisition failures, not reconstruction evidence.
-- Use a saline phantom with a plastic phantom target as the first controlled reconstruction-response medium.
-- Test at least three phantom target positions: side sector, opposite side sector, and center.
-- Use a cut-trunk pilot before final living-tree scans.
-- Use top-drilled or hollowed artificial defects only in the cut-trunk pilot.
-- Test both side-sector and center artificial defects when the cut trunk allows it.
-- Keep final living-tree scans observational and minimally invasive.
-- Do not drill, hollow, or deliberately create defects in standing living coconut trees.
-- Use 12 iron nail electrodes for the prototype field method.
-- Place the final living-tree electrode ring at 1.3 m above ground level.
-- Determine electrode spacing from trunk circumference divided by 12.
-- Orient E1 toward a fixed visible landmark and label E2 through E12 clockwise.
-- Start nail insertion around 1 cm and adjust only for stable electrical contact.
-- Restart the full scan run after any contact adjustment.
-- Identify backup category trees when PCA and tree-owner access allows it.
-- Use PCA expert evaluation as the source of healthy, asymptomatic, and diseased category labels.
-- Use tree-specific baselines for difference reconstruction.
-- Report localization by electrode sector instead of exact image coordinates.
-- Generate raw logs, reconstruction images, averaged reconstruction images, feature summaries, field sheets, and setup photos for each scan.
-- Use a combined ERT feature set for the future classifier: normalized raw measurements plus reconstruction-derived summary features.
-- Treat the classifier as a prototype or future-facing component unless a larger independent dataset is collected.
-- Avoid claiming named disease diagnosis, absolute conductivity maps, replacement of PCA expert evaluation, or validated AI classification.
+- Treat 100 to 500 uA with about 300 uA initial as provisional. Select the operating current by sweeping DAC codes on the phantom and recording drift against the weakest measurement voltages.
+- Run the cut-trunk defect ladder as four cumulative stages in a single continuous session with the electrode ring installed once and never re-seated, scanning at every stage and differencing consecutive stages (ADR 0002).
+- Capture both adjacent and opposite drive patterns at every stage, since a pattern can only be differenced against itself and adjacent drive is weakest at the trunk centre.
+- Vary only the drilled sector between trunks, holding all other factors constant.
+- Fix the success criterion before any image is produced: strongest reconstruction sector must match the drilled sector in at least 2 of 3 repeat runs at the larger defect stages.
+- Keep standing-tree scans observational. Never drill, hollow or create defects in a living tree.
+- Restart the full run after any contact adjustment, never combining partial runs from before and after.
+- Identify backup trees per category where access allows.
+
+### Reconstruction
+
+- Use difference reconstruction only where the same physical sample can be scanned before and after a change: the phantom, and consecutive cut-trunk defect stages.
+- Treat the field baseline as a quality control that admits or rejects a session, never as an imaging reference. Subtracting two same-session scans of an unchanged tree yields drift, not anatomy (ADR 0001).
+- Use absolute reconstruction for standing trees, against a mesh scaled to the measured circumference and using recorded actual electrode positions rather than a dimensionless unit circle.
+- Validate absolute reconstruction on the cut-trunk pilot, where the answer is known, before trusting it on a tree.
+- Never use one tree as the baseline for another.
+- Report localization by electrode sector, not exact image coordinates.
+- Never present output as an absolute conductivity map.
+
+### Classification
+
+- Train and evaluate the classifier on the cut-trunk dataset, which carries operator-created ground truth for both defect stage and drilled sector (ADR 0003).
+- Use leave-one-trunk-out cross-validation, fitting any scaling or dimensionality reduction inside each fold.
+- Reduce each scan to roughly 10 to 20 physically interpretable summary features rather than the full 216-value vector.
+- Use logistic regression or a shallow tree, not a flexible model that would learn trunk identity from a small sample.
+- Report standing-tree results descriptively; do not feed them to the trained model as though the relationship were established.
+- Limit target categories to healthy, asymptomatic and diseased. Never identify a named disease.
+
+### AIoT
+
+- Store field outputs locally first. Cloud availability must never be required to acquire data.
+- Use USB serial as the first ESP32-S3 to Raspberry Pi acquisition link, since the structured serial protocol already works on both sides.
+- Use the Raspberry Pi as the field computer, taking over the role currently held by the laptop workflow.
+- Use Google Drive as the initial sync target, uploading raw logs, reconstruction images, averaged images, feature summaries, field sheets and photos when connectivity is available.
 
 ## Testing Decisions
 
-- Test external behavior at the highest practical seam: serial firmware output, parser behavior, acquisition/reconstruction CLI behavior, generated logs, and field validation outputs.
-- Do not test private implementation details unless firmware source-level checks are the only available automated seam for Arduino code in this repo.
-- Preserve and extend existing Python unit tests for scan parsing, protocol mapping, frame logging, baseline stability, reconstruction output naming, and analyzer behavior.
-- Preserve firmware source tests that verify pin maps, separate voltage/current ADS1115 reads, forward/reverse records, adjacent/opposite modes, safe mux switching order, quality flags, status constants, and I2C diagnostics.
-- Add or preserve requirements-based environment setup so the full Python suite can run in a local virtual environment.
-- Use dummy-load verification as the first hardware test seam.
-- Use I2C scan output as the first live firmware diagnostic seam.
-- Use a single adjacent frame as the first acquisition seam after I2C and current checks.
-- Use short control captures as the first Python acquisition seam before full reconstruction.
-- Use baseline stability and quality flags as gates before accepting reconstructions.
-- Use CSV log row count as a guard against header-only acquisition failures.
-- Use existing good Phase 3A logs as prior art for expected current behavior: DAC 100 can produce roughly 300-350 uA with OK quality.
-- Use existing bad logs as prior art for stop conditions: I_LOW, I_HIGH, I_REVERSED, V_RANGE, and saturated current are electrical/acquisition failures.
-- Validate final field behavior through three adjacent-drive runs per tree rather than one-off images.
-- Treat repeatable electrode-sector patterns as stronger evidence than a single reconstruction frame.
-- Compare final tree categories using a structured table with expert label, current stability, repeatability, strongest sector, reconstruction summary, and notes.
+- Test external behaviour and contracts at the highest practical seam: serial firmware output, parser behaviour, acquisition and reconstruction CLI behaviour, generated logs, and validation outputs. Do not test private implementation details.
+- Test the serial frame parser with valid adjacent and opposite headers, malformed records, missing forward or reverse pairs, bad quality flags, and mismatched frame terminators.
+- Test measurement normalisation with known synthetic forward and reverse records, confirming transfer-resistance values and vector ordering.
+- Test baseline-stability and control-drift logic with stable, unstable and edge-case datasets so threshold enforcement stays intentional and reviewable.
+- Test that captures actually reach disk, labelled with specimen and stage, and that every frame is written. Logging was silently absent from the UI acquisition path for its whole existence.
+- Test that large-delta measurements pass through to reconstruction rather than being masked, and that noisy pairs are still excluded.
+- Test firmware source-level contracts for pin maps, separate voltage and current ADS1115 reads with their respective gains, forward and reverse records, adjacent and opposite modes, safe mux switching order, quality flags, status constants and I2C diagnostics.
+- Test the legacy export analyzer for CSV and NPZ loading, summary statistics and measurement-matrix generation, so Phase 2 artifacts stay trustworthy as support inputs.
+- Keep tests hardware-free and deterministic, using the demo acquisition path.
+- Keep requirements-based environment setup documented so the suite runs in a local virtual environment.
+- Hardware validation cannot be replaced by unit tests. Required bench verification: I2C detection, safe idle, shunt verification, dummy-load current measurement, mux-path continuity, and stable control runs before any reconstruction is trusted.
+- Guard against header-only acquisition failures by checking CSV row counts.
+- Prior art for expected behaviour: DAC 100 has produced roughly 300-350 uA at `OK` quality. `I_LOW`, `I_HIGH`, `I_REVERSED`, `V_RANGE` and saturated current are electrical failures, not reconstruction evidence.
 
 ## Out of Scope
 
-- Named coconut disease diagnosis.
-- Confirmed decay detection in standing living trees.
+- Named coconut disease diagnosis, or confirmed decay detection in standing living trees.
 - Replacing Philippine Coconut Authority expert evaluation.
 - Destructive drilling or hollowing of standing living coconut trees.
-- Absolute conductivity mapping.
-- Validated AI classifier performance from only three final trees.
+- Absolute conductivity mapping, or anatomically confirmed internal maps.
+- Claiming validated diagnostic classifier performance from the field dataset.
+- Treating a single reconstruction image as proof of performance.
+- Skipping dummy-load, phantom or cut-trunk validation and moving directly to tree claims.
 - Cloud-required live acquisition.
 - Custom IoT dashboard development unless requested later.
 - Image-only deep learning classifier training.
+- Replacing the entire analog stack with a high-end impedance platform in this phase.
 - Production-grade waterproof enclosure, PCB design, or deployment hardening.
-- Clinical, arboricultural, or commercial diagnostic claims.
+- Dropping the legacy Phase 2 tools; they are not the final product but remain useful.
+- Clinical, arboricultural or commercial diagnostic claims.
 
 ## Further Notes
 
-- The current repository contains newer Phase 3A work alongside older Phase 2 documentation. Future work should prefer the Phase 3A handover, glossary, validation runbook, and methodology documents when working on the thesis system.
-- The `ready-for-agent` label should be applied when this PRD is moved into GitHub Issues.
-- GitHub issue creation could not be performed from this environment because the `gh` CLI is not installed and no GitHub token is available.
-- The safest next implementation step is to run the current setup validation runbook on live hardware: USB serial detection, firmware `?` and `i` diagnostics, safe idle, direct dummy-load checks, mux-path checks, single adjacent frame, and short Python control capture.
+- Success is judged by whether the system repeatedly acquires stable frames, passes control-mode drift checks, and produces an averaged reconstruction that moves sensibly when a known target moves or a known defect is drilled.
+- `docs/drift-tuning-presets.md` records tuning attempts that all predate the ADR 0004 changes. Its results are historical and not comparable to future runs; the presets need re-deriving once frame time drops.
+- The `ready-for-agent` label should be applied when this PRD is moved into GitHub Issues. Issue creation could not be performed from this environment because the `gh` CLI was unavailable.
+- The safest next implementation step is the current setup validation runbook on live hardware: USB serial detection, firmware `?` and `i` diagnostics, safe idle, direct dummy-load checks, mux-path checks, a single adjacent frame, then a short Python control capture.

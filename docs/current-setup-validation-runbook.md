@@ -130,6 +130,8 @@ After the serial port is visible, run a short control capture:
 ```bash
 .venv/bin/python phase3a_unified_reconstruct.py \
   --port /dev/cu.YOUR_ESP32_PORT \
+  --specimen phantom \
+  --stage phantom \
   --pattern adjacent \
   --dac 100 \
   --settle-ms 30 \
@@ -140,6 +142,11 @@ After the serial port is visible, run a short control capture:
   --log \
   --control
 ```
+
+`--specimen` and `--stage` are required whenever `--log` is used. They are written
+into every CSV row and into the log filename, so a scan can never be traced to the
+wrong specimen or defect stage later. Valid stages are `s1-intact`, `s2-side-3cm`,
+`s3-side-8cm`, `s4-center-8cm`, plus `phantom`, `bench` and `tree`.
 
 Expected:
 
