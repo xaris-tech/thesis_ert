@@ -125,7 +125,7 @@ silently will corrupt results in ways that are hard to notice.
 |---|---|
 | `phase3a_unified_reconstruct.py` | Active acquisition and reconstruction. CLI entry point |
 | `phase3a_reconstruct.py` | Protocol, mesh and solver helpers, imported as `base` |
-| `tree_ert/` + `tree_ert_app.py` | Tkinter acquisition UI |
+| `tree_ert/` + `tree_ert_app.py` | PyQt6 acquisition UI |
 | `ert.py`, `pyeit_analyzer.py` | Legacy Phase 2 tools. Still tested and useful for export analysis; not the current path |
 
 Verification (macOS/Linux):

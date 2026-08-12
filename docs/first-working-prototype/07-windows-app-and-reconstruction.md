@@ -2,7 +2,7 @@
 
 ## Technology
 
-Use Python, Tkinter, pyserial, NumPy, Matplotlib, and PyEIT. Keep acquisition,
+Use Python, PyQt6, pyserial, NumPy, Matplotlib, and PyEIT. Keep acquisition,
 protocol parsing, quality analysis, storage, and reconstruction in separate
 modules so each can be tested without hardware.
 

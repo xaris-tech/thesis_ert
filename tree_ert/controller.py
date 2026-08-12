@@ -110,6 +110,7 @@ class DebugController:
         acquisition: Acquisition,
         progress: Callable[[str], None] | None = None,
         target_preview: Callable[[list[np.ndarray]], None] | None = None,
+        frame_metrics: Callable[[dict], None] | None = None,
     ) -> None:
         self.acquisition = acquisition
         self.state = ControllerState.DISCONNECTED
@@ -120,6 +121,10 @@ class DebugController:
         self._stop_requested = False
         self._progress = progress or (lambda _message: None)
         self._target_preview = target_preview or (lambda _reconstructions: None)
+        # Optional live readout hook: current median/spread and quality per
+        # frame, so a UI can show a number instead of only scrolling text.
+        # Defaults to a no-op so existing callers and tests are unaffected.
+        self._frame_metrics = frame_metrics or (lambda _metrics: None)
 
     def connect(self, settings: UiSettings) -> None:
         settings.validate()
@@ -165,6 +170,26 @@ class DebugController:
         self._emit(f"Logging to {logger.path}")
         return logger, run_id
 
+    def _emit_frame_metrics(
+        self,
+        phase: str,
+        frame: unified.UnifiedFrame,
+        index: int,
+        total: int,
+        quality: str | None = None,
+    ) -> None:
+        currents = np.asarray([abs(record.current_ua) for record in frame.records])
+        if quality is None:
+            quality = ",".join(sorted({record.quality for record in frame.records}))
+        self._frame_metrics({
+            "phase": phase,
+            "frame": index,
+            "total": total,
+            "current_median_ua": float(np.median(currents)) if currents.size else 0.0,
+            "current_spread_ua": float(np.max(currents) - np.min(currents)) if currents.size else 0.0,
+            "quality": quality,
+        })
+
     def capture_baseline(self, settings: UiSettings) -> BaselineResult:
         self._require_configured()
         self._clear_baseline()
@@ -183,6 +208,7 @@ class DebugController:
                 self._verify_pattern(frame, settings.pattern)
                 if logger is not None:
                     logger.write(run_id, "baseline", frame)
+                self._emit_frame_metrics("baseline", frame, index + 1, settings.baseline_frames)
                 vectors.append(unified.frame_to_vector(frame, self.protocol))
         finally:
             if logger is not None:
@@ -215,6 +241,7 @@ class DebugController:
             frame = self.acquisition.capture_frame()
             self._raise_if_stopped()
             self._verify_pattern(frame, settings.pattern)
+            self._emit_frame_metrics("control", frame, index + 1, settings.frames)
             controls.append(unified.frame_to_vector(frame, self.protocol))
         self._emit("Analyzing control drift")
         return unified.analyze_control_drift(
@@ -254,6 +281,10 @@ class DebugController:
                 )
                 reconstructions.append(reconstruction)
                 healths.append(filtered.frame_health)
+                self._emit_frame_metrics(
+                    "target", frame, index + 1, settings.frames,
+                    quality=filtered.frame_health.quality_label,
+                )
                 self._target_preview(list(reconstructions))
         finally:
             if logger is not None:

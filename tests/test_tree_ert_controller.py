@@ -316,5 +316,51 @@ class TestCaptureLogging(unittest.TestCase):
             self.assertEqual(len({row["frame_id"] for row in rows}), 4)
 
 
+class TestFrameMetricsHook(unittest.TestCase):
+    """The live-readout hook is optional and must not change capture output."""
+
+    def test_defaults_to_a_no_op_when_not_provided(self):
+        settings = replace(default_settings(), warmup_frames=0, baseline_frames=2, frames=2)
+        controller = DebugController(DemoAcquisition())
+        controller.connect(settings)
+        controller.configure(settings)
+
+        controller.capture_baseline(settings)
+        controller.capture_target(settings)  # must not raise with no hook wired
+
+    def test_emits_current_and_quality_for_baseline_control_and_target(self):
+        metrics = []
+        settings = replace(default_settings(), warmup_frames=0, baseline_frames=2, frames=2)
+        controller = DebugController(DemoAcquisition(), frame_metrics=metrics.append)
+        controller.connect(settings)
+        controller.configure(settings)
+
+        controller.capture_baseline(settings)
+        controller.capture_control(settings)
+        controller.capture_target(settings)
+
+        phases = [m["phase"] for m in metrics]
+        self.assertEqual(phases, ["baseline", "baseline", "control", "control", "target", "target"])
+        for entry in metrics:
+            self.assertIn("current_median_ua", entry)
+            self.assertIn("current_spread_ua", entry)
+            self.assertIn("quality", entry)
+            self.assertGreaterEqual(entry["frame"], 1)
+            self.assertLessEqual(entry["frame"], entry["total"])
+
+    def test_target_metrics_use_the_post_filter_quality_label(self):
+        metrics = []
+        settings = replace(default_settings(), warmup_frames=0, baseline_frames=2, frames=1)
+        controller = DebugController(DemoAcquisition(), frame_metrics=metrics.append)
+        controller.connect(settings)
+        controller.configure(settings)
+        controller.capture_baseline(settings)
+
+        target = controller.capture_target(settings)
+
+        target_metrics = [m for m in metrics if m["phase"] == "target"]
+        self.assertEqual(target_metrics[0]["quality"], target.frame_healths[0].quality_label)
+
+
 if __name__ == "__main__":
     unittest.main()
