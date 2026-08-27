@@ -37,9 +37,21 @@ class TestTreeErtUiEntrypoint(unittest.TestCase):
         self.assertIs(figure.axes[0], map_ax)
         self.assertIs(figure.axes[1], vector_ax)
         self.assertEqual(tuple(figure.axes[2:]), scan_axes)
-        self.assertEqual(map_ax.get_title(), "Average 2D map")
-        self.assertEqual(vector_ax.get_title(), "Average reconstruction vector")
+        self.assertEqual(map_ax.get_title(), "Latest scan map")
+        self.assertEqual(vector_ax.get_title(), "Latest reconstruction vector")
         self.assertEqual(scan_axes[0].get_title(), "Scan 1")
+
+    def test_latest_reconstruction_returns_most_recent_scan(self):
+        import numpy as np
+        from tree_ert.ui import latest_reconstruction
+
+        latest = latest_reconstruction([
+            np.array([1.0, 3.0, 5.0]),
+            np.array([3.0, 5.0, 7.0]),
+        ])
+
+        self.assertTrue(np.allclose(latest, np.array([3.0, 5.0, 7.0])))
+        self.assertEqual(latest_reconstruction([]).size, 0)
 
     def test_average_reconstruction_vector_averages_frames(self):
         import numpy as np
@@ -129,6 +141,157 @@ class TestTreeErtUiEntrypoint(unittest.TestCase):
         self.assertIn("best_settle=30ms", summary)
         self.assertIn("best_samples=4", summary)
         self.assertIn("max_relative=0.50%", summary)
+
+
+class TestPartialCaptureDescription(unittest.TestCase):
+    def test_describes_kept_frame_vectors(self):
+        from tree_ert.ui import describe_partial_capture
+
+        self.assertEqual(describe_partial_capture([1, 2, 3]), "kept 3 frame vector(s)")
+        self.assertEqual(describe_partial_capture([]), "no partial data kept")
+        self.assertEqual(describe_partial_capture(None), "no partial data kept")
+
+    def test_describes_kept_target_reconstructions(self):
+        from tree_ert.controller import TargetResult
+        from tree_ert.ui import describe_partial_capture
+
+        partial = TargetResult(reconstructions=[1, 2], frame_healths=[])
+
+        self.assertEqual(
+            describe_partial_capture(partial), "kept 2 target reconstruction(s)"
+        )
+
+
+class TestSettingsPersistence(unittest.TestCase):
+    def test_round_trips_settings_through_disk(self):
+        from dataclasses import replace
+        from pathlib import Path
+        from tempfile import TemporaryDirectory
+
+        from tree_ert.settings import UiSettings, load_settings, save_settings
+
+        with TemporaryDirectory() as directory:
+            path = Path(directory) / "ui_settings.json"
+            original = replace(
+                UiSettings.default(),
+                dac=75,
+                settle_ms=100,
+                samples=16,
+                lenient_quality=True,
+            )
+
+            save_settings(original, path)
+            restored = load_settings(path)
+
+            self.assertEqual(restored.dac, 75)
+            self.assertEqual(restored.settle_ms, 100)
+            self.assertEqual(restored.samples, 16)
+            self.assertTrue(restored.lenient_quality)
+            self.assertIsInstance(restored.log_dir, Path)
+
+    def test_missing_or_corrupt_file_returns_none_rather_than_raising(self):
+        from pathlib import Path
+        from tempfile import TemporaryDirectory
+
+        from tree_ert.settings import load_settings
+
+        with TemporaryDirectory() as directory:
+            missing = Path(directory) / "absent.json"
+            corrupt = Path(directory) / "corrupt.json"
+            corrupt.write_text("{not json", encoding="utf-8")
+
+            self.assertIsNone(load_settings(missing))
+            self.assertIsNone(load_settings(corrupt))
+
+    def test_unknown_and_invalid_keys_fall_back_to_defaults(self):
+        from tree_ert.settings import UiSettings, settings_from_dict
+
+        restored = settings_from_dict({"dac": 200, "no_such_field": 1})
+        self.assertEqual(restored.dac, 200)
+
+        # dac above the validated ceiling must not produce unusable settings.
+        fallback = settings_from_dict({"dac": 99999})
+        self.assertEqual(fallback, UiSettings.default())
+
+
+class TestFrameDiagnosticFormatters(unittest.TestCase):
+    @staticmethod
+    def _frame(records):
+        import phase3a_unified_reconstruct as unified
+
+        return unified.UnifiedFrame(
+            frame_id=1,
+            pattern="adjacent",
+            dac_code=100,
+            settle_ms=10,
+            sample_count=4,
+            records=list(records),
+        )
+
+    @staticmethod
+    def _record(polarity, i_pair, v_pair, voltage_mv, current_ua, quality="OK"):
+        import phase3a_unified_reconstruct as unified
+
+        return unified.MeasurementRecord(
+            polarity, i_pair, v_pair, voltage_mv, current_ua, quality
+        )
+
+    def test_probe_summary_names_the_weakest_pair_and_verdict(self):
+        import phase3a_unified_reconstruct as unified
+        from tree_ert.ui import format_frame_probe
+
+        frame = self._frame([
+            self._record("FWD", (0, 1), (2, 3), 20.0, 200.0),
+            self._record("FWD", (0, 1), (3, 4), 5.0, 4.0),
+        ])
+
+        summary = format_frame_probe(unified.probe_frame_health(frame))
+
+        self.assertIn("PASS", summary)
+        self.assertIn("min_current=4.000uA", summary)
+        self.assertIn("V=E4-E5", summary)
+
+    def test_polarization_summary_reports_decay(self):
+        import phase3a_unified_reconstruct as unified
+        from tree_ert.ui import format_polarization_summary
+
+        frame = self._frame([
+            self._record("FWD", (0, 1), (2, 3), 10.0, 300.0),
+            self._record("FWD", (0, 1), (3, 4), 10.0, 100.0),
+        ])
+
+        summary = format_polarization_summary(unified.analyze_polarization(frame))
+
+        self.assertIn("FLAGGED", summary)
+        self.assertIn("worst_decay=3.00x", summary)
+
+    def test_offset_summary_reports_dominated_fraction(self):
+        import phase3a_unified_reconstruct as unified
+        from tree_ert.ui import format_offset_summary
+
+        frame = self._frame([
+            self._record("FWD", (0, 1), (2, 3), 46.0, 200.0),
+            self._record("REV", (1, 0), (2, 3), 46.0, 200.0),
+        ])
+
+        summary = format_offset_summary(unified.analyze_offset_domination(frame))
+
+        self.assertIn("FLAGGED", summary)
+        self.assertIn("1/1 pairs", summary)
+
+    def test_electrode_summary_lists_weakest_drive_currents(self):
+        import phase3a_unified_reconstruct as unified
+        from tree_ert.ui import format_electrode_health_summary
+
+        frame = self._frame([
+            self._record("FWD", (0, 1), (2, 3), 20.0, 200.0),
+        ])
+
+        summary = format_electrode_health_summary(
+            unified.analyze_electrode_health(frame), limit=2
+        )
+
+        self.assertIn("drive=", summary)
 
 
 if __name__ == "__main__":

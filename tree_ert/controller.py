@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import time
 from dataclasses import dataclass, replace
 from enum import Enum
 from collections.abc import Callable
@@ -10,6 +11,19 @@ import phase3a_reconstruct as base
 import phase3a_unified_reconstruct as unified
 from tree_ert.acquisition import Acquisition
 from tree_ert.settings import UiSettings
+
+
+class CaptureStopped(RuntimeError):
+    """Raised when STOP interrupts a capture, carrying whatever was collected.
+
+    Subclasses RuntimeError so existing callers that catch RuntimeError keep
+    working; `partial` lets a caller keep the frames captured before the stop
+    instead of discarding several minutes of work.
+    """
+
+    def __init__(self, message: str = "capture stopped", partial: object = None) -> None:
+        super().__init__(message)
+        self.partial = partial
 
 
 class ControllerState(str, Enum):
@@ -36,6 +50,17 @@ class BaselineResult:
 class TargetResult:
     reconstructions: list[np.ndarray]
     frame_healths: list[unified.FrameHealthScore]
+
+
+@dataclass(frozen=True)
+class FrameDiagnostics:
+    """One-frame screen: current margin plus the two dominant saline faults."""
+
+    frame: unified.UnifiedFrame
+    probe: unified.FrameProbe
+    polarization: unified.PolarizationReport
+    offset: unified.OffsetReport
+    electrodes: list[unified.ElectrodeHealth]
 
 
 @dataclass(frozen=True)
@@ -138,27 +163,81 @@ class DebugController:
         self.state = ControllerState.CONFIGURED
         self._emit("Configuration ready")
 
+    def probe_frame(self, settings: UiSettings) -> FrameDiagnostics:
+        """Capture one frame and screen it without warmup or a stability gate.
+
+        Cheap enough to run before committing to a multi-minute capture, which
+        is the point: the weakest single measurement decides whether that
+        capture survives.
+        """
+        self._require_configured()
+        self._emit("Probe frame")
+        frame = self.acquisition.capture_frame()
+        self._verify_pattern(frame, settings.pattern)
+        probe = unified.probe_frame_health(frame)
+        polarization = unified.analyze_polarization(frame)
+        offset = unified.analyze_offset_domination(frame)
+        electrodes = unified.analyze_electrode_health(frame)
+        self._emit(
+            f"Probe: min_current={probe.min_current_ua:.3f}uA "
+            f"margin={probe.margin_ratio:.1f}x "
+            f"worst_decay={polarization.worst_decay_ratio:.2f} "
+            f"offset_dominated={offset.dominated_pairs}/{offset.total_pairs}"
+        )
+        return FrameDiagnostics(frame, probe, polarization, offset, electrodes)
+
     def capture_baseline(self, settings: UiSettings) -> BaselineResult:
         self._require_configured()
         self._clear_baseline()
+        strict = not settings.lenient_quality
         vectors = []
+        started = time.perf_counter()
         for index in range(settings.warmup_frames):
             self._raise_if_stopped()
-            self._emit(f"Warmup frame {index + 1}/{settings.warmup_frames}")
             self.acquisition.capture_frame()
+            self._emit_frame_progress(
+                "Warmup frame", index, settings.warmup_frames,
+                time.perf_counter() - started,
+            )
+        started = time.perf_counter()
         for index in range(settings.baseline_frames):
-            self._raise_if_stopped()
-            self._emit(f"Baseline frame {index + 1}/{settings.baseline_frames}")
+            self._raise_if_stopped(partial=list(vectors))
             frame = self.acquisition.capture_frame()
-            self._raise_if_stopped()
+            self._raise_if_stopped(partial=list(vectors))
             self._verify_pattern(frame, settings.pattern)
-            vectors.append(unified.frame_to_vector(frame, self.protocol))
+            vector = unified.frame_to_vector(
+                frame,
+                self.protocol,
+                strict=strict,
+                electrode_offset=settings.electrode_offset,
+                electrode_reversed=settings.electrode_reversed,
+            )
+            if not strict:
+                dropped = len(unified.missing_value_indexes(vector))
+                if dropped:
+                    self._emit(
+                        f"Baseline frame {index + 1}: dropped {dropped} bad measurements"
+                    )
+            vectors.append(vector)
+            self._emit_frame_progress(
+                "Baseline frame", index, settings.baseline_frames,
+                time.perf_counter() - started,
+            )
+            self._emit_running_stability(vectors)
+        baseline = unified.average_vectors(vectors)
+        if not strict:
+            never_measured = unified.missing_value_indexes(baseline)
+            if never_measured:
+                raise ValueError(
+                    f"{len(never_measured)} measurements were bad in every baseline "
+                    "frame; raise DAC or fix electrode contact"
+                )
+            vectors = [unified.fill_missing_values(vector, baseline) for vector in vectors]
         self._emit("Checking baseline stability")
         stability = unified.require_stable_baseline(
             vectors,
             allow_unstable=settings.allow_unstable_baseline,
         )
-        baseline = unified.average_vectors(vectors)
         pair_scores = unified.analyze_baseline_pair_health(vectors, self.protocol)
         result = BaselineResult(baseline, stability, pair_scores)
         self.baseline_result = result
@@ -169,14 +248,28 @@ class DebugController:
     def capture_control(self, settings: UiSettings) -> unified.ControlDriftReport:
         if self.baseline_result is None:
             raise RuntimeError("baseline is required before control drift")
+        strict = not settings.lenient_quality
         controls = []
+        started = time.perf_counter()
         for index in range(settings.frames):
-            self._raise_if_stopped()
-            self._emit(f"Control drift frame {index + 1}/{settings.frames}")
+            self._raise_if_stopped(partial=list(controls))
             frame = self.acquisition.capture_frame()
-            self._raise_if_stopped()
+            self._raise_if_stopped(partial=list(controls))
             self._verify_pattern(frame, settings.pattern)
-            controls.append(unified.frame_to_vector(frame, self.protocol))
+            vector = unified.frame_to_vector(
+                frame,
+                self.protocol,
+                strict=strict,
+                electrode_offset=settings.electrode_offset,
+                electrode_reversed=settings.electrode_reversed,
+            )
+            if not strict:
+                vector = unified.fill_missing_values(vector, self.baseline_result.baseline)
+            controls.append(vector)
+            self._emit_frame_progress(
+                "Control drift frame", index, settings.frames,
+                time.perf_counter() - started,
+            )
         self._emit("Analyzing control drift")
         return unified.analyze_control_drift(
             self.baseline_result.baseline,
@@ -187,15 +280,44 @@ class DebugController:
     def capture_target(self, settings: UiSettings) -> TargetResult:
         if self.baseline_result is None:
             raise RuntimeError("baseline is required before target capture")
+        strict = not settings.lenient_quality
+        # Inserting the target leaves the rig idle for a minute or two, so the
+        # electrode double layer restarts from cold and the first frames drift
+        # while it re-equilibrates. Without discarding them the reconstruction
+        # is dominated by that relaxation, which lands in the same place no
+        # matter where the target actually is.
+        started = time.perf_counter()
+        for index in range(settings.target_warmup_frames):
+            self._raise_if_stopped()
+            self.acquisition.capture_frame()
+            self._emit_frame_progress(
+                "Target warmup frame", index, settings.target_warmup_frames,
+                time.perf_counter() - started,
+            )
+
         reconstructions = []
         healths = []
+        started = time.perf_counter()
         for index in range(settings.frames):
-            self._raise_if_stopped()
-            self._emit(f"Target frame {index + 1}/{settings.frames}")
+            self._raise_if_stopped(
+                partial=TargetResult(list(reconstructions), list(healths))
+            )
             frame = self.acquisition.capture_frame()
-            self._raise_if_stopped()
+            self._raise_if_stopped(
+                partial=TargetResult(list(reconstructions), list(healths))
+            )
             self._verify_pattern(frame, settings.pattern)
-            current = unified.frame_to_vector(frame, self.protocol)
+            current = unified.frame_to_vector(
+                frame,
+                self.protocol,
+                strict=strict,
+                electrode_offset=settings.electrode_offset,
+                electrode_reversed=settings.electrode_reversed,
+            )
+            if not strict:
+                current = unified.fill_missing_values(
+                    current, self.baseline_result.baseline
+                )
             currents = np.asarray([abs(record.current_ua) for record in frame.records])
             filtered = unified.filter_frame_vector_best_effort(
                 baseline=self.baseline_result.baseline,
@@ -204,14 +326,28 @@ class DebugController:
                 current_median_ua=float(np.median(currents)),
                 current_spread_ua=float(np.max(currents) - np.min(currents)),
             )
+            vector_for_solver = (
+                filtered.filtered_vector if settings.filter_pairs else current
+            )
+            total_pairs = filtered.frame_health.kept_pairs + filtered.frame_health.dropped_pairs
+            self._emit(
+                f"  pairs: kept={filtered.frame_health.kept_pairs}/{total_pairs} "
+                f"dropped={filtered.frame_health.dropped_pairs} "
+                f"({filtered.frame_health.quality_label}) "
+                f"substitution={'on' if settings.filter_pairs else 'off'}"
+            )
             reconstruction = base.reconstruct_difference(
                 self.baseline_result.baseline,
-                filtered.filtered_vector,
+                vector_for_solver,
                 self.solver,
             )
             reconstructions.append(reconstruction)
             healths.append(filtered.frame_health)
             self._target_preview(list(reconstructions))
+            self._emit_frame_progress(
+                "Target frame", index, settings.frames,
+                time.perf_counter() - started,
+            )
         self.state = ControllerState.TARGET_READY
         self._emit("Target reconstruction ready")
         return TargetResult(reconstructions, healths)
@@ -267,11 +403,44 @@ class DebugController:
             self._emit("Tune failed: no successful drift attempts")
         return DriftTuneResult(attempts, best)
 
+    def send_command(self, command: str) -> list[str]:
+        """Pass a raw firmware command through and return the reply lines."""
+        if not command.strip():
+            raise ValueError("command is required")
+        self._emit(f"Serial command: {command.strip()}")
+        return self.acquisition.send_command(command)
+
     def stop(self) -> None:
         self._stop_requested = True
         self._emit("STOP requested")
         self.acquisition.stop()
         self.state = ControllerState.STOPPED
+
+    def emergency_stop(self) -> list[str]:
+        """Force the hardware idle and drop the connection, best effort.
+
+        Every step is attempted even if an earlier one fails, because the point
+        is to stop current flowing; failures are returned rather than raised so
+        one broken step cannot skip the rest.
+        """
+        errors: list[str] = []
+        self._stop_requested = True
+        self._emit("EMERGENCY STOP requested")
+        try:
+            self.acquisition.stop()
+        except Exception as exc:
+            errors.append(f"stop: {exc}")
+        try:
+            self.acquisition.close()
+        except Exception as exc:
+            errors.append(f"close: {exc}")
+        self._clear_configuration()
+        self.state = ControllerState.DISCONNECTED
+        if errors:
+            self._emit("EMERGENCY STOP finished with errors: " + "; ".join(errors))
+        else:
+            self._emit("EMERGENCY STOP done: current idle, port closed")
+        return errors
 
     def close(self) -> None:
         try:
@@ -289,9 +458,46 @@ class DebugController:
         } or self.protocol is None or self.solver is None:
             raise RuntimeError("configure before capture")
 
-    def _raise_if_stopped(self) -> None:
+    def _raise_if_stopped(self, partial: object = None) -> None:
         if self._stop_requested:
-            raise RuntimeError("capture stopped")
+            raise CaptureStopped(partial=partial)
+
+    def _emit_running_stability(self, vectors: list[np.ndarray]) -> None:
+        """Report stability so far, so a diverging run can be stopped early.
+
+        Without this the first stability number arrives only after every
+        baseline frame is captured, and then it raises.
+        """
+        if len(vectors) < 2:
+            return
+        usable = [vector for vector in vectors if not np.isnan(vector).any()]
+        if len(usable) < 2:
+            return
+        stability = unified.assess_baseline_stability(usable)
+        verdict = "stable" if stability.stable else "UNSTABLE"
+        self._emit(
+            f"  running stability: {verdict} "
+            f"relative={stability.max_relative_rms_percent:.2f}% "
+            f"(limit {unified.MAX_BASELINE_RELATIVE_RMS_PERCENT:.2f}%) "
+            f"corr={stability.min_correlation:.5f} "
+            f"(limit {unified.MIN_BASELINE_CORRELATION:.5f})"
+        )
+
+    def _emit_frame_progress(
+        self,
+        label: str,
+        index: int,
+        total: int,
+        elapsed_seconds: float,
+    ) -> None:
+        """Progress line with a remaining-time estimate from measured frames."""
+        completed = index + 1
+        message = f"{label} {completed}/{total}"
+        if completed and elapsed_seconds > 0.0:
+            per_frame = elapsed_seconds / completed
+            remaining = per_frame * (total - completed)
+            message += f" ({per_frame:.1f}s/frame, ~{remaining:.0f}s left)"
+        self._emit(message)
 
     def _clear_baseline(self) -> None:
         self.baseline_result = None

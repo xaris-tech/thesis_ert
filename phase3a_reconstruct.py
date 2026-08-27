@@ -224,7 +224,10 @@ def records_to_vector(
             # Firmware prints V+ then V-, while PyEIT stores [N, M].
             v_pair = (int(meas_pair[1]), int(meas_pair[0]))
             try:
-                values.append(by_key[(i_pair, v_pair)])
+                # Negated for the same reason as the unified path: the firmware
+                # reports V_vp - V_vn, PyEIT's subtract_row expects V_vn - V_vp
+                # (validity-audit D-02).
+                values.append(-by_key[(i_pair, v_pair)])
             except KeyError as exc:
                 detected_pattern = identify_drive_pattern(records)
                 raise ValueError(
@@ -274,6 +277,31 @@ def create_reconstruction_plot() -> tuple[plt.Figure, plt.Axes]:
     return fig, ax
 
 
+def electrode_label_positions(
+    eit_mesh,
+    n_el: int = N_ELECTRODES,
+    radius: float = 1.12,
+) -> list[tuple[int, float, float]]:
+    """Label positions taken from the mesh's own electrode nodes.
+
+    PyEIT places electrode 0 at 180 degrees and steps clockwise, so recomputing
+    `2 * pi * index / n_el` here mirrors every label about the vertical axis -
+    the image data stays correct while the annotation lies. Reading `el_pos`
+    removes the assumption instead of correcting it at each call site.
+    """
+    positions = getattr(eit_mesh, "el_pos", None)
+    nodes = getattr(eit_mesh, "node", None)
+    if positions is None or nodes is None:
+        return []
+    placements: list[tuple[int, float, float]] = []
+    for index, node_index in enumerate(positions[:n_el]):
+        x = float(nodes[node_index][0])
+        y = float(nodes[node_index][1])
+        norm = float(np.hypot(x, y)) or 1.0
+        placements.append((index, radius * x / norm, radius * y / norm))
+    return placements
+
+
 def update_reconstruction_plot(
     fig: plt.Figure,
     ax: plt.Axes,
@@ -293,10 +321,7 @@ def update_reconstruction_plot(
     ax.set_aspect("equal")
     ax.set_title(title)
     ax.set_axis_off()
-    for index in range(N_ELECTRODES):
-        angle = 2.0 * np.pi * index / N_ELECTRODES
-        x = 1.12 * np.cos(angle)
-        y = 1.12 * np.sin(angle)
+    for index, x, y in electrode_label_positions(eit_mesh):
         ax.text(
             x,
             y,

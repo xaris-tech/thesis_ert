@@ -1,10 +1,12 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+import json
+from dataclasses import dataclass, fields, replace
 from pathlib import Path
 
 
 VALID_PATTERNS = ("adjacent", "opposite", "skip-1", "skip-2")
+SETTINGS_FILENAME = "ui_settings.json"
 
 
 def parse_int_field(name: str, value: str, minimum: int, maximum: int) -> int:
@@ -36,12 +38,33 @@ class UiSettings:
     settle_ms: int = 30
     samples: int = 4
     warmup_frames: int = 10
+    # Frames discarded at the start of a target run. Inserting the target leaves
+    # the hardware idle, and re-energising restarts the electrode double layer
+    # from cold; those first frames drift regardless of what the target is.
+    target_warmup_frames: int = 5
     baseline_frames: int = 10
     frames: int = 20
     diameter_cm: float | None = None
     log_dir: Path = Path("phase3a_logs")
     log_enabled: bool = True
     allow_unstable_baseline: bool = False
+    # Drop individual bad measurements instead of failing the whole capture.
+    # Separate from allow_unstable_baseline: that rescues the stability gate,
+    # this rescues a single I_LOW record that would otherwise abort the run.
+    lenient_quality: bool = False
+    # Substitute unstable pairs with their baseline value before reconstructing.
+    # Turn off to see the raw difference: the filter asserts "nothing changed"
+    # for every pair it drops, which can erase a genuine target whose change
+    # exceeds MAX_RECON_PAIR_DELTA_KOHM.
+    filter_pairs: bool = True
+    # Physical-to-mesh electrode mapping. The firmware reports the electrode
+    # labels as wired; PyEIT's mesh has its own index order. If the ring was
+    # installed running the opposite way round, or starting at a different
+    # electrode, every reconstruction is mirrored or rotated by a fixed amount.
+    # Defaults are identity - change only from a ground-truth run with a target
+    # at a known electrode.
+    electrode_offset: int = 0
+    electrode_reversed: bool = False
 
     @classmethod
     def default(cls) -> "UiSettings":
@@ -62,10 +85,68 @@ class UiSettings:
             raise ValueError("samples must be positive")
         if self.warmup_frames < 0:
             raise ValueError("warmup_frames cannot be negative")
+        if self.target_warmup_frames < 0:
+            raise ValueError("target_warmup_frames cannot be negative")
         if self.baseline_frames <= 0:
             raise ValueError("baseline_frames must be positive")
         if self.frames <= 0:
             raise ValueError("frames must be positive")
         if self.diameter_cm is not None and self.diameter_cm <= 0:
             raise ValueError("diameter_cm must be positive")
+        if not 0 <= self.electrode_offset < 12:
+            raise ValueError("electrode_offset must be between 0 and 11")
         return self
+
+
+def settings_to_dict(settings: UiSettings) -> dict:
+    data = {}
+    for field in fields(settings):
+        value = getattr(settings, field.name)
+        data[field.name] = str(value) if isinstance(value, Path) else value
+    return data
+
+
+def settings_from_dict(data: dict, default: UiSettings | None = None) -> UiSettings:
+    """Rebuild settings, ignoring unknown or unusable keys.
+
+    A settings file written by an older build must not stop the UI starting, so
+    anything that does not fit falls back to the default value.
+    """
+    base = default or UiSettings.default()
+    known = {field.name for field in fields(base)}
+    updates: dict = {}
+    for name, value in data.items():
+        if name not in known:
+            continue
+        if name == "log_dir":
+            updates[name] = Path(value)
+        else:
+            updates[name] = value
+    try:
+        return replace(base, **updates).validate()
+    except (TypeError, ValueError):
+        return base
+
+
+def settings_path(log_dir: Path) -> Path:
+    return Path(log_dir) / SETTINGS_FILENAME
+
+
+def save_settings(settings: UiSettings, path: Path) -> None:
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(settings_to_dict(settings), indent=2), encoding="utf-8")
+
+
+def load_settings(path: Path, default: UiSettings | None = None) -> UiSettings | None:
+    """Return stored settings, or None when there is nothing usable to restore."""
+    path = Path(path)
+    if not path.exists():
+        return None
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+    if not isinstance(data, dict):
+        return None
+    return settings_from_dict(data, default)

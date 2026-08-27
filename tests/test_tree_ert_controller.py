@@ -1,8 +1,15 @@
 from dataclasses import replace
 import unittest
 
+import numpy as np
+
 from tree_ert.acquisition import DemoAcquisition, SerialAcquisition
-from tree_ert.controller import DebugController, ControllerState, drift_tuning_candidates
+from tree_ert.controller import (
+    CaptureStopped,
+    ControllerState,
+    DebugController,
+    drift_tuning_candidates,
+)
 from tree_ert.settings import UiSettings
 
 
@@ -26,6 +33,21 @@ class StopDuringCaptureAcquisition(DemoAcquisition):
     def stop(self) -> None:
         self.stop_count += 1
         super().stop()
+
+
+class BadRecordAcquisition(DemoAcquisition):
+    """Demo frames with one measurement flagged bad by the firmware.
+
+    A different record is spoiled each frame, so every pair is measured by at
+    least one frame - the case lenient capture is meant to rescue.
+    """
+
+    def capture_frame(self):
+        frame = super().capture_frame()
+        spoiled = list(frame.records)
+        index = (self.frame_id * 2) % len(spoiled)
+        spoiled[index] = replace(spoiled[index], quality="I_LOW", current_ua=0.2)
+        return replace(frame, records=spoiled)
 
 
 class FailingStopSerial:
@@ -87,10 +109,21 @@ class TestDebugController(unittest.TestCase):
 
         self.assertIn("Connecting to demo acquisition", messages)
         self.assertIn("Configuring pattern=adjacent dac=100 settle=30ms samples=4", messages)
-        self.assertIn("Warmup frame 1/1", messages)
-        self.assertIn("Baseline frame 2/2", messages)
-        self.assertIn("Control drift frame 2/2", messages)
-        self.assertIn("Target frame 2/2", messages)
+        # Progress lines carry a trailing time estimate, so match on the prefix.
+        for prefix in (
+            "Warmup frame 1/1",
+            "Baseline frame 2/2",
+            "Control drift frame 2/2",
+            "Target frame 2/2",
+        ):
+            self.assertTrue(
+                any(message.startswith(prefix) for message in messages),
+                f"no progress message starting with {prefix!r}",
+            )
+        self.assertTrue(
+            any(message.strip().startswith("running stability:") for message in messages),
+            "baseline should report running stability before it finishes",
+        )
 
     def test_controller_streams_target_reconstructions_as_they_are_created(self):
         previews = []
@@ -116,6 +149,148 @@ class TestDebugController(unittest.TestCase):
         target = controller.capture_target(settings)
         self.assertEqual(controller.state, ControllerState.TARGET_READY)
         self.assertEqual(len(target.reconstructions), settings.frames)
+
+    def test_probe_frame_reports_diagnostics_without_baseline(self):
+        controller = DebugController(DemoAcquisition())
+        settings = UiSettings.default()
+        controller.connect(settings)
+        controller.configure(settings)
+
+        diagnostics = controller.probe_frame(settings)
+
+        self.assertGreater(diagnostics.probe.total_records, 0)
+        self.assertEqual(diagnostics.probe.quality_counts, {"OK": diagnostics.probe.total_records})
+        self.assertEqual(len(diagnostics.electrodes), 12)
+        self.assertIsNone(controller.baseline_result)
+
+    def test_probe_frame_requires_configure(self):
+        controller = DebugController(DemoAcquisition())
+        settings = UiSettings.default()
+        controller.connect(settings)
+
+        with self.assertRaisesRegex(RuntimeError, "configure"):
+            controller.probe_frame(settings)
+
+    def test_lenient_capture_survives_a_bad_measurement(self):
+        settings = replace(
+            UiSettings.default(), warmup_frames=0, baseline_frames=3, frames=1
+        )
+        strict_controller = DebugController(BadRecordAcquisition())
+        strict_controller.connect(settings)
+        strict_controller.configure(settings)
+
+        with self.assertRaises(ValueError):
+            strict_controller.capture_baseline(settings)
+
+        lenient = replace(settings, lenient_quality=True)
+        lenient_controller = DebugController(BadRecordAcquisition())
+        lenient_controller.connect(lenient)
+        lenient_controller.configure(lenient)
+
+        result = lenient_controller.capture_baseline(lenient)
+
+        self.assertEqual(lenient_controller.state, ControllerState.BASELINE_READY)
+        self.assertFalse(bool(np.isnan(result.baseline).any()))
+
+    def test_emergency_stop_idles_hardware_and_drops_connection(self):
+        acquisition = DemoAcquisition()
+        controller = DebugController(acquisition)
+        settings = UiSettings.default()
+        controller.connect(settings)
+        controller.configure(settings)
+
+        errors = controller.emergency_stop()
+
+        self.assertEqual(errors, [])
+        self.assertTrue(acquisition.stopped)
+        self.assertEqual(controller.state, ControllerState.DISCONNECTED)
+        self.assertIsNone(controller.protocol)
+        self.assertIsNone(controller.baseline_result)
+
+    def test_emergency_stop_continues_after_a_failing_step(self):
+        class BrokenStop(DemoAcquisition):
+            def stop(self):
+                raise OSError("port vanished")
+
+        acquisition = BrokenStop()
+        controller = DebugController(acquisition)
+        settings = UiSettings.default()
+        controller.connect(settings)
+
+        errors = controller.emergency_stop()
+
+        # close() also routes through stop(), so both steps report the failure;
+        # the point is that neither one aborts the sequence.
+        self.assertEqual(len(errors), 2)
+        self.assertTrue(all("port vanished" in error for error in errors))
+        self.assertEqual(controller.state, ControllerState.DISCONNECTED)
+
+    def test_stopped_capture_keeps_partial_frames(self):
+        acquisition = StopDuringCaptureAcquisition(stop_on_capture=3)
+        controller = DebugController(acquisition)
+        acquisition.controller = controller
+        settings = replace(
+            UiSettings.default(), warmup_frames=0, baseline_frames=6, frames=2
+        )
+        controller.connect(settings)
+        controller.configure(settings)
+
+        with self.assertRaises(CaptureStopped) as caught:
+            controller.capture_baseline(settings)
+
+        self.assertEqual(len(caught.exception.partial), 2)
+
+    def test_target_capture_discards_warmup_frames_after_insertion(self):
+        settings = replace(
+            UiSettings.default(),
+            warmup_frames=0,
+            baseline_frames=2,
+            target_warmup_frames=3,
+            frames=2,
+        )
+        acquisition = DemoAcquisition()
+        messages = []
+        controller = DebugController(acquisition, progress=messages.append)
+        controller.connect(settings)
+        controller.configure(settings)
+        controller.capture_baseline(settings)
+        before = acquisition.frame_id
+
+        result = controller.capture_target(settings)
+
+        # 3 discarded plus 2 kept, and only the kept ones reconstruct.
+        self.assertEqual(acquisition.frame_id - before, 5)
+        self.assertEqual(len(result.reconstructions), 2)
+        self.assertTrue(
+            any(m.startswith("Target warmup frame 3/3") for m in messages),
+            "target warmup should be reported",
+        )
+
+    def test_substitution_can_be_disabled_for_target_capture(self):
+        settings = replace(
+            UiSettings.default(), warmup_frames=0, baseline_frames=2, frames=1
+        )
+        messages = []
+        controller = DebugController(DemoAcquisition(), progress=messages.append)
+        controller.connect(settings)
+        controller.configure(settings)
+        controller.capture_baseline(settings)
+
+        controller.capture_target(replace(settings, filter_pairs=False))
+
+        self.assertTrue(
+            any("substitution=off" in message for message in messages),
+            "target capture should report whether substitution was applied",
+        )
+
+    def test_send_command_passes_through_to_acquisition(self):
+        controller = DebugController(DemoAcquisition())
+        settings = UiSettings.default()
+        controller.connect(settings)
+
+        self.assertEqual(controller.send_command("?"), ["[demo] ?"])
+        with self.assertRaisesRegex(ValueError, "command"):
+            controller.send_command("   ")
 
     def test_target_requires_baseline(self):
         controller = DebugController(DemoAcquisition())

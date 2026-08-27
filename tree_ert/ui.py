@@ -4,6 +4,8 @@ import queue
 import threading
 import tkinter as tk
 from collections.abc import Callable
+from datetime import datetime
+from pathlib import Path
 from tkinter import messagebox, ttk
 from typing import Any
 
@@ -15,8 +17,119 @@ import phase3a_reconstruct as base
 import phase3a_unified_reconstruct as unified
 from phase3a_reconstruct import N_ELECTRODES
 from tree_ert.acquisition import DemoAcquisition, SerialAcquisition
-from tree_ert.controller import DebugController, DriftTuneAttempt, DriftTuneResult
-from tree_ert.settings import UiSettings, parse_float_field, parse_int_field
+from tree_ert.controller import (
+    CaptureStopped,
+    DebugController,
+    DriftTuneAttempt,
+    DriftTuneResult,
+    FrameDiagnostics,
+    TargetResult,
+)
+from tree_ert.settings import (
+    UiSettings,
+    load_settings,
+    parse_float_field,
+    parse_int_field,
+    save_settings,
+    settings_path,
+)
+
+
+def available_ports() -> tuple[str, ...]:
+    """Serial ports currently present, newest listing each call."""
+    try:
+        from serial.tools import list_ports
+    except ImportError:
+        return ()
+    return tuple(sorted(port.device for port in list_ports.comports()))
+
+
+def _electrode_pair(pair: tuple[int, int]) -> str:
+    return f"{base.index_to_electrode(pair[0])}-{base.index_to_electrode(pair[1])}"
+
+
+def format_frame_probe(probe: unified.FrameProbe) -> str:
+    qualities = ", ".join(
+        f"{name}={count}" for name, count in sorted(probe.quality_counts.items())
+    )
+    verdict = "PASS" if probe.passes else "FAIL"
+    return (
+        f"Probe {verdict}: min_current={probe.min_current_ua:.3f}uA "
+        f"({probe.margin_ratio:.1f}x the {unified.FIRMWARE_MIN_CURRENT_UA:.1f}uA floor) "
+        f"at {probe.min_current_polarity} "
+        f"I={_electrode_pair(probe.min_current_i_pair)} "
+        f"V={_electrode_pair(probe.min_current_v_pair)}; "
+        f"median_current={probe.median_current_ua:.3f}uA; "
+        f"records={probe.total_records}; qualities: {qualities}"
+    )
+
+
+def format_polarization_summary(report: unified.PolarizationReport) -> str:
+    if not report.metrics:
+        return "Polarisation: not enough measurements per injection pair to assess"
+    worst = report.metrics[0]
+    verdict = "FLAGGED" if report.flagged else "ok"
+    return (
+        f"Polarisation {verdict}: worst_decay={report.worst_decay_ratio:.2f}x "
+        f"(limit {unified.MAX_POLARIZATION_DECAY_RATIO:.2f}x) "
+        f"at I={_electrode_pair(worst.i_pair)} {worst.polarity} "
+        f"{worst.first_current_ua:.2f}uA -> {worst.last_current_ua:.2f}uA "
+        f"over {worst.sample_count} measurements; "
+        f"flagged_groups={report.flagged_groups}/{len(report.metrics)}"
+    )
+
+
+def format_offset_summary(report: unified.OffsetReport) -> str:
+    if not report.pairs:
+        return "Offset: no forward/reverse pairs to compare"
+    worst = report.pairs[0]
+    verdict = "FLAGGED" if report.flagged else "ok"
+    return (
+        f"Offset {verdict}: {report.dominated_pairs}/{report.total_pairs} pairs "
+        f"({100.0 * report.dominated_fraction:.1f}%) dominated by electrode offset "
+        f"(limit {unified.MAX_OFFSET_COMMON_RATIO:.2f}); "
+        f"worst I={_electrode_pair(worst.i_pair)} V={_electrode_pair(worst.v_pair)} "
+        f"fwd={worst.forward_mv:.3f}mV rev={worst.reverse_mv:.3f}mV "
+        f"differential={worst.differential_mv:.3f}mV common={worst.common_mv:.3f}mV"
+    )
+
+
+def format_electrode_health_summary(
+    electrodes: list[unified.ElectrodeHealth],
+    limit: int = 3,
+) -> str:
+    if not electrodes:
+        return "Electrodes: no data"
+    weakest = sorted(electrodes, key=lambda item: item.drive_median_ua)[:limit]
+    parts = [
+        f"{base.index_to_electrode(item.electrode)} "
+        f"drive={item.drive_median_ua:.2f}uA "
+        f"sense={item.sense_median_abs_mv:.2f}mV "
+        f"bad={item.bad_quality_count}"
+        for item in weakest
+    ]
+    return "Weakest electrodes by drive current: " + "; ".join(parts)
+
+
+def describe_partial_capture(partial: object) -> str:
+    """One line naming what a stopped capture managed to keep."""
+    if partial is None:
+        return "no partial data kept"
+    if isinstance(partial, TargetResult):
+        count = len(partial.reconstructions)
+        return f"kept {count} target reconstruction(s)" if count else "no partial data kept"
+    if isinstance(partial, list):
+        return f"kept {len(partial)} frame vector(s)" if partial else "no partial data kept"
+    return "partial data kept"
+
+
+def format_frame_diagnostics(diagnostics: FrameDiagnostics) -> str:
+    return "\n".join((
+        format_frame_probe(diagnostics.probe),
+        format_polarization_summary(diagnostics.polarization),
+        format_offset_summary(diagnostics.offset),
+        format_electrode_health_summary(diagnostics.electrodes),
+    ))
 
 
 def average_reconstruction_vector(reconstructions: list[np.ndarray]) -> np.ndarray:
@@ -25,16 +138,28 @@ def average_reconstruction_vector(reconstructions: list[np.ndarray]) -> np.ndarr
     return np.mean(np.stack(reconstructions), axis=0)
 
 
+def latest_reconstruction(reconstructions: list[np.ndarray]) -> np.ndarray:
+    """Most recent scan.
+
+    The main map shows this rather than a running average: averaging hides how
+    much a target run moves between scans, which is exactly what has to be
+    judged while the rig is still being stabilised.
+    """
+    if not reconstructions:
+        return np.asarray([], dtype=float)
+    return reconstructions[-1]
+
+
 def build_reconstruction_figure() -> tuple[Figure, object, object, tuple[object, ...]]:
     figure = Figure(figsize=(10, 6.5), dpi=100)
     grid = figure.add_gridspec(2, 4, height_ratios=(3.0, 1.15))
     map_ax = figure.add_subplot(grid[0, 0:2])
     vector_ax = figure.add_subplot(grid[0, 2:4])
     scan_axes = tuple(figure.add_subplot(grid[1, index]) for index in range(4))
-    map_ax.set_title("Average 2D map")
+    map_ax.set_title("Latest scan map")
     map_ax.set_aspect("equal")
     map_ax.set_axis_off()
-    vector_ax.set_title("Average reconstruction vector")
+    vector_ax.set_title("Latest reconstruction vector")
     vector_ax.set_xlabel("Vector index")
     vector_ax.set_ylabel("Difference")
     for index, axis in enumerate(scan_axes, start=1):
@@ -136,13 +261,17 @@ class DebugApp(tk.Tk):
         )
         self.demo = demo
         self._worker_active = False
+        self._last_reconstructions: list[np.ndarray] = []
         self._build_vars(port)
         self._build_layout()
         self.protocol("WM_DELETE_WINDOW", self._on_close)
         self.after(100, self._drain_events)
 
     def _build_vars(self, port: str) -> None:
-        defaults = UiSettings.default()
+        stored = load_settings(settings_path(UiSettings.default().log_dir))
+        defaults = stored or UiSettings.default()
+        self.restored_settings = stored is not None
+        # An explicit --port always wins over whatever was stored.
         self.port_var = tk.StringVar(value=port)
         self.pattern_var = tk.StringVar(value=defaults.pattern)
         self.dac_var = tk.StringVar(value=str(defaults.dac))
@@ -150,33 +279,106 @@ class DebugApp(tk.Tk):
         self.samples_var = tk.StringVar(value=str(defaults.samples))
         self.warmup_var = tk.StringVar(value=str(defaults.warmup_frames))
         self.baseline_var = tk.StringVar(value=str(defaults.baseline_frames))
+        self.target_warmup_var = tk.StringVar(value=str(defaults.target_warmup_frames))
         self.frames_var = tk.StringVar(value=str(defaults.frames))
-        self.diameter_var = tk.StringVar(value="")
+        self.diameter_var = tk.StringVar(
+            value="" if defaults.diameter_cm is None else str(defaults.diameter_cm)
+        )
+        self.command_var = tk.StringVar(value="")
+        self.lenient_var = tk.BooleanVar(value=defaults.lenient_quality)
+        self.allow_unstable_var = tk.BooleanVar(value=defaults.allow_unstable_baseline)
+        self.filter_pairs_var = tk.BooleanVar(value=defaults.filter_pairs)
+        self.electrode_offset_var = tk.StringVar(value=str(defaults.electrode_offset))
+        self.electrode_reversed_var = tk.BooleanVar(value=defaults.electrode_reversed)
         self.status_var = tk.StringVar(value="Demo mode" if self.demo else "Disconnected")
 
     def _build_layout(self) -> None:
         self.columnconfigure(1, weight=1)
         self.rowconfigure(0, weight=1)
 
-        left = ttk.Frame(self, padding=10)
+        left = ttk.Frame(self, padding=(10, 10, 4, 10))
         left.grid(row=0, column=0, sticky="ns")
+        left.rowconfigure(0, weight=1)
+
+        # Settings and actions scroll; the stop buttons are pinned underneath.
+        # An emergency control that can scroll off screen is not a safety
+        # control, and on a short window the old single-column pack layout put
+        # both stop buttons past the bottom edge.
+        canvas = tk.Canvas(left, width=214, highlightthickness=0, borderwidth=0)
+        canvas.grid(row=0, column=0, sticky="nsew")
+        scrollbar = ttk.Scrollbar(left, orient="vertical", command=canvas.yview)
+        scrollbar.grid(row=0, column=1, sticky="ns")
+        canvas.configure(yscrollcommand=scrollbar.set)
+
+        controls = ttk.Frame(canvas)
+        window = canvas.create_window((0, 0), window=controls, anchor="nw")
+        controls.bind(
+            "<Configure>",
+            lambda _event: canvas.configure(scrollregion=canvas.bbox("all")),
+        )
+        canvas.bind(
+            "<Configure>",
+            lambda event: canvas.itemconfigure(window, width=event.width),
+        )
+
+        stop_frame = ttk.Frame(left, padding=(0, 8, 0, 0))
+        stop_frame.grid(row=1, column=0, columnspan=2, sticky="ew")
+
         right = ttk.Notebook(self)
         right.grid(row=0, column=1, sticky="nsew")
 
-        self._build_controls(left)
+        self._build_controls(controls)
+        self._build_stop_controls(stop_frame)
         self._build_tabs(right)
+        self._bind_mousewheel(controls, canvas)
+        self._bind_mousewheel(canvas, canvas)
+
+    def _bind_mousewheel(self, widget: tk.Misc, canvas: tk.Canvas) -> None:
+        """Wheel-scroll the control column without hijacking the whole window."""
+        widget.bind(
+            "<MouseWheel>",
+            lambda event: canvas.yview_scroll(int(-event.delta / 120), "units"),
+        )
+        for child in widget.winfo_children():
+            self._bind_mousewheel(child, canvas)
 
     def _build_controls(self, parent: ttk.Frame) -> None:
-        ttk.Label(parent, text="Connection").pack(anchor="w")
-        ttk.Label(parent, textvariable=self.status_var, foreground="#444444").pack(anchor="w", pady=(0, 8))
-        ttk.Entry(parent, textvariable=self.port_var, width=18).pack(fill="x", pady=2)
+        parent.columnconfigure(1, weight=1)
+        row = 0
+
+        ttk.Label(parent, text="Connection").grid(row=row, column=0, columnspan=2, sticky="w")
+        row += 1
+        ttk.Label(
+            parent,
+            textvariable=self.status_var,
+            foreground="#444444",
+            wraplength=200,
+        ).grid(row=row, column=0, columnspan=2, sticky="w", pady=(0, 6))
+        row += 1
+
+        ttk.Label(parent, text="Port").grid(row=row, column=0, sticky="w")
+        self.port_combo = ttk.Combobox(
+            parent,
+            textvariable=self.port_var,
+            values=available_ports(),
+            width=12,
+        )
+        self.port_combo.grid(row=row, column=1, sticky="ew", pady=1)
+        row += 1
+        ttk.Button(parent, text="Refresh ports", command=self.refresh_ports).grid(
+            row=row, column=0, columnspan=2, sticky="ew", pady=(2, 4)
+        )
+        row += 1
+
+        ttk.Label(parent, text="Pattern").grid(row=row, column=0, sticky="w")
         ttk.Combobox(
             parent,
             textvariable=self.pattern_var,
             values=("adjacent", "opposite", "skip-1", "skip-2"),
-            width=16,
+            width=12,
             state="readonly",
-        ).pack(fill="x", pady=2)
+        ).grid(row=row, column=1, sticky="ew", pady=1)
+        row += 1
 
         for label, var in (
             ("DAC", self.dac_var),
@@ -184,23 +386,59 @@ class DebugApp(tk.Tk):
             ("Samples", self.samples_var),
             ("Warmup frames", self.warmup_var),
             ("Baseline frames", self.baseline_var),
+            ("Target warmup", self.target_warmup_var),
             ("Run frames", self.frames_var),
             ("Diameter cm", self.diameter_var),
+            ("Electrode offset", self.electrode_offset_var),
         ):
-            ttk.Label(parent, text=label).pack(anchor="w", pady=(8, 0))
-            ttk.Entry(parent, textvariable=var, width=18).pack(fill="x", pady=2)
+            ttk.Label(parent, text=label).grid(row=row, column=0, sticky="w")
+            ttk.Entry(parent, textvariable=var, width=12).grid(
+                row=row, column=1, sticky="ew", pady=1
+            )
+            row += 1
+
+        ttk.Checkbutton(
+            parent,
+            text="Drop bad measurements",
+            variable=self.lenient_var,
+        ).grid(row=row, column=0, columnspan=2, sticky="w", pady=(6, 0))
+        row += 1
+        ttk.Checkbutton(
+            parent,
+            text="Allow unstable baseline",
+            variable=self.allow_unstable_var,
+        ).grid(row=row, column=0, columnspan=2, sticky="w")
+        row += 1
+        ttk.Checkbutton(
+            parent,
+            text="Substitute unstable pairs",
+            variable=self.filter_pairs_var,
+        ).grid(row=row, column=0, columnspan=2, sticky="w")
+        row += 1
+        ttk.Checkbutton(
+            parent,
+            text="Reversed electrode ring",
+            variable=self.electrode_reversed_var,
+        ).grid(row=row, column=0, columnspan=2, sticky="w", pady=(0, 4))
+        row += 1
 
         for label, action in (
             ("Connect", self.connect),
             ("Configure", self.configure),
+            ("Probe Frame", self.probe_frame),
             ("Baseline", self.capture_baseline),
             ("Control Drift", self.capture_control),
             ("Tune Drift", self.tune_drift),
             ("Target Run", self.capture_target),
-            ("Export", self.export_placeholder),
+            ("Export Images", self.export_images),
         ):
-            ttk.Button(parent, text=label, command=action).pack(fill="x", pady=4)
+            ttk.Button(parent, text=label, command=action).grid(
+                row=row, column=0, columnspan=2, sticky="ew", pady=2
+            )
+            row += 1
 
+    def _build_stop_controls(self, parent: ttk.Frame) -> None:
+        parent.columnconfigure(0, weight=1)
         tk.Button(
             parent,
             text="STOP / CURRENT IDLE",
@@ -209,14 +447,40 @@ class DebugApp(tk.Tk):
             fg="white",
             activebackground="#7f0018",
             activeforeground="white",
-        ).pack(fill="x", pady=12)
+        ).grid(row=0, column=0, sticky="ew", pady=(0, 4))
+
+        tk.Button(
+            parent,
+            text="STOP EVERYTHING",
+            command=self.stop_everything,
+            bg="#000000",
+            fg="white",
+            activebackground="#333333",
+            activeforeground="white",
+        ).grid(row=1, column=0, sticky="ew")
 
     def _build_tabs(self, notebook: ttk.Notebook) -> None:
         reconstruction_tab = ttk.Frame(notebook)
         reconstruction_tab.columnconfigure(0, weight=1)
         reconstruction_tab.rowconfigure(0, weight=1)
 
-        self.serial_text = tk.Text(notebook, height=10, wrap="word")
+        serial_tab = ttk.Frame(notebook)
+        serial_tab.columnconfigure(0, weight=1)
+        serial_tab.rowconfigure(0, weight=1)
+        self.serial_text = tk.Text(serial_tab, height=10, wrap="word")
+        self.serial_text.grid(row=0, column=0, columnspan=2, sticky="nsew")
+        command_entry = ttk.Entry(serial_tab, textvariable=self.command_var)
+        command_entry.grid(row=1, column=0, sticky="ew", padx=(0, 4), pady=4)
+        command_entry.bind("<Return>", lambda _event: self.send_command())
+        ttk.Button(serial_tab, text="Send", command=self.send_command).grid(
+            row=1, column=1, pady=4
+        )
+        ttk.Label(
+            serial_tab,
+            text="Firmware commands: s ma ms mk mo el em eh pN tN cN nN jN.N g x i d ? h",
+            foreground="#444444",
+        ).grid(row=2, column=0, columnspan=2, sticky="w")
+
         self.health_text = tk.Text(notebook, height=10, wrap="word")
         self.files_text = tk.Text(notebook, height=10, wrap="word")
 
@@ -235,12 +499,14 @@ class DebugApp(tk.Tk):
 
         for title, widget in zip(
             debug_tab_titles(),
-            (reconstruction_tab, self.health_text, self.serial_text, self.files_text),
+            (reconstruction_tab, self.health_text, serial_tab, self.files_text),
             strict=True,
         ):
             notebook.add(widget, text=title)
 
         self._append(self.status_text, "Ready.\n")
+        if self.restored_settings:
+            self._append(self.status_text, "Restored settings from previous session.\n")
         if self.demo:
             self._append(self.serial_text, "Demo acquisition selected; no serial port will be opened.\n")
 
@@ -255,12 +521,31 @@ class DebugApp(tk.Tk):
             samples=parse_int_field("samples", self.samples_var.get(), 1, 1000),
             warmup_frames=parse_int_field("warmup_frames", self.warmup_var.get(), 0, 1000),
             baseline_frames=parse_int_field("baseline_frames", self.baseline_var.get(), 1, 1000),
+            target_warmup_frames=parse_int_field(
+                "target_warmup_frames", self.target_warmup_var.get(), 0, 1000
+            ),
             frames=parse_int_field("frames", self.frames_var.get(), 1, 1000),
             diameter_cm=diameter,
+            allow_unstable_baseline=bool(self.allow_unstable_var.get()),
+            lenient_quality=bool(self.lenient_var.get()),
+            filter_pairs=bool(self.filter_pairs_var.get()),
+            electrode_offset=parse_int_field(
+                "electrode_offset", self.electrode_offset_var.get(), 0, 11
+            ),
+            electrode_reversed=bool(self.electrode_reversed_var.get()),
         ).validate()
+
+    def refresh_ports(self) -> None:
+        ports = available_ports()
+        self.port_combo.configure(values=ports)
+        listing = ", ".join(ports) if ports else "none found"
+        self._append(self.status_text, f"Serial ports: {listing}\n")
 
     def connect(self) -> None:
         self._run_with_settings("connect", self.controller.connect)
+
+    def probe_frame(self) -> None:
+        self._run_with_settings("probe", self.controller.probe_frame)
 
     def configure(self) -> None:
         self._run_with_settings("configure", self.controller.configure)
@@ -277,8 +562,87 @@ class DebugApp(tk.Tk):
     def capture_target(self) -> None:
         self._run_with_settings("target", self.controller.capture_target)
 
-    def export_placeholder(self) -> None:
-        self._append(self.files_text, "Export uses phase3a_logs outputs from capture runs.\n")
+    def export_images(self) -> Path | None:
+        """Write the on-screen figure plus a contact sheet of every scan.
+
+        The on-screen figure only previews four scans, which is not enough to
+        judge whether a target is reproducible across a run; the contact sheet
+        renders all of them on one shared colour scale.
+        """
+        try:
+            settings = self.settings()
+        except Exception:
+            settings = UiSettings.default()
+        directory = Path(settings.log_dir) / "exports"
+        directory.mkdir(parents=True, exist_ok=True)
+        stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+        path = directory / f"{stamp}_debug_ui.png"
+        try:
+            self.figure.savefig(path, dpi=140, bbox_inches="tight", facecolor="white")
+        except Exception as exc:
+            self._append(self.files_text, f"Export failed: {exc}\n")
+            self._handle_error(f"export: {exc}")
+            return None
+        self._append(self.files_text, f"Exported {path}\n")
+        self._append(self.status_text, f"Exported {path}\n")
+
+        mesh = self.controller.mesh
+        if self._last_reconstructions and mesh is not None:
+            contact_path = directory / f"{stamp}_all_scans.png"
+            average_path = directory / f"{stamp}_average.png"
+            try:
+                unified.save_reconstruction_images(
+                    mesh,
+                    self._last_reconstructions,
+                    contact_path,
+                    average_path,
+                    settings.pattern,
+                    settings.diameter_cm,
+                )
+            except Exception as exc:
+                self._append(self.files_text, f"Contact sheet failed: {exc}\n")
+            else:
+                self._append(
+                    self.files_text,
+                    f"Exported {contact_path} ({len(self._last_reconstructions)} scans)\n"
+                    f"Exported {average_path}\n",
+                )
+                self._append(self.status_text, f"Exported {contact_path}\n")
+        return path
+
+    def send_command(self) -> None:
+        command = self.command_var.get().strip()
+        if not command:
+            return
+        self._append(self.serial_text, f"> {command}\n")
+        try:
+            replies = self.controller.send_command(command)
+        except Exception as exc:
+            self._append(self.serial_text, f"ERROR {exc}\n")
+            return
+        for line in replies or ["(no reply)"]:
+            self._append(self.serial_text, f"{line}\n")
+        self.command_var.set("")
+
+    def stop_everything(self) -> None:
+        """Force current idle and drop the port, whatever state the UI is in."""
+        try:
+            errors = self.controller.emergency_stop()
+        except Exception as exc:
+            self.status_var.set("Emergency stop error")
+            self._handle_error(f"stop everything: {exc}")
+            return
+        # Clear the busy flag unconditionally: the port is closed, so a worker
+        # still unwinding cannot do anything further, and leaving the flag set
+        # would lock every button.
+        self._worker_active = False
+        self.status_var.set("EVERYTHING STOPPED / DISCONNECTED")
+        self._append(
+            self.status_text,
+            "STOP EVERYTHING: DAC idle, muxes disabled, port closed. Reconnect to continue.\n",
+        )
+        for error in errors:
+            self._append(self.status_text, f"  stop-everything warning: {error}\n")
 
     def stop(self) -> None:
         worker_was_active = self._worker_active
@@ -320,6 +684,8 @@ class DebugApp(tk.Tk):
         def worker() -> None:
             try:
                 result = fn()
+            except CaptureStopped as exc:
+                self.events.put(("stopped", (name, exc.partial)))
             except Exception as exc:
                 self.events.put(("error", f"{name}: {exc}"))
             else:
@@ -341,7 +707,7 @@ class DebugApp(tk.Tk):
             self._append(self.status_text, f"{payload}\n")
             return
         if event == "target_preview":
-            self._draw_average(payload)
+            self._draw_reconstructions(payload)
             return
 
         self._worker_active = False
@@ -349,13 +715,23 @@ class DebugApp(tk.Tk):
             self.status_var.set("Error")
             self._handle_error(str(payload))
             return
+        if event == "stopped":
+            name, partial = payload
+            self._handle_stopped(name, partial)
+            return
+        if event == "configure":
+            self._save_current_settings()
 
         if event in {"baseline", "control", "target"} and "stopped" in str(payload).lower():
             self.status_var.set("STOPPED / CURRENT IDLE")
         else:
             self.status_var.set(f"{event} complete")
         self._append(self.status_text, f"{event} complete.\n")
-        if event == "baseline":
+        if event == "probe":
+            summary = format_frame_diagnostics(payload)
+            self._append(self.status_text, f"{summary}\n")
+            self._append(self.health_text, f"{summary}\n")
+        elif event == "baseline":
             self._draw_baseline_reference(payload.baseline)
             self._append(self.health_text, f"Baseline: {payload.stability}\n")
         elif event == "control":
@@ -365,8 +741,23 @@ class DebugApp(tk.Tk):
         elif event == "tune":
             self._handle_tune_result(payload)
         elif event == "target":
-            self._draw_average(payload.reconstructions)
+            self._draw_reconstructions(payload.reconstructions, payload.frame_healths)
             self._append(self.health_text, f"Target frames: {len(payload.reconstructions)}\n")
+
+    def _handle_stopped(self, name: str, partial: object) -> None:
+        self.status_var.set("STOPPED / CURRENT IDLE")
+        kept = describe_partial_capture(partial)
+        self._append(self.status_text, f"{name} stopped; {kept}\n")
+        self._append(self.health_text, f"{name} stopped; {kept}\n")
+        if isinstance(partial, TargetResult) and partial.reconstructions:
+            self._draw_reconstructions(partial.reconstructions, partial.frame_healths)
+
+    def _save_current_settings(self) -> None:
+        try:
+            settings = self.settings()
+            save_settings(settings, settings_path(settings.log_dir))
+        except Exception as exc:
+            self._append(self.status_text, f"Could not save settings: {exc}\n")
 
     def _handle_error(self, message: str) -> None:
         self._append(self.status_text, f"ERROR {message}\n")
@@ -388,13 +779,50 @@ class DebugApp(tk.Tk):
         self.baseline_var.set(str(settings.baseline_frames))
         self.frames_var.set(str(settings.frames))
 
-    def _draw_average(self, reconstructions: list[np.ndarray]) -> None:
-        average = average_reconstruction_vector(reconstructions)
-        self._draw_average_map(average)
-        self._draw_average_vector(average)
+    def _draw_reconstructions(
+        self,
+        reconstructions: list[np.ndarray],
+        frame_healths: list[unified.FrameHealthScore] | None = None,
+    ) -> None:
+        self._last_reconstructions = list(reconstructions)
+        latest = latest_reconstruction(reconstructions)
+        self._draw_latest_map(latest, len(reconstructions))
+        self._draw_latest_vector(latest, len(reconstructions))
         self._draw_scan_previews(reconstructions)
+        self._annotate_substituted_pairs(frame_healths)
         self.figure.tight_layout()
         self.canvas.draw_idle()
+
+    def _annotate_substituted_pairs(
+        self,
+        frame_healths: list[unified.FrameHealthScore] | None,
+    ) -> None:
+        """Show how much of the latest scan was substituted, not measured.
+
+        The best-effort filter writes the baseline value into dropped pairs,
+        which asserts "nothing changed here" to the solver and biases the image
+        toward a clean null result. Rendering the fraction on the figure keeps a
+        substituted null from being read as a measured one (validity-audit
+        D-05).
+        """
+        if not frame_healths:
+            return
+        health = frame_healths[-1]
+        total = health.kept_pairs + health.dropped_pairs
+        if not total or not health.dropped_pairs:
+            return
+        percent = 100.0 * health.dropped_pairs / total
+        self.map_ax.text(
+            0.5,
+            -0.06,
+            f"{health.dropped_pairs}/{total} pairs ({percent:.0f}%) substituted "
+            f"from baseline, not measured - {health.quality_label}",
+            transform=self.map_ax.transAxes,
+            ha="center",
+            va="top",
+            fontsize=7,
+            color="#b00020",
+        )
 
     def _draw_baseline_reference(self, baseline: np.ndarray) -> None:
         self.map_ax.clear()
@@ -425,34 +853,39 @@ class DebugApp(tk.Tk):
         self.figure.tight_layout()
         self.canvas.draw_idle()
 
-    def _draw_average_map(self, average: np.ndarray) -> None:
+    def _draw_latest_map(self, latest: np.ndarray, scan_count: int) -> None:
         self.map_ax.clear()
-        self.map_ax.set_title("Average 2D map")
+        title = f"Latest scan map (scan {scan_count})" if scan_count else "Latest scan map"
+        self.map_ax.set_title(title)
         self.map_ax.set_aspect("equal")
         self.map_ax.set_axis_off()
         mesh = self.controller.mesh
-        if average.size == 0:
+        if latest.size == 0:
             self.map_ax.text(0.5, 0.5, "No reconstruction data", ha="center", va="center")
             return
-        if mesh is None or len(average) != len(mesh.element):
+        if mesh is None or len(latest) != len(mesh.element):
             self.map_ax.text(0.5, 0.5, "Map unavailable", ha="center", va="center")
             return
-        limit = max(float(np.max(np.abs(average))), np.finfo(float).eps)
+        limit = max(float(np.max(np.abs(latest))), np.finfo(float).eps)
         self.map_ax.tripcolor(
             mesh.node[:, 0],
             mesh.node[:, 1],
             mesh.element,
-            average,
+            latest,
             shading="flat",
             cmap="coolwarm",
             vmin=-limit,
             vmax=limit,
         )
-        for index in range(N_ELECTRODES):
-            angle = 2.0 * np.pi * index / N_ELECTRODES
-            self.map_ax.text(
-                1.12 * np.cos(angle),
-                1.12 * np.sin(angle),
+        self._label_electrodes(self.map_ax, mesh)
+
+    @staticmethod
+    def _label_electrodes(axis, mesh) -> None:
+        """Label electrodes from the mesh's own positions (validity-audit D-01)."""
+        for index, x, y in base.electrode_label_positions(mesh, N_ELECTRODES):
+            axis.text(
+                x,
+                y,
                 f"E{index + 1}",
                 ha="center",
                 va="center",
@@ -460,13 +893,18 @@ class DebugApp(tk.Tk):
                 fontweight="bold",
             )
 
-    def _draw_average_vector(self, average: np.ndarray) -> None:
+    def _draw_latest_vector(self, latest: np.ndarray, scan_count: int) -> None:
         self.vector_ax.clear()
-        self.vector_ax.set_title("Average reconstruction vector")
+        title = (
+            f"Latest reconstruction vector (scan {scan_count})"
+            if scan_count
+            else "Latest reconstruction vector"
+        )
+        self.vector_ax.set_title(title)
         self.vector_ax.set_xlabel("Vector index")
         self.vector_ax.set_ylabel("Difference")
-        if average.size:
-            self.vector_ax.plot(average)
+        if latest.size:
+            self.vector_ax.plot(latest)
             self.vector_ax.axhline(0.0, color="black", linewidth=0.8, alpha=0.5)
         else:
             self.vector_ax.text(0.5, 0.5, "No reconstruction data", ha="center", va="center")
@@ -481,6 +919,9 @@ class DebugApp(tk.Tk):
         for preview_position, axis in enumerate(self.scan_axes):
             axis.clear()
             axis.set_axis_off()
+            # Without this the previews render as ellipses, which misreads as a
+            # distorted reconstruction rather than a distorted axis.
+            axis.set_aspect("equal")
             if preview_position >= len(indices):
                 axis.set_title("Scan")
                 axis.text(0.5, 0.5, "No scan", ha="center", va="center")
@@ -503,6 +944,7 @@ class DebugApp(tk.Tk):
             )
 
     def _on_close(self) -> None:
+        self._save_current_settings()
         try:
             self.controller.close()
         except Exception as exc:

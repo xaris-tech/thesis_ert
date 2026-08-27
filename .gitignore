@@ -14,3 +14,6 @@ Thumbs.db
 
 # Local brainstorming companion files
 .superpowers/
+
+# Claude Code local config/skills
+.claude/

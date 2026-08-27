@@ -56,7 +56,8 @@ class TestUnifiedFrameParsing(unittest.TestCase):
 
         values = unified.paired_transfer_resistance(frame)
 
-        self.assertAlmostEqual(values[((0, 1), (2, 3))], 0.1)
+        # Negated to match PyEIT's subtract_row convention (validity-audit D-02).
+        self.assertAlmostEqual(values[((0, 1), (2, 3))], -0.1)
 
     def test_rejects_non_ok_quality_and_tiny_current(self):
         bad_quality = unified.MeasurementRecord("FWD", (0, 1), (2, 3), 1.0, 100.0, "V_RANGE")
@@ -154,7 +155,10 @@ class TestBaselineStability(unittest.TestCase):
         self.assertLess(result.max_relative_rms_percent, 2.0)
         self.assertGreater(result.min_correlation, 0.995)
 
-    def test_low_signal_baseline_can_pass_absolute_drift_limit(self):
+    def test_low_signal_baseline_is_rejected_despite_small_absolute_drift(self):
+        # An offset-dominated rig collapses toward zero, so its absolute drift is
+        # tiny while its shape is noise. This used to pass on the absolute arm
+        # alone (validity-audit D-03).
         vectors = [
             np.array([0.0007, -0.0001, 0.0002]),
             np.array([0.0001, 0.0004, -0.0002]),
@@ -163,9 +167,22 @@ class TestBaselineStability(unittest.TestCase):
 
         result = unified.assess_baseline_stability(vectors)
 
-        self.assertTrue(result.stable)
+        self.assertFalse(result.stable)
         self.assertLess(result.max_absolute_rms_kohm, 0.002)
         self.assertGreater(result.max_relative_rms_percent, 2.0)
+
+    def test_real_signal_baseline_is_not_failed_by_the_absolute_threshold(self):
+        # 1 percent drift on a ~2 kOhm signal exceeds the old 2 ohm absolute
+        # arm; stability must be judged on shape, not on drive level.
+        vectors = [
+            np.array([1.00, 2.00, 3.00]),
+            np.array([1.01, 1.99, 3.01]),
+        ]
+
+        result = unified.assess_baseline_stability(vectors)
+
+        self.assertTrue(result.stable)
+        self.assertGreater(result.max_absolute_rms_kohm, unified.MAX_BASELINE_ABSOLUTE_RMS_KOHM)
 
     def test_unstable_baseline_is_rejected(self):
         vectors = [
@@ -319,6 +336,198 @@ class TestReconstructionImageSaving(unittest.TestCase):
             self.assertGreater(contact.stat().st_size, 0)
             self.assertTrue(average.exists())
             self.assertGreater(average.stat().st_size, 0)
+
+
+def make_frame(records, frame_id=1, pattern="adjacent"):
+    return unified.UnifiedFrame(
+        frame_id=frame_id,
+        pattern=pattern,
+        dac_code=100,
+        settle_ms=10,
+        sample_count=4,
+        records=list(records),
+    )
+
+
+def record(polarity, i_pair, v_pair, voltage_mv, current_ua, quality="OK"):
+    return unified.MeasurementRecord(
+        polarity, i_pair, v_pair, voltage_mv, current_ua, quality
+    )
+
+
+class TestFrameProbe(unittest.TestCase):
+    def test_reports_weakest_measurement_not_the_average(self):
+        frame = make_frame([
+            record("FWD", (0, 1), (2, 3), 20.0, 200.0),
+            record("REV", (1, 0), (2, 3), -20.0, 200.0),
+            record("FWD", (0, 1), (3, 4), 5.0, 4.0),
+        ])
+
+        probe = unified.probe_frame_health(frame)
+
+        self.assertAlmostEqual(probe.min_current_ua, 4.0)
+        self.assertEqual(probe.min_current_v_pair, (3, 4))
+        self.assertAlmostEqual(probe.margin_ratio, 4.0)
+        self.assertAlmostEqual(probe.median_current_ua, 200.0)
+        self.assertTrue(probe.passes)
+
+    def test_counts_quality_flags_and_fails_on_bad_records(self):
+        frame = make_frame([
+            record("FWD", (0, 1), (2, 3), 20.0, 200.0),
+            record("FWD", (0, 1), (3, 4), 1.0, 0.5, "I_LOW"),
+        ])
+
+        probe = unified.probe_frame_health(frame)
+
+        self.assertEqual(probe.quality_counts, {"OK": 1, "I_LOW": 1})
+        self.assertFalse(probe.passes)
+
+
+class TestPolarizationDetection(unittest.TestCase):
+    def test_flags_current_decaying_across_a_fixed_injection_pair(self):
+        frame = make_frame([
+            record("FWD", (0, 1), (2, 3), 10.0, 300.0),
+            record("FWD", (0, 1), (3, 4), 10.0, 120.0),
+            record("FWD", (0, 1), (4, 5), 10.0, 40.0),
+        ])
+
+        report = unified.analyze_polarization(frame)
+
+        self.assertTrue(report.flagged)
+        self.assertAlmostEqual(report.worst_decay_ratio, 7.5)
+        self.assertAlmostEqual(report.metrics[0].decreasing_fraction, 1.0)
+
+    def test_non_monotonic_swing_is_not_reported_as_polarisation(self):
+        # Large first-to-last ratio, but the steps are not a monotonic slide.
+        frame = make_frame([
+            record("FWD", (0, 1), (2, 3), 10.0, 300.0),
+            record("FWD", (0, 1), (3, 4), 10.0, 400.0),
+            record("FWD", (0, 1), (4, 5), 10.0, 350.0),
+            record("FWD", (0, 1), (5, 6), 10.0, 500.0),
+            record("FWD", (0, 1), (6, 7), 10.0, 40.0),
+        ])
+
+        report = unified.analyze_polarization(frame)
+
+        self.assertGreater(report.worst_decay_ratio, unified.MAX_POLARIZATION_DECAY_RATIO)
+        self.assertFalse(report.flagged)
+
+    def test_steady_current_is_not_flagged(self):
+        frame = make_frame([
+            record("FWD", (0, 1), (2, 3), 10.0, 200.0),
+            record("FWD", (0, 1), (3, 4), 10.0, 199.0),
+            record("FWD", (0, 1), (4, 5), 10.0, 201.0),
+        ])
+
+        report = unified.analyze_polarization(frame)
+
+        self.assertFalse(report.flagged)
+
+
+class TestOffsetDomination(unittest.TestCase):
+    def test_flags_forward_reverse_voltages_that_do_not_invert(self):
+        frame = make_frame([
+            record("FWD", (0, 1), (2, 3), 46.0, 200.0),
+            record("REV", (1, 0), (2, 3), 46.0, 200.0),
+        ])
+
+        report = unified.analyze_offset_domination(frame)
+
+        self.assertTrue(report.flagged)
+        self.assertEqual(report.dominated_pairs, 1)
+        self.assertAlmostEqual(report.dominated_fraction, 1.0)
+
+    def test_inverting_pair_is_not_flagged(self):
+        frame = make_frame([
+            record("FWD", (0, 1), (2, 3), 20.0, 200.0),
+            record("REV", (1, 0), (2, 3), -19.0, 200.0),
+        ])
+
+        report = unified.analyze_offset_domination(frame)
+
+        self.assertFalse(report.flagged)
+        self.assertEqual(report.dominated_pairs, 0)
+
+
+class TestElectrodeHealth(unittest.TestCase):
+    def test_separates_drive_and_sense_roles_per_electrode(self):
+        frame = make_frame([
+            record("FWD", (0, 1), (2, 3), 20.0, 100.0),
+            record("FWD", (0, 1), (4, 5), 30.0, 50.0),
+            record("FWD", (2, 3), (0, 1), 10.0, 8.0, "I_LOW"),
+        ])
+
+        health = {item.electrode: item for item in unified.analyze_electrode_health(frame)}
+
+        self.assertEqual(health[0].drive_count, 2)
+        self.assertAlmostEqual(health[0].drive_median_ua, 75.0)
+        self.assertEqual(health[0].sense_count, 1)
+        self.assertEqual(health[0].bad_quality_count, 1)
+        self.assertEqual(health[6].drive_count, 0)
+
+
+class TestElectrodeRemap(unittest.TestCase):
+    def test_identity_by_default(self):
+        self.assertEqual(unified.remap_electrode(5), 5)
+        key = ((0, 1), (2, 3))
+        self.assertEqual(unified.remap_measurement_key(key), key)
+
+    def test_reversed_ring_mirrors_about_the_offset_axis(self):
+        # offset=6, reversed: E1<->E7, E2<->E6, E3<->E5, E4 and E10 fixed.
+        pairs = {0: 6, 1: 5, 2: 4, 3: 3, 5: 1, 6: 0, 9: 9, 7: 11, 11: 7}
+        for source, expected in pairs.items():
+            self.assertEqual(
+                unified.remap_electrode(source, offset=6, reversed_ring=True),
+                expected,
+                f"E{source + 1}",
+            )
+
+    def test_offset_rotates_the_ring(self):
+        self.assertEqual(unified.remap_electrode(0, offset=3), 3)
+        self.assertEqual(unified.remap_electrode(11, offset=3), 2)
+
+    def test_remap_applies_to_both_pairs_of_a_key(self):
+        remapped = unified.remap_measurement_key(
+            ((0, 1), (5, 6)), offset=6, reversed_ring=True
+        )
+        self.assertEqual(remapped, ((6, 5), (1, 0)))
+
+
+class TestLenientQualityHandling(unittest.TestCase):
+    def test_lenient_mode_skips_bad_records_instead_of_raising(self):
+        frame = make_frame([
+            record("FWD", (0, 1), (2, 3), 20.0, 200.0),
+            record("REV", (1, 0), (2, 3), -18.0, 180.0),
+            record("FWD", (0, 1), (3, 4), 5.0, 0.4, "I_LOW"),
+            record("REV", (1, 0), (3, 4), -5.0, 180.0),
+        ])
+
+        with self.assertRaises(ValueError):
+            unified.paired_transfer_resistance(frame)
+
+        values = unified.paired_transfer_resistance(frame, strict=False)
+
+        self.assertEqual(list(values), [((0, 1), (2, 3))])
+        # Negated to match PyEIT's subtract_row convention (validity-audit D-02).
+        self.assertAlmostEqual(values[((0, 1), (2, 3))], -0.1)
+
+    def test_missing_values_are_filled_from_a_reference(self):
+        vector = np.asarray([1.0, float("nan"), 3.0])
+        reference = np.asarray([9.0, 5.0, 9.0])
+
+        self.assertEqual(unified.missing_value_indexes(vector), [1])
+        filled = unified.fill_missing_values(vector, reference)
+        np.testing.assert_allclose(filled, [1.0, 5.0, 3.0])
+
+    def test_average_vectors_ignores_missing_entries(self):
+        vectors = [
+            np.asarray([1.0, float("nan")]),
+            np.asarray([3.0, 4.0]),
+        ]
+
+        average = unified.average_vectors(vectors)
+
+        np.testing.assert_allclose(average, [2.0, 4.0])
 
 
 if __name__ == "__main__":

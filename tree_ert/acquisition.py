@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import time
 from dataclasses import dataclass
 from typing import Protocol
 
@@ -14,6 +15,7 @@ class Acquisition(Protocol):
     def connect(self, settings: UiSettings) -> None: ...
     def configure(self, settings: UiSettings) -> None: ...
     def capture_frame(self) -> unified.UnifiedFrame: ...
+    def send_command(self, command: str) -> list[str]: ...
     def stop(self) -> None: ...
     def close(self) -> None: ...
 
@@ -75,6 +77,9 @@ class DemoAcquisition:
             records=records,
         )
 
+    def send_command(self, command: str) -> list[str]:
+        return [f"[demo] {command.strip()}"]
+
     def stop(self) -> None:
         self.stopped = True
 
@@ -104,10 +109,28 @@ class SerialAcquisition:
             raise RuntimeError("serial connection is not open")
         return unified.request_frame(self._serial)
 
-    def send_command(self, command: str) -> None:
+    def send_command(self, command: str, reply_timeout: float = 0.6) -> list[str]:
+        """Send one firmware command and collect whatever it prints back.
+
+        Lets the UI drive the firmware directly, so the Arduino Serial Monitor
+        does not have to be opened - it holds the port exclusively and would
+        block the UI from connecting.
+        """
         if self._serial is None:
             raise RuntimeError("serial connection is not open")
         self._serial.write(f"{command.strip()}\n".encode())
+        deadline = time.monotonic() + reply_timeout
+        lines: list[str] = []
+        while time.monotonic() < deadline:
+            raw = self._serial.readline()
+            if not raw:
+                if lines:
+                    break
+                continue
+            text = raw.decode(errors="ignore").strip()
+            if text:
+                lines.append(text)
+        return lines
 
     def stop(self) -> None:
         if self._serial is not None:

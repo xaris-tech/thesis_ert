@@ -1,0 +1,20 @@
+{
+  "port": "COM7",
+  "baud": 115200,
+  "pattern": "adjacent",
+  "dac": 75,
+  "settle_ms": 10,
+  "samples": 16,
+  "warmup_frames": 20,
+  "target_warmup_frames": 5,
+  "baseline_frames": 10,
+  "frames": 10,
+  "diameter_cm": null,
+  "log_dir": "phase3a_logs",
+  "log_enabled": true,
+  "allow_unstable_baseline": false,
+  "lenient_quality": false,
+  "filter_pairs": false,
+  "electrode_offset": 0,
+  "electrode_reversed": false
+}

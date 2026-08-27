@@ -9,6 +9,7 @@ from datetime import datetime
 from pathlib import Path
 import time
 from typing import Iterable
+import warnings
 
 import numpy as np
 import serial
@@ -29,6 +30,24 @@ MIN_BASELINE_CORRELATION = 0.995
 MAX_RECON_BASELINE_PAIR_RMS_KOHM = 0.03
 MAX_RECON_PAIR_DELTA_KOHM = 0.05
 MIN_RECON_KEPT_PAIR_RATIO = 0.75
+
+# Mirrors MIN_CURRENT_UA in the unified firmware. A measurement below this is
+# flagged I_LOW by the firmware, and a single I_LOW aborts a strict capture, so
+# the minimum current across a frame is what predicts whether a long run
+# survives.
+FIRMWARE_MIN_CURRENT_UA = 1.0
+# Ratio of first to last current within one injection pair. Above this the
+# current is decaying across a fixed drive pair, which indicates electrode
+# polarisation rather than a real impedance change.
+MAX_POLARIZATION_DECAY_RATIO = 1.5
+# Polarisation is a monotonic slide, so a large first-to-last ratio only counts
+# when most steps actually decrease. Without this a noisy non-monotonic pair got
+# reported as polarisation (validity-audit X-04).
+MIN_POLARIZATION_DECREASING_FRACTION = 0.6
+# Ratio of common-mode to differential voltage across a forward/reverse pair.
+# Above this the static electrode half-cell potential is larger than the
+# injected signal, and the forward/reverse difference cancels to near zero.
+MAX_OFFSET_COMMON_RATIO = 1.0
 
 
 @dataclass(frozen=True)
@@ -162,6 +181,10 @@ def parse_v2_frame(lines: Iterable[str]) -> UnifiedFrame:
     return UnifiedFrame(frame_id, pattern, dac_code, settle_ms, sample_count, records)
 
 
+def record_is_valid(record: MeasurementRecord) -> bool:
+    return record.quality == "OK" and abs(record.current_ua) >= MIN_VALID_CURRENT_UA
+
+
 def validate_record(record: MeasurementRecord) -> None:
     if record.quality != "OK":
         raise ValueError(f"Measurement quality is {record.quality}")
@@ -169,23 +192,40 @@ def validate_record(record: MeasurementRecord) -> None:
         raise ValueError("Measured current is too close to zero")
 
 
+def canonical_measurement_key(
+    record: MeasurementRecord,
+) -> tuple[tuple[int, int], tuple[int, int]]:
+    if record.polarity == "FWD":
+        return (record.i_pair, record.v_pair)
+    return ((record.i_pair[1], record.i_pair[0]), record.v_pair)
+
+
 def paired_transfer_resistance(
     frame: UnifiedFrame,
+    strict: bool = True,
 ) -> dict[tuple[tuple[int, int], tuple[int, int]], float]:
+    """Forward/reverse averaged transfer resistance, keyed by canonical pair.
+
+    In strict mode any non-OK record raises, which is the behaviour the CLI
+    capture path depends on. In lenient mode bad records are skipped and only
+    pairs that still have both polarities are returned, so one weak measurement
+    costs a single pair instead of the whole capture.
+    """
     forward: dict[tuple[tuple[int, int], tuple[int, int]], MeasurementRecord] = {}
     reverse: dict[tuple[tuple[int, int], tuple[int, int]], MeasurementRecord] = {}
 
     for record in frame.records:
-        validate_record(record)
+        if strict:
+            validate_record(record)
+        elif not record_is_valid(record):
+            continue
+        key = canonical_measurement_key(record)
         if record.polarity == "FWD":
-            key = (record.i_pair, record.v_pair)
             forward[key] = record
         else:
-            canonical_i_pair = (record.i_pair[1], record.i_pair[0])
-            key = (canonical_i_pair, record.v_pair)
             reverse[key] = record
 
-    if forward.keys() != reverse.keys():
+    if strict and forward.keys() != reverse.keys():
         missing_reverse = sorted(forward.keys() - reverse.keys())
         missing_forward = sorted(reverse.keys() - forward.keys())
         raise ValueError(
@@ -194,12 +234,20 @@ def paired_transfer_resistance(
         )
 
     result: dict[tuple[tuple[int, int], tuple[int, int]], float] = {}
-    for key, fwd in forward.items():
+    for key in forward.keys() & reverse.keys():
+        fwd = forward[key]
         rev = reverse[key]
         fwd_resistance = fwd.voltage_mv / abs(fwd.current_ua)
         rev_resistance = rev.voltage_mv / abs(rev.current_ua)
         # mV/uA is numerically kOhm. Reverse voltage has opposite physical sign.
-        result[key] = 0.5 * (fwd_resistance - rev_resistance)
+        #
+        # The leading minus reconciles two conventions (validity-audit D-02):
+        # the firmware measures ADS A0-A1, which is V_vp - V_vn, while
+        # build_protocol stores rows as [vn, vp] and PyEIT's subtract_row
+        # computes v[meas[:,0]] - v[meas[:,1]] = V_vn - V_vp. Without this the
+        # whole vector reaches the solver negated and a more conductive target
+        # renders blue.
+        result[key] = -0.5 * (fwd_resistance - rev_resistance)
     return result
 
 
@@ -216,8 +264,58 @@ def protocol_and_command(pattern: str):
     raise ValueError(f"Unsupported pattern: {pattern}")
 
 
-def frame_to_vector(frame: UnifiedFrame, protocol) -> np.ndarray:
-    values_by_key = paired_transfer_resistance(frame)
+def remap_electrode(
+    index: int,
+    offset: int = 0,
+    reversed_ring: bool = False,
+    n_el: int = base.N_ELECTRODES,
+) -> int:
+    """Map a wired electrode index onto the mesh's index order.
+
+    The firmware reports electrodes as they are physically wired. If the ring
+    was installed running the opposite way round, or starting at a different
+    electrode, every reconstruction comes out mirrored or rotated by a fixed
+    amount, with the image data itself perfectly good. Both defaults are the
+    identity mapping.
+    """
+    if reversed_ring:
+        return (offset - index) % n_el
+    return (index + offset) % n_el
+
+
+def remap_measurement_key(
+    key: tuple[tuple[int, int], tuple[int, int]],
+    offset: int = 0,
+    reversed_ring: bool = False,
+    n_el: int = base.N_ELECTRODES,
+) -> tuple[tuple[int, int], tuple[int, int]]:
+    i_pair, v_pair = key
+    mapped = lambda index: remap_electrode(index, offset, reversed_ring, n_el)
+    return (
+        (mapped(i_pair[0]), mapped(i_pair[1])),
+        (mapped(v_pair[0]), mapped(v_pair[1])),
+    )
+
+
+def frame_to_vector(
+    frame: UnifiedFrame,
+    protocol,
+    strict: bool = True,
+    electrode_offset: int = 0,
+    electrode_reversed: bool = False,
+) -> np.ndarray:
+    """Vector of transfer resistances ordered to match the protocol.
+
+    In lenient mode a measurement the firmware flagged bad becomes NaN rather
+    than raising; use fill_missing_values() to substitute a reference before
+    handing the vector to the solver.
+    """
+    values_by_key = paired_transfer_resistance(frame, strict=strict)
+    if electrode_offset or electrode_reversed:
+        values_by_key = {
+            remap_measurement_key(key, electrode_offset, electrode_reversed): value
+            for key, value in values_by_key.items()
+        }
     values: list[float] = []
     for ex_index, ex_pair in enumerate(protocol.ex_mat):
         i_pair = (int(ex_pair[0]), int(ex_pair[1]))
@@ -226,11 +324,28 @@ def frame_to_vector(frame: UnifiedFrame, protocol) -> np.ndarray:
             try:
                 values.append(values_by_key[(i_pair, v_pair)])
             except KeyError as exc:
+                if not strict:
+                    values.append(float("nan"))
+                    continue
                 raise ValueError(
                     f"Missing normalized measurement I={i_pair} V={v_pair}; "
                     f"frame pattern is {frame.pattern}"
                 ) from exc
     return np.asarray(values, dtype=float)
+
+
+def missing_value_indexes(vector: np.ndarray) -> list[int]:
+    return [int(index) for index in np.flatnonzero(np.isnan(vector))]
+
+
+def fill_missing_values(vector: np.ndarray, reference: np.ndarray) -> np.ndarray:
+    """Replace NaN entries with the reference value at the same index."""
+    if vector.shape != reference.shape:
+        raise ValueError("Vector and reference must share the same shape")
+    filled = np.array(vector, copy=True)
+    missing = np.isnan(filled)
+    filled[missing] = reference[missing]
+    return filled
 
 
 def average_vectors(vectors: list[np.ndarray]) -> np.ndarray:
@@ -239,7 +354,15 @@ def average_vectors(vectors: list[np.ndarray]) -> np.ndarray:
     expected_shape = vectors[0].shape
     if any(vector.shape != expected_shape for vector in vectors):
         raise ValueError("All vectors must have the same shape")
-    return np.mean(np.stack(vectors), axis=0)
+    stacked = np.stack(vectors)
+    if not np.isnan(stacked).any():
+        return np.mean(stacked, axis=0)
+    # Lenient captures leave NaN where a measurement was dropped; average over
+    # whatever frames did measure that pair. A pair no frame measured stays NaN,
+    # which the caller is expected to detect rather than silently accept.
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", RuntimeWarning)
+        return np.nanmean(stacked, axis=0)
 
 
 def protocol_vector_keys(protocol) -> list[tuple[tuple[int, int], tuple[int, int]]]:
@@ -331,6 +454,229 @@ def summarize_top_unstable_pairs(
             f"rms={score.baseline_rms_kohm:.6f}kOhm"
         )
     return "; ".join(summary)
+
+
+@dataclass(frozen=True)
+class FrameProbe:
+    min_current_ua: float
+    min_current_polarity: str
+    min_current_i_pair: tuple[int, int]
+    min_current_v_pair: tuple[int, int]
+    median_current_ua: float
+    margin_ratio: float
+    quality_counts: dict[str, int]
+    total_records: int
+
+    @property
+    def passes(self) -> bool:
+        return self.margin_ratio >= 1.0 and set(self.quality_counts) <= {"OK"}
+
+
+@dataclass(frozen=True)
+class PolarizationMetric:
+    i_pair: tuple[int, int]
+    polarity: str
+    first_current_ua: float
+    last_current_ua: float
+    decay_ratio: float
+    decreasing_fraction: float
+    sample_count: int
+
+
+@dataclass(frozen=True)
+class PolarizationReport:
+    metrics: list[PolarizationMetric]
+    worst_decay_ratio: float
+    flagged_groups: int
+
+    @property
+    def flagged(self) -> bool:
+        return self.flagged_groups > 0
+
+
+@dataclass(frozen=True)
+class OffsetPairMetric:
+    i_pair: tuple[int, int]
+    v_pair: tuple[int, int]
+    forward_mv: float
+    reverse_mv: float
+    differential_mv: float
+    common_mv: float
+    common_ratio: float
+
+
+@dataclass(frozen=True)
+class OffsetReport:
+    pairs: list[OffsetPairMetric]
+    dominated_pairs: int
+    total_pairs: int
+
+    @property
+    def dominated_fraction(self) -> float:
+        return self.dominated_pairs / self.total_pairs if self.total_pairs else 0.0
+
+    @property
+    def flagged(self) -> bool:
+        return self.dominated_pairs > 0
+
+
+@dataclass(frozen=True)
+class ElectrodeHealth:
+    electrode: int
+    drive_median_ua: float
+    drive_count: int
+    sense_median_abs_mv: float
+    sense_count: int
+    bad_quality_count: int
+
+
+def probe_frame_health(frame: UnifiedFrame) -> FrameProbe:
+    """Cheap single-frame screen: does the weakest measurement clear the floor?
+
+    The minimum current across the frame, not the average, decides whether a
+    long capture survives, because one measurement under the firmware's
+    I_LOW threshold aborts a strict run.
+    """
+    if not frame.records:
+        raise ValueError("Frame contains no measurements")
+
+    currents = np.asarray([abs(record.current_ua) for record in frame.records])
+    weakest_index = int(np.argmin(currents))
+    weakest = frame.records[weakest_index]
+
+    quality_counts: dict[str, int] = {}
+    for record in frame.records:
+        quality_counts[record.quality] = quality_counts.get(record.quality, 0) + 1
+
+    min_current = float(currents[weakest_index])
+    return FrameProbe(
+        min_current_ua=min_current,
+        min_current_polarity=weakest.polarity,
+        min_current_i_pair=weakest.i_pair,
+        min_current_v_pair=weakest.v_pair,
+        median_current_ua=float(np.median(currents)),
+        margin_ratio=min_current / FIRMWARE_MIN_CURRENT_UA,
+        quality_counts=quality_counts,
+        total_records=len(frame.records),
+    )
+
+
+def analyze_polarization(frame: UnifiedFrame) -> PolarizationReport:
+    """Detect current decaying across a fixed injection pair.
+
+    Current must not depend on which unrelated pair is being voltage-sensed, so
+    a monotonic slide across successive measurements of one injection pair is
+    time-dependent electrode polarisation, not a real impedance change.
+    """
+    groups: dict[tuple[tuple[int, int], str], list[float]] = {}
+    for record in frame.records:
+        key = (canonical_measurement_key(record)[0], record.polarity)
+        groups.setdefault(key, []).append(abs(record.current_ua))
+
+    metrics: list[PolarizationMetric] = []
+    for (i_pair, polarity), currents in groups.items():
+        if len(currents) < 2:
+            continue
+        first = currents[0]
+        last = currents[-1]
+        decay_ratio = first / last if last > 0.0 else float("inf")
+        steps = np.diff(np.asarray(currents))
+        decreasing_fraction = float(np.mean(steps < 0.0)) if steps.size else 0.0
+        metrics.append(
+            PolarizationMetric(
+                i_pair=i_pair,
+                polarity=polarity,
+                first_current_ua=float(first),
+                last_current_ua=float(last),
+                decay_ratio=float(decay_ratio),
+                decreasing_fraction=decreasing_fraction,
+                sample_count=len(currents),
+            )
+        )
+
+    metrics.sort(key=lambda item: item.decay_ratio, reverse=True)
+    flagged = sum(
+        1
+        for metric in metrics
+        if metric.decay_ratio > MAX_POLARIZATION_DECAY_RATIO
+        and metric.decreasing_fraction >= MIN_POLARIZATION_DECREASING_FRACTION
+    )
+    worst = metrics[0].decay_ratio if metrics else 1.0
+    return PolarizationReport(metrics, worst, flagged)
+
+
+def analyze_offset_domination(frame: UnifiedFrame) -> OffsetReport:
+    """Detect forward/reverse voltages that fail to invert.
+
+    Reversing the injected current must invert an IR drop. When the common-mode
+    part (V_fwd + V_rev) outweighs the differential part (V_fwd - V_rev), the
+    reading is dominated by static electrode half-cell potential and
+    paired_transfer_resistance() cancels toward zero.
+    """
+    forward: dict[tuple[tuple[int, int], tuple[int, int]], float] = {}
+    reverse: dict[tuple[tuple[int, int], tuple[int, int]], float] = {}
+    for record in frame.records:
+        key = canonical_measurement_key(record)
+        if record.polarity == "FWD":
+            forward[key] = record.voltage_mv
+        else:
+            reverse[key] = record.voltage_mv
+
+    pairs: list[OffsetPairMetric] = []
+    for key in sorted(forward.keys() & reverse.keys()):
+        fwd = forward[key]
+        rev = reverse[key]
+        differential = abs(fwd - rev)
+        common = abs(fwd + rev)
+        ratio = common / differential if differential > 0.0 else float("inf")
+        pairs.append(
+            OffsetPairMetric(
+                i_pair=key[0],
+                v_pair=key[1],
+                forward_mv=fwd,
+                reverse_mv=rev,
+                differential_mv=differential,
+                common_mv=common,
+                common_ratio=ratio,
+            )
+        )
+
+    pairs.sort(key=lambda item: item.common_ratio, reverse=True)
+    dominated = sum(1 for pair in pairs if pair.common_ratio > MAX_OFFSET_COMMON_RATIO)
+    return OffsetReport(pairs, dominated, len(pairs))
+
+
+def analyze_electrode_health(
+    frame: UnifiedFrame,
+    n_el: int = base.N_ELECTRODES,
+) -> list[ElectrodeHealth]:
+    drive: dict[int, list[float]] = {index: [] for index in range(n_el)}
+    sense: dict[int, list[float]] = {index: [] for index in range(n_el)}
+    bad: dict[int, int] = {index: 0 for index in range(n_el)}
+
+    for record in frame.records:
+        for electrode in record.i_pair:
+            if electrode in drive:
+                drive[electrode].append(abs(record.current_ua))
+        for electrode in record.v_pair:
+            if electrode in sense:
+                sense[electrode].append(abs(record.voltage_mv))
+        if record.quality != "OK":
+            for electrode in set(record.i_pair) | set(record.v_pair):
+                if electrode in bad:
+                    bad[electrode] += 1
+
+    return [
+        ElectrodeHealth(
+            electrode=index,
+            drive_median_ua=float(np.median(drive[index])) if drive[index] else 0.0,
+            drive_count=len(drive[index]),
+            sense_median_abs_mv=float(np.median(sense[index])) if sense[index] else 0.0,
+            sense_count=len(sense[index]),
+            bad_quality_count=bad[index],
+        )
+        for index in range(n_el)
+    ]
 
 
 def _vector_correlation(left: np.ndarray, right: np.ndarray) -> float:
@@ -462,11 +808,10 @@ def _draw_reconstruction(ax, eit_mesh, values: np.ndarray, title: str, limit: fl
     ax.set_aspect("equal")
     ax.set_title(title, fontsize=9)
     ax.set_axis_off()
-    for index in range(base.N_ELECTRODES):
-        angle = 2.0 * np.pi * index / base.N_ELECTRODES
+    for index, x, y in base.electrode_label_positions(eit_mesh):
         ax.text(
-            1.12 * np.cos(angle),
-            1.12 * np.sin(angle),
+            x,
+            y,
             f"E{index + 1}",
             ha="center",
             va="center",
@@ -672,8 +1017,15 @@ def assess_baseline_stability(vectors: list[np.ndarray]) -> BaselineStability:
         max_relative_rms <= MAX_BASELINE_RELATIVE_RMS_PERCENT
         and min_correlation >= MIN_BASELINE_CORRELATION
     )
-    stable_by_absolute_drift = max_absolute_rms <= MAX_BASELINE_ABSOLUTE_RMS_KOHM
-    stable = stable_by_relative_shape or stable_by_absolute_drift
+    # Stability is decided on shape alone (validity-audit D-03). The absolute
+    # arm used to be OR-ed in here, which let an offset-dominated rig - whose
+    # transfer resistances collapse toward zero - clear a flat 2 ohm threshold
+    # while failing the shape test outright, reporting a baseline with no signal
+    # in it as stable. AND-ing it instead fails legitimate baselines, because a
+    # 1 percent drift on a 2 kOhm signal is already 20 ohm absolute: the
+    # threshold tracks drive level, not quality. The value is still reported for
+    # diagnostics.
+    stable = stable_by_relative_shape
     return BaselineStability(
         stable,
         max_relative_rms,

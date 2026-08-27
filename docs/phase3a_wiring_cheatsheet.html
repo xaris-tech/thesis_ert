@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase 3A ERT Wiring Cheat Sheet</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            margin: 40px auto;
+            max-width: 900px;
+            color: #333;
+            padding: 0 20px;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #2c3e50;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 30px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f6f7;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        tr:nth-child(even) {
+            background-color: #fafbfc;
+        }
+        .section-row td {
+            background-color: #e8ecef;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .note {
+            background-color: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .highlight {
+            font-family: monospace;
+            background-color: #f1f2f6;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+        @media print {
+            body { margin: 0; padding: 0; max-width: 100%; }
+            table { page-break-inside: avoid; }
+            h2 { page-break-after: avoid; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Phase 3A 12-Electrode ERT - Wiring Cheat Sheet</h1>
+    
+    <div class="note">
+        <strong>Tip for sharing:</strong> You can open this file in any web browser and press <strong>Ctrl+P</strong> (or Cmd+P) to easily print it or save it as a PDF.
+    </div>
+
+    <h2>1. ESP32-S3 Microcontroller</h2>
+    <table>
+        <tr>
+            <th>ESP32-S3 Pin</th>
+            <th>Connects To</th>
+            <th>Purpose</th>
+        </tr>
+        <tr class="section-row"><td colspan="3">Power & I2C Bus</td></tr>
+        <tr><td><span class="highlight">3V3</span></td><td>MCP4725 VDD, ADS1115 VDD, all 4x CD74HC4067 VCC</td><td>Logic & Module Power</td></tr>
+        <tr><td><span class="highlight">GND</span></td><td>All module GND pins</td><td>Common Ground</td></tr>
+        <tr><td><span class="highlight">GPIO8</span></td><td>MCP4725 SDA & ADS1115 SDA</td><td>I2C Data</td></tr>
+        <tr><td><span class="highlight">GPIO9</span></td><td>MCP4725 SCL & ADS1115 SCL</td><td>I2C Clock</td></tr>
+        
+        <tr class="section-row"><td colspan="3">MUX_I_SRC (Source Current)</td></tr>
+        <tr><td><span class="highlight">GPIO37</span></td><td>MUX_I_SRC EN</td><td>Active-low enable</td></tr>
+        <tr><td><span class="highlight">GPIO4</span></td><td>MUX_I_SRC S0</td><td>Address bit 0</td></tr>
+        <tr><td><span class="highlight">GPIO5</span></td><td>MUX_I_SRC S1</td><td>Address bit 1</td></tr>
+        <tr><td><span class="highlight">GPIO6</span></td><td>MUX_I_SRC S2</td><td>Address bit 2</td></tr>
+        <tr><td><span class="highlight">GPIO7</span></td><td>MUX_I_SRC S3</td><td>Address bit 3</td></tr>
+
+        <tr class="section-row"><td colspan="3">MUX_I_RET (Return Current)</td></tr>
+        <tr><td><span class="highlight">GPIO38</span></td><td>MUX_I_RET EN</td><td>Active-low enable</td></tr>
+        <tr><td><span class="highlight">GPIO10</span></td><td>MUX_I_RET S0</td><td>Address bit 0</td></tr>
+        <tr><td><span class="highlight">GPIO11</span></td><td>MUX_I_RET S1</td><td>Address bit 1</td></tr>
+        <tr><td><span class="highlight">GPIO12</span></td><td>MUX_I_RET S2</td><td>Address bit 2</td></tr>
+        <tr><td><span class="highlight">GPIO13</span></td><td>MUX_I_RET S3</td><td>Address bit 3</td></tr>
+
+        <tr class="section-row"><td colspan="3">MUX_VP (Voltage Positive)</td></tr>
+        <tr><td><span class="highlight">GPIO39</span></td><td>MUX_VP EN</td><td>Active-low enable</td></tr>
+        <tr><td><span class="highlight">GPIO15</span></td><td>MUX_VP S0</td><td>Address bit 0</td></tr>
+        <tr><td><span class="highlight">GPIO16</span></td><td>MUX_VP S1</td><td>Address bit 1</td></tr>
+        <tr><td><span class="highlight">GPIO17</span></td><td>MUX_VP S2</td><td>Address bit 2</td></tr>
+        <tr><td><span class="highlight">GPIO18</span></td><td>MUX_VP S3</td><td>Address bit 3</td></tr>
+
+        <tr class="section-row"><td colspan="3">MUX_VN (Voltage Negative)</td></tr>
+        <tr><td><span class="highlight">GPIO40</span></td><td>MUX_VN EN</td><td>Active-low enable</td></tr>
+        <tr><td><span class="highlight">GPIO36</span></td><td>MUX_VN S0</td><td>Address bit 0</td></tr>
+        <tr><td><span class="highlight">GPIO35</span></td><td>MUX_VN S1</td><td>Address bit 1</td></tr>
+        <tr><td><span class="highlight">GPIO41</span></td><td>MUX_VN S2</td><td>Address bit 2</td></tr>
+        <tr><td><span class="highlight">GPIO42</span></td><td>MUX_VN S3</td><td>Address bit 3</td></tr>
+    </table>
+
+    <h2>2. CD74HC4067 Multiplexers (x4)</h2>
+    <div class="note">
+        All 4 multiplexers share the same <span class="highlight">VCC</span> (to 3V3), <span class="highlight">GND</span> (to GND), and channels <span class="highlight">C0-C11</span> (to Electrodes E1-E12). Only the SIG/COM pin is uniquely routed for each.
+    </div>
+    <table>
+        <tr>
+            <th>Multiplexer</th>
+            <th>SIG/COM Pin Connects To</th>
+            <th>Purpose</th>
+        </tr>
+        <tr>
+            <td><strong>MUX_I_SRC</strong></td>
+            <td>Current Pump Op-Amp (Junction at Pin 5)</td>
+            <td>Routes injected current TO the tree</td>
+        </tr>
+        <tr>
+            <td><strong>MUX_I_RET</strong></td>
+            <td><span class="highlight">GND</span></td>
+            <td>Routes return current FROM the tree</td>
+        </tr>
+        <tr>
+            <td><strong>MUX_VP</strong></td>
+            <td>ADS1115 <span class="highlight">A0</span></td>
+            <td>Routes V+ measurement to ADC</td>
+        </tr>
+        <tr>
+            <td><strong>MUX_VN</strong></td>
+            <td>ADS1115 <span class="highlight">A1</span></td>
+            <td>Routes V- measurement to ADC</td>
+        </tr>
+    </table>
+
+    <h2>3. OPA2134PA Current Pump (TI Design 2)</h2>
+    <table>
+        <tr>
+            <th>OPA2134PA Pin</th>
+            <th>Connects To (Resistor Network)</th>
+            <th>Purpose</th>
+        </tr>
+        <tr><td><strong>1 (Out A)</strong></td><td>100Ω (R2) and 68Ω (Rs)</td><td>Output drive</td></tr>
+        <tr><td><strong>2 (Inv A)</strong></td><td>100Ω (R2) and 5kΩ to GND (R1)</td><td>Negative feedback</td></tr>
+        <tr><td><strong>3 (Non-Inv A)</strong></td><td>5kΩ from DAC (R3) and 100Ω from Pin 7 (R4)</td><td>Setpoint / Positive feedback</td></tr>
+        <tr><td><strong>4 (V-)</strong></td><td><span class="highlight">GND</span> (for single-supply test)</td><td>Negative supply</td></tr>
+        <tr><td><strong>5 (Non-Inv B)</strong></td><td>The other side of 68Ω (Rs) <strong>AND</strong> MUX_I_SRC SIG/COM</td><td>Output sensing node (to target)</td></tr>
+        <tr><td><strong>6 (Inv B)</strong></td><td>Tied to <strong>Pin 7</strong></td><td>Voltage follower setup</td></tr>
+        <tr><td><strong>7 (Out B)</strong></td><td>Tied to <strong>Pin 6</strong> and 100Ω to Pin 3 (R4)</td><td>Buffered output for feedback</td></tr>
+        <tr><td><strong>8 (V+)</strong></td><td>+9V (or test supply)</td><td>Positive supply</td></tr>
+    </table>
+
+    <h2>4. Analog/Digital Modules</h2>
+    <table>
+        <tr>
+            <th>Module Pin</th>
+            <th>Connects To</th>
+            <th>Purpose</th>
+        </tr>
+        <tr class="section-row"><td colspan="3">MCP4725 (DAC)</td></tr>
+        <tr><td><span class="highlight">VDD</span></td><td>ESP32-S3 3V3</td><td>Power</td></tr>
+        <tr><td><span class="highlight">GND</span></td><td><span class="highlight">GND</span></td><td>Common ground</td></tr>
+        <tr><td><span class="highlight">SDA</span></td><td>ESP32-S3 GPIO8</td><td>I2C data</td></tr>
+        <tr><td><span class="highlight">SCL</span></td><td>ESP32-S3 GPIO9</td><td>I2C clock</td></tr>
+        <tr><td><span class="highlight">ADDR</span></td><td><span class="highlight">GND</span></td><td>Sets I2C address to 0x60</td></tr>
+        <tr><td><span class="highlight">VOUT</span></td><td>Current Pump (R3 / 5kΩ resistor)</td><td>Outputs commanded voltage</td></tr>
+        
+        <tr class="section-row"><td colspan="3">ADS1115 (ADC)</td></tr>
+        <tr><td><span class="highlight">VDD</span></td><td>ESP32-S3 3V3</td><td>Power</td></tr>
+        <tr><td><span class="highlight">GND</span></td><td><span class="highlight">GND</span></td><td>Common ground</td></tr>
+        <tr><td><span class="highlight">SDA</span></td><td>ESP32-S3 GPIO8</td><td>I2C data</td></tr>
+        <tr><td><span class="highlight">SCL</span></td><td>ESP32-S3 GPIO9</td><td>I2C clock</td></tr>
+        <tr><td><span class="highlight">ADDR</span></td><td><span class="highlight">GND</span></td><td>Sets I2C address to 0x48</td></tr>
+        <tr><td><span class="highlight">A0</span></td><td>MUX_VP SIG/COM</td><td>Differential voltage positive</td></tr>
+        <tr><td><span class="highlight">A1</span></td><td>MUX_VN SIG/COM</td><td>Differential voltage negative</td></tr>
+        <tr><td><span class="highlight">A2</span>, <span class="highlight">A3</span></td><td>Leave Open</td><td>Reserved</td></tr>
+    </table>
+
+</body>
+</html>

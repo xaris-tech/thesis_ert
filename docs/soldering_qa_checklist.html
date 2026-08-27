@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase 3A Soldering & QA Checklist</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            margin: 40px auto;
+            max-width: 900px;
+            color: #333;
+            padding: 0 20px;
+            background-color: #f9f9f9;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #2980b9;
+            margin-top: 30px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        h3 {
+            color: #34495e;
+            margin-top: 20px;
+        }
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        li {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            border: 1px solid #e9ecef;
+        }
+        .pin-name {
+            font-weight: bold;
+            font-family: monospace;
+            background-color: #e8ecef;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 15px;
+        }
+        .connection-target {
+            color: #555;
+            margin-left: 5px;
+        }
+        .checkbox-group {
+            margin-top: 10px;
+            padding-left: 15px;
+            display: flex;
+            gap: 20px;
+        }
+        label {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+        }
+        input[type="checkbox"] {
+            margin-right: 8px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        .note {
+            background-color: #e8f4fd;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .progress-container {
+            position: sticky;
+            top: 0;
+            background: white;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 20px;
+            z-index: 100;
+        }
+        .progress-bar {
+            height: 10px;
+            background-color: #ecf0f1;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+        .progress-fill {
+            height: 100%;
+            background-color: #2ecc71;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        .progress-text {
+            font-size: 14px;
+            font-weight: bold;
+            color: #7f8c8d;
+        }
+        .reset-btn {
+            float: right;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .reset-btn:hover { background-color: #c0392b; }
+        
+        /* Strikethrough completed items */
+        .completed .pin-name, .completed .connection-target {
+            text-decoration: line-through;
+            color: #95a5a6;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Phase 3A Soldering & QA Checklist</h1>
+    
+    <div class="note">
+        <strong>Persistent Memory Active:</strong> This checklist uses your browser's Local Storage. You can close this tab and restart your computer; your checkmarks will automatically be saved and restored next time you open this file!
+    </div>
+
+    <div class="progress-container">
+        <button class="reset-btn" onclick="resetAll()">Reset All Progress</button>
+        <div class="progress-text">Overall Progress: <span id="progress-percent">0</span>% (<span id="progress-count">0</span>/<span id="progress-total">0</span> Tasks)</div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill"></div>
+        </div>
+    </div>
+
+    <h2>1. ESP32-S3 Microcontroller</h2>
+    
+    <h3>Power & I2C</h3>
+    <ul>
+        <li><span class="pin-name">3V3</span> <span class="connection-target">&rarr; MCP4725 VDD, ADS1115 VDD, 4x MUX VCC</span>
+            <div class="checkbox-group">
+                <label><input type="checkbox" id="esp32_3v3_solder"> Soldered</label>
+                <label><input type="checkbox" id="esp32_3v3_qa"> Multimeter Verified</label>
+            </div>
+        </li>
+        <li><span class="pin-name">GND</span> <span class="connection-target">&rarr; All module GNDs</span>
+            <div class="checkbox-group">
+                <label><input type="checkbox" id="esp32_gnd_solder"> Soldered</label>
+                <label><input type="checkbox" id="esp32_gnd_qa"> Multimeter Verified</label>
+            </div>
+        </li>
+        <li><span class="pin-name">GPIO8</span> <span class="connection-target">&rarr; I2C SDA (DAC & ADC)</span>
+            <div class="checkbox-group">
+                <label><input type="checkbox" id="esp32_io8_solder"> Soldered</label>
+                <label><input type="checkbox" id="esp32_io8_qa"> Multimeter Verified</label>
+            </div>
+        </li>
+        <li><span class="pin-name">GPIO9</span> <span class="connection-target">&rarr; I2C SCL (DAC & ADC)</span>
+            <div class="checkbox-group">
+                <label><input type="checkbox" id="esp32_io9_solder"> Soldered</label>
+                <label><input type="checkbox" id="esp32_io9_qa"> Multimeter Verified</label>
+            </div>
+        </li>
+    </ul>
+
+    <h3>MUX_I_SRC (Source Current)</h3>
+    <ul>
+        <li><span class="pin-name">GPIO37</span> <span class="connection-target">&rarr; MUX_I_SRC EN</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="esp32_io37_solder"> Soldered</label><label><input type="checkbox" id="esp32_io37_qa"> Verified</label></div></li>
+        <li><span class="pin-name">GPIO4</span> <span class="connection-target">&rarr; MUX_I_SRC S0</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="esp32_io4_solder"> Soldered</label><label><input type="checkbox" id="esp32_io4_qa"> Verified</label></div></li>
+        <li><span class="pin-name">GPIO5</span> <span class="connection-target">&rarr; MUX_I_SRC S1</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="esp32_io5_solder"> Soldered</label><label><input type="checkbox" id="esp32_io5_qa"> Verified</label></div></li>
+        <li><span class="pin-name">GPIO6</span> <span class="connection-target">&rarr; MUX_I_SRC S2</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="esp32_io6_solder"> Soldered</label><label><input type="checkbox" id="esp32_io6_qa"> Verified</label></div></li>
+        <li><span class="pin-name">GPIO7</span> <span class="connection-target">&rarr; MUX_I_SRC S3</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="esp32_io7_solder"> Soldered</label><label><input type="checkbox" id="esp32_io7_qa"> Verified</label></div></li>
+    </ul>
+
+    <h3>MUX_I_RET (Return Current)</h3>
+    <ul>
+        <li><span class="pin-name">GPIO38</span> <span class="connection-target">&rarr; MUX_I_RET EN</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="esp32_io38_solder"> Soldered</label><label><input type="checkbox" id="esp32_io38_qa"> Verified</label></div></li>
+        <li><span class="pin-name">GPIO10</span> <span class="connection-target">&rarr; MUX_I_RET S0</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="esp32_io10_solder"> Soldered</label><label><input type="checkbox" id="esp32_io10_qa"> Verified</label></div></li>
+        <li><span class="pin-name">GPIO11</span> <span class="connection-target">&rarr; MUX_I_RET S1</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="esp32_io11_solder"> Soldered</label><label><input type="checkbox" id="esp32_io11_qa"> Verified</label></div></li>
+        <li><span class="pin-name">GPIO12</span> <span class="connection-target">&rarr; MUX_I_RET S2</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="esp32_io12_solder"> Soldered</label><label><input type="checkbox" id="esp32_io12_qa"> Verified</label></div></li>
+        <li><span class="pin-name">GPIO13</span> <span class="connection-target">&rarr; MUX_I_RET S3</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="esp32_io13_solder"> Soldered</label><label><input type="checkbox" id="esp32_io13_qa"> Verified</label></div></li>
+    </ul>
+
+    <h3>MUX_VP (Voltage Positive)</h3>
+    <ul>
+        <li><span class="pin-name">GPIO39</span> <span class="connection-target">&rarr; MUX_VP EN</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="esp32_io39_solder"> Soldered</label><label><input type="checkbox" id="esp32_io39_qa"> Verified</label></div></li>
+        <li><span class="pin-name">GPIO15</span> <span class="connection-target">&rarr; MUX_VP S0</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="esp32_io15_solder"> Soldered</label><label><input type="checkbox" id="esp32_io15_qa"> Verified</label></div></li>
+        <li><span class="pin-name">GPIO16</span> <span class="connection-target">&rarr; MUX_VP S1</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="esp32_io16_solder"> Soldered</label><label><input type="checkbox" id="esp32_io16_qa"> Verified</label></div></li>
+        <li><span class="pin-name">GPIO17</span> <span class="connection-target">&rarr; MUX_VP S2</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="esp32_io17_solder"> Soldered</label><label><input type="checkbox" id="esp32_io17_qa"> Verified</label></div></li>
+        <li><span class="pin-name">GPIO18</span> <span class="connection-target">&rarr; MUX_VP S3</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="esp32_io18_solder"> Soldered</label><label><input type="checkbox" id="esp32_io18_qa"> Verified</label></div></li>
+    </ul>
+
+    <h3>MUX_VN (Voltage Negative)</h3>
+    <ul>
+        <li><span class="pin-name">GPIO40</span> <span class="connection-target">&rarr; MUX_VN EN</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="esp32_io40_solder"> Soldered</label><label><input type="checkbox" id="esp32_io40_qa"> Verified</label></div></li>
+        <li><span class="pin-name">GPIO36</span> <span class="connection-target">&rarr; MUX_VN S0</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="esp32_io36_solder"> Soldered</label><label><input type="checkbox" id="esp32_io36_qa"> Verified</label></div></li>
+        <li><span class="pin-name">GPIO35</span> <span class="connection-target">&rarr; MUX_VN S1</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="esp32_io35_solder"> Soldered</label><label><input type="checkbox" id="esp32_io35_qa"> Verified</label></div></li>
+        <li><span class="pin-name">GPIO41</span> <span class="connection-target">&rarr; MUX_VN S2</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="esp32_io41_solder"> Soldered</label><label><input type="checkbox" id="esp32_io41_qa"> Verified</label></div></li>
+        <li><span class="pin-name">GPIO42</span> <span class="connection-target">&rarr; MUX_VN S3</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="esp32_io42_solder"> Soldered</label><label><input type="checkbox" id="esp32_io42_qa"> Verified</label></div></li>
+    </ul>
+
+    <h2>2. CD74HC4067 Multiplexers</h2>
+
+    <h3>MUX_I_SRC (Source Current)</h3>
+    <ul>
+        <li><span class="pin-name">VCC</span> <span class="connection-target">&rarr; ESP32 3V3</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="mux_isrc_vcc_solder"> Soldered</label><label><input type="checkbox" id="mux_isrc_vcc_qa"> Verified</label></div></li>
+        <li><span class="pin-name">GND</span> <span class="connection-target">&rarr; System GND</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="mux_isrc_gnd_solder"> Soldered</label><label><input type="checkbox" id="mux_isrc_gnd_qa"> Verified</label></div></li>
+        <li><span class="pin-name">SIG/COM</span> <span class="connection-target">&rarr; OPA2134PA Pin 5 Junction</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="mux_isrc_sig_solder"> Soldered</label><label><input type="checkbox" id="mux_isrc_sig_qa"> Verified</label></div></li>
+        <li><span class="pin-name">C0 - C11</span> <span class="connection-target">&rarr; Electrodes E1-E12 Bus</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="mux_isrc_bus_solder"> Soldered</label><label><input type="checkbox" id="mux_isrc_bus_qa"> Verified</label></div></li>
+    </ul>
+
+    <h3>MUX_I_RET (Return Current)</h3>
+    <ul>
+        <li><span class="pin-name">VCC</span> <span class="connection-target">&rarr; ESP32 3V3</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="mux_iret_vcc_solder"> Soldered</label><label><input type="checkbox" id="mux_iret_vcc_qa"> Verified</label></div></li>
+        <li><span class="pin-name">GND</span> <span class="connection-target">&rarr; System GND</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="mux_iret_gnd_solder"> Soldered</label><label><input type="checkbox" id="mux_iret_gnd_qa"> Verified</label></div></li>
+        <li><span class="pin-name">SIG/COM</span> <span class="connection-target">&rarr; System GND (or Shunt Resistor)</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="mux_iret_sig_solder"> Soldered</label><label><input type="checkbox" id="mux_iret_sig_qa"> Verified</label></div></li>
+        <li><span class="pin-name">C0 - C11</span> <span class="connection-target">&rarr; Electrodes E1-E12 Bus</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="mux_iret_bus_solder"> Soldered</label><label><input type="checkbox" id="mux_iret_bus_qa"> Verified</label></div></li>
+    </ul>
+
+    <h3>MUX_VP (Voltage Positive)</h3>
+    <ul>
+        <li><span class="pin-name">VCC</span> <span class="connection-target">&rarr; ESP32 3V3</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="mux_vp_vcc_solder"> Soldered</label><label><input type="checkbox" id="mux_vp_vcc_qa"> Verified</label></div></li>
+        <li><span class="pin-name">GND</span> <span class="connection-target">&rarr; System GND</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="mux_vp_gnd_solder"> Soldered</label><label><input type="checkbox" id="mux_vp_gnd_qa"> Verified</label></div></li>
+        <li><span class="pin-name">SIG/COM</span> <span class="connection-target">&rarr; ADS1115 A0</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="mux_vp_sig_solder"> Soldered</label><label><input type="checkbox" id="mux_vp_sig_qa"> Verified</label></div></li>
+        <li><span class="pin-name">C0 - C11</span> <span class="connection-target">&rarr; Electrodes E1-E12 Bus</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="mux_vp_bus_solder"> Soldered</label><label><input type="checkbox" id="mux_vp_bus_qa"> Verified</label></div></li>
+    </ul>
+
+    <h3>MUX_VN (Voltage Negative)</h3>
+    <ul>
+        <li><span class="pin-name">VCC</span> <span class="connection-target">&rarr; ESP32 3V3</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="mux_vn_vcc_solder"> Soldered</label><label><input type="checkbox" id="mux_vn_vcc_qa"> Verified</label></div></li>
+        <li><span class="pin-name">GND</span> <span class="connection-target">&rarr; System GND</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="mux_vn_gnd_solder"> Soldered</label><label><input type="checkbox" id="mux_vn_gnd_qa"> Verified</label></div></li>
+        <li><span class="pin-name">SIG/COM</span> <span class="connection-target">&rarr; ADS1115 A1</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="mux_vn_sig_solder"> Soldered</label><label><input type="checkbox" id="mux_vn_sig_qa"> Verified</label></div></li>
+        <li><span class="pin-name">C0 - C11</span> <span class="connection-target">&rarr; Electrodes E1-E12 Bus</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="mux_vn_bus_solder"> Soldered</label><label><input type="checkbox" id="mux_vn_bus_qa"> Verified</label></div></li>
+    </ul>
+
+    <h2>3. MCP4725 (DAC)</h2>
+    <ul>
+        <li><span class="pin-name">VDD</span> <span class="connection-target">&rarr; ESP32 3V3</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="dac_vdd_solder"> Soldered</label><label><input type="checkbox" id="dac_vdd_qa"> Verified</label></div></li>
+        <li><span class="pin-name">GND</span> <span class="connection-target">&rarr; System GND</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="dac_gnd_solder"> Soldered</label><label><input type="checkbox" id="dac_gnd_qa"> Verified</label></div></li>
+        <li><span class="pin-name">SDA</span> <span class="connection-target">&rarr; ESP32 GPIO8</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="dac_sda_solder"> Soldered</label><label><input type="checkbox" id="dac_sda_qa"> Verified</label></div></li>
+        <li><span class="pin-name">SCL</span> <span class="connection-target">&rarr; ESP32 GPIO9</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="dac_scl_solder"> Soldered</label><label><input type="checkbox" id="dac_scl_qa"> Verified</label></div></li>
+        <li><span class="pin-name">ADDR</span> <span class="connection-target">&rarr; GND</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="dac_addr_solder"> Soldered</label><label><input type="checkbox" id="dac_addr_qa"> Verified</label></div></li>
+        <li><span class="pin-name">VOUT</span> <span class="connection-target">&rarr; Resistor R3 (5kΩ to OPA2134PA Pin 3)</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="dac_vout_solder"> Soldered</label><label><input type="checkbox" id="dac_vout_qa"> Verified</label></div></li>
+    </ul>
+
+    <h2>4. ADS1115 (ADC)</h2>
+    <ul>
+        <li><span class="pin-name">VDD</span> <span class="connection-target">&rarr; ESP32 3V3</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="adc_vdd_solder"> Soldered</label><label><input type="checkbox" id="adc_vdd_qa"> Verified</label></div></li>
+        <li><span class="pin-name">GND</span> <span class="connection-target">&rarr; System GND</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="adc_gnd_solder"> Soldered</label><label><input type="checkbox" id="adc_gnd_qa"> Verified</label></div></li>
+        <li><span class="pin-name">SDA</span> <span class="connection-target">&rarr; ESP32 GPIO8</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="adc_sda_solder"> Soldered</label><label><input type="checkbox" id="adc_sda_qa"> Verified</label></div></li>
+        <li><span class="pin-name">SCL</span> <span class="connection-target">&rarr; ESP32 GPIO9</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="adc_scl_solder"> Soldered</label><label><input type="checkbox" id="adc_scl_qa"> Verified</label></div></li>
+        <li><span class="pin-name">ADDR</span> <span class="connection-target">&rarr; GND</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="adc_addr_solder"> Soldered</label><label><input type="checkbox" id="adc_addr_qa"> Verified</label></div></li>
+        <li><span class="pin-name">A0</span> <span class="connection-target">&rarr; MUX_VP SIG/COM</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="adc_a0_solder"> Soldered</label><label><input type="checkbox" id="adc_a0_qa"> Verified</label></div></li>
+        <li><span class="pin-name">A1</span> <span class="connection-target">&rarr; MUX_VN SIG/COM</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="adc_a1_solder"> Soldered</label><label><input type="checkbox" id="adc_a1_qa"> Verified</label></div></li>
+    </ul>
+
+    <h2>5. OPA2134PA Current Pump</h2>
+    <ul>
+        <li><span class="pin-name">R1 (5kΩ)</span> <span class="connection-target">&rarr; Between Pin 2 and GND</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="opa_r1_solder"> Soldered</label><label><input type="checkbox" id="opa_r1_qa"> Verified</label></div></li>
+        <li><span class="pin-name">R2 (100Ω)</span> <span class="connection-target">&rarr; Between Pin 1 and Pin 2</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="opa_r2_solder"> Soldered</label><label><input type="checkbox" id="opa_r2_qa"> Verified</label></div></li>
+        <li><span class="pin-name">R3 (5kΩ)</span> <span class="connection-target">&rarr; Between DAC VOUT and Pin 3</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="opa_r3_solder"> Soldered</label><label><input type="checkbox" id="opa_r3_qa"> Verified</label></div></li>
+        <li><span class="pin-name">R4 (100Ω)</span> <span class="connection-target">&rarr; Between Pin 7 and Pin 3</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="opa_r4_solder"> Soldered</label><label><input type="checkbox" id="opa_r4_qa"> Verified</label></div></li>
+        <li><span class="pin-name">Rs (68Ω)</span> <span class="connection-target">&rarr; Between Pin 1 and Pin 5</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="opa_rs_solder"> Soldered</label><label><input type="checkbox" id="opa_rs_qa"> Verified</label></div></li>
+        <li><span class="pin-name">Pin 4 (V-)</span> <span class="connection-target">&rarr; System GND (or Negative Supply)</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="opa_p4_solder"> Soldered</label><label><input type="checkbox" id="opa_p4_qa"> Verified</label></div></li>
+        <li><span class="pin-name">Pin 6 (Inv B)</span> <span class="connection-target">&rarr; Tied directly to Pin 7</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="opa_p6_solder"> Soldered</label><label><input type="checkbox" id="opa_p6_qa"> Verified</label></div></li>
+        <li><span class="pin-name">Pin 8 (V+)</span> <span class="connection-target">&rarr; Positive Supply (+9V)</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="opa_p8_solder"> Soldered</label><label><input type="checkbox" id="opa_p8_qa"> Verified</label></div></li>
+        <li><span class="pin-name">Pin 5 Junction</span> <span class="connection-target">&rarr; MUX_I_SRC SIG/COM</span>
+            <div class="checkbox-group"><label><input type="checkbox" id="opa_p5_solder"> Soldered</label><label><input type="checkbox" id="opa_p5_qa"> Verified</label></div></li>
+    </ul>
+
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        const progressFill = document.getElementById('progress-fill');
+        const progressPercent = document.getElementById('progress-percent');
+        const progressCount = document.getElementById('progress-count');
+        const progressTotal = document.getElementById('progress-total');
+        
+        const total = checkboxes.length;
+        progressTotal.innerText = total;
+
+        function updateProgress() {
+            const checked = document.querySelectorAll('input[type="checkbox"]:checked').length;
+            const percent = Math.round((checked / total) * 100);
+            
+            progressFill.style.width = percent + '%';
+            progressPercent.innerText = percent;
+            progressCount.innerText = checked;
+            
+            // Highlight completed list items
+            checkboxes.forEach(cb => {
+                const li = cb.closest('li');
+                const group = li.querySelectorAll('input[type="checkbox"]');
+                const allGroupChecked = Array.from(group).every(c => c.checked);
+                if (allGroupChecked) {
+                    li.classList.add('completed');
+                } else {
+                    li.classList.remove('completed');
+                }
+            });
+        }
+
+        // Load saved states
+        checkboxes.forEach(cb => {
+            const savedState = localStorage.getItem('ert_checklist_' + cb.id);
+            if (savedState === 'true') {
+                cb.checked = true;
+            }
+            
+            // Save state on change
+            cb.addEventListener('change', () => {
+                localStorage.setItem('ert_checklist_' + cb.id, cb.checked);
+                updateProgress();
+            });
+        });
+        
+        updateProgress();
+    });
+
+    function resetAll() {
+        if (confirm("Are you sure you want to reset all your progress?")) {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(cb => {
+                cb.checked = false;
+                localStorage.setItem('ert_checklist_' + cb.id, false);
+            });
+            // trigger change event manually to update progress
+            document.querySelector('input[type="checkbox"]').dispatchEvent(new Event('change'));
+            location.reload();
+        }
+    }
+</script>
+
+</body>
+</html>
