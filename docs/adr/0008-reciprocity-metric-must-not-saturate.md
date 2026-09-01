@@ -93,10 +93,22 @@ match with a flipped sign scores 0% error and sets the flag.
 Re-scored against the 2026-09-01 capture
 (`phase3a_logs/phase3a-v2-adjacent-20260901-171117.csv`), the metric now returns **54 distinct
 scores for 54 pairs** spanning 0.70% to 99.84%, against 47 identical 200.00% values before.
-The worst-third electrode frequency became E5 x11, E4 x9, E3 x7 — E5 now ranks first,
-independently agreeing with the drive-current evidence in
-[ADR-0009](0009-fix-e5-contact-before-further-capture.md). Under the old metric E5 tied at 9
-in a flat distribution that named no suspect.
+That is the whole of what this ADR claims: the column ranks.
+
+**Correction (2026-09-01, same day).** This section originally read the post-fix worst-third
+frequency (E5 x11, E4 x9, E3 x7) as independent agreement with the drive-current evidence in
+[ADR-0009](0009-fix-e5-contact-before-further-capture.md). That corroboration claim was wrong
+and has been withdrawn. E5 was subsequently repaired - an 8x improvement in delivered current,
+with control drift dropping it from first to fifth in the per-electrode ranking - and the
+reciprocity distribution did not move: E5 rows held a 71% median error before and after. The
+agreement was coincidental. See [ADR-0010](0010-reciprocity-error-scales-with-signal.md), which
+records that reciprocity error tracks signal amplitude (r = +0.791 against log amplitude)
+rather than contact quality, and withdraws reciprocity as evidence of hardware health until
+dummy loads calibrate it.
+
+The metric fix itself is unaffected by that correction and remains verified. Ranking correctly
+is what made the amplitude analysis possible at all; the saturated metric could not have
+produced it.
 
 Falsified if any two pairs with different magnitude ratios ever score identically, or if a
 re-run reports a median of exactly 200.00%.
