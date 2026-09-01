@@ -59,3 +59,4 @@ one costs a re-derivation.
 | [0003](0003-reciprocity-as-report-not-gate.md) | Reciprocity error is reported, not enforced as a capture gate | Accepted |
 | [0004](0004-opt-in-pinned-colorbar.md) | Colorbar pinning is opt-in per run set, not the default | Accepted |
 | [0005](0005-firmware-tests-stay-text-assertions.md) | Firmware tests stay text assertions; the limitation is documented, not engineered away | Accepted |
+| [0006](0006-remove-shipped-superpowers-plans.md) | Remove shipped build plans rather than archiving them in-tree | Accepted |
