@@ -30,6 +30,7 @@ MIN_BASELINE_CORRELATION = 0.995
 MAX_RECON_BASELINE_PAIR_RMS_KOHM = 0.03
 MAX_RECON_PAIR_DELTA_KOHM = 0.05
 MIN_RECON_KEPT_PAIR_RATIO = 0.75
+RECIPROCITY_THRESHOLD_PERCENT = 10.0
 
 # Mirrors MIN_CURRENT_UA in the unified firmware. A measurement below this is
 # flagged I_LOW by the firmware, and a single I_LOW aborts a strict capture, so
@@ -249,6 +250,49 @@ def paired_transfer_resistance(
         # renders blue.
         result[key] = -0.5 * (fwd_resistance - rev_resistance)
     return result
+
+
+def reciprocity_errors(
+    values: dict[tuple[tuple[int, int], tuple[int, int]], float],
+) -> dict[tuple[tuple[int, int], tuple[int, int]], float]:
+    """Percent error between each measurement and its reciprocal.
+
+    Reciprocity: (I:A,B / V:C,D) should equal (I:C,D / V:A,B). Only pairs whose
+    reciprocal was also captured in this frame are scored; each reciprocal
+    pair is reported once, keyed by whichever orientation was seen first.
+    """
+    errors: dict[tuple[tuple[int, int], tuple[int, int]], float] = {}
+    seen: set[tuple[tuple, tuple]] = set()
+    for key, value in values.items():
+        i_pair, v_pair = key
+        reciprocal_key = (v_pair, i_pair)
+        if reciprocal_key not in values:
+            continue
+        canonical = tuple(sorted((key, reciprocal_key)))
+        if canonical in seen:
+            continue
+        seen.add(canonical)
+        other = values[reciprocal_key]
+        denom = max((abs(value) + abs(other)) / 2.0, 1e-9)
+        errors[key] = abs(value - other) / denom * 100.0
+    return errors
+
+
+def filter_by_reciprocity(
+    values: dict[tuple[tuple[int, int], tuple[int, int]], float],
+    threshold_percent: float = RECIPROCITY_THRESHOLD_PERCENT,
+) -> tuple[dict[tuple[tuple[int, int], tuple[int, int]], float], list[tuple[tuple[int, int], tuple[int, int]]]]:
+    """Drop both members of any reciprocal pair whose error exceeds threshold."""
+    errors = reciprocity_errors(values)
+    kept = dict(values)
+    dropped: list[tuple[tuple[int, int], tuple[int, int]]] = []
+    for key, error in errors.items():
+        if error > threshold_percent:
+            i_pair, v_pair = key
+            kept.pop(key, None)
+            kept.pop((v_pair, i_pair), None)
+            dropped.append(key)
+    return kept, dropped
 
 
 def protocol_and_command(pattern: str):
@@ -769,7 +813,10 @@ def write_control_report(path: Path, report: ControlDriftReport) -> None:
 
 def wait_for_target(auto_continue: bool, input_fn=input) -> None:
     if not auto_continue:
-        input_fn("[Target] Place the target without moving electrodes, then press Enter...")
+        input_fn(
+            "[Target] Place the target without moving electrodes. Let the tank "
+            "settle 5-10 minutes (or pass --target-settle-s), then press Enter..."
+        )
 
 
 def reconstruction_image_paths(csv_path: Path) -> tuple[Path, Path]:
@@ -782,6 +829,46 @@ def reconstruction_image_paths(csv_path: Path) -> tuple[Path, Path]:
 
 def control_report_path(csv_path: Path) -> Path:
     return csv_path.with_name(f"{csv_path.stem}-stability.csv")
+
+
+def reciprocity_report_path(csv_path: Path) -> Path:
+    return csv_path.with_name(f"{csv_path.stem}-reciprocity.csv")
+
+
+def average_measurement_values(
+    frames: list[dict[tuple[tuple[int, int], tuple[int, int]], float]],
+) -> dict[tuple[tuple[int, int], tuple[int, int]], float]:
+    """Average per-key transfer resistance across frames that saw that key."""
+    sums: dict[tuple[tuple[int, int], tuple[int, int]], float] = {}
+    counts: dict[tuple[tuple[int, int], tuple[int, int]], int] = {}
+    for values in frames:
+        for key, value in values.items():
+            sums[key] = sums.get(key, 0.0) + value
+            counts[key] = counts.get(key, 0) + 1
+    return {key: sums[key] / counts[key] for key in sums}
+
+
+def write_reciprocity_report(
+    path: Path,
+    errors: dict[tuple[tuple[int, int], tuple[int, int]], float],
+    threshold_percent: float,
+) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.writer(handle)
+        writer.writerow([
+            "i_plus", "i_minus", "v_plus", "v_minus",
+            "percent_error", "threshold_percent", "status",
+        ])
+        for (i_pair, v_pair), error in sorted(
+            errors.items(), key=lambda item: item[1], reverse=True
+        ):
+            writer.writerow([
+                base.index_to_electrode(i_pair[0]), base.index_to_electrode(i_pair[1]),
+                base.index_to_electrode(v_pair[0]), base.index_to_electrode(v_pair[1]),
+                f"{error:.4f}", f"{threshold_percent:.4f}",
+                "FAIL" if error > threshold_percent else "OK",
+            ])
 
 
 def consistency_report_path(csv_path: Path) -> Path:
@@ -828,12 +915,16 @@ def save_reconstruction_images(
     average_path: Path,
     pattern_label: str,
     diameter_cm: float | None = None,
+    fixed_limit: float | None = None,
 ) -> None:
     if not reconstructions:
         raise ValueError("No reconstructions are available to save")
     contact_path.parent.mkdir(parents=True, exist_ok=True)
-    limit = max(float(np.max(np.abs(values))) for values in reconstructions)
-    limit = max(limit, np.finfo(float).eps)
+    if fixed_limit is not None:
+        limit = fixed_limit
+    else:
+        limit = max(float(np.max(np.abs(values))) for values in reconstructions)
+        limit = max(limit, np.finfo(float).eps)
 
     fig, axes = base.plt.subplots(4, 5, figsize=(16, 12), constrained_layout=True)
     image = None
@@ -860,7 +951,10 @@ def save_reconstruction_images(
     base.plt.close(fig)
 
     average_values = np.mean(np.stack(reconstructions), axis=0)
-    average_limit = max(float(np.max(np.abs(average_values))), np.finfo(float).eps)
+    if fixed_limit is not None:
+        average_limit = fixed_limit
+    else:
+        average_limit = max(float(np.max(np.abs(average_values))), np.finfo(float).eps)
     avg_fig, avg_ax = base.plt.subplots(figsize=(8, 7), constrained_layout=True)
     avg_image = _draw_reconstruction(
         avg_ax,
@@ -1063,6 +1157,7 @@ def capture_vectors(
     logger: RawFrameLogger | None,
     run_id: str,
     capture: str,
+    reciprocity_sink: list[dict[tuple[tuple[int, int], tuple[int, int]], float]] | None = None,
 ) -> list[np.ndarray]:
     vectors: list[np.ndarray] = []
     for index in range(1, count + 1):
@@ -1075,6 +1170,8 @@ def capture_vectors(
             logger.write(run_id, capture, frame)
         vector = frame_to_vector(frame, protocol)
         vectors.append(vector)
+        if reciprocity_sink is not None:
+            reciprocity_sink.append(paired_transfer_resistance(frame, strict=False))
         currents = np.asarray([abs(record.current_ua) for record in frame.records])
         print(
             f"[{capture} {index}/{count}] frame={frame.frame_id} "
@@ -1117,6 +1214,18 @@ def parse_args() -> argparse.Namespace:
         default=None,
         help="Real trunk or phantom diameter in centimeters; used for plot/run labeling",
     )
+    parser.add_argument(
+        "--colorbar-limit",
+        type=float,
+        default=None,
+        help=(
+            "Pin reconstruction colorbars to +/- this value (relative conductivity "
+            "change) instead of auto-scaling to each run's own max. Set this to a "
+            "fixed value shared across a run set before comparing images between runs "
+            "-- otherwise a noise-only run and a strong-signal run render with the "
+            "same visual saturation."
+        ),
+    )
     parser.add_argument("--startup-wait", type=float, default=1.5)
     parser.add_argument("--log", action="store_true")
     parser.add_argument("--log-dir", default=str(DEFAULT_LOG_DIR))
@@ -1136,6 +1245,26 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Bypass the baseline stability gate temporarily and continue anyway",
     )
+    parser.add_argument(
+        "--reciprocity-threshold-pct",
+        type=float,
+        default=RECIPROCITY_THRESHOLD_PERCENT,
+        help=(
+            "Max allowed percent error between a measurement and its reciprocal "
+            "(I:A,B/V:C,D vs I:C,D/V:A,B) computed on the baseline capture. "
+            "Reported to a CSV, not used to reject the run."
+        ),
+    )
+    parser.add_argument(
+        "--target-settle-s",
+        type=float,
+        default=0.0,
+        help=(
+            "Seconds to wait after the target-placement prompt before capturing "
+            "target frames, letting the tank settle (recommend 300-600s after "
+            "inserting/moving a target)"
+        ),
+    )
     return parser.parse_args()
 
 
@@ -1149,6 +1278,12 @@ def main() -> None:
         raise ValueError("--warmup-frames cannot be negative")
     if args.diameter_cm is not None and args.diameter_cm <= 0:
         raise ValueError("--diameter-cm must be positive when provided")
+    if args.colorbar_limit is not None and args.colorbar_limit <= 0:
+        raise ValueError("--colorbar-limit must be positive when provided")
+    if args.reciprocity_threshold_pct <= 0:
+        raise ValueError("--reciprocity-threshold-pct must be positive")
+    if args.target_settle_s < 0:
+        raise ValueError("--target-settle-s cannot be negative")
 
     protocol, mode_command = protocol_and_command(args.pattern)
     eit_mesh, solver = base.create_solver(protocol)
@@ -1177,10 +1312,32 @@ def main() -> None:
             discard_warmup_frames(ser, args.warmup_frames, args.pattern)
 
         print(f"[Baseline] Capturing {args.baseline_frames} averaged frames")
+        baseline_reciprocity_frames: list[dict[tuple[tuple[int, int], tuple[int, int]], float]] = []
         baseline_vectors = capture_vectors(
             ser, protocol, args.baseline_frames, args.pattern,
             logger, run_id, "baseline",
+            reciprocity_sink=baseline_reciprocity_frames,
         )
+        reciprocity_values = average_measurement_values(baseline_reciprocity_frames)
+        reciprocity_scores = reciprocity_errors(reciprocity_values)
+        if reciprocity_scores:
+            failing = sum(
+                1 for error in reciprocity_scores.values()
+                if error > args.reciprocity_threshold_pct
+            )
+            worst_key = max(reciprocity_scores, key=reciprocity_scores.get)
+            print(
+                f"[Reciprocity] {len(reciprocity_scores)} scored pairs, "
+                f"{failing} above {args.reciprocity_threshold_pct:.1f}% threshold, "
+                f"worst={reciprocity_scores[worst_key]:.2f}% "
+                f"(I={base.index_to_electrode(worst_key[0][0])}-{base.index_to_electrode(worst_key[0][1])} "
+                f"V={base.index_to_electrode(worst_key[1][0])}-{base.index_to_electrode(worst_key[1][1])})"
+            )
+            reciprocity_path = reciprocity_report_path(run_csv_path)
+            write_reciprocity_report(reciprocity_path, reciprocity_scores, args.reciprocity_threshold_pct)
+            print(f"[Reciprocity] saved report to {reciprocity_path}")
+        else:
+            print("[Reciprocity] no reciprocal pairs found in this pattern/mesh")
         stability = require_stable_baseline(
             baseline_vectors,
             allow_unstable=args.allow_unstable_baseline,
@@ -1235,6 +1392,9 @@ def main() -> None:
             print(f"[Control] Stability report saved to {report_path}")
         else:
             wait_for_target(args.auto_continue)
+            if args.target_settle_s > 0:
+                print(f"[Target] Settling {args.target_settle_s:.0f}s before capture")
+                time.sleep(args.target_settle_s)
 
             fig, ax = base.create_reconstruction_plot()
             print(f"[Run] Capturing {args.frames} comparison frames")
@@ -1303,6 +1463,7 @@ def main() -> None:
             average_path,
             args.pattern.title(),
             args.diameter_cm,
+            args.colorbar_limit,
         )
         print(f"[Images] saved contact sheet to {contact_path}")
         print(f"[Images] saved average reconstruction to {average_path}")

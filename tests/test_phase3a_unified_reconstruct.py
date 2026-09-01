@@ -530,5 +530,48 @@ class TestLenientQualityHandling(unittest.TestCase):
         np.testing.assert_allclose(average, [2.0, 4.0])
 
 
+class TestReciprocityCheck(unittest.TestCase):
+    def test_scores_percent_error_between_reciprocal_pairs_once(self):
+        values = {
+            ((0, 1), (2, 3)): 1.00,
+            ((2, 3), (0, 1)): 1.10,
+            ((4, 5), (6, 7)): 2.00,  # no reciprocal captured, not scored
+        }
+
+        errors = unified.reciprocity_errors(values)
+
+        self.assertEqual(len(errors), 1)
+        key = next(iter(errors))
+        self.assertIn(key, [((0, 1), (2, 3)), ((2, 3), (0, 1))])
+        self.assertAlmostEqual(errors[key], 100.0 * 0.10 / 1.05, places=6)
+
+    def test_filter_drops_both_orientations_above_threshold(self):
+        values = {
+            ((0, 1), (2, 3)): 1.00,
+            ((2, 3), (0, 1)): 2.00,  # ~67% error, should drop
+            ((4, 5), (6, 7)): 3.00,
+            ((6, 7), (4, 5)): 3.05,  # ~1.6% error, should keep
+        }
+
+        kept, dropped = unified.filter_by_reciprocity(values, threshold_percent=10.0)
+
+        self.assertEqual(dropped, [((0, 1), (2, 3))])
+        self.assertNotIn(((0, 1), (2, 3)), kept)
+        self.assertNotIn(((2, 3), (0, 1)), kept)
+        self.assertIn(((4, 5), (6, 7)), kept)
+        self.assertIn(((6, 7), (4, 5)), kept)
+
+    def test_average_measurement_values_averages_across_frames(self):
+        frames = [
+            {((0, 1), (2, 3)): 1.0, ((4, 5), (6, 7)): 5.0},
+            {((0, 1), (2, 3)): 3.0},
+        ]
+
+        averaged = unified.average_measurement_values(frames)
+
+        self.assertAlmostEqual(averaged[((0, 1), (2, 3))], 2.0)
+        self.assertAlmostEqual(averaged[((4, 5), (6, 7))], 5.0)
+
+
 if __name__ == "__main__":
     unittest.main()
