@@ -288,7 +288,7 @@ class TestDebugController(unittest.TestCase):
         settings = UiSettings.default()
         controller.connect(settings)
 
-        self.assertEqual(controller.send_command("?"), ["[demo] ?"])
+        self.assertEqual(controller.send_command("ma"), ["[demo] ma"])
         with self.assertRaisesRegex(ValueError, "command"):
             controller.send_command("   ")
 
@@ -409,6 +409,123 @@ class TestDebugController(unittest.TestCase):
 
         self.assertTrue(fake_serial.closed)
         self.assertIsNone(acquisition._serial)
+
+
+class FakeDacSerial:
+    """Serial stub that answers `i` with a scan and records what was written."""
+
+    def __init__(self, scan_lines, address_reply=None):
+        self.scan_lines = list(scan_lines)
+        self.address_reply = list(address_reply or ["[INFO] MCP4725 attached at 0x61"])
+        self.written = []
+        self._pending = []
+
+    def write(self, payload):
+        text = payload.decode().strip()
+        self.written.append(text)
+        if text == "i":
+            self._pending = list(self.scan_lines)
+        elif text.startswith("b"):
+            self._pending = list(self.address_reply)
+
+    def readline(self):
+        if not self._pending:
+            return b""
+        return (self._pending.pop(0) + "\n").encode()
+
+    def reset_input_buffer(self):
+        pass
+
+    def close(self):
+        pass
+
+
+SCAN_0X61 = ["I2C_SCAN,BEGIN", "I2C_DEVICE,0x48", "I2C_DEVICE,0x61", "I2C_SCAN,END,FOUND,2"]
+SCAN_0X60 = ["I2C_SCAN,BEGIN", "I2C_DEVICE,0x48", "I2C_DEVICE,0x60", "I2C_SCAN,END,FOUND,2"]
+SCAN_BOTH = [
+    "I2C_SCAN,BEGIN", "I2C_DEVICE,0x48",
+    "I2C_DEVICE,0x60", "I2C_DEVICE,0x61", "I2C_SCAN,END,FOUND,3",
+]
+
+
+class TestSerialDacAddressSelection(unittest.TestCase):
+    def _acquisition(self, serial_stub):
+        acquisition = SerialAcquisition()
+        acquisition._serial = serial_stub
+        return acquisition
+
+    def test_binds_to_the_scanned_address(self):
+        for scan, expected, command in (
+            (SCAN_0X61, 0x61, "b61"),
+            (SCAN_0X60, 0x60, "b60"),
+        ):
+            with self.subTest(expected=expected):
+                stub = FakeDacSerial(scan)
+                result = self._acquisition(stub).select_dac_address()
+
+                self.assertEqual(result.address, expected)
+                self.assertTrue(result.resolved)
+                self.assertIn(command, stub.written)
+
+    def test_sends_no_address_command_when_the_bus_is_ambiguous(self):
+        stub = FakeDacSerial(SCAN_BOTH)
+
+        result = self._acquisition(stub).select_dac_address()
+
+        self.assertIsNone(result.address)
+        self.assertFalse(any(text.startswith("b") for text in stub.written))
+        self.assertIn("0x60", result.detail)
+        self.assertIn("0x61", result.detail)
+
+    def test_reports_an_older_flash_without_the_b_command(self):
+        stub = FakeDacSerial(SCAN_0X61, ["[ERROR] unknown command; send h"])
+
+        result = self._acquisition(stub).select_dac_address()
+
+        self.assertIsNone(result.address)
+        self.assertIn("reflash", result.detail)
+
+    def test_reports_a_firmware_refusal(self):
+        stub = FakeDacSerial(SCAN_0X61, ["[ERROR] no MCP4725 acknowledged at 0x61"])
+
+        result = self._acquisition(stub).select_dac_address()
+
+        self.assertIsNone(result.address)
+        self.assertIn("refused", result.detail)
+
+    def test_silent_board_leaves_the_firmware_choice_alone(self):
+        stub = FakeDacSerial([])
+
+        result = self._acquisition(stub).select_dac_address()
+
+        self.assertIsNone(result.address)
+        self.assertFalse(any(text.startswith("b") for text in stub.written))
+
+
+class TestControllerDacAddress(unittest.TestCase):
+    def test_connect_reports_the_selected_address(self):
+        messages = []
+        controller = DebugController(DemoAcquisition(), progress=messages.append)
+
+        controller.connect(UiSettings.default())
+
+        self.assertEqual(controller.state, ControllerState.CONNECTED)
+        self.assertTrue(any("DAC address" in message for message in messages))
+
+    def test_connect_survives_a_failing_address_check(self):
+        class BrokenSelect(DemoAcquisition):
+            def select_dac_address(self):
+                raise RuntimeError("scan exploded")
+
+        messages = []
+        controller = DebugController(BrokenSelect(), progress=messages.append)
+
+        controller.connect(UiSettings.default())
+
+        # Advisory only: the firmware already chose an address at boot, so a
+        # failed correction must not cost the session.
+        self.assertEqual(controller.state, ControllerState.CONNECTED)
+        self.assertTrue(any("scan exploded" in message for message in messages))
 
 
 if __name__ == "__main__":

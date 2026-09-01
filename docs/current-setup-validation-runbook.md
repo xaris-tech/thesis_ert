@@ -8,6 +8,25 @@ and a Windows/COM-port host, matching `CLAUDE.md`. Reconcile this document with 
 source whenever either changes — see `docs/validity-audit.md` X-01 for the prior drift that
 made this runbook fail its own checks.
 
+## Quick path: the Self Test tab
+
+The debug UI runs most of this runbook automatically. Launch it, press **Connect**, then
+**Self Test**, and read the tab: one row per component, worst-first remedy in the pane
+underneath, `Save report` to keep a copy next to the run logs.
+
+```powershell
+.\.venv\Scripts\python.exe tree_ert_app.py --port COM3
+```
+
+It covers steps 0, 2, 6 and parts of 5 and 7, and reports the shunt and current-range
+mismatches this document warns about. It cannot cover what needs a multimeter: the direct
+dummy-load sweep in step 4, and confirming the physically fitted Rs. Set the measured shunt
+in the **Fitted shunt ohm** field so the self test has something to compare the firmware's
+value against - left blank, that check can only warn.
+
+Run it with no board attached too: the host checks still run, and the hardware checks report
+SKIP rather than a misleading pass.
+
 ## 0. Software Baseline
 
 From the repo root, in PowerShell:
@@ -30,9 +49,10 @@ Get-PnpDevice -Class Ports -PresentOnly
 ```
 
 Expected result: a new `COMn` entry appears after plugging in the ESP32-S3 (typically under a
-"Silicon Labs" or "USB Serial" friendly name). If nothing new appears, check the cable, board
-power, USB mode, and driver. Note the COM port — it is passed to `tree_ert_app.py --port COM3`
-or `phase3a_unified_reconstruct.py --port COM3` (substitute the actual port).
+"Silicon Labs" or "USB Serial" friendly name). The debug UI's **Refresh ports** button lists
+the same thing. If nothing new appears, check the cable, board power, USB mode, and driver.
+Note the COM port - it is passed to `tree_ert_app.py --port COM3` or
+`phase3a_unified_reconstruct.py --port COM3` (substitute the actual port).
 
 ## 2. Firmware Diagnostic
 
@@ -48,10 +68,13 @@ i
 Expected:
 
 - `h` prints the command list.
-- `?` prints `STATUS` including `SHUNT_OHMS,97.9` (the measured value — see
-  `docs/validity-audit.md` D-F4/F4; do not expect `100.0`).
+- `?` prints `STATUS,2,...` including `SHUNT_OHMS`. The firmware default is `97.9` (the
+  measured value - see `docs/validity-audit.md` D-F4/F4; do not expect `100.0`). What matters
+  is that it matches the resistor physically fitted, which `j<ohms>` sets.
 - `i` prints an I2C scan and should find:
-  - MCP4725 at `0x61`
+  - MCP4725 at `0x60` **or `0x61`** - the A0 strap picks the low address bit, so this
+    board has scanned at both; the firmware probes both at boot and the UI rebinds from the
+    scan
   - ADS1115 at `0x48`
 
 If either I2C device is missing, stop and fix wiring/power before scanning.

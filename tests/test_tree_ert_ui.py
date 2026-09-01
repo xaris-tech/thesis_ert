@@ -67,7 +67,10 @@ class TestTreeErtUiEntrypoint(unittest.TestCase):
     def test_status_is_embedded_in_reconstruction_tab(self):
         from tree_ert.ui import debug_tab_titles
 
-        self.assertEqual(debug_tab_titles(), ("Reconstruction", "Health", "Serial", "Files"))
+        self.assertEqual(
+            debug_tab_titles(),
+            ("Reconstruction", "Self Test", "Health", "Serial", "Files"),
+        )
         self.assertNotIn("Status", debug_tab_titles())
 
     def test_preview_indices_spread_across_reconstructions(self):

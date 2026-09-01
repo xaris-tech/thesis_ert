@@ -112,6 +112,9 @@ Current serial commands:
 - `j<number>` set the current-sense shunt value in ohms
 - `a1` / `a0` enable or disable electrode-voltage PGA autoranging
 - `i` scan the I2C bus
+- `b<hex>` set the MCP4725 I2C address (`b60` / `b61`); `b` alone reports it. The A0
+  strap picks the low address bit and this board has scanned at both, so firmware
+  probes 0x61 then 0x60 at boot and the debug UI re-binds it from a scan on connect
 - `d` debug hold for multimeter work
 - `?` print status
 - `h` print help

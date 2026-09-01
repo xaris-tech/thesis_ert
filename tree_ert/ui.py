@@ -16,6 +16,7 @@ from matplotlib.figure import Figure
 import phase3a_reconstruct as base
 import phase3a_unified_reconstruct as unified
 from phase3a_reconstruct import N_ELECTRODES
+from tree_ert import selftest
 from tree_ert.acquisition import DemoAcquisition, SerialAcquisition
 from tree_ert.controller import (
     CaptureStopped,
@@ -178,7 +179,30 @@ def preview_scan_indices(scan_count: int, preview_count: int = 4) -> tuple[int, 
 
 
 def debug_tab_titles() -> tuple[str, ...]:
-    return ("Reconstruction", "Health", "Serial", "Files")
+    return ("Reconstruction", "Self Test", "Health", "Serial", "Files")
+
+
+SELF_TEST_STATUS_COLORS = {
+    selftest.CheckStatus.PASS: "#0b6b3a",
+    selftest.CheckStatus.WARN: "#8a5a00",
+    selftest.CheckStatus.FAIL: "#b00020",
+    selftest.CheckStatus.SKIP: "#666666",
+}
+
+
+def format_self_test_summary(report: selftest.SelfTestReport) -> str:
+    counts = report.counts()
+    summary = (
+        f"Self test {report.status.value}: "
+        f"pass={counts[selftest.CheckStatus.PASS]} "
+        f"warn={counts[selftest.CheckStatus.WARN]} "
+        f"fail={counts[selftest.CheckStatus.FAIL]} "
+        f"skip={counts[selftest.CheckStatus.SKIP]}"
+    )
+    blocker = report.first_blocker()
+    if blocker is not None:
+        summary += f" | fix first: {blocker.component} - {blocker.name}"
+    return summary
 
 
 def format_control_drift_summary(report: unified.ControlDriftReport) -> str:
@@ -262,6 +286,8 @@ class DebugApp(tk.Tk):
         self.demo = demo
         self._worker_active = False
         self._last_reconstructions: list[np.ndarray] = []
+        self._last_self_test: selftest.SelfTestReport | None = None
+        self._self_test_remedies: dict[str, selftest.CheckResult] = {}
         self._build_vars(port)
         self._build_layout()
         self.protocol("WM_DELETE_WINDOW", self._on_close)
@@ -290,7 +316,13 @@ class DebugApp(tk.Tk):
         self.filter_pairs_var = tk.BooleanVar(value=defaults.filter_pairs)
         self.electrode_offset_var = tk.StringVar(value=str(defaults.electrode_offset))
         self.electrode_reversed_var = tk.BooleanVar(value=defaults.electrode_reversed)
+        self.self_test_frames_var = tk.StringVar(value=str(defaults.self_test_frames))
+        self.expected_shunt_var = tk.StringVar(
+            value="" if defaults.expected_shunt_ohms is None
+            else str(defaults.expected_shunt_ohms)
+        )
         self.status_var = tk.StringVar(value="Demo mode" if self.demo else "Disconnected")
+        self.self_test_status_var = tk.StringVar(value="Not run")
 
     def _build_layout(self) -> None:
         self.columnconfigure(1, weight=1)
@@ -390,6 +422,8 @@ class DebugApp(tk.Tk):
             ("Run frames", self.frames_var),
             ("Diameter cm", self.diameter_var),
             ("Electrode offset", self.electrode_offset_var),
+            ("Self test frames", self.self_test_frames_var),
+            ("Fitted shunt ohm", self.expected_shunt_var),
         ):
             ttk.Label(parent, text=label).grid(row=row, column=0, sticky="w")
             ttk.Entry(parent, textvariable=var, width=12).grid(
@@ -424,6 +458,7 @@ class DebugApp(tk.Tk):
 
         for label, action in (
             ("Connect", self.connect),
+            ("Self Test", self.run_self_test),
             ("Configure", self.configure),
             ("Probe Frame", self.probe_frame),
             ("Baseline", self.capture_baseline),
@@ -481,6 +516,8 @@ class DebugApp(tk.Tk):
             foreground="#444444",
         ).grid(row=2, column=0, columnspan=2, sticky="w")
 
+        self_test_tab = self._build_self_test_tab(notebook)
+
         self.health_text = tk.Text(notebook, height=10, wrap="word")
         self.files_text = tk.Text(notebook, height=10, wrap="word")
 
@@ -499,7 +536,7 @@ class DebugApp(tk.Tk):
 
         for title, widget in zip(
             debug_tab_titles(),
-            (reconstruction_tab, self.health_text, serial_tab, self.files_text),
+            (reconstruction_tab, self_test_tab, self.health_text, serial_tab, self.files_text),
             strict=True,
         ):
             notebook.add(widget, text=title)
@@ -510,9 +547,142 @@ class DebugApp(tk.Tk):
         if self.demo:
             self._append(self.serial_text, "Demo acquisition selected; no serial port will be opened.\n")
 
+    def _build_self_test_tab(self, notebook: ttk.Notebook) -> ttk.Frame:
+        """One row per component check, worst-first ordering left to the report.
+
+        A tree rather than a text log because the point of the tab is to answer
+        "which component is broken" at a glance; a scrolling log makes the
+        reader do the sorting.
+        """
+        tab = ttk.Frame(notebook)
+        tab.columnconfigure(0, weight=1)
+        tab.rowconfigure(1, weight=1)
+
+        header = ttk.Frame(tab)
+        header.grid(row=0, column=0, sticky="ew", padx=6, pady=(6, 2))
+        header.columnconfigure(1, weight=1)
+        ttk.Button(header, text="Run Self Test", command=self.run_self_test).grid(
+            row=0, column=0, sticky="w"
+        )
+        self.self_test_status_label = ttk.Label(
+            header,
+            textvariable=self.self_test_status_var,
+            wraplength=700,
+        )
+        self.self_test_status_label.grid(row=0, column=1, sticky="w", padx=(8, 0))
+        ttk.Button(header, text="Save report", command=self.export_self_test).grid(
+            row=0, column=2, sticky="e"
+        )
+
+        columns = ("status", "component", "check", "detail")
+        self.self_test_tree = ttk.Treeview(
+            tab, columns=columns, show="headings", height=18
+        )
+        for column, heading, width in (
+            ("status", "Status", 60),
+            ("component", "Component", 170),
+            ("check", "Check", 250),
+            ("detail", "Result", 520),
+        ):
+            self.self_test_tree.heading(column, text=heading)
+            self.self_test_tree.column(column, width=width, anchor="w", stretch=(column == "detail"))
+        self.self_test_tree.grid(row=1, column=0, sticky="nsew", padx=(6, 0))
+        tree_scroll = ttk.Scrollbar(
+            tab, orient="vertical", command=self.self_test_tree.yview
+        )
+        tree_scroll.grid(row=1, column=1, sticky="ns")
+        self.self_test_tree.configure(yscrollcommand=tree_scroll.set)
+        for status, color in SELF_TEST_STATUS_COLORS.items():
+            self.self_test_tree.tag_configure(status.value, foreground=color)
+        self.self_test_tree.bind("<<TreeviewSelect>>", self._show_self_test_remedy)
+
+        remedy_frame = ttk.LabelFrame(tab, text="What to do", padding=(6, 4))
+        remedy_frame.grid(row=2, column=0, columnspan=2, sticky="ew", padx=6, pady=6)
+        remedy_frame.columnconfigure(0, weight=1)
+        self.self_test_remedy = tk.Text(remedy_frame, height=4, wrap="word")
+        self.self_test_remedy.grid(row=0, column=0, sticky="ew")
+        self._append(
+            self.self_test_remedy,
+            "Select a row to see what a WARN or FAIL means and what to do about it.\n",
+        )
+        return tab
+
+    def _render_self_test(self, report: selftest.SelfTestReport) -> None:
+        self._last_self_test = report
+        self.self_test_tree.delete(*self.self_test_tree.get_children())
+        self._self_test_remedies = {}
+        for index, result in enumerate(report.results):
+            item = self.self_test_tree.insert(
+                "",
+                "end",
+                iid=str(index),
+                values=(
+                    result.status.value,
+                    result.component,
+                    result.name,
+                    result.detail,
+                ),
+                tags=(result.status.value,),
+            )
+            self._self_test_remedies[item] = result
+        summary = format_self_test_summary(report)
+        self.self_test_status_var.set(summary)
+        self.self_test_status_label.configure(
+            foreground=SELF_TEST_STATUS_COLORS[report.status]
+        )
+        self._append(self.status_text, f"{summary}\n")
+        self._append(self.health_text, f"{selftest.format_report(report)}\n")
+        blocker = report.first_blocker()
+        if blocker is not None:
+            self._show_result_remedy(blocker)
+
+    def _show_self_test_remedy(self, _event=None) -> None:
+        selection = self.self_test_tree.selection()
+        if not selection:
+            return
+        result = self._self_test_remedies.get(selection[0])
+        if result is not None:
+            self._show_result_remedy(result)
+
+    def _show_result_remedy(self, result: selftest.CheckResult) -> None:
+        self.self_test_remedy.delete("1.0", "end")
+        text = f"[{result.status.value}] {result.component} - {result.name}\n{result.detail}\n"
+        if result.remedy:
+            text += f"\n{result.remedy}\n"
+        self._append(self.self_test_remedy, text)
+
+    def export_self_test(self) -> Path | None:
+        """Write the last report to a text file next to the run logs."""
+        if self._last_self_test is None:
+            self._append(self.status_text, "No self test to save yet.\n")
+            return None
+        try:
+            settings = self.settings()
+        except Exception:
+            settings = UiSettings.default()
+        directory = Path(settings.log_dir)
+        directory.mkdir(parents=True, exist_ok=True)
+        stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+        path = directory / f"selftest-{stamp}.txt"
+        try:
+            path.write_text(
+                selftest.format_report(self._last_self_test), encoding="utf-8"
+            )
+        except OSError as exc:
+            self._append(self.status_text, f"Self test save failed: {exc}\n")
+            return None
+        self._append(self.files_text, f"Saved {path}\n")
+        self._append(self.status_text, f"Saved {path}\n")
+        return path
+
     def settings(self) -> UiSettings:
         diameter_text = self.diameter_var.get().strip()
         diameter = parse_float_field("diameter_cm", diameter_text, minimum=0.1) if diameter_text else None
+        shunt_text = self.expected_shunt_var.get().strip()
+        shunt = (
+            parse_float_field("expected_shunt_ohms", shunt_text, minimum=0.1)
+            if shunt_text else None
+        )
         return UiSettings(
             port=self.port_var.get().strip(),
             pattern=self.pattern_var.get().strip(),
@@ -533,6 +703,10 @@ class DebugApp(tk.Tk):
                 "electrode_offset", self.electrode_offset_var.get(), 0, 11
             ),
             electrode_reversed=bool(self.electrode_reversed_var.get()),
+            self_test_frames=parse_int_field(
+                "self_test_frames", self.self_test_frames_var.get(), 2, 100
+            ),
+            expected_shunt_ohms=shunt,
         ).validate()
 
     def refresh_ports(self) -> None:
@@ -546,6 +720,10 @@ class DebugApp(tk.Tk):
 
     def probe_frame(self) -> None:
         self._run_with_settings("probe", self.controller.probe_frame)
+
+    def run_self_test(self) -> None:
+        self.self_test_status_var.set("Running...")
+        self._run_with_settings("self_test", self.controller.run_self_test)
 
     def configure(self) -> None:
         self._run_with_settings("configure", self.controller.configure)
@@ -727,7 +905,9 @@ class DebugApp(tk.Tk):
         else:
             self.status_var.set(f"{event} complete")
         self._append(self.status_text, f"{event} complete.\n")
-        if event == "probe":
+        if event == "self_test":
+            self._render_self_test(payload)
+        elif event == "probe":
             summary = format_frame_diagnostics(payload)
             self._append(self.status_text, f"{summary}\n")
             self._append(self.health_text, f"{summary}\n")

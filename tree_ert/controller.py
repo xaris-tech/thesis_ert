@@ -9,6 +9,7 @@ import numpy as np
 
 import phase3a_reconstruct as base
 import phase3a_unified_reconstruct as unified
+from tree_ert import selftest
 from tree_ert.acquisition import Acquisition
 from tree_ert.settings import UiSettings
 
@@ -147,7 +148,26 @@ class DebugController:
         self._emit(f"Connecting to {target}")
         self.acquisition.connect(settings)
         self.state = ControllerState.CONNECTED
+        self._select_dac_address()
         self._emit("Connected")
+
+    def _select_dac_address(self) -> None:
+        """Bind the firmware's DAC driver to whatever the I2C scan reports.
+
+        Advisory, never fatal: the firmware already picks an address at boot, so
+        a failure here costs a correction, not the session. The outcome is
+        emitted either way because a DAC on an unexpected address is worth
+        seeing in the log next to the run it produced.
+        """
+        try:
+            result = self.acquisition.select_dac_address()
+        except Exception as exc:  # noqa: BLE001 - advisory step, never fatal
+            self._emit(f"DAC address check skipped: {exc}")
+            return
+        self._emit(
+            f"DAC address: {result.detail}" if result.resolved
+            else f"DAC address unresolved: {result.detail}"
+        )
 
     def configure(self, settings: UiSettings) -> None:
         settings.validate()
@@ -406,6 +426,165 @@ class DebugController:
         else:
             self._emit("Tune failed: no successful drift attempts")
         return DriftTuneResult(attempts, best)
+
+    def run_self_test(self, settings: UiSettings) -> selftest.SelfTestReport:
+        """Check every component in ladder order and report each one separately.
+
+        Host checks always run, so the suite is useful before a board is even
+        plugged in. Hardware checks are skipped rather than failed when there is
+        no connection, because "not tested" and "tested and broken" are
+        different answers and merging them hides the second one.
+        """
+        settings.validate()
+        results: list[selftest.CheckResult] = []
+        self._emit("Self test: host software")
+        results.append(selftest.check_protocol(settings.pattern))
+        results.append(selftest.check_solver(settings.pattern))
+        results.append(selftest.check_reconstruction_forward_model(settings.pattern))
+
+        if self.state is ControllerState.DISCONNECTED:
+            self._emit("Self test: not connected, skipping hardware checks")
+            results.extend(self._skipped_hardware_checks("not connected"))
+            return self._finish_self_test(results)
+
+        self._emit("Self test: firmware and I2C")
+        status, status_error = self._read_firmware_status()
+        addresses = self._read_i2c_addresses()
+        results.append(selftest.check_status_reply(status, status_error))
+        results.append(selftest.check_i2c_devices(addresses))
+        results.append(selftest.check_dac_binding(status, addresses))
+        results.append(selftest.check_shunt(status, settings.expected_shunt_ohms))
+        results.append(selftest.check_current_range(status, settings.dac))
+        results.append(selftest.check_voltage_autorange(status))
+
+        try:
+            frames = self._capture_self_test_frames(settings)
+        except CaptureStopped:
+            raise
+        except Exception as exc:  # noqa: BLE001 - reported as a check, not a crash
+            self._emit(f"Self test: frame capture failed: {exc}")
+            results.extend(self._skipped_frame_checks(f"frame capture failed: {exc}"))
+            return self._finish_self_test(results)
+
+        frame = frames[0]
+        probe = unified.probe_frame_health(frame)
+        results.append(selftest.check_frame_shape(frame, settings.pattern))
+        results.append(selftest.check_polarity_interleaving(frame))
+        results.append(selftest.check_quality_flags(probe))
+        results.append(selftest.check_current_margin(probe))
+        results.append(selftest.check_polarization(unified.analyze_polarization(frame)))
+        results.append(selftest.check_offset_domination(unified.analyze_offset_domination(frame)))
+        results.append(selftest.check_voltage_resolution(frame))
+        results.append(selftest.check_electrodes(unified.analyze_electrode_health(frame)))
+        results.append(selftest.check_repeatability(self._self_test_vectors(frames, settings)))
+        return self._finish_self_test(results)
+
+    def _finish_self_test(self, results: list[selftest.CheckResult]) -> selftest.SelfTestReport:
+        report = selftest.SelfTestReport(results)
+        counts = report.counts()
+        self._emit(
+            f"Self test {report.status.value}: "
+            f"pass={counts[selftest.CheckStatus.PASS]} "
+            f"warn={counts[selftest.CheckStatus.WARN]} "
+            f"fail={counts[selftest.CheckStatus.FAIL]} "
+            f"skip={counts[selftest.CheckStatus.SKIP]}"
+        )
+        blocker = report.first_blocker()
+        if blocker is not None:
+            self._emit(f"Self test fix first: {blocker.component} - {blocker.name}")
+        return report
+
+    def _read_firmware_status(self) -> tuple[unified.FirmwareStatus | None, str]:
+        try:
+            reply = self.acquisition.send_command("?")
+        except Exception as exc:  # noqa: BLE001 - becomes a FAIL check, not a crash
+            return None, f"'?' command failed: {exc}"
+        try:
+            return unified.parse_status(reply), ""
+        except ValueError as exc:
+            return None, str(exc)
+
+    def _read_i2c_addresses(self) -> list[int]:
+        try:
+            return unified.parse_i2c_scan(self.acquisition.send_command("i"))
+        except Exception:  # noqa: BLE001 - an empty scan is itself the finding
+            return []
+
+    def _capture_self_test_frames(self, settings: UiSettings) -> list[unified.UnifiedFrame]:
+        """Capture the frames the acquisition checks read, configuring if needed.
+
+        Configuring here rather than demanding it first is what lets the self
+        test be the first button pressed after Connect, which is the point of
+        having it.
+        """
+        if self.state is ControllerState.CONNECTED or self.protocol is None:
+            self.configure(settings)
+        frames: list[unified.UnifiedFrame] = []
+        for index in range(settings.self_test_frames):
+            self._raise_if_stopped()
+            frames.append(self.acquisition.capture_frame())
+            self._emit(f"Self test frame {index + 1}/{settings.self_test_frames}")
+        return frames
+
+    def _self_test_vectors(
+        self,
+        frames: list[unified.UnifiedFrame],
+        settings: UiSettings,
+    ) -> list[np.ndarray]:
+        """Vectors for the repeatability check.
+
+        Lenient on purpose: one bad record should not turn a question about
+        repeatability into an exception that hides every other answer.
+        """
+        vectors: list[np.ndarray] = []
+        for frame in frames:
+            if frame.pattern != settings.pattern:
+                continue
+            try:
+                vectors.append(unified.frame_to_vector(
+                    frame,
+                    self.protocol,
+                    strict=False,
+                    electrode_offset=settings.electrode_offset,
+                    electrode_reversed=settings.electrode_reversed,
+                ))
+            except ValueError:
+                continue
+        return vectors
+
+    @staticmethod
+    def _skipped_hardware_checks(reason: str) -> list[selftest.CheckResult]:
+        names = (
+            ("Link / firmware", "STATUS reply"),
+            ("Hardware / I2C", "ADS1115 and MCP4725 present"),
+            ("Hardware / DAC", "DAC bound to scanned address"),
+            ("Hardware / shunt", "shunt matches fitted resistor"),
+            ("Hardware / current range", "DAC within range ceiling"),
+            ("Hardware / ADC", "electrode-voltage PGA autoranging"),
+        )
+        skipped = [
+            selftest.CheckResult(component, name, selftest.CheckStatus.SKIP, reason)
+            for component, name in names
+        ]
+        return skipped + DebugController._skipped_frame_checks(reason)
+
+    @staticmethod
+    def _skipped_frame_checks(reason: str) -> list[selftest.CheckResult]:
+        names = (
+            ("Acquisition / frame", "frame matches protocol"),
+            ("Acquisition / frame", "forward/reverse interleaved"),
+            ("Acquisition / quality", "measurement quality flags"),
+            ("Acquisition / current", "weakest-measurement current margin"),
+            ("Acquisition / polarisation", "current stable across an injection pair"),
+            ("Acquisition / offset", "forward/reverse voltages invert"),
+            ("Acquisition / resolution", "voltage readings are resolved, not quantised"),
+            ("Hardware / electrodes", "all 12 electrodes live"),
+            ("Acquisition / repeatability", "consecutive frames agree"),
+        )
+        return [
+            selftest.CheckResult(component, name, selftest.CheckStatus.SKIP, reason)
+            for component, name in names
+        ]
 
     def send_command(self, command: str) -> list[str]:
         """Pass a raw firmware command through and return the reply lines."""

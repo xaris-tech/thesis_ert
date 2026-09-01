@@ -65,6 +65,15 @@ class UiSettings:
     # at a known electrode.
     electrode_offset: int = 0
     electrode_reversed: bool = False
+    # Frames the self test captures to judge repeatability. Two is the minimum
+    # that can disagree; more is slower but screens a rig that only drifts after
+    # the first few frames.
+    self_test_frames: int = 3
+    # Resistance of the current-sense shunt physically fitted to the board. The
+    # self test compares it against what the firmware reports: a mismatch scales
+    # every measured current, and therefore every transfer resistance, by a
+    # constant the data itself gives no sign of. None means "not measured yet".
+    expected_shunt_ohms: float | None = None
 
     @classmethod
     def default(cls) -> "UiSettings":
@@ -95,6 +104,10 @@ class UiSettings:
             raise ValueError("diameter_cm must be positive")
         if not 0 <= self.electrode_offset < 12:
             raise ValueError("electrode_offset must be between 0 and 11")
+        if self.self_test_frames < 2:
+            raise ValueError("self_test_frames must be at least 2")
+        if self.expected_shunt_ohms is not None and self.expected_shunt_ohms <= 0:
+            raise ValueError("expected_shunt_ohms must be positive")
         return self
 
 

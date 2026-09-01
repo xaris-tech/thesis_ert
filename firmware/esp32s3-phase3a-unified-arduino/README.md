@@ -58,6 +58,7 @@ Use Serial Monitor at 115200 baud with newline enabled.
 | `g` | start continuous frames |
 | `x` | stop and force DAC/muxes idle |
 | `i` | scan I2C bus for MCP4725 and ADS1115 |
+| `b60` / `b61` | set the MCP4725 I2C address (hex); `b` alone reports the active one |
 | `d` | hold E1/E2 driving and E3/E4 sensing for multimeter work |
 | `?` | print status |
 | `h` | print help |

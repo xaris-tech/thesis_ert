@@ -6,7 +6,14 @@
 constexpr uint8_t PIN_SDA = 8;
 constexpr uint8_t PIN_SCL = 9;
 constexpr uint8_t ELECTRODE_COUNT = 12;
-constexpr uint8_t MCP4725_ADDRESS = 0x61;
+// The MCP4725's A0 pin selects the low bit of its address, so the same board
+// answers at 0x60 or 0x61 depending on how A0 is strapped. Bench scans on this
+// prototype have returned both, so the address is runtime-settable ('b') and
+// bring-up probes the alternate before giving up.
+constexpr uint8_t DEFAULT_MCP4725_ADDRESS = 0x61;
+constexpr uint8_t ALTERNATE_MCP4725_ADDRESS = 0x60;
+constexpr uint8_t MIN_MCP4725_ADDRESS = 0x60;
+constexpr uint8_t MAX_MCP4725_ADDRESS = 0x67;
 constexpr uint8_t ADS1115_ADDRESS = 0x48;
 
 constexpr float DEFAULT_SHUNT_OHMS = 97.9f;
@@ -107,6 +114,7 @@ uint16_t dischargeMs = DEFAULT_DISCHARGE_MS;
 uint16_t framePeriodMs = DEFAULT_FRAME_PERIOD_MS;
 uint8_t sampleCount = DEFAULT_SAMPLE_COUNT;
 float shuntOhms = DEFAULT_SHUNT_OHMS;
+uint8_t dacAddress = DEFAULT_MCP4725_ADDRESS;
 bool voltageAutorange = true;
 float lastVoltageFullScaleMv = 4096.0f;
 unsigned long lastFrameMs = 0;
@@ -406,6 +414,8 @@ void printStatus() {
   Serial.print(maxDacCode());
   Serial.print(",SHUNT_OHMS,");
   Serial.print(shuntOhms, 2);
+  Serial.print(",DAC_ADDR,0x");
+  Serial.print(dacAddress, HEX);
   Serial.print(",VGAIN_AUTO,");
   Serial.print(voltageAutorange ? 1 : 0);
   Serial.print(",VRANGE_MV,");
@@ -414,6 +424,47 @@ void printStatus() {
   Serial.print(MIN_CURRENT_UA, 1);
   Serial.print(",MAX_CURRENT_UA,");
   Serial.println(MAX_CURRENT_UA, 1);
+}
+
+// Rebinds the DAC driver to `address` and parks the output at zero. The bus is
+// probed directly first: some Adafruit_MCP4725 versions return success from
+// begin() without ever addressing the part, and setDacRaw() discards
+// setVoltage()'s return, so an unacknowledged address would otherwise leave the
+// current source stuck at whatever code its EEPROM powered up with while the
+// firmware reported the commanded value. dacAddress is left untouched on
+// failure so the caller can fall back.
+bool attachDac(uint8_t address) {
+  if (address < MIN_MCP4725_ADDRESS || address > MAX_MCP4725_ADDRESS) return false;
+  Wire.beginTransmission(address);
+  if (Wire.endTransmission() != 0) return false;
+  if (!dac.begin(address)) return false;
+  dacAddress = address;
+  setDacRaw(0);
+  return true;
+}
+
+void setDacAddress(uint8_t address) {
+  const uint8_t previous = dacAddress;
+  if (address < MIN_MCP4725_ADDRESS || address > MAX_MCP4725_ADDRESS) {
+    Serial.print("[ERROR] DAC address must be 0x");
+    Serial.print(MIN_MCP4725_ADDRESS, HEX);
+    Serial.print(" to 0x");
+    Serial.println(MAX_MCP4725_ADDRESS, HEX);
+    return;
+  }
+  continuousMode = false;
+  enterSafeIdle();
+  if (!attachDac(address)) {
+    Serial.print("[ERROR] no MCP4725 acknowledged at 0x");
+    Serial.println(address, HEX);
+    attachDac(previous);
+    Serial.print("[INFO] still on 0x");
+    Serial.println(dacAddress, HEX);
+    return;
+  }
+  Serial.print("[INFO] MCP4725 attached at 0x");
+  Serial.println(dacAddress, HEX);
+  printStatus();
 }
 
 void printI2CScan() {
@@ -454,6 +505,7 @@ void printHelp() {
   Serial.println("x       stop and force safe idle");
   Serial.println("rN      set continuous frame interval in ms");
   Serial.println("i       scan I2C bus for MCP4725 and ADS1115");
+  Serial.println("bNN     set MCP4725 I2C address in hex, e.g. b60 or b61; b alone reports");
   Serial.println("d       DEBUG HOLD: turn on DAC and MUX E1/E2 permanently for multimeter testing");
   Serial.println("?       print status");
   Serial.println("h       print help");
@@ -533,6 +585,16 @@ void handleCommand(String line) {
       break;
     }
     case 'a': voltageAutorange = value != 0; printStatus(); break;
+    case 'b': {
+      // Hex, not decimal: the argument is read straight off an I2C scan line.
+      const String argument = line.substring(1);
+      if (!argument.length()) {
+        printStatus();
+        break;
+      }
+      setDacAddress(static_cast<uint8_t>(strtol(argument.c_str(), nullptr, 16)));
+      break;
+    }
     case 'n': sampleCount = constrain(value, 1, 32); printStatus(); break;
     case 'r': framePeriodMs = max<uint16_t>(value, 100); printStatus(); break;
     case 'i': printI2CScan(); break;
@@ -563,12 +625,17 @@ void configurePins() {
 
 void configureI2CDevices() {
   Wire.begin(PIN_SDA, PIN_SCL);
-  if (!dac.begin(MCP4725_ADDRESS)) {
+  if (!attachDac(DEFAULT_MCP4725_ADDRESS)
+      && !attachDac(ALTERNATE_MCP4725_ADDRESS)) {
     Serial.print("[FATAL] MCP4725 not found at 0x");
-    Serial.println(MCP4725_ADDRESS, HEX);
+    Serial.print(DEFAULT_MCP4725_ADDRESS, HEX);
+    Serial.print(" or 0x");
+    Serial.println(ALTERNATE_MCP4725_ADDRESS, HEX);
+    Serial.println("[FATAL] send i on a working build to scan, or check the A0 strap");
     while (true) delay(1000);
   }
-  setDacRaw(0);
+  Serial.print("[INFO] MCP4725 attached at 0x");
+  Serial.println(dacAddress, HEX);
 
   if (!ads.begin(ADS1115_ADDRESS, &Wire)) {
     Serial.print("[FATAL] ADS1115 not found at 0x");

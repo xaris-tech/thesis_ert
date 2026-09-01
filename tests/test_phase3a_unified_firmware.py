@@ -45,6 +45,34 @@ class TestUnifiedFirmwareSource(unittest.TestCase):
         self.assertIn("float shuntOhms = DEFAULT_SHUNT_OHMS;", self.source)
         self.assertIn("case 'j':", self.source)
 
+    def test_dac_i2c_address_is_runtime_settable(self):
+        self.assertIn("constexpr uint8_t DEFAULT_MCP4725_ADDRESS = 0x61;", self.source)
+        self.assertIn("constexpr uint8_t ALTERNATE_MCP4725_ADDRESS = 0x60;", self.source)
+        self.assertIn("uint8_t dacAddress = DEFAULT_MCP4725_ADDRESS;", self.source)
+        self.assertIn("case 'b':", self.source)
+        self.assertIn(",DAC_ADDR,0x", self.source)
+
+    def test_dac_attach_probes_the_bus_before_accepting_an_address(self):
+        """A wrong address must be refused, not accepted silently.
+
+        setDacRaw() discards setVoltage()'s return, so an unacknowledged
+        address would leave the current source at whatever code its EEPROM
+        powered up with while the firmware reported the commanded value.
+        """
+        start = self.source.index("bool attachDac(")
+        body = self.source[start:self.source.index("void setDacAddress(")]
+        self.assertIn("Wire.endTransmission() != 0", body)
+        self.assertIn("return false", body)
+        # dacAddress must only advance after the probe and begin() both pass.
+        self.assertLess(body.index("Wire.endTransmission"), body.index("dacAddress = address"))
+
+    def test_boot_falls_back_to_the_alternate_dac_address(self):
+        start = self.source.index("void configureI2CDevices()")
+        body = self.source[start:self.source.index("void setup()")]
+        self.assertIn("attachDac(DEFAULT_MCP4725_ADDRESS)", body)
+        self.assertIn("attachDac(ALTERNATE_MCP4725_ADDRESS)", body)
+        self.assertIn("[FATAL] MCP4725 not found at 0x", body)
+
     def test_switching_goes_idle_before_mux_addresses_change(self):
         function = re.search(
             r"void configureDriveAndSense\([^)]*\)\s*\{(?P<body>.*?)\n\}",
@@ -115,7 +143,8 @@ class TestUnifiedFirmwareSource(unittest.TestCase):
         self.assertIn("case 'c':", self.source)
 
     def test_fatal_i2c_messages_report_the_configured_address(self):
-        self.assertIn("Serial.println(MCP4725_ADDRESS, HEX);", self.source)
+        self.assertIn("Serial.print(DEFAULT_MCP4725_ADDRESS, HEX);", self.source)
+        self.assertIn("Serial.println(ALTERNATE_MCP4725_ADDRESS, HEX);", self.source)
         self.assertIn("Serial.println(ADS1115_ADDRESS, HEX);", self.source)
 
     def test_supports_adjacent_opposite_skip_one_and_skip_two_runtime_modes(self):

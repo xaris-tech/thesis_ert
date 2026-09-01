@@ -573,5 +573,45 @@ class TestReciprocityCheck(unittest.TestCase):
         self.assertAlmostEqual(averaged[((4, 5), (6, 7))], 5.0)
 
 
+class TestDacAddressDiscovery(unittest.TestCase):
+    def test_parses_addresses_between_the_scan_markers(self):
+        lines = [
+            "[INFO] banner",
+            "I2C_SCAN,BEGIN",
+            "I2C_DEVICE,0x48",
+            "I2C_DEVICE,0x61",
+            "I2C_SCAN,END,FOUND,2",
+            "I2C_DEVICE,0x60",
+        ]
+
+        self.assertEqual(unified.parse_i2c_scan(lines), [0x48, 0x61])
+
+    def test_ignores_malformed_device_lines(self):
+        lines = ["I2C_SCAN,BEGIN", "I2C_DEVICE,junk", "I2C_DEVICE,0x60", "I2C_SCAN,END"]
+
+        self.assertEqual(unified.parse_i2c_scan(lines), [0x60])
+
+    def test_selects_the_only_mcp4725_candidate(self):
+        self.assertEqual(unified.select_dac_address([0x48, 0x61]), 0x61)
+        self.assertEqual(unified.select_dac_address([0x48, 0x60]), 0x60)
+
+    def test_refuses_to_guess_between_two_candidates(self):
+        # Both 0x60 and 0x61 answering means the bus cannot say which is the
+        # DAC; binding to whichever was listed first would be a coin flip.
+        self.assertIsNone(unified.select_dac_address([0x48, 0x60, 0x61]))
+
+    def test_returns_none_when_no_candidate_is_present(self):
+        self.assertIsNone(unified.select_dac_address([0x48]))
+        self.assertIsNone(unified.select_dac_address([]))
+
+    def test_command_is_newline_terminated_lowercase_hex(self):
+        self.assertEqual(unified.dac_address_command(0x60), b"b60\n")
+        self.assertEqual(unified.dac_address_command(0x61), b"b61\n")
+
+    def test_command_rejects_addresses_outside_the_mcp4725_span(self):
+        with self.assertRaises(ValueError):
+            unified.dac_address_command(0x48)
+
+
 if __name__ == "__main__":
     unittest.main()

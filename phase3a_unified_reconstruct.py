@@ -32,6 +32,17 @@ MAX_RECON_PAIR_DELTA_KOHM = 0.05
 MIN_RECON_KEPT_PAIR_RATIO = 0.75
 RECIPROCITY_THRESHOLD_PERCENT = 10.0
 
+# MCP4725 address span. The A0 strap picks the low bit, so this board has been
+# scanned at both 0x60 and 0x61; the UI discovers which rather than assuming.
+# Mirrors MIN_MCP4725_ADDRESS/MAX_MCP4725_ADDRESS in the unified firmware.
+MCP4725_ADDRESS_MIN = 0x60
+MCP4725_ADDRESS_MAX = 0x67
+
+# The ADS1115 address is strapped, not discovered: the firmware constructs the
+# driver at the library default and never scans for it, so a board answering
+# anywhere else is miswired rather than differently configured.
+ADS1115_ADDRESS = 0x48
+
 # Mirrors MIN_CURRENT_UA in the unified firmware. A measurement below this is
 # flagged I_LOW by the firmware, and a single I_LOW aborts a strict capture, so
 # the minimum current across a frame is what predicts whether a long run
@@ -306,6 +317,132 @@ def protocol_and_command(pattern: str):
     if normalized == "skip-2":
         return base.build_skip_two_protocol(), b"mk\n"
     raise ValueError(f"Unsupported pattern: {pattern}")
+
+
+@dataclass(frozen=True)
+class FirmwareStatus:
+    """Parsed reply to the firmware `?` command.
+
+    Every field the firmware reports is kept in `values` as raw text as well, so
+    a newer flash that adds a key does not need a change here to be readable.
+    """
+
+    pattern: str
+    dac_code: int
+    settle_ms: int
+    discharge_ms: int
+    sample_count: int
+    current_range: str
+    rs_ohms: float
+    max_dac_code: int
+    shunt_ohms: float
+    dac_address: int | None
+    voltage_autorange: bool
+    voltage_range_mv: float
+    min_current_ua: float
+    max_current_ua: float
+    values: dict[str, str]
+
+
+def parse_status(lines: Iterable[str]) -> FirmwareStatus:
+    """Parse the `STATUS,2,KEY,VALUE,...` line out of a serial reply.
+
+    Takes the whole reply so banners and command echoes can be passed straight
+    through. Raises when no v2 STATUS line is present, which is itself the
+    signal that the board is running an older flash.
+    """
+    for line in lines:
+        text = line.strip()
+        if not text.startswith("STATUS,"):
+            continue
+        parts = [part.strip() for part in text.split(",")]
+        if len(parts) < 3 or parts[1] != "2":
+            continue
+        body = parts[2:]
+        values = {
+            body[index].upper(): body[index + 1]
+            for index in range(0, len(body) - 1, 2)
+        }
+        address: int | None = None
+        raw_address = values.get("DAC_ADDR", "")
+        try:
+            address = int(raw_address, 16)
+        except ValueError:
+            address = None
+        try:
+            return FirmwareStatus(
+                pattern=values["MODE"].lower(),
+                dac_code=int(values["DAC"]),
+                settle_ms=int(values["SETTLE"]),
+                discharge_ms=int(values["DISCHARGE"]),
+                sample_count=int(values["SAMPLES"]),
+                current_range=values["RANGE"].upper(),
+                rs_ohms=float(values["RS_OHMS"]),
+                max_dac_code=int(values["MAX_DAC_CODE"]),
+                shunt_ohms=float(values["SHUNT_OHMS"]),
+                dac_address=address,
+                voltage_autorange=values["VGAIN_AUTO"] not in {"0", ""},
+                voltage_range_mv=float(values["VRANGE_MV"]),
+                min_current_ua=float(values["MIN_CURRENT_UA"]),
+                max_current_ua=float(values["MAX_CURRENT_UA"]),
+                values=values,
+            )
+        except (KeyError, ValueError) as exc:
+            raise ValueError(f"Malformed STATUS line: {text}") from exc
+    raise ValueError("No v2 STATUS line in reply; firmware may predate STATUS,2")
+
+
+def parse_i2c_scan(lines: Iterable[str]) -> list[int]:
+    """Addresses reported by the firmware's `i` command, in scan order.
+
+    Lines outside the BEGIN/END markers are ignored so this can be handed the
+    whole serial reply, banner and echoes included.
+    """
+    addresses: list[int] = []
+    in_scan = False
+    for line in lines:
+        text = line.strip()
+        if text.startswith("I2C_SCAN,BEGIN"):
+            in_scan = True
+            addresses = []
+            continue
+        if text.startswith("I2C_SCAN,END"):
+            in_scan = False
+            continue
+        if not in_scan or not text.startswith("I2C_DEVICE,"):
+            continue
+        try:
+            addresses.append(int(text.split(",", 1)[1].strip(), 16))
+        except ValueError:
+            continue
+    return addresses
+
+
+def select_dac_address(addresses: Iterable[int]) -> int | None:
+    """The one MCP4725 address on the bus, or None when that is not decidable.
+
+    The A0 strap moves this prototype's DAC between 0x60 and 0x61, which is why
+    the address is discovered rather than assumed. Two candidates means the bus
+    cannot say which one is the DAC, and guessing would bind the driver to
+    whichever the scan happened to list first.
+    """
+    candidates = [
+        address for address in addresses
+        if MCP4725_ADDRESS_MIN <= address <= MCP4725_ADDRESS_MAX
+    ]
+    if len(candidates) != 1:
+        return None
+    return candidates[0]
+
+
+def dac_address_command(address: int) -> bytes:
+    """Firmware command that binds the DAC driver to `address`."""
+    if not MCP4725_ADDRESS_MIN <= address <= MCP4725_ADDRESS_MAX:
+        raise ValueError(
+            f"DAC address must be between 0x{MCP4725_ADDRESS_MIN:02x} "
+            f"and 0x{MCP4725_ADDRESS_MAX:02x}"
+        )
+    return f"b{address:02x}\n".encode()
 
 
 def remap_electrode(
