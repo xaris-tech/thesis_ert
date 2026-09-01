@@ -13,7 +13,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 import time
-from typing import Iterable
+from typing import Iterable, Sequence
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -267,8 +267,28 @@ def reconstruct_difference(
     baseline: np.ndarray,
     current: np.ndarray,
     solver: JAC,
+    dropped_indexes: Sequence[int] | None = None,
 ) -> np.ndarray:
-    return np.real(solver.solve_gs(current, baseline))
+    """Backprojection difference image, optionally excluding untrusted rows.
+
+    Without dropped_indexes this is solver.solve_gs verbatim. With it, the
+    named measurement rows are excluded from both the frame-scaling factor
+    and the backprojection sum, rather than relying on filter_frame_vector's
+    baseline substitution to make their residual merely small (validity-audit
+    D-05): a substituted row's dv is (1 - a) * baseline, not zero, and biases
+    `a` itself when many rows are substituted.
+    """
+    if not dropped_indexes:
+        return np.real(solver.solve_gs(current, baseline))
+
+    v1 = np.asarray(current, dtype=float)
+    v0 = np.asarray(baseline, dtype=float)
+    kept = np.ones(v1.shape[0], dtype=bool)
+    kept[list(dropped_indexes)] = False
+    a = np.dot(v1[kept], v0[kept]) / np.dot(v0[kept], v0[kept])
+    dv = v1 - a * v0
+    dv[~kept] = 0.0
+    return np.real(-np.dot(solver.H, dv.transpose()))
 
 
 def create_reconstruction_plot() -> tuple[plt.Figure, plt.Axes]:

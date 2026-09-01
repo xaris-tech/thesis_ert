@@ -68,7 +68,7 @@ When changing capture/reconstruction logic, prefer extending `phase3a_unified_re
 
 ### Tests (`tests/`)
 
-One test module roughly per source module (`test_ert.py`, `test_phase3a_reconstruct.py`, `test_phase3a_unified_reconstruct.py`, `test_phase3a_unified_firmware.py`, `test_pyeit_analyzer.py`, `test_tree_ert_controller.py`, `test_tree_ert_settings.py`, `test_tree_ert_ui.py`) using stdlib `unittest`. `test_phase3a_unified_firmware.py` checks firmware source/behavior expectations from the Python side — keep it in sync when touching the unified `.ino`.
+One test module roughly per source module (`test_ert.py`, `test_phase3a_reconstruct.py`, `test_phase3a_unified_reconstruct.py`, `test_phase3a_unified_firmware.py`, `test_pyeit_analyzer.py`, `test_tree_ert_controller.py`, `test_tree_ert_settings.py`, `test_tree_ert_ui.py`) using stdlib `unittest`. `test_phase3a_unified_firmware.py` checks firmware source *text* against the Python side via string/regex matching — it does not compile, flash, or simulate the firmware, so a pass is a doc/code sync guard, not behavioral proof. Keep it in sync when touching the unified `.ino`; treat "confirmed on hardware" bench-session notes in `docs/validity-audit.md`/`docs/planned-improvements.md` as the real behavioral evidence.
 
 ### Data dirs
 

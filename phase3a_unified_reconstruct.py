@@ -1416,7 +1416,10 @@ def main() -> None:
                     current_spread_ua=float(np.max(currents) - np.min(currents)),
                 )
                 frame_healths.append(filtered.frame_health)
-                ds = base.reconstruct_difference(baseline, filtered.filtered_vector, solver)
+                ds = base.reconstruct_difference(
+                    baseline, filtered.filtered_vector, solver,
+                    dropped_indexes=filtered.dropped_indexes,
+                )
                 reconstructions.append(ds)
                 delta_rms = float(np.sqrt(np.mean((filtered.filtered_vector - baseline) ** 2)))
                 print(

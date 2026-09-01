@@ -12,8 +12,12 @@ Finding IDs (`D-*`, `L-*`, `X-*`) are stable; cite them when fixing or disputing
 
 ## Status, updated 2026-08-27
 
-Fixed and covered by tests: **D-01, D-02, D-03, D-04, D-05 (partial), X-04 (polarisation
-flag)**. `tests/test_reconstruction_localisation.py` is the forward-model test recommended in
+Fixed and covered by tests: **D-01, D-02, D-03, D-04, D-05, X-04 (polarisation
+flag)**. **X-03** is addressed the way this section itself recommends — stated plainly, not
+built out — via a module docstring on `tests/test_phase3a_unified_firmware.py` and a
+CLAUDE.md note; there is still no compiled/behavioural firmware test in this repo, and
+building one (toolchain + simulator or hardware-in-loop) remains a real, unstarted project,
+not something this pass attempted. `tests/test_reconstruction_localisation.py` is the forward-model test recommended in
 section 6 — it puts a target of known angle and known sign through the pipeline and asserts
 both, which is what would have caught D-01 and D-02.
 
@@ -24,12 +28,16 @@ Two notes on how the fixes differ from the recommendations:
   past the 2 ohm threshold. The value is still computed and reported for diagnostics, but no
   longer decides stability. Confirmed by test: a real-signal baseline that exceeds the
   absolute threshold is now stable, and a near-zero offset-dominated baseline is not.
-- **D-05 is only partially addressed.** Substituted pairs are now rendered on the figure with
+- **D-05 is now fully addressed.** Substituted pairs are still rendered on the figure with
   their count, percentage, and quality label, so a substituted null cannot be read as a
-  measured one. The rows are still handed to the solver rather than dropped from the inverse
-  problem; that remains open.
+  measured one. In addition, `reconstruct_difference()` (`phase3a_reconstruct.py`) now accepts
+  `dropped_indexes` and, when given, excludes those rows from both the frame-scaling factor `a`
+  and the backprojection sum — `dv[dropped] = 0` against `solver.H` rather than relying on
+  `filtered - baseline ≈ 0` to make the residual merely small. Both capture paths
+  (`phase3a_unified_reconstruct.py`'s CLI loop and `tree_ert/controller.py`'s
+  `capture_target`) pass `filtered.dropped_indexes` through.
 
-Still open: **L-01, L-02, L-03, X-01, X-02, X-03**, the remaining half of D-05, and the
+Still open: **L-01, L-02, L-03, X-01, X-02**, and the
 `MIN_VALID_CURRENT_UA` / `FIRMWARE_MIN_CURRENT_UA` duplication in X-04.
 
 ### Confirmed on hardware, 2026-08-27
@@ -210,6 +218,12 @@ labelled `debug-low-confidence` (`MIN_RECON_KEPT_PAIR_RATIO = 0.75`).
 minimum render the substituted fraction on the image itself so a null result cannot be read as
 a measurement.
 
+**Status:** done. `reconstruct_difference(..., dropped_indexes=...)` zeroes the dropped rows'
+contribution to both the frame-scaling factor and the backprojection sum, rather than the
+Jacobian itself (rebuilding per-frame Jacobians for a fixed mesh/protocol is not something
+`pyeit.eit.jac.JAC` supports without re-running `setup()`, which is per-protocol, not
+per-frame). The image annotation from the first pass is unchanged and still shown alongside.
+
 ---
 
 ## 2. Limits that cannot be tuned out
@@ -346,6 +360,14 @@ MCP4725 at `0x60` (firmware uses `0x61`, and the hardware answers there — see 
 Windows/COM-port project. This is the document that gates "before trusting any reconstruction
 image", so an operator following it exactly stops at step 2 on a correctly working rig.
 
+**Status:** reconciled at the doc level — shunt value, I2C addresses, and Windows/PowerShell
+paths and commands (`Get-PnpDevice`, `.\.venv\Scripts\python.exe`) now match the firmware and
+`CLAUDE.md`. Steps 0 (test suite) and the command syntax were re-verified this pass. Steps 1-6
+and 8 (serial detection, I2C scan, dummy-load current sweep, mux path check, single-frame
+check) were **not** re-run end to end because doing so requires a connected ESP32-S3 and bench
+multimeter, which this pass did not have. Re-running those against real hardware before relying
+on this runbook again is still outstanding.
+
 ### X-02. Chapter 3 states an AIoT pipeline that has no implementation
 
 **Location:** `docs/chapter-3-methodology-draft.md`
@@ -364,6 +386,11 @@ Every assertion is a string or regex match against the `.ino`. That is a legitim
 sync guard and worth keeping, but nothing in the repository compiles the firmware, and no test
 could have caught D-04. Worth stating plainly wherever verification is described, so the test
 count is not read as behavioural coverage.
+
+**Status:** stated plainly — module docstring added to `tests/test_phase3a_unified_firmware.py`
+and a matching note in `CLAUDE.md`. Building an actual compiled/behavioural firmware test
+(PlatformIO + a HAL-level simulator, or hardware-in-loop against a real board) is not done and
+is a materially larger effort than the rest of this list; treat it as a separate project.
 
 ### X-04. Three smaller inconsistencies
 

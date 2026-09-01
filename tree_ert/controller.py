@@ -329,6 +329,9 @@ class DebugController:
             vector_for_solver = (
                 filtered.filtered_vector if settings.filter_pairs else current
             )
+            dropped_for_solver = (
+                filtered.dropped_indexes if settings.filter_pairs else None
+            )
             total_pairs = filtered.frame_health.kept_pairs + filtered.frame_health.dropped_pairs
             self._emit(
                 f"  pairs: kept={filtered.frame_health.kept_pairs}/{total_pairs} "
@@ -340,6 +343,7 @@ class DebugController:
                 self.baseline_result.baseline,
                 vector_for_solver,
                 self.solver,
+                dropped_indexes=dropped_for_solver,
             )
             reconstructions.append(reconstruction)
             healths.append(filtered.frame_health)

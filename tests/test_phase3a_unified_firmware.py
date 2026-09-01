@@ -1,3 +1,16 @@
+"""Doc/code sync guard for the active firmware, NOT behavioural coverage.
+
+Every assertion below is a string or regex match against the raw `.ino` text.
+Nothing here compiles the firmware, flashes a board, or runs the code in any
+form of simulator — there is no toolchain in this repository that could. A
+passing test here means the source still contains the pattern being checked
+for; it says nothing about what the ESP32 actually does at runtime. Do not
+read this module's pass count as evidence a firmware change works — only a
+real flash-and-probe session on hardware can show that (see
+docs/validity-audit.md, X-03, and the "Confirmed on hardware" log entries
+in docs/planned-improvements.md for what that looks like in practice).
+"""
+
 import re
 import unittest
 from pathlib import Path
@@ -10,6 +23,8 @@ FIRMWARE = Path(
 
 
 class TestUnifiedFirmwareSource(unittest.TestCase):
+    """Text/regex assertions against the .ino source — see module docstring."""
+
     @classmethod
     def setUpClass(cls):
         cls.source = FIRMWARE.read_text(encoding="utf-8")

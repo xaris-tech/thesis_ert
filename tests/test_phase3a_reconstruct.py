@@ -131,5 +131,55 @@ class TestPhase3ALogging(unittest.TestCase):
         self.assertIn("run-1,0,E1,E2,E3,E4,10.000000", rows[1])
 
 
+class _FakeSolver:
+    """Stand-in for pyeit's JAC exposing only what reconstruct_difference uses."""
+
+    def __init__(self, h: np.ndarray):
+        self.H = h
+
+    def solve_gs(self, v1, v0):
+        a = np.dot(v1, v0) / np.dot(v0, v0)
+        dv = v1 - a * v0
+        return -np.dot(self.H, dv.transpose())
+
+
+class TestReconstructDifference(unittest.TestCase):
+    def test_without_dropped_indexes_matches_solve_gs(self):
+        solver = _FakeSolver(np.array([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]]))
+        baseline = np.array([1.0, 2.0, 3.0])
+        current = np.array([1.1, 2.4, 2.7])
+
+        result = phase3a.reconstruct_difference(baseline, current, solver)
+        expected = solver.solve_gs(current, baseline)
+
+        np.testing.assert_allclose(result, expected)
+
+    def test_dropped_row_contributes_nothing_to_the_result(self):
+        h = np.array([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+        solver = _FakeSolver(h)
+        baseline = np.array([1.0, 2.0, 3.0])
+        # A "substituted" row: current == baseline at index 1, an untrustworthy
+        # measurement standing in as a fake null rather than a real one.
+        current = np.array([1.5, 2.0, 0.5])
+
+        result = phase3a.reconstruct_difference(
+            baseline, current, solver, dropped_indexes=[1],
+        )
+
+        # Recompute by hand with index 1 fully excluded from scaling and sum.
+        kept = np.array([True, False, True])
+        a = np.dot(current[kept], baseline[kept]) / np.dot(baseline[kept], baseline[kept])
+        dv = current - a * baseline
+        dv[~kept] = 0.0
+        expected = -np.dot(h, dv.transpose())
+
+        np.testing.assert_allclose(result, expected)
+        # Zeroing column 1's h-weighted contribution must differ from the
+        # naive solve_gs result whenever a != 1, proving the row was excluded
+        # rather than merely small.
+        naive = solver.solve_gs(current, baseline)
+        self.assertFalse(np.allclose(result, naive))
+
+
 if __name__ == "__main__":
     unittest.main()
