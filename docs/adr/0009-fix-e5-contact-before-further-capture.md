@@ -81,10 +81,23 @@ Re-run the single-frame capture and compare median drive current for the four E5
 against the ~600-790 uA of unaffected pairs. Repaired when E5's pairs are within the spread of
 the others; falsified if they remain depressed after re-seating.
 
-The diagnostic that separates the two candidate causes — bad electrode-tissue contact versus a
-bad mux channel — is to move E5's lead to a spare mux channel and repeat. If the deficit
-follows the lead it is contact; if it stays with the channel it is the mux. This has not been
-done.
+**Outcome, same session.** E5 was re-seated and the single-frame capture repeated:
 
-The self test's per-electrode liveness check should independently flag E5. If it does not, its
-threshold is too loose for a 7-9x deficit and needs tightening against these numbers.
+```
+E4-E5:   737.8 uA   [was ~92]
+E5-E6:   754.4 uA   [was ~84]
+pairs without E5:  min 541.0  median 586.7  max 721.6
+```
+
+An 8-9x improvement, placing E5's pairs at the top of the distribution rather than the bottom.
+216/216 records `Q,OK`, and the self test's per-electrode liveness check reports no weak
+electrodes against a 147.6 uA floor.
+
+Re-seating the electrode cleared the deficit while the mux channel stayed the same, which rules
+out the multiplexer: the cause was the electrode-tissue interface. The lead-swap diagnostic
+originally proposed here - move E5's lead to a spare mux channel and see whether the deficit
+follows the lead or stays with the channel - was therefore never run, and is retained only as
+the procedure to use if a future deficit does not clear on re-seating.
+
+The rung 5-8 figures recorded above are pre-repair and are retained as the reference the repair
+was measured against, not as usable baseline data.
