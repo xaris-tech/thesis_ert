@@ -1,6 +1,6 @@
 # ADR-0008: Score reciprocity with a non-saturating metric and report sign flips separately
 
-- **Status:** Proposed
+- **Status:** Accepted
 - **Date:** 2026-09-01
 - **Affects:** `phase3a_unified_reconstruct.py` (`reciprocity_errors`, `filter_by_reciprocity`,
   `--reciprocity-threshold-pct`, reciprocity CSV), any threshold calibrated from it
@@ -84,12 +84,23 @@ until the metric has been calibrated on real distributions.
 
 ## Verification
 
-Unverified — this ADR proposes the change; the fix is not yet implemented.
+`tests/test_phase3a_unified_reconstruct.py::TestReciprocityCheck` covers the metric:
+`test_score_is_monotonic_across_a_sign_boundary` asserts that `(+1,-1)`, `(+1,-10)` and
+`(+1,-100)` produce three increasing scores, where the previous metric returned 200% for all
+three. `test_sign_flip_is_reported_separately_from_magnitude` pins that a perfect magnitude
+match with a flipped sign scores 0% error and sets the flag.
 
-Implementation must add a test asserting the metric is monotonic across a sign boundary:
-`(+1, -1)`, `(+1, -10)`, and `(+1, -100)` must produce three increasing scores, where the
-current metric returns 200% for all three. `tests/test_phase3a_unified_reconstruct.py::TestReciprocityCheck`
-is where it belongs.
+Re-scored against the 2026-09-01 capture
+(`phase3a_logs/phase3a-v2-adjacent-20260901-171117.csv`), the metric now returns **54 distinct
+scores for 54 pairs** spanning 0.70% to 99.84%, against 47 identical 200.00% values before.
+The worst-third electrode frequency became E5 x11, E4 x9, E3 x7 — E5 now ranks first,
+independently agreeing with the drive-current evidence in
+[ADR-0009](0009-fix-e5-contact-before-further-capture.md). Under the old metric E5 tied at 9
+in a flat distribution that named no suspect.
 
-On hardware, falsified if a re-run of the 2026-09-01 capture still reports a median of exactly
-200.00%, or if any two pairs with different magnitude ratios score identically.
+Falsified if any two pairs with different magnitude ratios ever score identically, or if a
+re-run reports a median of exactly 200.00%.
+
+The 10% threshold remains the ADR-0003 placeholder. It is now calibratable — the distribution
+is no longer saturated — but has not been calibrated, and 42 of 54 pairs sit above it. Setting
+a real value needs several runs on repaired hardware, so it stays a report and not a gate.

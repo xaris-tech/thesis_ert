@@ -13,6 +13,41 @@ from tree_ert.controller import (
 from tree_ert.settings import UiSettings
 
 
+class TestCaptureReciprocity(unittest.TestCase):
+    def test_scores_pairs_without_needing_a_baseline(self):
+        # Reciprocity is an internal consistency check on the instrument, not a
+        # comparison against a reference state, so it must run straight after
+        # configure - before any baseline exists.
+        controller = DebugController(DemoAcquisition())
+        settings = replace(
+            UiSettings.default(), pattern="adjacent", frames=2, warmup_frames=0
+        )
+
+        controller.connect(settings)
+        controller.configure(settings)
+        scores = controller.capture_reciprocity(settings)
+
+        self.assertIsNone(controller.baseline_result)
+        self.assertTrue(scores)
+        for score in scores.values():
+            self.assertGreaterEqual(score.error_percent, 0.0)
+            self.assertLessEqual(score.error_percent, 100.0)
+            self.assertIsInstance(score.sign_flipped, bool)
+
+    def test_each_reciprocal_pair_is_scored_once(self):
+        controller = DebugController(DemoAcquisition())
+        settings = replace(
+            UiSettings.default(), pattern="adjacent", frames=1, warmup_frames=0
+        )
+
+        controller.connect(settings)
+        controller.configure(settings)
+        scores = controller.capture_reciprocity(settings)
+
+        for (i_pair, v_pair) in scores:
+            self.assertNotIn((v_pair, i_pair), scores)
+
+
 class StopDuringCaptureAcquisition(DemoAcquisition):
     def __init__(self, stop_on_capture: int) -> None:
         super().__init__()

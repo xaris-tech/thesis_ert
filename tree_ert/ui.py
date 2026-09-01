@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import queue
+import statistics
 import threading
 import tkinter as tk
+from collections import Counter
 from collections.abc import Callable
 from datetime import datetime
 from pathlib import Path
@@ -179,7 +181,7 @@ def preview_scan_indices(scan_count: int, preview_count: int = 4) -> tuple[int, 
 
 
 def debug_tab_titles() -> tuple[str, ...]:
-    return ("Reconstruction", "Self Test", "Health", "Serial", "Files")
+    return ("Reconstruction", "Self Test", "Reciprocity", "Health", "Serial", "Files")
 
 
 SELF_TEST_STATUS_COLORS = {
@@ -188,6 +190,35 @@ SELF_TEST_STATUS_COLORS = {
     selftest.CheckStatus.FAIL: "#b00020",
     selftest.CheckStatus.SKIP: "#666666",
 }
+
+
+def format_reciprocity_summary(
+    scores: dict[tuple[tuple[int, int], tuple[int, int]], unified.ReciprocityScore],
+    threshold_percent: float = unified.RECIPROCITY_THRESHOLD_PERCENT,
+) -> str:
+    """One line for the status stream, plus the electrodes worth suspecting.
+
+    Sign flips are counted separately from magnitude error (ADR-0008): a flip at
+    low amplitude is offset domination, not a wiring fault, so folding it into
+    the error count would overstate how much hardware is broken.
+    """
+    if not scores:
+        return "Reciprocity: no reciprocal pairs in this pattern"
+    errors = [score.error_percent for score in scores.values()]
+    flipped = sum(1 for score in scores.values() if score.sign_flipped)
+    failing = sum(1 for error in errors if error > threshold_percent)
+    worst = sorted(scores.items(), key=lambda item: item[1].error_percent, reverse=True)
+    counts: Counter[str] = Counter()
+    for (i_pair, v_pair), _score in worst[: max(1, len(worst) // 3)]:
+        for index in (*i_pair, *v_pair):
+            counts[base.index_to_electrode(index)] += 1
+    suspects = ", ".join(f"{name}x{count}" for name, count in counts.most_common(3))
+    return (
+        f"Reciprocity: {len(scores)} pairs, {failing} above {threshold_percent:.0f}%, "
+        f"{flipped} sign-flipped; "
+        f"error min {min(errors):.1f}% median {statistics.median(errors):.1f}% "
+        f"max {max(errors):.1f}%; recurring in worst third: {suspects}"
+    )
 
 
 def format_self_test_summary(report: selftest.SelfTestReport) -> str:
@@ -287,6 +318,8 @@ class DebugApp(tk.Tk):
         self._worker_active = False
         self._last_reconstructions: list[np.ndarray] = []
         self._last_self_test: selftest.SelfTestReport | None = None
+        self._last_reciprocity: dict | None = None
+        self._reciprocity_sort_column: str | None = None
         self._self_test_remedies: dict[str, selftest.CheckResult] = {}
         self._build_vars(port)
         self._build_layout()
@@ -323,6 +356,10 @@ class DebugApp(tk.Tk):
         )
         self.status_var = tk.StringVar(value="Demo mode" if self.demo else "Disconnected")
         self.self_test_status_var = tk.StringVar(value="Not run")
+        self.reciprocity_status_var = tk.StringVar(value="Not run")
+        self.reciprocity_threshold_var = tk.StringVar(
+            value=str(unified.RECIPROCITY_THRESHOLD_PERCENT)
+        )
 
     def _build_layout(self) -> None:
         self.columnconfigure(1, weight=1)
@@ -424,6 +461,7 @@ class DebugApp(tk.Tk):
             ("Electrode offset", self.electrode_offset_var),
             ("Self test frames", self.self_test_frames_var),
             ("Fitted shunt ohm", self.expected_shunt_var),
+            ("Reciprocity max %", self.reciprocity_threshold_var),
         ):
             ttk.Label(parent, text=label).grid(row=row, column=0, sticky="w")
             ttk.Entry(parent, textvariable=var, width=12).grid(
@@ -462,6 +500,7 @@ class DebugApp(tk.Tk):
             ("Configure", self.configure),
             ("Probe Frame", self.probe_frame),
             ("Baseline", self.capture_baseline),
+            ("Reciprocity", self.capture_reciprocity),
             ("Control Drift", self.capture_control),
             ("Tune Drift", self.tune_drift),
             ("Target Run", self.capture_target),
@@ -517,6 +556,7 @@ class DebugApp(tk.Tk):
         ).grid(row=2, column=0, columnspan=2, sticky="w")
 
         self_test_tab = self._build_self_test_tab(notebook)
+        reciprocity_tab = self._build_reciprocity_tab(notebook)
 
         self.health_text = tk.Text(notebook, height=10, wrap="word")
         self.files_text = tk.Text(notebook, height=10, wrap="word")
@@ -536,7 +576,7 @@ class DebugApp(tk.Tk):
 
         for title, widget in zip(
             debug_tab_titles(),
-            (reconstruction_tab, self_test_tab, self.health_text, serial_tab, self.files_text),
+            (reconstruction_tab, self_test_tab, reciprocity_tab, self.health_text, serial_tab, self.files_text),
             strict=True,
         ):
             notebook.add(widget, text=title)
@@ -606,6 +646,139 @@ class DebugApp(tk.Tk):
             "Select a row to see what a WARN or FAIL means and what to do about it.\n",
         )
         return tab
+
+    def _reciprocity_threshold(self) -> float:
+        """UI-only setting; not part of UiSettings because it changes how the
+        report is read, never what the instrument does during a capture."""
+        try:
+            return float(self.reciprocity_threshold_var.get())
+        except (TypeError, ValueError):
+            return unified.RECIPROCITY_THRESHOLD_PERCENT
+
+    def _build_reciprocity_tab(self, notebook: ttk.Notebook) -> ttk.Frame:
+        """Rung 7 of the validation runbook: per-pair reciprocity, sortable.
+
+        Sortable is the whole point. The diagnostic is "which electrodes recur
+        in the worst rows", which needs a column that ranks - see ADR-0008 for
+        why the previous metric could not.
+        """
+        tab = ttk.Frame(notebook)
+        tab.columnconfigure(0, weight=1)
+        tab.rowconfigure(1, weight=1)
+
+        header = ttk.Frame(tab)
+        header.grid(row=0, column=0, sticky="ew", padx=6, pady=(6, 2))
+        header.columnconfigure(1, weight=1)
+        ttk.Button(header, text="Run Reciprocity", command=self.capture_reciprocity).grid(
+            row=0, column=0, sticky="w"
+        )
+        ttk.Label(
+            header, textvariable=self.reciprocity_status_var, wraplength=700
+        ).grid(row=0, column=1, sticky="w", padx=(8, 0))
+        ttk.Button(header, text="Save report", command=self.export_reciprocity).grid(
+            row=0, column=2, sticky="e"
+        )
+
+        columns = ("error", "flip", "drive", "sense", "status")
+        self.reciprocity_tree = ttk.Treeview(
+            tab, columns=columns, show="headings", height=18
+        )
+        for column, heading, width in (
+            ("error", "Error %", 90),
+            ("flip", "Sign flip", 80),
+            ("drive", "Drive I", 130),
+            ("sense", "Sense V", 130),
+            ("status", "Status", 70),
+        ):
+            self.reciprocity_tree.heading(
+                column, text=heading,
+                command=lambda c=column: self._sort_reciprocity(c),
+            )
+            self.reciprocity_tree.column(column, width=width, anchor="w")
+        self.reciprocity_tree.grid(row=1, column=0, sticky="nsew", padx=(6, 0))
+        scroll = ttk.Scrollbar(tab, orient="vertical", command=self.reciprocity_tree.yview)
+        scroll.grid(row=1, column=1, sticky="ns")
+        self.reciprocity_tree.configure(yscrollcommand=scroll.set)
+        self.reciprocity_tree.tag_configure("fail", foreground="#b00020")
+        self.reciprocity_tree.tag_configure("ok", foreground="#0b6b3a")
+
+        note = ttk.LabelFrame(tab, text="How to read this", padding=(6, 4))
+        note.grid(row=2, column=0, columnspan=2, sticky="ew", padx=6, pady=6)
+        note.columnconfigure(0, weight=1)
+        self.reciprocity_note = tk.Text(note, height=4, wrap="word")
+        self.reciprocity_note.grid(row=0, column=0, sticky="ew")
+        self._append(
+            self.reciprocity_note,
+            "Error % is magnitude disagreement between a pair and its reciprocal; "
+            "click a column to sort. A sign flip is reported separately: at low "
+            "amplitude it means the offset is larger than the signal, not that the "
+            "wiring is wrong. Electrodes recurring in the worst rows are the ones "
+            "to suspect.\n",
+        )
+        return tab
+
+    def _render_reciprocity(self, scores: dict) -> None:
+        self._last_reciprocity = scores
+        self.reciprocity_tree.delete(*self.reciprocity_tree.get_children())
+        threshold = self._reciprocity_threshold()
+        ordered = sorted(
+            scores.items(), key=lambda item: item[1].error_percent, reverse=True
+        )
+        for index, ((i_pair, v_pair), score) in enumerate(ordered):
+            failed = score.error_percent > threshold
+            self.reciprocity_tree.insert(
+                "", "end", iid=str(index),
+                values=(
+                    f"{score.error_percent:.2f}",
+                    "YES" if score.sign_flipped else "-",
+                    f"{base.index_to_electrode(i_pair[0])}-{base.index_to_electrode(i_pair[1])}",
+                    f"{base.index_to_electrode(v_pair[0])}-{base.index_to_electrode(v_pair[1])}",
+                    "FAIL" if failed else "OK",
+                ),
+                tags=("fail" if failed else "ok",),
+            )
+        self.reciprocity_status_var.set(format_reciprocity_summary(scores, threshold))
+
+    def _sort_reciprocity(self, column: str) -> None:
+        items = [
+            (self.reciprocity_tree.set(item, column), item)
+            for item in self.reciprocity_tree.get_children("")
+        ]
+
+        def key(entry):
+            try:
+                return (0, float(entry[0]))
+            except ValueError:
+                return (1, entry[0])
+
+        descending = self._reciprocity_sort_column == column
+        items.sort(key=key, reverse=descending)
+        self._reciprocity_sort_column = None if descending else column
+        for position, (_value, item) in enumerate(items):
+            self.reciprocity_tree.move(item, "", position)
+
+    def export_reciprocity(self):
+        if not self._last_reciprocity:
+            self._append(self.files_text, "No reciprocity run to save yet.\n")
+            return None
+        try:
+            settings = self.settings()
+        except Exception:
+            settings = UiSettings.default()
+        directory = Path(settings.log_dir)
+        directory.mkdir(parents=True, exist_ok=True)
+        stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+        path = directory / f"{stamp}-reciprocity.csv"
+        try:
+            unified.write_reciprocity_report(
+                path, self._last_reciprocity, self._reciprocity_threshold()
+            )
+        except Exception as exc:
+            self._append(self.files_text, f"Reciprocity export failed: {exc}\n")
+            self._handle_error(f"export reciprocity: {exc}")
+            return None
+        self._append(self.files_text, f"Saved reciprocity report to {path}\n")
+        return path
 
     def _render_self_test(self, report: selftest.SelfTestReport) -> None:
         self._last_self_test = report
@@ -730,6 +903,10 @@ class DebugApp(tk.Tk):
 
     def capture_baseline(self) -> None:
         self._run_with_settings("baseline", self.controller.capture_baseline)
+
+    def capture_reciprocity(self) -> None:
+        self.reciprocity_status_var.set("Running...")
+        self._run_with_settings("reciprocity", self.controller.capture_reciprocity)
 
     def capture_control(self) -> None:
         self._run_with_settings("control", self.controller.capture_control)
@@ -914,6 +1091,11 @@ class DebugApp(tk.Tk):
         elif event == "baseline":
             self._draw_baseline_reference(payload.baseline)
             self._append(self.health_text, f"Baseline: {payload.stability}\n")
+        elif event == "reciprocity":
+            self._render_reciprocity(payload)
+            summary = format_reciprocity_summary(payload, self._reciprocity_threshold())
+            self._append(self.status_text, f"{summary}\n")
+            self._append(self.health_text, f"{summary}\n")
         elif event == "control":
             summary = format_control_drift_summary(payload)
             self._append(self.status_text, f"{summary}\n")

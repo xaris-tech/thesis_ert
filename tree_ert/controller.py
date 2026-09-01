@@ -297,6 +297,33 @@ class DebugController:
             self.protocol,
         )
 
+    def capture_reciprocity(
+        self, settings: UiSettings
+    ) -> dict[tuple[tuple[int, int], tuple[int, int]], unified.ReciprocityScore]:
+        """Rung 7: score each reciprocal pair over `settings.frames` frames.
+
+        Needs no baseline - reciprocity is an internal consistency check on the
+        instrument, not a comparison against a reference state. Lenient parsing
+        throughout: a pair that loses one orientation is simply not scored,
+        which costs one row rather than the capture.
+        """
+        measurements: list[dict[tuple[tuple[int, int], tuple[int, int]], float]] = []
+        started = time.perf_counter()
+        for index in range(settings.frames):
+            self._raise_if_stopped(partial=list(measurements))
+            frame = self.acquisition.capture_frame()
+            self._raise_if_stopped(partial=list(measurements))
+            self._verify_pattern(frame, settings.pattern)
+            measurements.append(unified.paired_transfer_resistance(frame, strict=False))
+            self._emit_frame_progress(
+                "Reciprocity frame", index, settings.frames,
+                time.perf_counter() - started,
+            )
+        self._emit("Scoring reciprocity")
+        return unified.reciprocity_scores(
+            unified.average_measurement_values(measurements)
+        )
+
     def capture_target(self, settings: UiSettings) -> TargetResult:
         if self.baseline_result is None:
             raise RuntimeError("baseline is required before target capture")

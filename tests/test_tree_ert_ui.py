@@ -64,12 +64,34 @@ class TestTreeErtUiEntrypoint(unittest.TestCase):
 
         self.assertTrue(np.allclose(average, np.array([2.0, 4.0, 6.0])))
 
+    def test_reciprocity_summary_counts_sign_flips_apart_from_errors(self):
+        import phase3a_unified_reconstruct as unified
+        from tree_ert.ui import format_reciprocity_summary
+
+        scores = {
+            ((0, 1), (2, 3)): unified.ReciprocityScore(0.0, True),
+            ((4, 5), (6, 7)): unified.ReciprocityScore(80.0, False),
+        }
+
+        summary = format_reciprocity_summary(scores, threshold_percent=10.0)
+
+        # The flipped pair agrees perfectly on magnitude, so it must not be
+        # counted as an error (ADR-0008).
+        self.assertIn("2 pairs", summary)
+        self.assertIn("1 above 10%", summary)
+        self.assertIn("1 sign-flipped", summary)
+
+    def test_reciprocity_summary_handles_no_reciprocal_pairs(self):
+        from tree_ert.ui import format_reciprocity_summary
+
+        self.assertIn("no reciprocal pairs", format_reciprocity_summary({}))
+
     def test_status_is_embedded_in_reconstruction_tab(self):
         from tree_ert.ui import debug_tab_titles
 
         self.assertEqual(
             debug_tab_titles(),
-            ("Reconstruction", "Self Test", "Health", "Serial", "Files"),
+            ("Reconstruction", "Self Test", "Reciprocity", "Health", "Serial", "Files"),
         )
         self.assertNotIn("Status", debug_tab_titles())
 

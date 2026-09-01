@@ -263,16 +263,35 @@ def paired_transfer_resistance(
     return result
 
 
-def reciprocity_errors(
+@dataclass(frozen=True)
+class ReciprocityScore:
+    """Magnitude disagreement and sign agreement for one reciprocal pair.
+
+    Kept separate deliberately (ADR-0008): a flipped sign means something
+    different from a magnitude error. At low amplitude it is the expected
+    consequence of offset domination; at high amplitude it is a wiring fault.
+    Folding both into one percentage cannot distinguish them.
+    """
+
+    error_percent: float
+    sign_flipped: bool
+
+
+def reciprocity_scores(
     values: dict[tuple[tuple[int, int], tuple[int, int]], float],
-) -> dict[tuple[tuple[int, int], tuple[int, int]], float]:
-    """Percent error between each measurement and its reciprocal.
+) -> dict[tuple[tuple[int, int], tuple[int, int]], ReciprocityScore]:
+    """Magnitude error and sign flip per reciprocal pair.
 
     Reciprocity: (I:A,B / V:C,D) should equal (I:C,D / V:A,B). Only pairs whose
     reciprocal was also captured in this frame are scored; each reciprocal
     pair is reported once, keyed by whichever orientation was seen first.
+
+    The error is magnitude disagreement relative to the larger magnitude, which
+    is bounded at 100% and monotonic in the actual disagreement. The earlier
+    mean-magnitude denominator saturated at exactly 200% for every sign-crossing
+    pair regardless of magnitude, so the column could not rank (ADR-0008).
     """
-    errors: dict[tuple[tuple[int, int], tuple[int, int]], float] = {}
+    scores: dict[tuple[tuple[int, int], tuple[int, int]], ReciprocityScore] = {}
     seen: set[tuple[tuple, tuple]] = set()
     for key, value in values.items():
         i_pair, v_pair = key
@@ -284,9 +303,20 @@ def reciprocity_errors(
             continue
         seen.add(canonical)
         other = values[reciprocal_key]
-        denom = max((abs(value) + abs(other)) / 2.0, 1e-9)
-        errors[key] = abs(value - other) / denom * 100.0
-    return errors
+        denom = max(abs(value), abs(other), 1e-9)
+        scores[key] = ReciprocityScore(
+            error_percent=abs(abs(value) - abs(other)) / denom * 100.0,
+            sign_flipped=bool((value * other) < 0.0),
+        )
+    return scores
+
+
+def reciprocity_errors(
+    values: dict[tuple[tuple[int, int], tuple[int, int]], float],
+) -> dict[tuple[tuple[int, int], tuple[int, int]], float]:
+    """Magnitude-error view of :func:`reciprocity_scores`, for callers that
+    only need a sortable number."""
+    return {key: score.error_percent for key, score in reciprocity_scores(values).items()}
 
 
 def filter_by_reciprocity(
@@ -987,7 +1017,7 @@ def average_measurement_values(
 
 def write_reciprocity_report(
     path: Path,
-    errors: dict[tuple[tuple[int, int], tuple[int, int]], float],
+    scores: dict[tuple[tuple[int, int], tuple[int, int]], ReciprocityScore],
     threshold_percent: float,
 ) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -995,16 +1025,18 @@ def write_reciprocity_report(
         writer = csv.writer(handle)
         writer.writerow([
             "i_plus", "i_minus", "v_plus", "v_minus",
-            "percent_error", "threshold_percent", "status",
+            "percent_error", "sign_flipped", "threshold_percent", "status",
         ])
-        for (i_pair, v_pair), error in sorted(
-            errors.items(), key=lambda item: item[1], reverse=True
+        for (i_pair, v_pair), score in sorted(
+            scores.items(), key=lambda item: item[1].error_percent, reverse=True
         ):
             writer.writerow([
                 base.index_to_electrode(i_pair[0]), base.index_to_electrode(i_pair[1]),
                 base.index_to_electrode(v_pair[0]), base.index_to_electrode(v_pair[1]),
-                f"{error:.4f}", f"{threshold_percent:.4f}",
-                "FAIL" if error > threshold_percent else "OK",
+                f"{score.error_percent:.4f}",
+                "YES" if score.sign_flipped else "no",
+                f"{threshold_percent:.4f}",
+                "FAIL" if score.error_percent > threshold_percent else "OK",
             ])
 
 
@@ -1456,22 +1488,29 @@ def main() -> None:
             reciprocity_sink=baseline_reciprocity_frames,
         )
         reciprocity_values = average_measurement_values(baseline_reciprocity_frames)
-        reciprocity_scores = reciprocity_errors(reciprocity_values)
-        if reciprocity_scores:
+        pair_scores = reciprocity_scores(reciprocity_values)
+        if pair_scores:
             failing = sum(
-                1 for error in reciprocity_scores.values()
-                if error > args.reciprocity_threshold_pct
+                1 for score in pair_scores.values()
+                if score.error_percent > args.reciprocity_threshold_pct
             )
-            worst_key = max(reciprocity_scores, key=reciprocity_scores.get)
+            flipped = sum(1 for score in pair_scores.values() if score.sign_flipped)
+            worst_key = max(pair_scores, key=lambda key: pair_scores[key].error_percent)
             print(
-                f"[Reciprocity] {len(reciprocity_scores)} scored pairs, "
+                f"[Reciprocity] {len(pair_scores)} scored pairs, "
                 f"{failing} above {args.reciprocity_threshold_pct:.1f}% threshold, "
-                f"worst={reciprocity_scores[worst_key]:.2f}% "
+                f"{flipped} sign-flipped, "
+                f"worst={pair_scores[worst_key].error_percent:.2f}% "
                 f"(I={base.index_to_electrode(worst_key[0][0])}-{base.index_to_electrode(worst_key[0][1])} "
                 f"V={base.index_to_electrode(worst_key[1][0])}-{base.index_to_electrode(worst_key[1][1])})"
             )
+            if flipped:
+                print(
+                    f"[Reciprocity] {flipped} pairs disagree in sign; at low amplitude this is "
+                    "offset domination, not wiring (ADR-0008)"
+                )
             reciprocity_path = reciprocity_report_path(run_csv_path)
-            write_reciprocity_report(reciprocity_path, reciprocity_scores, args.reciprocity_threshold_pct)
+            write_reciprocity_report(reciprocity_path, pair_scores, args.reciprocity_threshold_pct)
             print(f"[Reciprocity] saved report to {reciprocity_path}")
         else:
             print("[Reciprocity] no reciprocal pairs found in this pattern/mesh")

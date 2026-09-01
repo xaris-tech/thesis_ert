@@ -61,5 +61,5 @@ one costs a re-derivation.
 | [0005](0005-firmware-tests-stay-text-assertions.md) | Firmware tests stay text assertions; the limitation is documented, not engineered away | Accepted |
 | [0006](0006-remove-shipped-superpowers-plans.md) | Remove shipped build plans rather than archiving them in-tree | Accepted |
 | [0007](0007-accept-either-mcp4725-address.md) | Accept either MCP4725 address, and verify binding instead of the address | Accepted |
-| [0008](0008-reciprocity-metric-must-not-saturate.md) | Score reciprocity with a non-saturating metric and report sign flips separately | Proposed |
+| [0008](0008-reciprocity-metric-must-not-saturate.md) | Score reciprocity with a non-saturating metric and report sign flips separately | Accepted |
 | [0009](0009-fix-e5-contact-before-further-capture.md) | Fix E5's contact physically rather than compensating for it in software | Accepted |

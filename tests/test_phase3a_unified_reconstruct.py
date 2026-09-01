@@ -543,7 +543,37 @@ class TestReciprocityCheck(unittest.TestCase):
         self.assertEqual(len(errors), 1)
         key = next(iter(errors))
         self.assertIn(key, [((0, 1), (2, 3)), ((2, 3), (0, 1))])
-        self.assertAlmostEqual(errors[key], 100.0 * 0.10 / 1.05, places=6)
+        # ADR-0008: relative to the larger magnitude, not the mean.
+        self.assertAlmostEqual(errors[key], 100.0 * 0.10 / 1.10, places=6)
+
+    def test_score_is_monotonic_across_a_sign_boundary(self):
+        # ADR-0008: the previous mean-magnitude denominator returned exactly
+        # 200% for all three of these, so the column could not rank.
+        def score(a, b):
+            values = {((0, 1), (2, 3)): a, ((2, 3), (0, 1)): b}
+            return next(iter(unified.reciprocity_scores(values).values())).error_percent
+
+        near, mid, far = score(1.0, -1.0), score(1.0, -10.0), score(1.0, -100.0)
+
+        self.assertLess(near, mid)
+        self.assertLess(mid, far)
+
+    def test_sign_flip_is_reported_separately_from_magnitude(self):
+        values = {((0, 1), (2, 3)): 1.0, ((2, 3), (0, 1)): -1.0}
+
+        score = next(iter(unified.reciprocity_scores(values).values()))
+
+        # Magnitudes agree perfectly; only the sign disagrees.
+        self.assertAlmostEqual(score.error_percent, 0.0)
+        self.assertTrue(score.sign_flipped)
+
+    def test_matching_signs_are_not_flagged_as_flipped(self):
+        values = {((0, 1), (2, 3)): 1.0, ((2, 3), (0, 1)): 2.0}
+
+        score = next(iter(unified.reciprocity_scores(values).values()))
+
+        self.assertFalse(score.sign_flipped)
+        self.assertAlmostEqual(score.error_percent, 50.0)
 
     def test_filter_drops_both_orientations_above_threshold(self):
         values = {
