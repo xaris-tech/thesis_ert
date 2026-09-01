@@ -80,7 +80,7 @@ If connecting the analog common ground makes MCP4725 or ADS1115 disappear from I
 | MCP4725 | GND | system ground |
 | MCP4725 | SDA | ESP32 GPIO8 |
 | MCP4725 | SCL | ESP32 GPIO9 |
-| MCP4725 | ADDR | GND, address `0x60` |
+| MCP4725 | ADDR | documented as GND/`0x60`, but the board answers at `0x61` and firmware uses `0x61` (see planned-improvements D2) |
 | MCP4725 | VOUT | HCP command input through HCP resistor network |
 | ADS1115 | VDD | ESP32 3V3 |
 | ADS1115 | GND | system ground |
@@ -284,7 +284,7 @@ If COM port access is denied, close Arduino Serial Monitor or any other serial p
 
 Use this order before trusting reconstructions:
 
-1. I2C scan: confirm MCP4725 at `0x60` and ADS1115 at `0x48`.
+1. I2C scan: confirm MCP4725 at `0x61` and ADS1115 at `0x48`.
 2. Confirm physical shunt value and firmware shunt constant match.
 3. Confirm DAC command changes HCP output/current.
 4. With dummy loads, verify current is in the expected range.

@@ -8,7 +8,15 @@ DC Electrical Resistance Tomography (ERT) research prototype for controlled test
 
 **Read `AGENTS.md` first** — it is the canonical source for domain truths (what the hardware can/cannot currently do), the serial `FRAME` protocol contract, the debugging/validation ladder, and firmware serial commands. Do not duplicate or contradict it; this file covers commands and code architecture only.
 
-Other key docs: `HANDOVER.md` (hardware/software reality), `CONTEXT.md` (thesis terminology), `docs/first-working-prototype/` (build/pinout details), `docs/drift-tuning-presets.md`, `docs/current-setup-validation-runbook.md`, `docs/planned-improvements.md` (agreed-but-unimplemented firmware/GUI work queue, plus measured hardware findings that motivate it — read before proposing changes in these areas), `docs/validity-audit.md` (2026-08-27 independent review: 5 reproduced defects, 3 architectural limits, and what was verified correct — read before trusting a reconstruction image or citing a capability).
+Other key docs: `HANDOVER.md` (hardware/software reality), `CONTEXT.md` (thesis terminology), `docs/first-working-prototype/` (build/pinout details), `docs/drift-tuning-presets.md`, `docs/current-setup-validation-runbook.md`, `docs/planned-improvements.md` (agreed-but-unimplemented firmware/GUI work queue, plus measured hardware findings that motivate it — read before proposing changes in these areas), `docs/validity-audit.md` (2026-08-27 independent review: 5 reproduced defects, 3 architectural limits, and what was verified correct — read before trusting a reconstruction image or citing a capability), `docs/adr/` (architecture decision records — why things are the way they are).
+
+## Architecture Decision Records — mandatory
+
+**Every non-obvious decision made in this repo gets an ADR in `docs/adr/`, written as part of the change that implements it, not afterwards.** This is not optional and does not require the user to ask for it.
+
+Write one when a decision changes what a reconstruction image means, picks a judgement-call threshold or constant, rejects a more obvious approach, accepts a known limitation instead of fixing it, changes the serial protocol or capture methodology, or affects a claim the thesis makes about the instrument. Skip it for routine refactors, typo fixes, and dependency bumps. When unsure, write it.
+
+Process: copy `docs/adr/template.md` to `docs/adr/NNNN-short-kebab-title.md` with the next free number, fill in Context / Decision / Rationale / Consequences / Verification, add a row to the index table in `docs/adr/README.md`, and cite the ADR number in the commit message. Accepted ADRs are immutable — supersede with a new one rather than editing. `docs/adr/README.md` has the full convention.
 
 ## Commands
 

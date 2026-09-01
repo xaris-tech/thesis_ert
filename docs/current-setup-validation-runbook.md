@@ -176,7 +176,7 @@ Existing bad early opposite-drive logs show current saturation or bad quality fl
 Stop and debug hardware before reconstruction when:
 
 - ESP32-S3 serial port is not visible
-- I2C scan does not show `0x60` and `0x48`
+- I2C scan does not show `0x61` and `0x48`
 - current is near zero or unstable
 - current is saturated/high
 - voltage exceeds safe mux/ADC range
