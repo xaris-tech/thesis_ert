@@ -1,0 +1,10 @@
+condition,pairs,median_error_percent,sign_flipped,median_current_ua
+dac100,54,58.04,30,361.6
+dac200,54,57.69,30,515.7
+dac400,54,58.35,30,823.1
+settle50,54,57.75,30,515.0
+settle200,54,59.46,30,514.7
+discharge50,54,57.71,30,516.2
+adj_autorange_on,54,58.27,30,586.4
+adj_autorange_off,54,55.16,30,583.7
+opp_autorange_on,0,,,
