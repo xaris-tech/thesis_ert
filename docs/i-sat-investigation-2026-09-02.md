@@ -490,3 +490,42 @@ measure.
 previous 1.0 uA floor the same frame would have passed most of its records as `Q,OK`, and the
 run would have produced a plausible-looking reconstruction out of shunt noise. This is the first
 time that floor has fired on live hardware.
+
+### 10.7 Post-repair baseline and control drift — the detection floor
+
+Measured 2026-09-02 after the supply was restored, on the tree, adjacent pattern, DAC code 200,
+range `eh`, 8 samples: 5 warmup frames discarded, then 10 baseline frames and 10 control frames
+with nothing changed between them. Evidence: `phase3a_logs/post-repair-baseline-20260902.npz`.
+
+```text
+vector length 108, NaNs per frame: 0 of 108 on all 20 frames
+
+baseline    stable=True   max relative RMS 0.32%   max absolute RMS 0.00031 kohm
+                          min correlation 1.000000
+control     relative RMS  median 0.28%   min 0.19%   max 0.43%
+                          min correlation 0.999991
+
+baseline |R|              median 0.0094, min 0.0024, max 0.4689 kohm
+detection floor           median control RMS 0.000072 kohm
+median SNR                124x
+```
+
+**This is the cleanest the instrument has been.** Every one of the 108 pairs returned a valid
+measurement on every frame, where pre-repair runs routinely lost pairs to `I_LOW` and one run
+aborted on a single `I_REVERSED`. Baseline correlation is 1.000000 to six figures.
+
+Electrode drift is also uniform for the first time, spanning 0.000172 to 0.000191 kohm mean pair
+RMS across all twelve. **E5 is no longer an outlier** - it sits mid-pack at 0.000181 against a
+top value of 0.000191, where in the 2026-09-01 runs it ranked first before its contact was
+re-seated and fifth after. There is no single bad electrode in this data.
+
+**What this licenses.** The control run is the detection floor: a target must move the
+measurement further than the instrument moves on its own. That floor is now 0.28 percent median,
+0.43 percent worst case, frame to frame. A target producing less than roughly 0.5 percent change
+cannot be distinguished from drift, and the 2026-09-01 target run that produced 0.42 percent
+against a 0.41-0.59 percent baseline spread would still be a null result today.
+
+**What it does not license.** This says nothing about reciprocity, which remains violated at
+57.5 percent median error (ADR-0017). Stability and symmetry are independent properties: the
+instrument repeats itself precisely while still disagreeing with itself under exchange of drive
+and sense. Difference imaging depends on the former, and absolute accuracy on the latter.
