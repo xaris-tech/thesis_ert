@@ -119,7 +119,7 @@ class DemoAcquisition:
             + f",SAMPLES,{self.sample_count}"
             + ",RANGE,LOW,RS_OHMS,68.0,MAX_DAC_CODE,420,SHUNT_OHMS,97.90"
             + f",DAC_ADDR,0x{self.dac_address:02X}"
-            + ",VGAIN_AUTO,1,VRANGE_MV,256.0,MIN_CURRENT_UA,1.0,MAX_CURRENT_UA,1200.0"
+            + ",VGAIN_AUTO,1,VRANGE_MV,256.0,MIN_CURRENT_UA,10.0,MAX_CURRENT_UA,1250.0"
         )
 
     def select_dac_address(self) -> DacAddressResult:
@@ -145,6 +145,10 @@ class SerialAcquisition:
             raise RuntimeError("serial connection is not open")
         _, mode_command = unified.protocol_and_command(settings.pattern)
         self._serial.write(mode_command)
+        # Declare the Rs jumper before the DAC code: the firmware clamps the
+        # code to the selected range's ceiling, so setting the range second
+        # would silently clip a legitimate request (ADR-0011).
+        self._serial.write(settings.range_command())
         self._serial.write(f"p{settings.dac}\n".encode())
         self._serial.write(f"t{settings.settle_ms}\n".encode())
         self._serial.write(f"n{settings.samples}\n".encode())

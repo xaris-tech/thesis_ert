@@ -360,13 +360,14 @@ class TestFrameProbe(unittest.TestCase):
         frame = make_frame([
             record("FWD", (0, 1), (2, 3), 20.0, 200.0),
             record("REV", (1, 0), (2, 3), -20.0, 200.0),
-            record("FWD", (0, 1), (3, 4), 5.0, 4.0),
+            record("FWD", (0, 1), (3, 4), 5.0, 40.0),
         ])
 
         probe = unified.probe_frame_health(frame)
 
-        self.assertAlmostEqual(probe.min_current_ua, 4.0)
+        self.assertAlmostEqual(probe.min_current_ua, 40.0)
         self.assertEqual(probe.min_current_v_pair, (3, 4))
+        # 40 uA against the 10 uA measured-noise floor (ADR-0012).
         self.assertAlmostEqual(probe.margin_ratio, 4.0)
         self.assertAlmostEqual(probe.median_current_ua, 200.0)
         self.assertTrue(probe.passes)

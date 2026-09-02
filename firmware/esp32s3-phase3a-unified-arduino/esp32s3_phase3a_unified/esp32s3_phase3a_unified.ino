@@ -17,8 +17,21 @@ constexpr uint8_t MAX_MCP4725_ADDRESS = 0x67;
 constexpr uint8_t ADS1115_ADDRESS = 0x48;
 
 constexpr float DEFAULT_SHUNT_OHMS = 97.9f;
-constexpr float MIN_CURRENT_UA = 1.0f;
-constexpr float MAX_CURRENT_UA = 1200.0f;
+// Measured noise floor, not a nominal value. A 2026-09-02 null frame captured
+// with the OPA2134 supply disconnected - no current physically possible -
+// returned shunt-channel readings from 0.000 to 2.554 uA, and 10 of its 20
+// measurements cleared the previous 1.0 uA floor and were stamped Q,OK. The
+// floor has to sit above that noise or the flag certifies nothing (ADR-0012).
+constexpr float MIN_CURRENT_UA = 10.0f;
+// The over-current guard is derived per range from the fitted Rs (see
+// CURRENT_RANGES) rather than being one flat ceiling. ADR-0011 has the bench
+// evidence: a single 1200 uA constant sat above the whole design's 1.0 mA
+// maximum, so it could not flag an over-current on LOW (design max 100 uA)
+// until the reading was 12x over.
+constexpr float CURRENT_GUARD_HEADROOM = 1.25f;
+// ADS1115 full scale on GAIN_SIXTEEN, the fixed range readCurrentUa() uses.
+constexpr float CURRENT_FULL_SCALE_MV = 256.0f;
+constexpr float CURRENT_SATURATION_FRACTION = 0.99f;
 constexpr float MAX_MUX_VOLTAGE_MV = 3000.0f;
 
 constexpr uint16_t DEFAULT_DAC_CODE = 100;
@@ -44,12 +57,15 @@ struct CurrentRangeSpec {
   const char* name;
   float rsOhms;
   uint16_t maxDacCode;
+  // Current at maxDacCode from Iload = VDAC * 0.02 / Rs with a 3.3 V DAC, i.e.
+  // the table in docs/first-working-prototype/03-howland-current-source.md.
+  float designMaxUa;
 };
 
 const CurrentRangeSpec CURRENT_RANGES[] = {
-  {"LOW", 68.0f, 420},
-  {"MEDIUM", 22.0f, 680},
-  {"HIGH", 10.0f, 620},
+  {"LOW", 68.0f, 420, 100.0f},
+  {"MEDIUM", 22.0f, 680, 500.0f},
+  {"HIGH", 10.0f, 620, 1000.0f},
 };
 
 // Electrode-voltage PGA ranges, finest first. Measured saline frames put every
@@ -107,6 +123,10 @@ Adafruit_MCP4725 dac;
 
 DrivePattern drivePattern = DrivePattern::ADJACENT;
 CurrentRange currentRange = CurrentRange::RANGE_LOW;
+// Rs is a physical jumper the firmware cannot read back. False until the
+// operator selects a range this session with el/em/eh, which is the only
+// evidence the firmware has that its assumed Rs matches the fitted one.
+bool rangeDeclared = false;
 bool continuousMode = false;
 uint16_t requestedDacCode = DEFAULT_DAC_CODE;
 uint16_t muxSettleMs = DEFAULT_SETTLE_MS;
@@ -126,6 +146,14 @@ const CurrentRangeSpec& rangeSpec() {
 
 uint16_t maxDacCode() {
   return rangeSpec().maxDacCode;
+}
+
+// Guard ceiling for the selected range. The headroom absorbs component
+// tolerance on Rs and the DAC reference so a legitimately full-scale drive is
+// not flagged, while still catching the order-of-magnitude faults that a flat
+// ceiling missed (ADR-0011).
+float maxCurrentUa() {
+  return rangeSpec().designMaxUa * CURRENT_GUARD_HEADROOM;
 }
 
 uint8_t wrapElectrode(int value) {
@@ -274,15 +302,24 @@ float readVoltageMv() {
   return measuredMv;
 }
 
+// Unlike readVoltageMv() the current channel has no autoranging fallback, so a
+// railed shunt reading would otherwise be reported as a precise-looking number
+// (255.9 mV / 97.9 ohm = 2613.636 uA) indistinguishable from a real
+// over-current. Record the clip so qualityFlag() can say so (ADR-0011).
+bool lastCurrentSaturated = false;
+
 float readCurrentUa() {
   ads.setGain(GAIN_SIXTEEN);  // +/-0.256 V across the current-sense shunt.
   const float shuntMv = readAveragedDifferentialMv(1);
+  lastCurrentSaturated =
+      fabsf(shuntMv) >= CURRENT_FULL_SCALE_MV * CURRENT_SATURATION_FRACTION;
   return shuntMv / shuntOhms * 1000.0f;
 }
 
 const char* qualityFlag(float voltageMv, float currentUa) {
+  if (lastCurrentSaturated) return "I_SAT";
   if (fabsf(currentUa) < MIN_CURRENT_UA) return "I_LOW";
-  if (fabsf(currentUa) > MAX_CURRENT_UA) return "I_HIGH";
+  if (fabsf(currentUa) > maxCurrentUa()) return "I_HIGH";
   if (currentUa < 0.0f) return "I_REVERSED";
   if (fabsf(voltageMv) > MAX_MUX_VOLTAGE_MV) return "V_RANGE";
   return "OK";
@@ -385,6 +422,7 @@ void setRequestedDac(uint16_t code) {
 
 void setCurrentRange(CurrentRange range) {
   currentRange = range;
+  rangeDeclared = true;
   if (requestedDacCode > maxDacCode()) {
     requestedDacCode = maxDacCode();
     Serial.print("[LIMIT] DAC lowered to ");
@@ -423,7 +461,9 @@ void printStatus() {
   Serial.print(",MIN_CURRENT_UA,");
   Serial.print(MIN_CURRENT_UA, 1);
   Serial.print(",MAX_CURRENT_UA,");
-  Serial.println(MAX_CURRENT_UA, 1);
+  Serial.print(maxCurrentUa(), 1);
+  Serial.print(",RS_DECLARED,");
+  Serial.println(rangeDeclared ? 1 : 0);
 }
 
 // Rebinds the DAC driver to `address` and parks the output at zero. The bus is
@@ -499,6 +539,7 @@ void printHelp() {
   Serial.println("el      select LOW current range, Rs 68 ohm, DAC ceiling 420");
   Serial.println("em      select MEDIUM current range, Rs 22 ohm, DAC ceiling 680");
   Serial.println("eh      select HIGH current range, Rs 10 ohm, DAC ceiling 620");
+  Serial.println("        el/em/eh must match the fitted Rs jumper; STATUS RS_DECLARED shows it");
   Serial.println("jN.N    set current-sense shunt value in ohms");
   Serial.println("a1 / a0 enable or disable electrode-voltage PGA autoranging");
   Serial.println("g       continuous frames on");
@@ -653,6 +694,12 @@ void setup() {
   enterSafeIdle();
   printHelp();
   printStatus();
+  Serial.println("[WARN] Rs is a physical jumper the firmware cannot read back.");
+  Serial.print("[WARN] Assuming range ");
+  Serial.print(rangeSpec().name);
+  Serial.print(" (Rs ");
+  Serial.print(rangeSpec().rsOhms, 1);
+  Serial.println(" ohm) until el/em/eh confirms the fitted jumper.");
 }
 
 void loop() {

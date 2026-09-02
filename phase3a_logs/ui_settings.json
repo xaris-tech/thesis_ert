@@ -2,7 +2,8 @@
   "port": "COM7",
   "baud": 115200,
   "pattern": "adjacent",
-  "dac": 75,
+  "current_range": "high",
+  "dac": 100,
   "settle_ms": 10,
   "samples": 16,
   "warmup_frames": 5,
@@ -16,5 +17,7 @@
   "lenient_quality": false,
   "filter_pairs": false,
   "electrode_offset": 0,
-  "electrode_reversed": false
+  "electrode_reversed": false,
+  "self_test_frames": 3,
+  "expected_shunt_ohms": null
 }

@@ -267,13 +267,13 @@ class TestFrameDiagnosticFormatters(unittest.TestCase):
 
         frame = self._frame([
             self._record("FWD", (0, 1), (2, 3), 20.0, 200.0),
-            self._record("FWD", (0, 1), (3, 4), 5.0, 4.0),
+            self._record("FWD", (0, 1), (3, 4), 5.0, 40.0),
         ])
 
         summary = format_frame_probe(unified.probe_frame_health(frame))
 
         self.assertIn("PASS", summary)
-        self.assertIn("min_current=4.000uA", summary)
+        self.assertIn("min_current=40.000uA", summary)
         self.assertIn("V=E4-E5", summary)
 
     def test_polarization_summary_reports_decay(self):

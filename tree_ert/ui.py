@@ -19,6 +19,7 @@ import phase3a_reconstruct as base
 import phase3a_unified_reconstruct as unified
 from phase3a_reconstruct import N_ELECTRODES
 from tree_ert import selftest
+from tree_ert import settings as settings_module
 from tree_ert.acquisition import DemoAcquisition, SerialAcquisition
 from tree_ert.controller import (
     CaptureStopped,
@@ -333,6 +334,7 @@ class DebugApp(tk.Tk):
         # An explicit --port always wins over whatever was stored.
         self.port_var = tk.StringVar(value=port)
         self.pattern_var = tk.StringVar(value=defaults.pattern)
+        self.current_range_var = tk.StringVar(value=defaults.current_range)
         self.dac_var = tk.StringVar(value=str(defaults.dac))
         self.settle_var = tk.StringVar(value=str(defaults.settle_ms))
         self.samples_var = tk.StringVar(value=str(defaults.samples))
@@ -444,6 +446,22 @@ class DebugApp(tk.Tk):
             parent,
             textvariable=self.pattern_var,
             values=("adjacent", "opposite", "skip-1", "skip-2"),
+            width=12,
+            state="readonly",
+        ).grid(row=row, column=1, sticky="ew", pady=1)
+        row += 1
+
+        # Must match the Rs jumper physically fitted. The firmware cannot read
+        # the jumper back and defaults to LOW every boot, so leaving this wrong
+        # guards against the wrong current ceiling (ADR-0011).
+        ttk.Label(parent, text="Current range (Rs)").grid(row=row, column=0, sticky="w")
+        ttk.Combobox(
+            parent,
+            textvariable=self.current_range_var,
+            values=tuple(
+                f"{name} ({ohms:g}Ω)"
+                for name, (_, ohms, _) in settings_module.CURRENT_RANGES.items()
+            ),
             width=12,
             state="readonly",
         ).grid(row=row, column=1, sticky="ew", pady=1)
@@ -856,10 +874,16 @@ class DebugApp(tk.Tk):
             parse_float_field("expected_shunt_ohms", shunt_text, minimum=0.1)
             if shunt_text else None
         )
+        # The combobox shows "high (10Ω)"; the setting stores just the name.
+        current_range = self.current_range_var.get().strip().split(" ")[0]
+        ceiling = settings_module.CURRENT_RANGES.get(
+            current_range, (None, None, 620)
+        )[2]
         return UiSettings(
             port=self.port_var.get().strip(),
             pattern=self.pattern_var.get().strip(),
-            dac=parse_int_field("dac", self.dac_var.get(), 0, 620),
+            current_range=current_range,
+            dac=parse_int_field("dac", self.dac_var.get(), 0, ceiling),
             settle_ms=parse_int_field("settle_ms", self.settle_var.get(), 1, 10000),
             samples=parse_int_field("samples", self.samples_var.get(), 1, 1000),
             warmup_frames=parse_int_field("warmup_frames", self.warmup_var.get(), 0, 1000),

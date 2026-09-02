@@ -20,7 +20,9 @@ import phase3a_reconstruct as base
 DEFAULT_PORT = "COM3"
 DEFAULT_BAUD = 115200
 DEFAULT_LOG_DIR = Path("phase3a_logs")
-MIN_VALID_CURRENT_UA = 0.5
+# Set from a measured null frame, not chosen nominally: with the current
+# source unpowered the shunt channel still reads up to 2.554 uA (ADR-0012).
+MIN_VALID_CURRENT_UA = 10.0
 DEFAULT_WARMUP_FRAMES = 10
 DEFAULT_BASELINE_FRAMES = 10
 DEFAULT_SETTLE_MS = 30
@@ -47,7 +49,7 @@ ADS1115_ADDRESS = 0x48
 # flagged I_LOW by the firmware, and a single I_LOW aborts a strict capture, so
 # the minimum current across a frame is what predicts whether a long run
 # survives.
-FIRMWARE_MIN_CURRENT_UA = 1.0
+FIRMWARE_MIN_CURRENT_UA = 10.0
 # Ratio of first to last current within one injection pair. Above this the
 # current is decaying across a fixed drive pair, which indicates electrode
 # polarisation rather than a real impedance change.

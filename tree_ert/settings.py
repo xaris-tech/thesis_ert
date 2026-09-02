@@ -6,6 +6,18 @@ from pathlib import Path
 
 
 VALID_PATTERNS = ("adjacent", "opposite", "skip-1", "skip-2")
+# Current-range jumper. Rs is physical and the firmware cannot read it back, so
+# the UI has to declare it every session or the firmware keeps its RANGE_LOW
+# default and guards against LOW's 100 uA ceiling (ADR-0011). On a rig whose
+# fitted Rs is 10 ohm that flags every legitimate measurement as I_HIGH.
+# Values are (firmware command, Rs ohms, DAC ceiling) from
+# docs/first-working-prototype/03-howland-current-source.md.
+CURRENT_RANGES = {
+    "low": ("el", 68.0, 420),
+    "medium": ("em", 22.0, 680),
+    "high": ("eh", 10.0, 620),
+}
+VALID_CURRENT_RANGES = tuple(CURRENT_RANGES)
 SETTINGS_FILENAME = "ui_settings.json"
 
 
@@ -34,6 +46,10 @@ class UiSettings:
     port: str = "COM3"
     baud: int = 115200
     pattern: str = "adjacent"
+    # Must match the Rs jumper actually fitted. Defaults to "high" because the
+    # only Rs on this board is 10 ohm - LOW and MEDIUM cannot be selected in
+    # hardware at all. Declaring it is what sets STATUS RS_DECLARED to 1.
+    current_range: str = "high"
     dac: int = 100
     settle_ms: int = 30
     samples: int = 4
@@ -79,6 +95,16 @@ class UiSettings:
     def default(cls) -> "UiSettings":
         return cls()
 
+    def range_command(self) -> bytes:
+        """Firmware command that declares the fitted Rs jumper."""
+        return (CURRENT_RANGES[self.current_range][0] + "\n").encode()
+
+    def range_rs_ohms(self) -> float:
+        return CURRENT_RANGES[self.current_range][1]
+
+    def max_dac_code(self) -> int:
+        return CURRENT_RANGES[self.current_range][2]
+
     def validate(self) -> "UiSettings":
         if not self.port.strip():
             raise ValueError("port is required")
@@ -86,8 +112,16 @@ class UiSettings:
             raise ValueError("baud must be positive")
         if self.pattern not in VALID_PATTERNS:
             raise ValueError(f"pattern must be one of {', '.join(VALID_PATTERNS)}")
-        if self.dac < 0 or self.dac > 620:
-            raise ValueError("dac must be between 0 and 620")
+        if self.current_range not in CURRENT_RANGES:
+            raise ValueError(
+                f"current_range must be one of {', '.join(VALID_CURRENT_RANGES)}"
+            )
+        ceiling = self.max_dac_code()
+        if self.dac < 0 or self.dac > ceiling:
+            raise ValueError(
+                f"dac must be between 0 and {ceiling} on the "
+                f"{self.current_range} current range"
+            )
         if self.settle_ms <= 0:
             raise ValueError("settle_ms must be positive")
         if self.samples <= 0:

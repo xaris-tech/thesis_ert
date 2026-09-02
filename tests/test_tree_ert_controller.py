@@ -563,5 +563,35 @@ class TestControllerDacAddress(unittest.TestCase):
         self.assertTrue(any("scan exploded" in message for message in messages))
 
 
+class TestConfigureDeclaresCurrentRange(unittest.TestCase):
+    """ADR-0011: without the range command the firmware guards against LOW's
+    100 uA ceiling and flags every legitimate reading on a 10 ohm Rs as
+    I_HIGH."""
+
+    def test_range_is_sent_before_the_dac_code(self):
+        import tree_ert.acquisition as acquisition
+        from dataclasses import replace as _replace
+        from tree_ert.settings import UiSettings
+
+        written = []
+
+        class FakeSerial:
+            def write(self, payload):
+                written.append(payload)
+            def reset_input_buffer(self):
+                pass
+
+        serial_acq = acquisition.SerialAcquisition.__new__(acquisition.SerialAcquisition)
+        serial_acq._serial = FakeSerial()
+        serial_acq.configure(_replace(UiSettings.default(), current_range="high", dac=100))
+
+        newline = chr(10)
+        self.assertIn(("eh" + newline).encode(), written)
+        self.assertLess(
+            written.index(("eh" + newline).encode()),
+            written.index(("p100" + newline).encode()),
+        )
+
+
 if __name__ == "__main__":
     unittest.main()

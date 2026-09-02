@@ -107,9 +107,9 @@ class TestUnifiedFirmwareSource(unittest.TestCase):
 
     def test_current_range_enforces_its_own_dac_ceiling(self):
         self.assertIn("enum class CurrentRange", self.source)
-        self.assertIn('{"LOW", 68.0f, 420}', self.source)
-        self.assertIn('{"MEDIUM", 22.0f, 680}', self.source)
-        self.assertIn('{"HIGH", 10.0f, 620}', self.source)
+        self.assertIn('{"LOW", 68.0f, 420,', self.source)
+        self.assertIn('{"MEDIUM", 22.0f, 680,', self.source)
+        self.assertIn('{"HIGH", 10.0f, 620,', self.source)
         self.assertIn("min<uint16_t>(code, maxDacCode())", self.source)
         self.assertIn('line == "el"', self.source)
         self.assertIn('line == "em"', self.source)
@@ -179,8 +179,34 @@ class TestUnifiedFirmwareSource(unittest.TestCase):
 
     def test_current_quality_uses_magnitude_and_reports_reversed_polarity(self):
         self.assertIn("fabsf(currentUa) < MIN_CURRENT_UA", self.source)
-        self.assertIn("fabsf(currentUa) > MAX_CURRENT_UA", self.source)
+        self.assertIn("fabsf(currentUa) > maxCurrentUa()", self.source)
         self.assertIn('currentUa < 0.0f) return "I_REVERSED"', self.source)
+
+    def test_over_current_guard_is_derived_per_range_not_a_flat_ceiling(self):
+        # ADR-0011: a single MAX_CURRENT_UA constant sat above the whole
+        # design's 1.0 mA maximum, so LOW (design max 100 uA) was unguarded.
+        self.assertNotIn("constexpr float MAX_CURRENT_UA", self.source)
+        self.assertIn(
+            "return rangeSpec().designMaxUa * CURRENT_GUARD_HEADROOM",
+            self.source,
+        )
+        for row in ('{"LOW", 68.0f, 420, 100.0f}',
+                    '{"MEDIUM", 22.0f, 680, 500.0f}',
+                    '{"HIGH", 10.0f, 620, 1000.0f}'):
+            self.assertIn(row, self.source)
+
+    def test_saturated_current_channel_is_flagged_not_reported_as_a_value(self):
+        # ADR-0011: the current channel has no autorange fallback, so a railed
+        # shunt read must not surface as a precise-looking 2613.636 uA.
+        self.assertIn(
+            "fabsf(shuntMv) >= CURRENT_FULL_SCALE_MV * CURRENT_SATURATION_FRACTION",
+            self.source,
+        )
+        self.assertIn('if (lastCurrentSaturated) return "I_SAT"', self.source)
+
+    def test_status_reports_whether_the_rs_jumper_was_declared(self):
+        self.assertIn('Serial.print(",RS_DECLARED,")', self.source)
+        self.assertIn("rangeDeclared = true", self.source)
 
 
 if __name__ == "__main__":
