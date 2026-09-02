@@ -17,3 +17,4 @@ Thumbs.db
 
 # Claude Code local config/skills
 .claude/
+.firmware-build/

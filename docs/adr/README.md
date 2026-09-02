@@ -69,3 +69,4 @@ one costs a re-derivation.
 | [0013](0013-repair-howland-ratio-match.md) | Repair the Howland ratio match rather than designing around low output impedance | Superseded by [0014](0014-current-sense-feedback-tapped-before-rs.md) |
 | [0014](0014-current-sense-feedback-tapped-before-rs.md) | The current-sense feedback is tapped before Rs, so the rig has never been a current source | Accepted |
 | [0015](0015-measure-output-impedance-with-the-instrument.md) | Measure output impedance with the instrument's own shunt, not a multimeter | Accepted |
+| [0016](0016-compile-the-firmware-in-the-test-suite.md) | Compile the firmware in the test suite; behavioural verification still stays on the bench | Accepted |

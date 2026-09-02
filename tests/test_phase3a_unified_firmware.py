@@ -1,10 +1,14 @@
 """Doc/code sync guard for the active firmware, NOT behavioural coverage.
 
 Every assertion below is a string or regex match against the raw `.ino` text.
-Nothing here compiles the firmware, flashes a board, or runs the code in any
-form of simulator — there is no toolchain in this repository that could. A
+Nothing here flashes a board or runs the code in any form of simulator. A
 passing test here means the source still contains the pattern being checked
-for; it says nothing about what the ESP32 actually does at runtime. Do not
+for; it says nothing about what the ESP32 actually does at runtime.
+
+The sketch *is* compiled, by `tests/test_firmware_compiles.py` (ADR-0016), which
+catches syntax errors, bad identifiers and overflowing builds. That is a
+separate and much narrower claim than behavioural correctness: D-04 below, a
+wrong pin number, and an inverted mux enable all compile cleanly. Do not
 read this module's pass count as evidence a firmware change works — only a
 real flash-and-probe session on hardware can show that (see
 docs/validity-audit.md, X-03, and the "Confirmed on hardware" log entries
