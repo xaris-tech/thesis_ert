@@ -1,7 +1,7 @@
 {
   "port": "COM7",
   "baud": 115200,
-  "pattern": "adjacent",
+  "pattern": "opposite",
   "current_range": "high",
   "dac": 100,
   "settle_ms": 10,

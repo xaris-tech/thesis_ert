@@ -426,7 +426,12 @@ physically for the same reason given there.
 ### 10.5 Still outstanding
 
 - Dummy-load sweep (section 7.3) has not been run. It is the measurement that quantifies output
-  impedance, and it is now also the discriminating test for issue A.
+  impedance, and it is now also the discriminating test for issue A. **Tooling is now in place**
+  (`dummy_load_sweep.py`, [ADR-0015](adr/0015-measure-output-impedance-with-the-instrument.md)):
+  the firmware `d` command emits a machine-readable `HOLD` reading, the host sweeps DAC codes at
+  one fitted resistor, and `fit` solves for `Rout` across resistors. The bench work - electrodes
+  off, resistor across E1-E2, changed between runs - is unchanged and still outstanding, and the
+  firmware must be reflashed for `HOLD` to exist.
 - Supply is still ±15 V; spec is ±9 V.
 - Everything in section 8 stands: no capture predating this repair measured a controlled
   current, and all baselines must be retaken.

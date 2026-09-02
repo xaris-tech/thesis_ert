@@ -61,6 +61,7 @@ Two generations coexist here too:
 - **`phase3a_reconstruct.py`** — shared PyEIT plumbing: builds `PyEITProtocol` variants (`build_adjacent_protocol`, `build_opposite_protocol`, `build_skip_one_protocol`, `build_skip_two_protocol`), `create_solver` (mesh + JAC solver), `reconstruct_difference`, and CSV frame logging (`FrameLogger`). `phase3a_unified_reconstruct.py` imports this module as `base` for mesh/solver/reconstruction — don't reimplement solver setup elsewhere.
 - **`phase3a_reconstruct_opposite.py`** — thin standalone CLI wrapper around `phase3a_reconstruct` for opposite-drive-only capture (a Phase-2-era entry point; the unified tool now covers this case for Phase 3A).
 - **`ert.py`** — legacy `SCAN:`-protocol tool, deprecated, do not extend.
+- **`dummy_load_sweep.py`** — bench tool, not part of the capture path. Drives the firmware `d` (debug hold) command, which emits a `HOLD` record read through the instrument's own shunt, and fits `I = Vth / (Rout + Rload)` across hand-fitted resistors to measure the current source's output impedance (ADR-0015). `measure` runs one resistor, `fit` solves across the CSV they append to.
 - **`pyeit_analyzer.py`** — offline analysis of exported `.npz`/`.csv` capture files (`load_export`, `summarize_export`, `plot_export`), independent of the live serial path.
 
 ### `tree_ert/` package — Tkinter debug UI

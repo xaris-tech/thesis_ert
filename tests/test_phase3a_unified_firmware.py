@@ -208,6 +208,26 @@ class TestUnifiedFirmwareSource(unittest.TestCase):
         self.assertIn('Serial.print(",RS_DECLARED,")', self.source)
         self.assertIn("rangeDeclared = true", self.source)
 
+    def test_debug_hold_emits_a_machine_readable_reading(self):
+        # ADR-0015: dummy_load_sweep.py drives the sweep off this line, so the
+        # field names have to stay in step with parse_hold_line().
+        self.assertIn(
+            'Serial.print("HOLD,1,I_SRC,E1,I_RET,E2,VP,E3,VN,E4,DAC,")',
+            self.source,
+        )
+        for field in ('",V,"', '",I,"', '",Q,"'):
+            self.assertIn(f"Serial.print({field})", self.source)
+        self.assertIn(
+            "Serial.println(qualityFlag(voltageMv, currentUa))",
+            self.source,
+        )
+
+    def test_debug_hold_leaves_the_drive_energised_for_a_multimeter(self):
+        # The point of the hold is that the state persists after the reading, so
+        # enterSafeIdle() must not creep into it the way it ends a measurement.
+        body = self.source.split("void debugHold() {", 1)[1].split("\n}", 1)[0]
+        self.assertNotIn("enterSafeIdle", body)
+
 
 if __name__ == "__main__":
     unittest.main()

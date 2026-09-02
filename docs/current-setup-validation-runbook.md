@@ -138,12 +138,17 @@ Start without routing through the electrode muxes:
 HCP current output -> dummy resistor -> shunt -> system ground
 ```
 
-> **Never power the OPA2134 with no load connected.** With the resistors currently fitted the
-> positive-feedback loop gain exceeds unity above `R_load = 4846 ohm`, so an open circuit -
-> electrodes in air, nothing in the tank, a disconnected dummy - latches the amplifier to a
-> rail every time. A latched amplifier drives the electrode node past the CD4067's 3.3 V supply
-> and can cause CMOS latch-up in the muxes. Connect the load first, then apply amplifier power.
-> See [ADR-0013](adr/0013-repair-howland-ratio-match.md).
+> **Never power the OPA2134 with no load connected.** An open circuit - electrodes in air,
+> nothing in the tank, a disconnected dummy - latches the amplifier to a rail. A latched
+> amplifier drives the electrode node past the CD4067's 3.3 V supply and can cause CMOS latch-up
+> in the muxes. Connect the load first, then apply amplifier power.
+>
+> The `R_load = 4846 ohm` latch pole this note previously quoted came from
+> [ADR-0013](adr/0013-repair-howland-ratio-match.md), which is **superseded by
+> [ADR-0014](adr/0014-current-sense-feedback-tapped-before-rs.md)**: it was computed from an R1
+> value later re-measured at 4980 ohm, and from a circuit whose sense feedback was miswired.
+> **The pole has not been recomputed for the repaired circuit and no measured value replaces
+> it.** Treat "connect the load first" as unconditional rather than relying on a number.
 
 Use these loads:
 
@@ -151,9 +156,11 @@ Use these loads:
 - 1 kOhm
 - 2 kOhm
 
-> The 4.7 kohm and 10 kohm loads this section previously specified are **above the 4846 ohm
-> latch pole** and will latch rather than measure. Do not use them until the ratio match is
-> repaired and the pole has been recomputed from the new resistor values.
+> The 4.7 kohm and 10 kohm loads this section previously specified were dropped as being above
+> the then-computed latch pole. That pole figure is stale (see the warning above), but the three
+> loads below span the tree's measured 1-1.5 kohm nail-to-nail impedance, which is what the
+> sweep needs to bracket. Add a higher load only after the repaired circuit has been shown not
+> to latch into it.
 
 Use these DAC codes:
 
@@ -163,9 +170,24 @@ Use these DAC codes:
 - 300
 - 400
 
-For each setting, measure the voltage across the shunt with a multimeter and confirm it matches
-what `?` reported for `SHUNT_OHMS` (measured 97.9 ohm as of 2026-08-27; re-check if the board or
-shunt component has changed).
+Run the sweep once per fitted resistor, then fit across them ([ADR-0015](adr/0015-measure-output-impedance-with-the-instrument.md)):
+
+```powershell
+.\.venv\Scripts\python.exe dummy_load_sweep.py measure --port COM7 --load-ohms 500
+.\.venv\Scripts\python.exe dummy_load_sweep.py measure --port COM7 --load-ohms 1000
+.\.venv\Scripts\python.exe dummy_load_sweep.py measure --port COM7 --load-ohms 2000
+.\.venv\Scripts\python.exe dummy_load_sweep.py fit phase3a_logs/dummy-load-sweep.csv
+```
+
+This holds E1/E2 with the firmware `d` command and reads the shunt through the instrument's own
+ADC - the same channel every reported transfer resistance is normalised by. Include DAC code 0,
+which is the discriminating test for the 213 uA zero-command offset in
+`docs/i-sat-investigation-2026-09-02.md` section 10.4: near zero implicates the electrodes,
+near 213 uA implicates the circuit.
+
+Cross-check at least one point with a multimeter across the shunt - the muxes stay held after
+the reading for exactly this - and confirm `SHUNT_OHMS` from `?` matches the fitted part
+(measured 97.9 ohm as of 2026-08-27). A shunt-value error scales every current by a constant.
 
 ```text
 I = Vshunt / SHUNT_OHMS
@@ -176,11 +198,15 @@ Pass condition:
 - current is stable
 - current increases predictably with DAC code
 - **current is roughly the same at all three loads.** This is the check that actually tests a
-  current source. With the resistors fitted as of 2026-09-02 the model predicts 176 / 199 /
-  269 uA at DAC code 100 for 500 / 1000 / 2000 ohm - a 53 percent spread that a real current
-  source would not have, and the measurement that quantifies how far off the pump is.
+  current source, and it is the one that has never been run on the repaired rig. `fit` reports
+  it as `flatness %`; a current source is flat, and the pre-repair rig tracked `1/R_load` at
+  `Rout = 430 ohm`. An `Rout` far above 2 kohm is the same statement.
 - **current responds to DAC code at all.** A reading that does not move when the code changes
   by a large factor is a latched amplifier, not a measurement.
+
+> Earlier revisions of this section predicted 176 / 199 / 269 uA at DAC code 100 for the three
+> loads. **Those numbers are withdrawn** - they were derived from ADR-0013's superseded model.
+> On the tree after the repair, DAC code 100 measured 361 uA. Go in without a predicted value.
 - current is in a useful microamp range
 - no analog node exceeds the safe mux/ADC range
 

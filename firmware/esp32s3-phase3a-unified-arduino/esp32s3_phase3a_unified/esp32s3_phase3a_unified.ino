@@ -554,7 +554,23 @@ void printHelp() {
 
 void debugHold() {
   // Hold E1(0) and E2(1) as current source/return, and E3(2), E4(3) as voltage sense.
-  configureDriveAndSense(0, 1, 2, 3); 
+  configureDriveAndSense(0, 1, 2, 3);
+  // Read back through the instrument's own shunt before handing over to the
+  // operator. The dummy-load sweep that quantifies output impedance is a
+  // sequence of (DAC code, load) points, and reading each point off a
+  // multimeter makes it a manual transcription job; emitting it lets the host
+  // sweep the codes and do the fit. The muxes stay enabled either way, so a
+  // multimeter still works on the same held state (ADR-0015).
+  const float currentUa = readCurrentUa();
+  const float voltageMv = readVoltageMv();
+  Serial.print("HOLD,1,I_SRC,E1,I_RET,E2,VP,E3,VN,E4,DAC,");
+  Serial.print(requestedDacCode);
+  Serial.print(",V,");
+  Serial.print(voltageMv, 3);
+  Serial.print(",I,");
+  Serial.print(currentUa, 3);
+  Serial.print(",Q,");
+  Serial.println(qualityFlag(voltageMv, currentUa));
   Serial.println("[DEBUG] Holding E1 (I+), E2 (I-), E3 (V+), E4 (V-) ON at current DAC level.");
   Serial.println("[DEBUG] Use your multimeter now! Send 'x' to stop and idle.");
 }
