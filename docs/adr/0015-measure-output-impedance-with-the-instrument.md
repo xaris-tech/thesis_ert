@@ -122,5 +122,17 @@ A repaired current source gives near-flat current across the three loads and an 
 2 kohm. Current tracking `1/R_load`, or an `Rout` near 430 ohm, means the repair did not take.
 The DAC code 0 row of the same data answers the 213 uA offset question.
 
-**Not yet performed.** The tool and the firmware readout are in place and tested against
-synthetic data; no real dummy-load measurement has been taken.
+**The `HOLD` readout is hardware-verified, 2026-09-02.** After reflashing, `d` returned parsed
+records at three DAC codes through `parse_hold_line()`, with the quality flag applied:
+
+```text
+code    0  I     3.032 uA  V   -10.031 mV  I_LOW
+code  100  I     3.192 uA  V    -9.000 mV  I_LOW
+code  200  I     1.596 uA  V    -9.484 mV  I_LOW
+```
+
+The path works end to end. **The readings themselves are a null result** - see
+`docs/i-sat-investigation-2026-09-02.md` section 10.6.
+
+**The dummy-load sweep has still not been performed**, and cannot be until the source delivers
+current again.

@@ -435,3 +435,58 @@ physically for the same reason given there.
 - Supply is still ±15 V; spec is ±9 V.
 - Everything in section 8 stands: no capture predating this repair measured a controlled
   current, and all baselines must be retaken.
+
+### 10.6 Regression after reflash — the source delivers no current
+
+Measured 2026-09-02, after reflashing the firmware carrying the ADR-0015 `HOLD` readout, with
+the range declared `eh` (Rs 10 ohm):
+
+```text
+d (hold E1/E2), samples 8
+  code    0  I     3.032 uA  V   -10.031 mV  I_LOW
+  code  100  I     3.192 uA  V    -9.000 mV  I_LOW
+  code  200  I     1.596 uA  V    -9.484 mV  I_LOW
+
+one full adjacent frame at code 200, 216 records
+  quality   I_LOW 214, OK 2
+  I         median 2.554 uA, min 0.000, max 14.045
+  V         median 7.703 mV, max 38.656
+```
+
+This is global, not confined to the held pair: all 216 records of a full frame read the same
+way. Compare the post-repair sweep in section 10.1 four hours earlier, which gave 216 / 361 /
+518 / 827 uA at codes 0 / 100 / 200 / 400 on the same rig.
+
+**The distribution matches the documented null exactly.** ADR-0012's floor was set from a frame
+captured with the OPA2134 supply physically disconnected, which returned "shunt-channel readings
+from 0.000 to 2.554 uA". This frame returns 0.000 to 2.554 uA with a median of 2.554. What is
+being measured is the shunt channel's own noise, not a current.
+
+The signature is not a latch. A latched amplifier rails, and section 1 records that as `I_SAT`
+with electrode nodes driven past the mux supply; here there is no `I_SAT`, the sense voltages
+are single-digit millivolts, and nothing responds to the DAC code.
+
+Two candidates remain, both consistent with everything above:
+
+- **The OPA2134 has no supply.** This is the condition the null frame was captured under, and it
+  reproduces the numbers exactly.
+- **The MCP4725 output is not reaching the amplifier.** Addressing is confirmed good - the scan
+  finds 0x48 and 0x60, and `STATUS` reports `DAC_ADDR,0x60`, so the firmware is writing to the
+  device that is present - but a correctly addressed DAC can still have a dead or disconnected
+  `VOUT`.
+
+**Discriminating measurements**, both unpowered-safe except the first:
+
+1. Supply rails at the OPA2134 supply pins. Section 10.5 notes the supply is still +/-15 V
+   against a +/-9 V spec, so a protection trip or a dislodged lead during the reflash are both
+   plausible.
+2. `MCP4725 VOUT` at DAC code 200. Section 10.4 measured 80 mV at code 100 on a working rig, so
+   roughly 160 mV is expected. Near zero implicates the DAC.
+
+Until one of these is resolved the dummy-load sweep cannot run, since it needs a current to
+measure.
+
+**ADR-0012's floor is what caught this.** 214 of 216 records were flagged `I_LOW`. Under the
+previous 1.0 uA floor the same frame would have passed most of its records as `Q,OK`, and the
+run would have produced a plausible-looking reconstruction out of shunt noise. This is the first
+time that floor has fired on live hardware.
