@@ -70,3 +70,4 @@ one costs a re-derivation.
 | [0014](0014-current-sense-feedback-tapped-before-rs.md) | The current-sense feedback is tapped before Rs, so the rig has never been a current source | Accepted |
 | [0015](0015-measure-output-impedance-with-the-instrument.md) | Measure output impedance with the instrument's own shunt, not a multimeter | Accepted |
 | [0016](0016-compile-the-firmware-in-the-test-suite.md) | Compile the firmware in the test suite; behavioural verification still stays on the bench | Accepted |
+| [0017](0017-reciprocity-survives-the-current-source-repair.md) | Reciprocity violation survives the current-source repair, so output impedance is not its cause | Accepted |
