@@ -72,3 +72,4 @@ one costs a re-derivation.
 | [0016](0016-compile-the-firmware-in-the-test-suite.md) | Compile the firmware in the test suite; behavioural verification still stays on the bench | Accepted |
 | [0017](0017-reciprocity-survives-the-current-source-repair.md) | Reciprocity violation survives the current-source repair, so output impedance is not its cause | Accepted |
 | [0018](0018-bisect-reciprocity-with-a-resistor-phantom.md) | Stop black-box hypothesis testing on the tree; bisect reciprocity with a resistor phantom | Accepted |
+| [0019](0019-image-the-void-by-inserting-a-target.md) | Image the drilled void by inserting a target into it; the resistor phantom is unavailable | Accepted |
