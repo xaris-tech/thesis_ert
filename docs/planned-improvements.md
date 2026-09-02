@@ -60,8 +60,21 @@ with the non-0.1-percent resistors actually fitted. `Rs = 10 ohm` (the HIGH rang
 least forgiving value in the range table; `docs/first-working-prototype/03-howland-current-source.md`
 specifies starting on LOW (68 ohm).
 
-The resistors are soldered and cannot practically be reworked or trimmed, so this is now a
-fixed property of the rig to design around rather than a defect to repair.
+> **Cause re-identified 2026-09-02 by
+> [ADR-0014](adr/0014-current-sense-feedback-tapped-before-rs.md).** The measurements in this
+> section are correct and are the strongest retrospective evidence for that ADR, but the
+> causal claim below - leg mismatch - is wrong. OPA2134 pin 5 is tied to pin 1 instead of
+> `I_SRC_OUT`, so the loop never sensed current. The `Rout ~= 430 ohm` measured here is simply
+> `Rs` plus two mux `Ron`, with no regulation at all.
+>
+> **Withdrawn 2026-09-02 by [ADR-0013](adr/0013-repair-howland-ratio-match.md).** The claim
+> below was made before the individual resistors were measured. They since were: R1 is 4.498k
+> and R3 is 5.022k against a shared 5.00k nominal, giving `e = 10.7%` and `Rout = 94 ohm`, not
+> the 2-3% and 430 ohm estimated here. At that mismatch the pump drives `I_SRC_OUT` to 3.86 V,
+> past the 3.3 V mux supply, so it is a defect to repair and not a property to design around.
+
+~~The resistors are soldered and cannot practically be reworked or trimmed, so this is now a
+fixed property of the rig to design around rather than a defect to repair.~~
 
 Consequence to design around: difference imaging still works, because
 `paired_transfer_resistance()` normalises each measurement by its own measured current. The

@@ -1,5 +1,11 @@
 # Current Setup Validation Runbook
 
+> **2026-09-02:** the rig is mid-repair. OPA2134 pin 5 is wired to pin 1 instead of
+> `I_SRC_OUT`, so the pump has never regulated current and currently latches, reporting
+> `Q,I_SAT` on every measurement. Do not treat any capture as valid until the repair and its
+> acceptance tests pass — see
+> [`i-sat-investigation-2026-09-02.md`](i-sat-investigation-2026-09-02.md).
+
 Use this runbook to validate the Phase 3A setup before trusting any reconstruction image.
 
 This runbook targets the active firmware
@@ -93,6 +99,37 @@ Expected:
 - All muxes are disabled.
 - No electrode current should be intentionally driven.
 
+## 3b. Null Frame Check (do this before every capture session)
+
+**This is the single highest-value check in the runbook and it takes thirty seconds.** It found
+a defect on 2026-09-02 that months of reconstruction analysis had not.
+
+Disconnect the OPA2134 supply - battery off, or `V+`/`V-` unplugged - leaving the ESP32-S3, ADC,
+and muxes powered over USB. No injected current is physically possible in this state. Then
+capture one frame:
+
+```text
+s
+```
+
+Expected: **every measurement reports `Q,I_LOW`, and no measurement reports `Q,OK`.**
+
+If any measurement reports `Q,OK`, stop. The instrument is certifying noise as data, and every
+capture taken under the same firmware is suspect. On the run that motivated this section,
+10 of 20 measurements in an unpowered frame were stamped `Q,OK`, with shunt readings from
+0.000 to 2.554 uA against a 1.0 uA floor - see [ADR-0012](adr/0012-current-floor-from-measured-noise.md),
+which raised that floor to 10.0 uA.
+
+Two things to read off the same frame while you have it:
+
+- **Current readings** show the noise floor of the shunt channel. They should quantise in steps
+  of about 0.319 uA, which is 4 LSB of the ADS1115 on `GAIN_SIXTEEN`. A peak materially above
+  2.5 uA means `MIN_CURRENT_UA` is no longer far enough above the noise and must be raised.
+- **Voltage readings** are pure electrode half-cell potential, since no current is flowing.
+  Values of 185-443 mV are normal and are the offset that `paired_transfer_resistance()` exists
+  to cancel (`planned-improvements.md` 1.3). Their spread across electrodes is a useful contact
+  check in its own right: an electrode far from its neighbours is a contact problem.
+
 ## 4. Direct Dummy-Load Check
 
 Start without routing through the electrode muxes:
@@ -101,11 +138,22 @@ Start without routing through the electrode muxes:
 HCP current output -> dummy resistor -> shunt -> system ground
 ```
 
+> **Never power the OPA2134 with no load connected.** With the resistors currently fitted the
+> positive-feedback loop gain exceeds unity above `R_load = 4846 ohm`, so an open circuit -
+> electrodes in air, nothing in the tank, a disconnected dummy - latches the amplifier to a
+> rail every time. A latched amplifier drives the electrode node past the CD4067's 3.3 V supply
+> and can cause CMOS latch-up in the muxes. Connect the load first, then apply amplifier power.
+> See [ADR-0013](adr/0013-repair-howland-ratio-match.md).
+
 Use these loads:
 
+- 500 Ohm
 - 1 kOhm
-- 4.7 kOhm
-- 10 kOhm
+- 2 kOhm
+
+> The 4.7 kohm and 10 kohm loads this section previously specified are **above the 4846 ohm
+> latch pole** and will latch rather than measure. Do not use them until the ratio match is
+> repaired and the pole has been recomputed from the new resistor values.
 
 Use these DAC codes:
 
@@ -127,6 +175,12 @@ Pass condition:
 
 - current is stable
 - current increases predictably with DAC code
+- **current is roughly the same at all three loads.** This is the check that actually tests a
+  current source. With the resistors fitted as of 2026-09-02 the model predicts 176 / 199 /
+  269 uA at DAC code 100 for 500 / 1000 / 2000 ohm - a 53 percent spread that a real current
+  source would not have, and the measurement that quantifies how far off the pump is.
+- **current responds to DAC code at all.** A reading that does not move when the code changes
+  by a large factor is a latched amplifier, not a measurement.
 - current is in a useful microamp range
 - no analog node exceeds the safe mux/ADC range
 
@@ -200,6 +254,11 @@ Stop and debug hardware before reconstruction when:
 
 - ESP32-S3 serial port is not visible
 - I2C scan does not show `0x61` and `0x48`
+- **a null frame (section 3b) reports any `Q,OK` with the current source unpowered**
+- **`STATUS` reports `RS_DECLARED,0`, i.e. nobody has confirmed the fitted Rs jumper this
+  session (see [ADR-0011](adr/0011-current-guard-derives-from-fitted-rs.md))**
+- **any measurement reports `Q,I_SAT`: the current channel is railed and its reported value is
+  fiction, not a large current**
 - current is near zero or unstable
 - current is saturated/high
 - voltage exceeds safe mux/ADC range

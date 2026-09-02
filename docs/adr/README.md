@@ -64,3 +64,7 @@ one costs a re-derivation.
 | [0008](0008-reciprocity-metric-must-not-saturate.md) | Score reciprocity with a non-saturating metric and report sign flips separately | Accepted |
 | [0009](0009-fix-e5-contact-before-further-capture.md) | Fix E5's contact physically rather than compensating for it in software | Accepted |
 | [0010](0010-reciprocity-error-scales-with-signal.md) | Treat reciprocity as uncalibrated until dummy loads settle its amplitude dependence | Accepted |
+| [0011](0011-current-guard-derives-from-fitted-rs.md) | Derive the over-current guard from the fitted Rs, and flag a saturated current channel | Accepted |
+| [0012](0012-current-floor-from-measured-noise.md) | Set the minimum-current floor from a measured null frame, not a nominal value | Accepted |
+| [0013](0013-repair-howland-ratio-match.md) | Repair the Howland ratio match rather than designing around low output impedance | Superseded by [0014](0014-current-sense-feedback-tapped-before-rs.md) |
+| [0014](0014-current-sense-feedback-tapped-before-rs.md) | The current-sense feedback is tapped before Rs, so the rig has never been a current source | Accepted |
