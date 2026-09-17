@@ -2,3 +2,12 @@ matplotlib
 numpy
 pyeit
 pyserial
+
+# PyQt6 front-end (ADR-0024). Optional: tree_ert_app.py (Tkinter) and the CLI
+# tools run without it, and tests/test_tree_ert_qt.py skips when it is absent.
+#
+# On Raspberry Pi OS / Debian, install from apt instead of pip -- there is no
+# reliable ARM64 wheel:
+#     sudo apt install python3-pyqt6
+#     python3 -m venv --system-site-packages .venv
+PyQt6
