@@ -73,3 +73,14 @@ one costs a re-derivation.
 | [0017](0017-reciprocity-survives-the-current-source-repair.md) | Reciprocity violation survives the current-source repair, so output impedance is not its cause | Accepted |
 | [0018](0018-bisect-reciprocity-with-a-resistor-phantom.md) | Stop black-box hypothesis testing on the tree; bisect reciprocity with a resistor phantom | Accepted |
 | [0019](0019-image-the-void-by-inserting-a-target.md) | Image the drilled void by inserting a target into it; the resistor phantom is unavailable | Accepted |
+| [0020](0020-electrode-insertion-depth-convention.md) | Electrodes are short bare tips in both tank and tree | Accepted |
+| [0021](0021-saline-tank-as-the-deferred-phantom.md) | The saline tank is the deferred phantom; the reciprocity bisect resumes | Accepted |
+| [0022](0022-titrate-the-medium-with-the-instrument.md) | Titrate the tank with the instrument rather than mixing to a fixed recipe | Accepted (target window superseded by [0026](0026-session-baseline-reconstruction-and-a-quantisation-check.md)) |
+| [0023](0023-per-run-folders-with-a-conditions-sheet.md) | Per-run folders with a conditions sheet supersede flat timestamped logs | Accepted |
+| [0024](0024-pyqt6-front-end-tkinter-frozen.md) | PyQt6 session-driver front-end; Tkinter is frozen, not removed | Accepted |
+| [0025](0025-dedicated-scans-root-session-log-and-index.md) | A dedicated scans root, an append-only session log, and a scan index | Accepted |
+| [0026](0026-session-baseline-reconstruction-and-a-quantisation-check.md) | Session-baseline reconstruction in the UI, and a quantisation check replacing the resistance window | Accepted |
+| [0027](0027-control-image-makes-a-null-visible.md) | Every difference image is rendered beside the baseline against itself | Accepted |
+| [0028](0028-there-is-no-baseline-for-a-diseased-tree.md) | A diseased tree has no baseline; the thesis claim requires absolute imaging | Accepted |
+| [0029](0029-baseline-run-saves-its-control-image.md) | A baseline run saves its own control image, named as noise | Accepted |
+| [0030](0030-reciprocity-gates-the-difference-image.md) | Reciprocity gates the difference image (10 % median, stamped override) | Accepted |
