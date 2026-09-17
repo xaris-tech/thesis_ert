@@ -1516,3 +1516,180 @@
 2026-09-17 16:31:37    Reciprocity: median 95.8%  max 100.0%  sign flips 31/54
 2026-09-17 16:31:37    Noise floor: median pair sd 0.00245 kohm (14.08%)  max 0.09411 kohm over 108 pairs
 2026-09-17 16:31:37  Indexed in scans\index.csv
+2026-09-17 16:47:43  Baseline cleared; the next run will become the new baseline.
+2026-09-17 16:47:49  Connecting to COM12...
+2026-09-17 16:47:49  Configuring instrument...
+
+------------------------------------------------------------------------
+2026-09-17 16:47:49  Run 20260917-164749-recept-pt2
+2026-09-17 16:47:49  Conditions: medium=saline tank saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-09-17 16:47:49  Recording to scans\runs\20260917-164749-recept-pt2
+2026-09-17 16:48:18  [warmup 1/5] 216/216 OK | I med 70.3 uA (14.1-145.6) | R med 0.0120 kohm | dV med 67 LSB
+2026-09-17 16:48:46  [warmup 2/5] 216/216 OK | I med 70.3 uA (12.8-147.6) | R med 0.0127 kohm | dV med 66 LSB
+2026-09-17 16:49:14  [warmup 3/5] 216/216 OK | I med 70.2 uA (12.3-147.7) | R med 0.0162 kohm | dV med 48 LSB
+2026-09-17 16:49:43  [warmup 4/5] 216/216 OK | I med 70.9 uA (11.7-147.3) | R med 0.0196 kohm | dV med 65 LSB
+2026-09-17 16:50:11  [warmup 5/5] 216/216 OK | I med 70.9 uA (11.0-147.7) | R med 0.0174 kohm | dV med 64 LSB
+2026-09-17 16:50:39  [frame 1] 216/216 OK | I med 70.7 uA (11.3-147.8) | R med 0.0157 kohm | dV med 56 LSB
+2026-09-17 16:51:08  [frame 2] 216/216 OK | I med 70.9 uA (11.9-147.2) | R med 0.0194 kohm | dV med 60 LSB
+2026-09-17 16:51:36  [frame 3] 216/216 OK | I med 70.7 uA (11.3-148.1) | R med 0.0191 kohm | dV med 50 LSB
+2026-09-17 16:52:04  [frame 4] 216/216 OK | I med 70.7 uA (11.1-147.6) | R med 0.0194 kohm | dV med 54 LSB
+2026-09-17 16:52:32  [frame 5] 216/216 OK | I med 70.9 uA (10.5-147.6) | R med 0.0221 kohm | dV med 60 LSB
+2026-09-17 16:53:01  [frame 6] 216/216 OK | I med 70.7 uA (11.0-147.2) | R med 0.0212 kohm | dV med 60 LSB
+2026-09-17 16:53:29  [frame 7] 216/216 OK | I med 71.0 uA (10.7-147.2) | R med 0.0211 kohm | dV med 64 LSB
+2026-09-17 16:53:57  [frame 8] 216/216 OK | I med 70.8 uA (11.3-147.5) | R med 0.0202 kohm | dV med 64 LSB
+2026-09-17 16:54:26  [frame 9] 216/216 OK | I med 70.8 uA (10.1-147.7) | R med 0.0206 kohm | dV med 58 LSB
+2026-09-17 16:54:54  [frame 10] 216/216 OK | I med 71.1 uA (10.1-147.1) | R med 0.0187 kohm | dV med 60 LSB
+2026-09-17 16:55:12  No reconstruction: This run is the session baseline; it has nothing to differ from.
+2026-09-17 16:55:13  Baseline control image saved to scans\runs\20260917-164749-recept-pt2\control.png
+2026-09-17 16:55:13  This run is now the session baseline (20260917-164749-recept-pt2).
+2026-09-17 16:55:13  Finished. Run saved to scans\runs\20260917-164749-recept-pt2
+2026-09-17 16:55:13    Frames captured: 10
+2026-09-17 16:55:13    Reciprocity: median 96.3%  max 100.0%  sign flips 31/54
+2026-09-17 16:55:13    Noise floor: median pair sd 0.00298 kohm (15.37%)  max 0.20308 kohm over 108 pairs
+2026-09-17 16:55:13  Indexed in scans\index.csv
+2026-09-17 16:57:37  Connecting to COM12...
+2026-09-17 16:57:37  Configuring instrument...
+
+------------------------------------------------------------------------
+2026-09-17 16:57:37  Run 20260917-165737-recept-pt2
+2026-09-17 16:57:37  Conditions: medium=saline tank saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-09-17 16:57:37  Recording to scans\runs\20260917-165737-recept-pt2
+2026-09-17 16:58:05  [warmup 1/5] 216/216 OK | I med 69.9 uA (13.1-143.7) | R med 0.0126 kohm | dV med 62 LSB
+2026-09-17 16:58:34  [warmup 2/5] 216/216 OK | I med 69.7 uA (12.2-147.1) | R med 0.0163 kohm | dV med 50 LSB
+2026-09-17 16:59:02  [warmup 3/5] 216/216 OK | I med 70.0 uA (11.2-146.8) | R med 0.0194 kohm | dV med 58 LSB
+2026-09-17 16:59:30  [warmup 4/5] 216/216 OK | I med 69.7 uA (11.2-147.3) | R med 0.0175 kohm | dV med 62 LSB
+2026-09-17 16:59:58  [warmup 5/5] 216/216 OK | I med 70.1 uA (10.9-146.5) | R med 0.0195 kohm | dV med 54 LSB
+2026-09-17 17:00:27  [frame 1] 216/216 OK | I med 70.2 uA (10.8-147.2) | R med 0.0204 kohm | dV med 48 LSB
+2026-09-17 17:00:55  [frame 2] 216/216 OK | I med 70.1 uA (10.9-146.4) | R med 0.0189 kohm | dV med 60 LSB
+2026-09-17 17:01:23  [frame 3] 216/216 OK | I med 70.1 uA (10.9-146.4) | R med 0.0198 kohm | dV med 58 LSB
+2026-09-17 17:01:52  [frame 4] 216/216 OK | I med 70.4 uA (10.4-146.6) | R med 0.0219 kohm | dV med 52 LSB
+2026-09-17 17:02:20  [frame 5] 216/216 OK | I med 70.1 uA (10.9-146.4) | R med 0.0192 kohm | dV med 67 LSB
+2026-09-17 17:02:48  [frame 6] 216/216 OK | I med 69.9 uA (11.2-146.6) | R med 0.0212 kohm | dV med 66 LSB
+2026-09-17 17:03:17  [frame 7] 216/216 OK | I med 70.0 uA (10.7-146.4) | R med 0.0211 kohm | dV med 50 LSB
+2026-09-17 17:03:45  [frame 8] 216/216 OK | I med 69.8 uA (10.5-146.1) | R med 0.0196 kohm | dV med 59 LSB
+2026-09-17 17:04:13  [frame 9] 216/216 OK | I med 69.6 uA (10.5-146.6) | R med 0.0210 kohm | dV med 66 LSB
+2026-09-17 17:04:41  [frame 10] 216/216 OK | I med 69.8 uA (10.3-145.7) | R med 0.0203 kohm | dV med 68 LSB
+2026-09-17 17:04:42  No reconstruction: Reciprocity check failed, so no image was made (baseline: median reciprocity error 96.3% exceeds 10%; this run: median reciprocity error 96.6% exceeds 10%). Frames are saved. Fix reciprocity first, or tick the override to image anyway.
+2026-09-17 17:04:42  Finished. Run saved to scans\runs\20260917-165737-recept-pt2
+2026-09-17 17:04:42    Frames captured: 10
+2026-09-17 17:04:42    Reciprocity: median 96.6%  max 100.0%  sign flips 33/54
+2026-09-17 17:04:42    Noise floor: median pair sd 0.00299 kohm (15.91%)  max 0.12691 kohm over 108 pairs
+2026-09-17 17:04:42  Indexed in scans\index.csv
+2026-09-17 17:05:37  Connecting to COM12...
+2026-09-17 17:05:37  Configuring instrument...
+
+------------------------------------------------------------------------
+2026-09-17 17:05:37  Run 20260917-170537-recept-pt2
+2026-09-17 17:05:37  Conditions: medium=saline tank saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-09-17 17:05:37  Recording to scans\runs\20260917-170537-recept-pt2
+2026-09-17 17:06:05  [warmup 1/5] 216/216 OK | I med 69.1 uA (13.5-144.0) | R med 0.0122 kohm | dV med 78 LSB
+2026-09-17 17:06:33  [warmup 2/5] 216/216 OK | I med 68.9 uA (11.8-146.4) | R med 0.0183 kohm | dV med 52 LSB
+2026-09-17 17:07:02  [warmup 3/5] 216/216 OK | I med 69.1 uA (11.3-147.0) | R med 0.0177 kohm | dV med 55 LSB
+2026-09-17 17:07:30  [warmup 4/5] 216/216 OK | I med 69.2 uA (10.7-146.1) | R med 0.0186 kohm | dV med 63 LSB
+2026-09-17 17:07:58  [warmup 5/5] 216/216 OK | I med 69.3 uA (10.9-146.4) | R med 0.0224 kohm | dV med 64 LSB
+2026-09-17 17:08:27  [frame 1] 216/216 OK | I med 69.3 uA (10.1-145.8) | R med 0.0193 kohm | dV med 62 LSB
+2026-09-17 17:08:55  [frame 2] 216/216 OK | I med 69.3 uA (11.0-145.7) | R med 0.0179 kohm | dV med 55 LSB
+2026-09-17 17:09:23  [frame 3] 216/216 OK | I med 69.3 uA (10.7-144.8) | R med 0.0233 kohm | dV med 56 LSB
+2026-09-17 17:09:51  [frame 4] 215/216 OK | I med 69.2 uA (9.9-145.7) | R med 0.0226 kohm | dV med 54 LSB | flags I_LOWx1
+2026-09-17 17:10:20  [frame 5] 216/216 OK | I med 69.4 uA (10.3-145.2) | R med 0.0217 kohm | dV med 65 LSB
+2026-09-17 17:10:48  [frame 6] 216/216 OK | I med 69.4 uA (10.5-145.5) | R med 0.0210 kohm | dV med 62 LSB
+2026-09-17 17:11:16  [frame 7] 216/216 OK | I med 69.3 uA (10.8-145.2) | R med 0.0200 kohm | dV med 60 LSB
+2026-09-17 17:11:45  [frame 8] 216/216 OK | I med 69.5 uA (10.5-145.6) | R med 0.0257 kohm | dV med 71 LSB
+2026-09-17 17:12:13  [frame 9] 216/216 OK | I med 69.6 uA (10.1-145.4) | R med 0.0205 kohm | dV med 64 LSB
+2026-09-17 17:12:41  [frame 10] 216/216 OK | I med 69.1 uA (10.5-145.8) | R med 0.0231 kohm | dV med 67 LSB
+2026-09-17 17:12:41  RECIPROCITY OVERRIDDEN - NOT VALID DATA (baseline: median reciprocity error 96.3% exceeds 10%; this run: median reciprocity error 96.5% exceeds 10%)
+2026-09-17 17:12:43  Reconstruction: Peak -1.106e+00 at 99 deg  |  pairs 108/108 [ok]  |  0.9x noise - INDISTINGUISHABLE FROM NOISE
+2026-09-17 17:12:43  Finished. Run saved to scans\runs\20260917-170537-recept-pt2
+2026-09-17 17:12:43    Frames captured: 10
+2026-09-17 17:12:43    Reciprocity: median 96.5%  max 100.0%  sign flips 32/54
+2026-09-17 17:12:43    Noise floor: median pair sd 0.00309 kohm (13.58%)  max 0.10548 kohm over 108 pairs
+2026-09-17 17:12:43  Indexed in scans\index.csv
+2026-09-17 17:14:58  Baseline cleared; the next run will become the new baseline.
+2026-09-17 17:15:16  Connecting to COM12...
+2026-09-17 17:15:16  Configuring instrument...
+
+------------------------------------------------------------------------
+2026-09-17 17:15:16  Run 20260917-171516-recept-baseline
+2026-09-17 17:15:16  Conditions: medium=saline tank saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-09-17 17:15:16  Recording to scans\runs\20260917-171516-recept-baseline
+2026-09-17 17:15:44  [warmup 1/5] 216/216 OK | I med 68.2 uA (13.2-142.9) | R med 0.0138 kohm | dV med 70 LSB
+2026-09-17 17:16:12  [warmup 2/5] 216/216 OK | I med 66.4 uA (12.7-144.8) | R med 0.0180 kohm | dV med 60 LSB
+2026-09-17 17:16:41  [warmup 3/5] 216/216 OK | I med 65.6 uA (11.5-145.7) | R med 0.0254 kohm | dV med 55 LSB
+2026-09-17 17:17:09  [warmup 4/5] 216/216 OK | I med 65.2 uA (11.3-145.4) | R med 0.0240 kohm | dV med 57 LSB QUANTISATION LIMITED (11/108 pairs under 4)
+2026-09-17 17:17:37  [warmup 5/5] 216/216 OK | I med 65.5 uA (10.5-145.7) | R med 0.0255 kohm | dV med 55 LSB
+2026-09-17 17:18:05  [frame 1] 216/216 OK | I med 65.5 uA (10.9-144.4) | R med 0.0270 kohm | dV med 54 LSB
+2026-09-17 17:18:34  [frame 2] 216/216 OK | I med 65.2 uA (10.5-144.9) | R med 0.0311 kohm | dV med 58 LSB QUANTISATION LIMITED (11/108 pairs under 4)
+2026-09-17 17:19:02  [frame 3] 216/216 OK | I med 65.0 uA (10.2-144.4) | R med 0.0285 kohm | dV med 58 LSB QUANTISATION LIMITED (12/108 pairs under 4)
+2026-09-17 17:19:30  [frame 4] 216/216 OK | I med 65.1 uA (10.6-143.9) | R med 0.0276 kohm | dV med 57 LSB
+2026-09-17 17:19:59  [frame 5] 216/216 OK | I med 64.9 uA (11.2-144.4) | R med 0.0272 kohm | dV med 50 LSB
+2026-09-17 17:20:27  [frame 6] 216/216 OK | I med 64.9 uA (11.1-144.2) | R med 0.0255 kohm | dV med 47 LSB QUANTISATION LIMITED (12/108 pairs under 4)
+2026-09-17 17:20:55  [frame 7] 216/216 OK | I med 64.2 uA (10.9-144.8) | R med 0.0294 kohm | dV med 55 LSB
+2026-09-17 17:21:24  [frame 8] 216/216 OK | I med 64.5 uA (10.9-144.8) | R med 0.0301 kohm | dV med 51 LSB
+2026-09-17 17:21:52  [frame 9] 216/216 OK | I med 64.4 uA (11.5-143.7) | R med 0.0267 kohm | dV med 57 LSB
+2026-09-17 17:22:20  [frame 10] 216/216 OK | I med 63.9 uA (10.9-143.6) | R med 0.0265 kohm | dV med 51 LSB
+2026-09-17 17:22:20  No reconstruction: This run is the session baseline; it has nothing to differ from.
+2026-09-17 17:22:22  Baseline control image saved to scans\runs\20260917-171516-recept-baseline\control.png
+2026-09-17 17:22:22  This run is now the session baseline (20260917-171516-recept-baseline).
+2026-09-17 17:22:22  Finished. Run saved to scans\runs\20260917-171516-recept-baseline
+2026-09-17 17:22:22    Frames captured: 10
+2026-09-17 17:22:22    Reciprocity: median 93.3%  max 100.0%  sign flips 32/54
+2026-09-17 17:22:22    Noise floor: median pair sd 0.00325 kohm (13.67%)  max 0.12039 kohm over 108 pairs
+2026-09-17 17:22:22  Indexed in scans\index.csv
+2026-09-17 17:25:31  Connecting to COM12...
+2026-09-17 17:25:31  Configuring instrument...
+
+------------------------------------------------------------------------
+2026-09-17 17:25:31  Run 20260917-172531-recept-baseline
+2026-09-17 17:25:31  Conditions: medium=saline tank saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-09-17 17:25:31  Recording to scans\runs\20260917-172531-recept-baseline
+2026-09-17 17:25:59  [warmup 1/5] 216/216 OK | I med 64.6 uA (12.7-139.7) | R med 0.0156 kohm | dV med 64 LSB
+2026-09-17 17:26:28  [warmup 2/5] 216/216 OK | I med 63.7 uA (12.4-142.4) | R med 0.0207 kohm | dV med 54 LSB
+2026-09-17 17:26:56  [warmup 3/5] 216/216 OK | I med 63.7 uA (10.6-142.5) | R med 0.0266 kohm | dV med 55 LSB
+2026-09-17 17:27:24  [warmup 4/5] 216/216 OK | I med 63.8 uA (11.1-142.7) | R med 0.0282 kohm | dV med 51 LSB QUANTISATION LIMITED (11/108 pairs under 4)
+2026-09-17 17:27:53  [warmup 5/5] 216/216 OK | I med 63.5 uA (10.6-142.4) | R med 0.0254 kohm | dV med 57 LSB
+2026-09-17 17:28:21  [frame 1] 216/216 OK | I med 63.7 uA (10.9-142.2) | R med 0.0270 kohm | dV med 52 LSB
+2026-09-17 17:28:49  [frame 2] 216/216 OK | I med 63.8 uA (10.5-142.9) | R med 0.0242 kohm | dV med 56 LSB
+2026-09-17 17:29:18  [frame 3] 216/216 OK | I med 63.8 uA (10.6-142.4) | R med 0.0265 kohm | dV med 51 LSB
+2026-09-17 17:29:46  [frame 4] 216/216 OK | I med 63.6 uA (10.9-142.8) | R med 0.0248 kohm | dV med 57 LSB
+2026-09-17 17:30:14  [frame 5] 216/216 OK | I med 63.6 uA (11.2-142.6) | R med 0.0267 kohm | dV med 53 LSB QUANTISATION LIMITED (11/108 pairs under 4)
+2026-09-17 17:30:42  [frame 6] 216/216 OK | I med 63.4 uA (10.4-142.3) | R med 0.0270 kohm | dV med 55 LSB
+2026-09-17 17:31:11  [frame 7] 215/216 OK | I med 63.5 uA (9.8-142.3) | R med 0.0263 kohm | dV med 47 LSB | flags I_LOWx1
+2026-09-17 17:31:39  [frame 8] 216/216 OK | I med 63.2 uA (10.1-142.8) | R med 0.0261 kohm | dV med 57 LSB
+2026-09-17 17:32:07  [frame 9] 216/216 OK | I med 63.0 uA (10.2-142.1) | R med 0.0241 kohm | dV med 53 LSB
+2026-09-17 17:32:36  [frame 10] 216/216 OK | I med 63.1 uA (10.5-142.2) | R med 0.0268 kohm | dV med 50 LSB
+2026-09-17 17:32:36  RECIPROCITY OVERRIDDEN - NOT VALID DATA (baseline: median reciprocity error 93.3% exceeds 10%; this run: median reciprocity error 93.6% exceeds 10%)
+2026-09-17 17:32:38  Reconstruction: Peak +9.901e-01 at 136 deg  |  pairs 108/108 [ok]  |  2.3x the noise image
+2026-09-17 17:32:38  Finished. Run saved to scans\runs\20260917-172531-recept-baseline
+2026-09-17 17:32:38    Frames captured: 10
+2026-09-17 17:32:38    Reciprocity: median 93.6%  max 100.0%  sign flips 33/54
+2026-09-17 17:32:38    Noise floor: median pair sd 0.00308 kohm (14.65%)  max 0.11579 kohm over 108 pairs
+2026-09-17 17:32:38  Indexed in scans\index.csv
+2026-09-17 17:38:32  Connecting to COM12...
+2026-09-17 17:38:32  Configuring instrument...
+
+------------------------------------------------------------------------
+2026-09-17 17:38:32  Run 20260917-173832-recept-baseline
+2026-09-17 17:38:32  Conditions: medium=saline tank saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-09-17 17:38:32  Recording to scans\runs\20260917-173832-recept-baseline
+2026-09-17 17:39:00  [warmup 1/5] 216/216 OK | I med 63.5 uA (13.0-137.7) | R med 0.0134 kohm | dV med 79 LSB
+2026-09-17 17:39:28  [warmup 2/5] 216/216 OK | I med 63.7 uA (12.1-140.4) | R med 0.0192 kohm | dV med 58 LSB
+2026-09-17 17:39:57  [warmup 3/5] 216/216 OK | I med 63.3 uA (11.5-142.0) | R med 0.0270 kohm | dV med 60 LSB
+2026-09-17 17:40:25  [warmup 4/5] 216/216 OK | I med 63.2 uA (11.5-142.1) | R med 0.0266 kohm | dV med 54 LSB
+2026-09-17 17:40:53  [warmup 5/5] 216/216 OK | I med 63.2 uA (10.9-141.4) | R med 0.0257 kohm | dV med 58 LSB
+2026-09-17 17:41:22  [frame 1] 216/216 OK | I med 63.3 uA (11.2-140.5) | R med 0.0225 kohm | dV med 60 LSB QUANTISATION LIMITED (11/108 pairs under 4)
+2026-09-17 17:41:50  [frame 2] 216/216 OK | I med 63.4 uA (10.5-141.5) | R med 0.0262 kohm | dV med 48 LSB QUANTISATION LIMITED (11/108 pairs under 4)
+2026-09-17 17:42:18  [frame 3] 216/216 OK | I med 63.6 uA (11.0-140.8) | R med 0.0280 kohm | dV med 51 LSB
+2026-09-17 17:42:47  [frame 4] 216/216 OK | I med 63.4 uA (10.9-141.5) | R med 0.0239 kohm | dV med 56 LSB
+2026-09-17 17:43:15  [frame 5] 216/216 OK | I med 63.1 uA (10.3-142.4) | R med 0.0265 kohm | dV med 61 LSB QUANTISATION LIMITED (11/108 pairs under 4)
+2026-09-17 17:43:43  [frame 6] 216/216 OK | I med 63.2 uA (10.9-140.9) | R med 0.0274 kohm | dV med 52 LSB
+2026-09-17 17:44:11  [frame 7] 216/216 OK | I med 63.5 uA (10.9-141.5) | R med 0.0259 kohm | dV med 60 LSB QUANTISATION LIMITED (11/108 pairs under 4)
+2026-09-17 17:44:40  [frame 8] 216/216 OK | I med 63.2 uA (10.9-141.5) | R med 0.0251 kohm | dV med 58 LSB
+2026-09-17 17:45:08  [frame 9] 216/216 OK | I med 63.6 uA (10.5-140.7) | R med 0.0260 kohm | dV med 56 LSB QUANTISATION LIMITED (11/108 pairs under 4)
+2026-09-17 17:45:36  [frame 10] 216/216 OK | I med 62.8 uA (10.4-141.2) | R med 0.0237 kohm | dV med 50 LSB QUANTISATION LIMITED (11/108 pairs under 4)
+2026-09-17 17:45:36  RECIPROCITY OVERRIDDEN - NOT VALID DATA (baseline: median reciprocity error 93.3% exceeds 10%; this run: median reciprocity error 94.2% exceeds 10%)
+2026-09-17 17:45:38  Reconstruction: Peak +1.324e+00 at 150 deg  |  pairs 108/108 [ok]  |  3.0x the noise image
+2026-09-17 17:45:38  Finished. Run saved to scans\runs\20260917-173832-recept-baseline
+2026-09-17 17:45:38    Frames captured: 10
+2026-09-17 17:45:38    Reciprocity: median 94.2%  max 100.0%  sign flips 31/54
+2026-09-17 17:45:38    Noise floor: median pair sd 0.00341 kohm (16.26%)  max 0.11506 kohm over 108 pairs
+2026-09-17 17:45:38  Indexed in scans\index.csv
