@@ -1,0 +1,57 @@
+Host / protocol
+  [PASS] adjacent protocol builds: 12 excitations x 9 sense pairs = 108 measurements
+
+Host / solver
+  [PASS] PyEIT mesh and solver build: 476 elements, 12 electrodes placed from mesh.el_pos
+
+Host / reconstruction
+  [PASS] known target reconstructs at the right place and sign: conductive target at 30 deg reconstructs at 30 deg (0 deg off), peak +0.6210
+
+Link / firmware
+  [PASS] STATUS reply: v2 firmware, mode=adjacent range=HIGH dac=100 settle=30ms samples=16
+
+Hardware / I2C
+  [PASS] ADS1115 and MCP4725 present: ADS1115 0x48, MCP4725 0x60 (saw 0x48, 0x60)
+
+Hardware / DAC
+  [PASS] DAC bound to scanned address: bound to 0x60
+
+Hardware / shunt
+  [WARN] shunt matches fitted resistor: firmware reports 97.90 ohm; no expected value configured
+         -> Measure the fitted Rs and set it in the self-test field so this can be checked.
+
+Hardware / current range
+  [WARN] DAC within range ceiling: requested dac=620 but firmware holds 100
+         -> Press Configure before running the self test so the board matches the UI.
+
+Hardware / ADC
+  [PASS] electrode-voltage PGA autoranging: enabled; last range 256 mV full scale
+
+Acquisition / frame
+  [PASS] frame matches protocol: adjacent: 108 pairs, 108 forward and 108 reverse
+  [PASS] forward/reverse interleaved: 216 records alternating FWD/REV
+
+Acquisition / quality
+  [PASS] measurement quality flags: all 216 records OK
+
+Acquisition / current
+  [PASS] weakest-measurement current margin: min=319.12uA (31.9x the 10.0uA floor), median=401.16uA, weakest at I=E10-E11
+
+Acquisition / polarisation
+  [PASS] current stable across an injection pair: worst decay 1.02x, 0 injection groups flagged
+
+Acquisition / offset
+  [FAIL] forward/reverse voltages invert: 77/108 pairs offset-dominated (71.3%)
+         -> Static half-cell potential outweighs the injected signal, so transfer resistances cancel toward zero. Check PGA autoranging is on and the drive current is high enough to be resolvable.
+
+Acquisition / resolution
+  [PASS] voltage readings are resolved, not quantised: 100% of 216 readings distinct; not all on the 125 uV coarse grid
+
+Hardware / electrodes
+  [PASS] all 12 electrodes live: 12/12 electrodes above 100.4uA (median drive 401.5uA)
+
+Acquisition / repeatability
+  [PASS] consecutive frames agree: 3 frames: relative RMS 1.33%, correlation 0.99991
+
+Overall: FAIL (pass=15 warn=2 fail=1 skip=0)
+Fix first: Acquisition / offset - forward/reverse voltages invert

@@ -3,7 +3,7 @@
   "baud": 115200,
   "pattern": "adjacent",
   "current_range": "high",
-  "dac": 616,
+  "dac": 400,
   "settle_ms": 30,
   "samples": 16,
   "warmup_frames": 5,

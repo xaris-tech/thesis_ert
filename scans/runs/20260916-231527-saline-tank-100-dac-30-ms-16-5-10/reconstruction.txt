@@ -1,0 +1,7 @@
+peak -4.433e-02 at 236 deg (x=-0.24, y=-0.35)
+colour scale +/-4.433e-02  (auto-scaled to this image)
+pairs 108/108 kept  [ok]
+measurement noise floor 0.00038 kohm - a change below this is not a detection
+control peak -5.263e-02
+significance 0.84x the noise image
+baseline run: 20260916-230725-saline-tank-100-dac-30-ms-16-5-10
