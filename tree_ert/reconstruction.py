@@ -30,12 +30,17 @@ import phase3a_unified_reconstruct as unified
 from tree_ert import capture_view
 from tree_ert.settings import UiSettings
 
-RECIPROCITY_GATE_PERCENT = 10.0
-"""Median reciprocity error above which a difference image is refused (ADR-0030).
+RECIPROCITY_GATE_PERCENT = 15.0
+"""Median reciprocity error above which a difference image is refused
+(ADR-0030, threshold raised from 10 by ADR-0032). After the V- wiring fix
+(ADR-0031) healthy nail electrodes in saline measured 8-11 percent and runs at
+11-12 percent localised a known target at 10-14x the noise image, so 10 sat on
+the healthy floor and refused valid images. The broken instrument read
+57-95 percent, far above 15.
 
 Reconstruction maps a voltage change onto a location only if swapping drive and
-sense electrodes gives the same reading. Good EIT systems reach under 1 percent;
-10 percent is the edge the literature still calls usable. It is a gate on the
+sense electrodes gives the same reading. Good EIT systems reach under 1 percent,
+and the instrument itself reads 0.1 percent on a resistor ring. It is a gate on the
 data, not on the picture: no solver setting recovers geometry the measurement
 set no longer carries."""
 

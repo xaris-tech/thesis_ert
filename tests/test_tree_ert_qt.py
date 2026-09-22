@@ -562,7 +562,7 @@ class ReconstructionFlowTests(QtTestCase):
             **{**worker._request.__dict__, "override_reciprocity": override}
         )
         with mock.patch.object(
-            recon, "reciprocity_gate", return_value="median reciprocity error 79.1% exceeds 10%"
+            recon, "reciprocity_gate", return_value="median reciprocity error 79.1% exceeds 15%"
         ):
             events = self.capture(worker)
         run = [r for r in run_record.list_runs(self.log_dir) if "target" in r.name][0]

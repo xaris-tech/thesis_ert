@@ -242,19 +242,26 @@ class ReciprocityGateTests(unittest.TestCase):
             max_error_percent=median * 2, sign_flip_count=0,
         )
 
-    def test_threshold_is_ten_percent(self):
-        self.assertEqual(reconstruction.RECIPROCITY_GATE_PERCENT, 10.0)
+    def test_threshold_is_fifteen_percent(self):
+        self.assertEqual(reconstruction.RECIPROCITY_GATE_PERCENT, 15.0)
+
+    def test_a_measured_good_saline_run_passes(self):
+        # 20260922-151800: 11.2% median, and it localised the wood at 11x noise.
+        self.assertIsNone(self.gate_with(self.summary(11.2)))
 
     def test_good_reciprocity_passes(self):
         self.assertIsNone(self.gate_with(self.summary(2.0)))
 
     def test_exactly_at_the_threshold_passes(self):
-        self.assertIsNone(self.gate_with(self.summary(10.0)))
+        self.assertIsNone(self.gate_with(self.summary(15.0)))
+
+    def test_just_over_the_threshold_fails(self):
+        self.assertIsNotNone(self.gate_with(self.summary(15.1)))
 
     def test_the_measured_tank_value_fails_and_says_why(self):
         reason = self.gate_with(self.summary(79.1))
         self.assertIn("79.1%", reason)
-        self.assertIn("10%", reason)
+        self.assertIn("15%", reason)
 
     def test_unmeasurable_reciprocity_fails_rather_than_passes(self):
         self.assertIn("could not be measured", self.gate_with(None))

@@ -305,6 +305,49 @@ class SessionSummary:
     frame_count: int
     reciprocity: ReciprocitySummary | None
     noise: NoiseSummary | None
+    suspect_electrodes: tuple[tuple[int, float], ...] = ()
+    """(zero-based electrode, median reciprocity error of the pairs touching it),
+    worst first, for electrodes far worse than the rest (ADR-0032)."""
+
+
+SUSPECT_ELECTRODE_FACTOR = 2.0
+"""An electrode is suspect when the pairs touching it are this many times worse
+than all pairs together (ADR-0032). On 2026-09-22 E2 read 70% against an 11%
+median; the healthy electrodes sat at 8-11%."""
+
+SUSPECT_ELECTRODE_FLOOR_PERCENT = 15.0
+"""...and worse than this in absolute terms, so a uniformly excellent run (say
+0.1% overall, 0.3% on one electrode) does not raise a warning over nothing.
+Equal to the reconstruction gate, deliberately: below it nothing is refused."""
+
+
+def electrode_reciprocity(
+    frames: Sequence[unified.UnifiedFrame],
+) -> dict[int, float]:
+    """Median reciprocity error of the pairs touching each electrode.
+
+    A median over the whole run hides a single bad contact: every pair has four
+    electrodes, so one bad nail spoils a third of the pairs and still leaves the
+    median looking tolerable. Scored per electrode, the bad one stands out -- and
+    its neighbours rise too, because they share pairs with it.
+    """
+    scores = unified.reciprocity_scores(average_pair_values(frames))
+    touching: dict[int, list[float]] = {}
+    for (i_pair, v_pair), score in scores.items():
+        for electrode in set(i_pair) | set(v_pair):
+            touching.setdefault(electrode, []).append(score.error_percent)
+    return {electrode: statistics.median(errors) for electrode, errors in touching.items()}
+
+
+def suspect_electrodes(
+    per_electrode: dict[int, float], overall_median_percent: float
+) -> tuple[tuple[int, float], ...]:
+    limit = max(
+        SUSPECT_ELECTRODE_FACTOR * overall_median_percent,
+        SUSPECT_ELECTRODE_FLOOR_PERCENT,
+    )
+    flagged = [(e, err) for e, err in per_electrode.items() if err > limit]
+    return tuple(sorted(flagged, key=lambda item: -item[1]))
 
 
 def reciprocity_summary(frames: Sequence[unified.UnifiedFrame]) -> ReciprocitySummary | None:
@@ -380,10 +423,17 @@ def noise_summary(frames: Sequence[unified.UnifiedFrame]) -> NoiseSummary | None
 
 
 def session_summary(frames: Sequence[unified.UnifiedFrame]) -> SessionSummary:
+    reciprocity = reciprocity_summary(frames)
+    suspects: tuple[tuple[int, float], ...] = ()
+    if reciprocity is not None:
+        suspects = suspect_electrodes(
+            electrode_reciprocity(frames), reciprocity.median_error_percent
+        )
     return SessionSummary(
         frame_count=len(frames),
-        reciprocity=reciprocity_summary(frames),
+        reciprocity=reciprocity,
         noise=noise_summary(frames),
+        suspect_electrodes=suspects,
     )
 
 
@@ -432,6 +482,15 @@ def format_session_summary(summary: SessionSummary) -> str:
             f"max {rec.max_error_percent:.1f}%  "
             f"sign flips {rec.sign_flip_count}/{rec.pair_count}"
         )
+        if summary.suspect_electrodes:
+            worst = ", ".join(
+                f"E{electrode + 1} {error:.0f}%"
+                for electrode, error in summary.suspect_electrodes
+            )
+            lines.append(
+                f"Check electrode contact: {worst} "
+                f"(all pairs median {rec.median_error_percent:.0f}%)"
+            )
     if summary.noise is None:
         lines.append("Noise floor: needs at least 2 frames")
     else:

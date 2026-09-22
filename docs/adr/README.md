@@ -83,4 +83,6 @@ one costs a re-derivation.
 | [0027](0027-control-image-makes-a-null-visible.md) | Every difference image is rendered beside the baseline against itself | Accepted |
 | [0028](0028-there-is-no-baseline-for-a-diseased-tree.md) | A diseased tree has no baseline; the thesis claim requires absolute imaging | Accepted |
 | [0029](0029-baseline-run-saves-its-control-image.md) | A baseline run saves its own control image, named as noise | Accepted |
-| [0030](0030-reciprocity-gates-the-difference-image.md) | Reciprocity gates the difference image (10 % median, stamped override) | Accepted |
+| [0030](0030-reciprocity-gates-the-difference-image.md) | Reciprocity gates the difference image (10 % median, stamped override) | Threshold superseded by [0032](0032-reciprocity-gate-at-15-percent-and-per-electrode-warning.md) |
+| [0031](0031-reciprocity-fault-was-a-v-minus-mux-wiring-error.md) | The reciprocity fault was a V- mux address wiring error; pre-fix data is compromised | Accepted |
+| [0032](0032-reciprocity-gate-at-15-percent-and-per-electrode-warning.md) | Reciprocity gate at 15 %, with a per-electrode contact warning (supersedes ADR-0030 threshold) | Accepted |

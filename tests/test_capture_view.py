@@ -421,3 +421,48 @@ class FormattingTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class SuspectElectrodeTests(unittest.TestCase):
+    """ADR-0032: one bad contact must be named, not hidden in the median."""
+
+    def test_the_measured_bad_electrode_is_named_worst_first(self):
+        # 20260922-151800, zero-based: E2 70%, E1 47%, E3 44%, rest 8-11%.
+        per = {0: 47.0, 1: 70.0, 2: 44.0, **{e: 10.0 for e in range(3, 12)}}
+        suspects = capture_view.suspect_electrodes(per, overall_median_percent=11.2)
+        self.assertEqual([e for e, _ in suspects], [1, 0, 2])
+
+    def test_a_uniformly_healthy_run_names_nobody(self):
+        per = {e: 10.0 for e in range(12)}
+        self.assertEqual(capture_view.suspect_electrodes(per, 10.0), ())
+
+    def test_small_relative_outliers_below_the_floor_are_ignored(self):
+        # Resistor ring: 0.1% overall, one electrode at 0.3% is not a problem.
+        per = {**{e: 0.1 for e in range(11)}, 11: 0.3}
+        self.assertEqual(capture_view.suspect_electrodes(per, 0.1), ())
+
+    def test_per_electrode_score_is_the_median_of_pairs_touching_it(self):
+        from unittest import mock
+        import phase3a_unified_reconstruct as unified
+
+        scores = {
+            ((0, 1), (2, 3)): unified.ReciprocityScore(error_percent=90.0, sign_flipped=False),
+            ((4, 5), (6, 7)): unified.ReciprocityScore(error_percent=10.0, sign_flipped=False),
+        }
+        with mock.patch.object(capture_view, "average_pair_values", return_value={}), \
+             mock.patch.object(unified, "reciprocity_scores", return_value=scores):
+            per = capture_view.electrode_reciprocity([])
+        self.assertEqual(per[0], 90.0)
+        self.assertEqual(per[5], 10.0)
+        self.assertNotIn(8, per)
+
+    def test_the_session_readout_names_the_electrode_one_based(self):
+        summary = capture_view.SessionSummary(
+            frame_count=10,
+            reciprocity=capture_view.ReciprocitySummary(54, 11.2, 99.4, 3),
+            noise=None,
+            suspect_electrodes=((1, 70.0), (0, 47.0)),
+        )
+        text = capture_view.format_session_summary(summary)
+        self.assertIn("Check electrode contact: E2 70%, E1 47%", text)
+        self.assertIn("all pairs median 11%", text)
