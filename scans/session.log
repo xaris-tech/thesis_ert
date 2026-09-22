@@ -2404,3 +2404,276 @@
 2026-09-22 16:26:34    Check electrode contact: E2 81%, E1 76%, E3 43% (all pairs median 15%)
 2026-09-22 16:26:34    Noise floor: median pair sd 0.00013 kohm (1.01%)  max 0.00266 kohm over 108 pairs
 2026-09-22 16:26:34  Indexed in scans\index.csv
+2026-09-22 16:36:08  Baseline cleared; the next run will become the new baseline.
+2026-09-22 16:38:44  Connecting to COM12...
+2026-09-22 16:38:44  Configuring instrument...
+
+------------------------------------------------------------------------
+2026-09-22 16:38:44  Run 20260922-163844-tank-baseline-purified-saline-3
+2026-09-22 16:38:44  Conditions: medium=purified saline tank saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-09-22 16:38:44  Recording to scans\runs\20260922-163844-tank-baseline-purified-saline-3
+2026-09-22 16:39:06  [warmup 1/5] 216/216 OK | I med 230.0 uA (84.0-310.4) | R med 0.0097 kohm | dV med 564 LSB
+2026-09-22 16:39:27  [warmup 2/5] 216/216 OK | I med 229.7 uA (83.6-309.7) | R med 0.0094 kohm | dV med 561 LSB
+2026-09-22 16:39:48  [warmup 3/5] 216/216 OK | I med 229.7 uA (84.7-310.0) | R med 0.0092 kohm | dV med 558 LSB
+2026-09-22 16:40:09  [warmup 4/5] 216/216 OK | I med 229.8 uA (84.7-309.9) | R med 0.0093 kohm | dV med 554 LSB
+2026-09-22 16:40:30  [warmup 5/5] 216/216 OK | I med 229.5 uA (84.1-309.9) | R med 0.0094 kohm | dV med 553 LSB
+2026-09-22 16:40:51  [frame 1] 216/216 OK | I med 229.7 uA (83.8-309.7) | R med 0.0093 kohm | dV med 559 LSB
+2026-09-22 16:41:12  [frame 2] 216/216 OK | I med 229.7 uA (83.9-310.3) | R med 0.0093 kohm | dV med 560 LSB
+2026-09-22 16:41:32  [frame 3] 216/216 OK | I med 229.8 uA (84.2-310.5) | R med 0.0095 kohm | dV med 553 LSB
+2026-09-22 16:41:53  [frame 4] 216/216 OK | I med 229.8 uA (83.6-309.8) | R med 0.0094 kohm | dV med 558 LSB
+2026-09-22 16:42:14  [frame 5] 216/216 OK | I med 229.5 uA (83.3-309.9) | R med 0.0092 kohm | dV med 554 LSB
+2026-09-22 16:42:35  [frame 6] 216/216 OK | I med 229.5 uA (84.0-310.2) | R med 0.0093 kohm | dV med 558 LSB
+2026-09-22 16:42:56  [frame 7] 216/216 OK | I med 229.7 uA (83.9-309.8) | R med 0.0093 kohm | dV med 558 LSB
+2026-09-22 16:43:17  [frame 8] 216/216 OK | I med 229.9 uA (83.1-310.6) | R med 0.0094 kohm | dV med 559 LSB
+2026-09-22 16:43:38  [frame 9] 216/216 OK | I med 229.6 uA (83.3-309.6) | R med 0.0093 kohm | dV med 559 LSB
+2026-09-22 16:43:59  [frame 10] 216/216 OK | I med 229.5 uA (83.2-310.2) | R med 0.0093 kohm | dV med 554 LSB
+2026-09-22 16:43:59  No reconstruction: This run is the session baseline; it has nothing to differ from.
+2026-09-22 16:44:01  Baseline control image saved to scans\runs\20260922-163844-tank-baseline-purified-saline-3\control.png
+2026-09-22 16:44:01  This run is now the session baseline (20260922-163844-tank-baseline-purified-saline-3).
+2026-09-22 16:44:01  Finished. Run saved to scans\runs\20260922-163844-tank-baseline-purified-saline-3
+2026-09-22 16:44:01    Frames captured: 10
+2026-09-22 16:44:01    Reciprocity: median 10.6%  max 94.3%  sign flips 3/54
+2026-09-22 16:44:01    Check electrode contact: E2 80%, E1 58%, E3 40% (all pairs median 11%)
+2026-09-22 16:44:01    Noise floor: median pair sd 0.00013 kohm (1.13%)  max 0.00259 kohm over 108 pairs
+2026-09-22 16:44:01  Indexed in scans\index.csv
+2026-09-22 16:45:03  Connecting to COM12...
+2026-09-22 16:45:03  Configuring instrument...
+
+------------------------------------------------------------------------
+2026-09-22 16:45:03  Run 20260922-164503-tank-baseline-purified-saline-3
+2026-09-22 16:45:03  Conditions: medium=purified saline tank saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-09-22 16:45:03  Recording to scans\runs\20260922-164503-tank-baseline-purified-saline-3
+2026-09-22 16:45:24  [warmup 1/5] 216/216 OK | I med 230.5 uA (81.6-311.1) | R med 0.0113 kohm | dV med 643 LSB
+2026-09-22 16:45:45  [warmup 2/5] 216/216 OK | I med 230.1 uA (82.3-309.7) | R med 0.0116 kohm | dV med 649 LSB
+2026-09-22 16:46:06  [warmup 3/5] 216/216 OK | I med 230.3 uA (82.1-310.5) | R med 0.0114 kohm | dV med 651 LSB
+2026-09-22 16:46:27  [warmup 4/5] 216/216 OK | I med 230.4 uA (81.7-310.1) | R med 0.0113 kohm | dV med 649 LSB
+2026-09-22 16:46:48  [warmup 5/5] 216/216 OK | I med 230.2 uA (81.9-310.3) | R med 0.0115 kohm | dV med 649 LSB
+2026-09-22 16:47:09  [frame 1] 216/216 OK | I med 230.1 uA (81.4-310.7) | R med 0.0113 kohm | dV med 646 LSB
+2026-09-22 16:47:30  [frame 2] 216/216 OK | I med 230.1 uA (81.9-310.3) | R med 0.0114 kohm | dV med 651 LSB
+2026-09-22 16:47:51  [frame 3] 216/216 OK | I med 230.1 uA (82.0-309.9) | R med 0.0114 kohm | dV med 651 LSB
+2026-09-22 16:48:12  [frame 4] 216/216 OK | I med 230.1 uA (81.1-310.4) | R med 0.0113 kohm | dV med 649 LSB
+2026-09-22 16:48:32  [frame 5] 216/216 OK | I med 230.1 uA (81.7-310.3) | R med 0.0113 kohm | dV med 650 LSB
+2026-09-22 16:48:53  [frame 6] 216/216 OK | I med 230.1 uA (81.5-310.2) | R med 0.0114 kohm | dV med 651 LSB
+2026-09-22 16:49:14  [frame 7] 216/216 OK | I med 230.1 uA (82.0-310.6) | R med 0.0113 kohm | dV med 654 LSB
+2026-09-22 16:49:35  [frame 8] 216/216 OK | I med 230.2 uA (81.5-309.8) | R med 0.0112 kohm | dV med 647 LSB
+2026-09-22 16:49:56  [frame 9] 216/216 OK | I med 230.4 uA (81.6-310.5) | R med 0.0114 kohm | dV med 652 LSB
+2026-09-22 16:50:17  [frame 10] 216/216 OK | I med 230.4 uA (81.2-310.2) | R med 0.0114 kohm | dV med 649 LSB
+2026-09-22 16:50:19  Reconstruction: Peak -2.629e-01 at 307 deg  |  pairs 108/108 [ok]  |  20.8x the noise image
+2026-09-22 16:50:19  Finished. Run saved to scans\runs\20260922-164503-tank-baseline-purified-saline-3
+2026-09-22 16:50:19    Frames captured: 10
+2026-09-22 16:50:19    Reciprocity: median 10.0%  max 97.3%  sign flips 3/54
+2026-09-22 16:50:19    Check electrode contact: E2 80%, E1 61%, E3 47% (all pairs median 10%)
+2026-09-22 16:50:19    Noise floor: median pair sd 0.00012 kohm (0.92%)  max 0.00103 kohm over 108 pairs
+2026-09-22 16:50:19  Indexed in scans\index.csv
+2026-09-22 16:52:39  Baseline cleared; the next run will become the new baseline.
+2026-09-22 16:52:50  Connecting to COM12...
+2026-09-22 16:52:50  Configuring instrument...
+
+------------------------------------------------------------------------
+2026-09-22 16:52:50  Run 20260922-165250-tank-baseline-purified-saline-4
+2026-09-22 16:52:50  Conditions: medium=purified saline tank saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-09-22 16:52:50  Recording to scans\runs\20260922-165250-tank-baseline-purified-saline-4
+2026-09-22 16:53:12  [warmup 1/5] 216/216 OK | I med 230.1 uA (83.4-311.2) | R med 0.0098 kohm | dV med 564 LSB
+2026-09-22 16:53:32  [warmup 2/5] 216/216 OK | I med 229.8 uA (83.9-310.2) | R med 0.0094 kohm | dV med 561 LSB
+2026-09-22 16:53:53  [warmup 3/5] 216/216 OK | I med 230.2 uA (84.2-309.7) | R med 0.0095 kohm | dV med 554 LSB
+2026-09-22 16:54:14  [warmup 4/5] 216/216 OK | I med 229.9 uA (83.6-310.3) | R med 0.0093 kohm | dV med 553 LSB
+2026-09-22 16:54:35  [warmup 5/5] 216/216 OK | I med 230.0 uA (83.6-309.9) | R med 0.0092 kohm | dV med 556 LSB
+2026-09-22 16:54:56  [frame 1] 216/216 OK | I med 230.1 uA (83.6-310.7) | R med 0.0093 kohm | dV med 554 LSB
+2026-09-22 16:55:17  [frame 2] 216/216 OK | I med 230.0 uA (84.0-309.8) | R med 0.0093 kohm | dV med 557 LSB
+2026-09-22 16:55:38  [frame 3] 216/216 OK | I med 229.7 uA (83.7-309.8) | R med 0.0093 kohm | dV med 555 LSB
+2026-09-22 16:55:59  [frame 4] 216/216 OK | I med 229.9 uA (83.5-310.2) | R med 0.0093 kohm | dV med 554 LSB
+2026-09-22 16:56:20  [frame 5] 216/216 OK | I med 229.8 uA (83.1-310.5) | R med 0.0094 kohm | dV med 556 LSB
+2026-09-22 16:56:41  [frame 6] 216/216 OK | I med 229.8 uA (83.9-310.3) | R med 0.0093 kohm | dV med 553 LSB
+2026-09-22 16:57:02  [frame 7] 216/216 OK | I med 229.9 uA (83.8-310.5) | R med 0.0092 kohm | dV med 556 LSB
+2026-09-22 16:57:23  [frame 8] 216/216 OK | I med 230.1 uA (83.7-309.9) | R med 0.0092 kohm | dV med 555 LSB
+2026-09-22 16:57:44  [frame 9] 216/216 OK | I med 230.0 uA (83.8-309.4) | R med 0.0092 kohm | dV med 551 LSB
+2026-09-22 16:58:05  [frame 10] 216/216 OK | I med 230.0 uA (83.9-310.3) | R med 0.0091 kohm | dV med 558 LSB
+2026-09-22 16:58:05  No reconstruction: This run is the session baseline; it has nothing to differ from.
+2026-09-22 16:58:06  Baseline control image saved to scans\runs\20260922-165250-tank-baseline-purified-saline-4\control.png
+2026-09-22 16:58:06  This run is now the session baseline (20260922-165250-tank-baseline-purified-saline-4).
+2026-09-22 16:58:06  Finished. Run saved to scans\runs\20260922-165250-tank-baseline-purified-saline-4
+2026-09-22 16:58:06    Frames captured: 10
+2026-09-22 16:58:06    Reciprocity: median 11.4%  max 90.8%  sign flips 3/54
+2026-09-22 16:58:06    Check electrode contact: E2 78%, E1 55%, E3 38% (all pairs median 11%)
+2026-09-22 16:58:06    Noise floor: median pair sd 0.00012 kohm (0.99%)  max 0.00122 kohm over 108 pairs
+2026-09-22 16:58:06  Indexed in scans\index.csv
+2026-09-22 16:59:29  Connecting to COM12...
+2026-09-22 16:59:29  Configuring instrument...
+
+------------------------------------------------------------------------
+2026-09-22 16:59:29  Run 20260922-165929-tank-baseline-purified-saline-4
+2026-09-22 16:59:29  Conditions: medium=purified saline tank saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-09-22 16:59:29  Recording to scans\runs\20260922-165929-tank-baseline-purified-saline-4
+2026-09-22 16:59:57  [warmup 1/5] 216/216 OK | I med 226.0 uA (68.5-307.2) | R med 0.0088 kohm | dV med 482 LSB
+2026-09-22 17:00:26  [warmup 2/5] 216/216 OK | I med 225.6 uA (68.3-306.3) | R med 0.0087 kohm | dV med 475 LSB
+2026-09-22 17:00:54  [warmup 3/5] 216/216 OK | I med 226.0 uA (67.0-307.0) | R med 0.0085 kohm | dV med 471 LSB
+2026-09-22 17:01:22  [warmup 4/5] 216/216 OK | I med 226.0 uA (68.5-306.8) | R med 0.0084 kohm | dV med 471 LSB
+2026-09-22 17:01:51  [warmup 5/5] 216/216 OK | I med 226.0 uA (68.1-306.9) | R med 0.0085 kohm | dV med 467 LSB
+2026-09-22 17:02:19  [frame 1] 216/216 OK | I med 226.4 uA (67.7-306.5) | R med 0.0084 kohm | dV med 466 LSB
+2026-09-22 17:02:47  [frame 2] 216/216 OK | I med 225.9 uA (67.9-306.8) | R med 0.0084 kohm | dV med 468 LSB
+2026-09-22 17:03:15  [frame 3] 216/216 OK | I med 226.0 uA (68.2-306.8) | R med 0.0084 kohm | dV med 465 LSB
+2026-09-22 17:03:44  [frame 4] 216/216 OK | I med 226.2 uA (68.2-306.8) | R med 0.0084 kohm | dV med 466 LSB
+2026-09-22 17:04:12  [frame 5] 216/216 OK | I med 226.5 uA (67.4-307.3) | R med 0.0084 kohm | dV med 469 LSB
+2026-09-22 17:04:40  [frame 6] 216/216 OK | I med 226.2 uA (68.3-307.0) | R med 0.0084 kohm | dV med 465 LSB
+2026-09-22 17:05:09  [frame 7] 216/216 OK | I med 226.2 uA (68.5-307.5) | R med 0.0084 kohm | dV med 465 LSB
+2026-09-22 17:05:37  [frame 8] 216/216 OK | I med 226.4 uA (68.0-307.0) | R med 0.0085 kohm | dV med 469 LSB
+2026-09-22 17:06:05  [frame 9] 216/216 OK | I med 226.2 uA (67.7-307.5) | R med 0.0084 kohm | dV med 467 LSB
+2026-09-22 17:06:34  [frame 10] 216/216 OK | I med 226.5 uA (67.8-307.6) | R med 0.0084 kohm | dV med 466 LSB
+2026-09-22 17:06:36  Reconstruction: Peak +2.443e-01 at 120 deg  |  pairs 108/108 [ok]  |  23.0x the noise image
+2026-09-22 17:06:36  Finished. Run saved to scans\runs\20260922-165929-tank-baseline-purified-saline-4
+2026-09-22 17:06:36    Frames captured: 10
+2026-09-22 17:06:36    Reciprocity: median 14.1%  max 97.5%  sign flips 2/54
+2026-09-22 17:06:36    Check electrode contact: E2 88%, E1 78%, E3 46% (all pairs median 14%)
+2026-09-22 17:06:36    Noise floor: median pair sd 0.00012 kohm (1.05%)  max 0.00204 kohm over 108 pairs
+2026-09-22 17:06:36  Indexed in scans\index.csv
+2026-09-22 17:13:03  Baseline cleared; the next run will become the new baseline.
+2026-09-22 17:13:15  Connecting to COM12...
+2026-09-22 17:13:15  Configuring instrument...
+
+------------------------------------------------------------------------
+2026-09-22 17:13:15  Run 20260922-171315-tank-baseline-purified-saline-5
+2026-09-22 17:13:15  Conditions: medium=purified saline tank saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-09-22 17:13:15  Recording to scans\runs\20260922-171315-tank-baseline-purified-saline-5
+2026-09-22 17:13:43  [warmup 1/5] 216/216 OK | I med 226.4 uA (69.3-308.6) | R med 0.0088 kohm | dV med 483 LSB
+2026-09-22 17:14:12  [warmup 2/5] 216/216 OK | I med 226.8 uA (69.5-308.2) | R med 0.0082 kohm | dV med 474 LSB
+2026-09-22 17:14:40  [warmup 3/5] 216/216 OK | I med 227.0 uA (68.3-307.1) | R med 0.0083 kohm | dV med 469 LSB
+2026-09-22 17:15:08  [warmup 4/5] 216/216 OK | I med 226.9 uA (68.6-307.3) | R med 0.0083 kohm | dV med 471 LSB
+2026-09-22 17:15:36  [warmup 5/5] 216/216 OK | I med 227.3 uA (68.2-307.2) | R med 0.0082 kohm | dV med 471 LSB
+2026-09-22 17:16:05  [frame 1] 216/216 OK | I med 227.0 uA (68.4-308.0) | R med 0.0082 kohm | dV med 470 LSB
+2026-09-22 17:16:33  [frame 2] 216/216 OK | I med 227.2 uA (68.3-306.6) | R med 0.0082 kohm | dV med 474 LSB
+2026-09-22 17:17:01  [frame 3] 216/216 OK | I med 227.0 uA (68.4-307.3) | R med 0.0084 kohm | dV med 474 LSB
+2026-09-22 17:17:30  [frame 4] 216/216 OK | I med 227.0 uA (69.2-306.9) | R med 0.0083 kohm | dV med 470 LSB
+2026-09-22 17:17:58  [frame 5] 216/216 OK | I med 227.2 uA (69.1-306.6) | R med 0.0083 kohm | dV med 468 LSB
+2026-09-22 17:18:26  [frame 6] 216/216 OK | I med 226.6 uA (68.4-307.6) | R med 0.0083 kohm | dV med 472 LSB
+2026-09-22 17:18:55  [frame 7] 216/216 OK | I med 226.8 uA (68.8-307.2) | R med 0.0082 kohm | dV med 471 LSB
+2026-09-22 17:19:23  [frame 8] 216/216 OK | I med 226.9 uA (68.7-307.5) | R med 0.0085 kohm | dV med 470 LSB
+2026-09-22 17:19:51  [frame 9] 216/216 OK | I med 226.9 uA (68.3-306.1) | R med 0.0084 kohm | dV med 467 LSB
+2026-09-22 17:20:19  [frame 10] 216/216 OK | I med 226.8 uA (68.1-306.7) | R med 0.0084 kohm | dV med 464 LSB
+2026-09-22 17:20:20  No reconstruction: This run is the session baseline; it has nothing to differ from.
+2026-09-22 17:20:23  Baseline control image saved to scans\runs\20260922-171315-tank-baseline-purified-saline-5\control.png
+2026-09-22 17:20:23  This run is now the session baseline (20260922-171315-tank-baseline-purified-saline-5).
+2026-09-22 17:20:23  Finished. Run saved to scans\runs\20260922-171315-tank-baseline-purified-saline-5
+2026-09-22 17:20:23    Frames captured: 10
+2026-09-22 17:20:23    Reciprocity: median 13.8%  max 95.5%  sign flips 2/54
+2026-09-22 17:20:23    Check electrode contact: E2 86%, E1 77%, E3 42% (all pairs median 14%)
+2026-09-22 17:20:23    Noise floor: median pair sd 0.00014 kohm (1.18%)  max 0.00219 kohm over 108 pairs
+2026-09-22 17:20:23  Indexed in scans\index.csv
+2026-09-22 17:21:26  Connecting to COM12...
+2026-09-22 17:21:26  Configuring instrument...
+
+------------------------------------------------------------------------
+2026-09-22 17:21:26  Run 20260922-172126-tank-baseline-purified-saline-5
+2026-09-22 17:21:26  Conditions: medium=purified saline tank saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-09-22 17:21:26  Recording to scans\runs\20260922-172126-tank-baseline-purified-saline-5
+2026-09-22 17:21:55  [warmup 1/5] 216/216 OK | I med 225.5 uA (68.3-306.4) | R med 0.0098 kohm | dV med 535 LSB
+2026-09-22 17:22:23  [warmup 2/5] 216/216 OK | I med 225.5 uA (68.0-305.9) | R med 0.0095 kohm | dV med 535 LSB
+2026-09-22 17:22:51  [warmup 3/5] 216/216 OK | I med 225.6 uA (67.8-306.1) | R med 0.0094 kohm | dV med 538 LSB
+2026-09-22 17:23:20  [warmup 4/5] 216/216 OK | I med 225.4 uA (68.9-307.2) | R med 0.0094 kohm | dV med 540 LSB
+2026-09-22 17:23:48  [warmup 5/5] 216/216 OK | I med 226.2 uA (68.7-307.7) | R med 0.0095 kohm | dV med 538 LSB
+2026-09-22 17:24:16  [frame 1] 216/216 OK | I med 226.4 uA (68.9-307.5) | R med 0.0094 kohm | dV med 540 LSB
+2026-09-22 17:24:45  [frame 2] 216/216 OK | I med 226.3 uA (69.2-307.6) | R med 0.0093 kohm | dV med 542 LSB
+2026-09-22 17:25:13  [frame 3] 216/216 OK | I med 226.3 uA (69.1-307.6) | R med 0.0094 kohm | dV med 541 LSB
+2026-09-22 17:25:41  [frame 4] 216/216 OK | I med 226.8 uA (68.7-308.4) | R med 0.0094 kohm | dV med 541 LSB
+2026-09-22 17:26:09  [frame 5] 216/216 OK | I med 226.6 uA (69.1-307.9) | R med 0.0093 kohm | dV med 539 LSB
+2026-09-22 17:26:38  [frame 6] 216/216 OK | I med 226.6 uA (68.8-308.0) | R med 0.0094 kohm | dV med 538 LSB
+2026-09-22 17:27:06  [frame 7] 216/216 OK | I med 226.4 uA (68.8-308.2) | R med 0.0094 kohm | dV med 539 LSB
+2026-09-22 17:27:34  [frame 8] 216/216 OK | I med 226.9 uA (68.9-307.5) | R med 0.0095 kohm | dV med 537 LSB
+2026-09-22 17:28:03  [frame 9] 216/216 OK | I med 226.7 uA (69.3-307.7) | R med 0.0095 kohm | dV med 538 LSB
+2026-09-22 17:28:31  [frame 10] 216/216 OK | I med 226.5 uA (69.0-307.2) | R med 0.0095 kohm | dV med 543 LSB
+2026-09-22 17:28:33  Reconstruction: Peak -2.193e-01 at 56 deg  |  pairs 108/108 [ok]  |  14.6x the noise image
+2026-09-22 17:28:33  Finished. Run saved to scans\runs\20260922-172126-tank-baseline-purified-saline-5
+2026-09-22 17:28:33    Frames captured: 10
+2026-09-22 17:28:33    Reciprocity: median 13.2%  max 97.6%  sign flips 2/54
+2026-09-22 17:28:33    Check electrode contact: E2 87%, E1 79%, E3 50% (all pairs median 13%)
+2026-09-22 17:28:33    Noise floor: median pair sd 0.00012 kohm (1.11%)  max 0.00324 kohm over 108 pairs
+2026-09-22 17:28:33  Indexed in scans\index.csv
+2026-09-22 17:31:03  Baseline cleared; the next run will become the new baseline.
+2026-09-22 17:31:15  Connecting to COM12...
+2026-09-22 17:31:15  Configuring instrument...
+
+------------------------------------------------------------------------
+2026-09-22 17:31:15  Run 20260922-173115-tank-baseline-purified-saline-6
+2026-09-22 17:31:15  Conditions: medium=purified saline tank saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-09-22 17:31:15  Recording to scans\runs\20260922-173115-tank-baseline-purified-saline-6
+2026-09-22 17:31:43  [warmup 1/5] 216/216 OK | I med 228.0 uA (69.7-308.7) | R med 0.0089 kohm | dV med 480 LSB
+2026-09-22 17:32:12  [warmup 2/5] 216/216 OK | I med 228.0 uA (69.7-307.8) | R med 0.0084 kohm | dV med 476 LSB
+2026-09-22 17:32:40  [warmup 3/5] 216/216 OK | I med 227.7 uA (69.2-308.5) | R med 0.0084 kohm | dV med 470 LSB
+2026-09-22 17:33:08  [warmup 4/5] 216/216 OK | I med 228.0 uA (68.8-308.3) | R med 0.0083 kohm | dV med 474 LSB
+2026-09-22 17:33:36  [warmup 5/5] 216/216 OK | I med 228.2 uA (69.9-308.3) | R med 0.0082 kohm | dV med 473 LSB
+2026-09-22 17:34:05  [frame 1] 216/216 OK | I med 228.1 uA (69.2-308.2) | R med 0.0082 kohm | dV med 473 LSB
+2026-09-22 17:34:33  [frame 2] 216/216 OK | I med 228.0 uA (69.4-308.3) | R med 0.0082 kohm | dV med 471 LSB
+2026-09-22 17:35:01  [frame 3] 216/216 OK | I med 228.1 uA (68.7-308.2) | R med 0.0082 kohm | dV med 474 LSB
+2026-09-22 17:35:30  [frame 4] 216/216 OK | I med 228.2 uA (69.2-308.2) | R med 0.0083 kohm | dV med 473 LSB
+2026-09-22 17:35:58  [frame 5] 216/216 OK | I med 228.0 uA (68.6-308.4) | R med 0.0083 kohm | dV med 470 LSB
+2026-09-22 17:36:26  [frame 6] 216/216 OK | I med 228.3 uA (68.8-308.2) | R med 0.0082 kohm | dV med 472 LSB
+2026-09-22 17:36:55  [frame 7] 216/216 OK | I med 228.2 uA (69.0-308.4) | R med 0.0082 kohm | dV med 474 LSB
+2026-09-22 17:37:23  [frame 8] 216/216 OK | I med 228.3 uA (68.9-307.9) | R med 0.0083 kohm | dV med 478 LSB
+2026-09-22 17:37:51  [frame 9] 216/216 OK | I med 228.1 uA (69.9-308.8) | R med 0.0082 kohm | dV med 477 LSB
+2026-09-22 17:38:19  [frame 10] 216/216 OK | I med 228.4 uA (69.0-308.4) | R med 0.0084 kohm | dV med 474 LSB
+2026-09-22 17:38:20  No reconstruction: This run is the session baseline; it has nothing to differ from.
+2026-09-22 17:38:21  Baseline control image saved to scans\runs\20260922-173115-tank-baseline-purified-saline-6\control.png
+2026-09-22 17:38:21  This run is now the session baseline (20260922-173115-tank-baseline-purified-saline-6).
+2026-09-22 17:38:21  Finished. Run saved to scans\runs\20260922-173115-tank-baseline-purified-saline-6
+2026-09-22 17:38:21    Frames captured: 10
+2026-09-22 17:38:21    Reciprocity: median 13.5%  max 95.6%  sign flips 2/54
+2026-09-22 17:38:21    Check electrode contact: E2 87%, E1 76%, E3 41% (all pairs median 13%)
+2026-09-22 17:38:21    Noise floor: median pair sd 0.00012 kohm (1.04%)  max 0.00195 kohm over 108 pairs
+2026-09-22 17:38:21  Indexed in scans\index.csv
+2026-09-22 17:39:39  Connecting to COM12...
+2026-09-22 17:39:39  Configuring instrument...
+
+------------------------------------------------------------------------
+2026-09-22 17:39:39  Run 20260922-173939-tank-baseline-purified-saline-6
+2026-09-22 17:39:39  Conditions: medium=purified saline tank saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-09-22 17:39:39  Recording to scans\runs\20260922-173939-tank-baseline-purified-saline-6
+2026-09-22 17:40:08  [warmup 1/5] 216/216 OK | I med 228.0 uA (69.9-303.5) | R med 0.0108 kohm | dV med 599 LSB
+2026-09-22 17:40:36  [warmup 2/5] 216/216 OK | I med 228.3 uA (70.0-302.1) | R med 0.0107 kohm | dV med 604 LSB
+2026-09-22 17:41:04  [warmup 3/5] 216/216 OK | I med 228.5 uA (70.5-302.9) | R med 0.0106 kohm | dV med 606 LSB
+2026-09-22 17:41:32  [warmup 4/5] 216/216 OK | I med 228.8 uA (70.9-303.3) | R med 0.0106 kohm | dV med 605 LSB
+2026-09-22 17:42:01  [warmup 5/5] 216/216 OK | I med 228.9 uA (70.8-303.4) | R med 0.0107 kohm | dV med 599 LSB
+2026-09-22 17:42:29  [frame 1] 216/216 OK | I med 229.1 uA (70.5-303.7) | R med 0.0108 kohm | dV med 601 LSB
+2026-09-22 17:42:57  [frame 2] 216/216 OK | I med 228.7 uA (70.9-303.9) | R med 0.0107 kohm | dV med 606 LSB
+2026-09-22 17:43:26  [frame 3] 216/216 OK | I med 229.1 uA (70.1-303.5) | R med 0.0108 kohm | dV med 600 LSB
+2026-09-22 17:43:54  [frame 4] 216/216 OK | I med 228.7 uA (70.7-304.4) | R med 0.0108 kohm | dV med 601 LSB
+2026-09-22 17:44:22  [frame 5] 216/216 OK | I med 228.7 uA (70.5-303.5) | R med 0.0107 kohm | dV med 601 LSB
+2026-09-22 17:44:51  [frame 6] 216/216 OK | I med 228.6 uA (70.9-304.0) | R med 0.0107 kohm | dV med 603 LSB
+2026-09-22 17:45:19  [frame 7] 216/216 OK | I med 228.7 uA (69.9-304.1) | R med 0.0107 kohm | dV med 597 LSB
+2026-09-22 17:45:47  [frame 8] 216/216 OK | I med 228.7 uA (70.9-303.5) | R med 0.0107 kohm | dV med 598 LSB
+2026-09-22 17:46:15  [frame 9] 216/216 OK | I med 228.3 uA (70.7-304.0) | R med 0.0106 kohm | dV med 604 LSB
+2026-09-22 17:46:44  [frame 10] 216/216 OK | I med 228.9 uA (70.3-303.8) | R med 0.0107 kohm | dV med 599 LSB
+2026-09-22 17:46:46  Reconstruction: Peak -2.569e-01 at 28 deg  |  pairs 108/108 [ok]  |  18.4x the noise image
+2026-09-22 17:46:46  Finished. Run saved to scans\runs\20260922-173939-tank-baseline-purified-saline-6
+2026-09-22 17:46:46    Frames captured: 10
+2026-09-22 17:46:46    Reciprocity: median 13.8%  max 98.6%  sign flips 4/54
+2026-09-22 17:46:46    Check electrode contact: E2 80%, E1 71%, E3 49% (all pairs median 14%)
+2026-09-22 17:46:46    Noise floor: median pair sd 0.00014 kohm (0.98%)  max 0.00223 kohm over 108 pairs
+2026-09-22 17:46:46  Indexed in scans\index.csv
+2026-09-22 17:48:13  Connecting to COM12...
+2026-09-22 17:48:13  Configuring instrument...
+
+------------------------------------------------------------------------
+2026-09-22 17:48:13  Run 20260922-174813-tank-baseline-purified-saline-6
+2026-09-22 17:48:13  Conditions: medium=purified saline tank saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-09-22 17:48:13  Recording to scans\runs\20260922-174813-tank-baseline-purified-saline-6
+2026-09-22 17:48:41  [warmup 1/5] 215/216 OK | I med 227.8 uA (1.4-302.8) | R med 0.0082 kohm | dV med 451 LSB | flags I_LOWx1
+2026-09-22 17:49:09  [warmup 2/5] 216/216 OK | I med 228.9 uA (71.1-301.8) | R med 0.0084 kohm | dV med 470 LSB
+2026-09-22 17:49:38  [warmup 3/5] 216/216 OK | I med 229.0 uA (70.9-303.9) | R med 0.0083 kohm | dV med 470 LSB
+2026-09-22 17:50:06  [warmup 4/5] 216/216 OK | I med 228.7 uA (70.9-303.8) | R med 0.0084 kohm | dV med 465 LSB
+2026-09-22 17:50:34  [warmup 5/5] 216/216 OK | I med 228.9 uA (71.1-304.2) | R med 0.0084 kohm | dV med 468 LSB
+2026-09-22 17:51:02  [frame 1] 216/216 OK | I med 228.9 uA (71.2-304.4) | R med 0.0083 kohm | dV med 465 LSB
+2026-09-22 17:51:31  [frame 2] 216/216 OK | I med 228.8 uA (70.5-304.1) | R med 0.0084 kohm | dV med 467 LSB
+2026-09-22 17:51:59  [frame 3] 216/216 OK | I med 228.9 uA (71.5-304.8) | R med 0.0084 kohm | dV med 467 LSB
+2026-09-22 17:52:27  [frame 4] 216/216 OK | I med 228.9 uA (71.3-304.5) | R med 0.0084 kohm | dV med 465 LSB
+2026-09-22 17:52:56  [frame 5] 216/216 OK | I med 229.0 uA (71.1-304.0) | R med 0.0084 kohm | dV med 466 LSB
+2026-09-22 17:53:24  [frame 6] 216/216 OK | I med 228.8 uA (71.3-304.4) | R med 0.0084 kohm | dV med 465 LSB
+2026-09-22 17:53:52  [frame 7] 216/216 OK | I med 228.8 uA (71.7-304.4) | R med 0.0084 kohm | dV med 466 LSB
+2026-09-22 17:54:21  [frame 8] 216/216 OK | I med 228.4 uA (71.5-304.8) | R med 0.0084 kohm | dV med 464 LSB
+2026-09-22 17:54:49  [frame 9] 216/216 OK | I med 228.5 uA (70.5-304.0) | R med 0.0083 kohm | dV med 468 LSB
+2026-09-22 17:55:17  [frame 10] 216/216 OK | I med 228.7 uA (71.2-303.6) | R med 0.0084 kohm | dV med 465 LSB
+2026-09-22 17:55:19  Reconstruction: Peak +4.657e-01 at 150 deg  |  pairs 108/108 [ok]  |  33.4x the noise image
+2026-09-22 17:55:19  Finished. Run saved to scans\runs\20260922-174813-tank-baseline-purified-saline-6
+2026-09-22 17:55:19    Frames captured: 10
+2026-09-22 17:55:19    Reciprocity: median 13.9%  max 99.9%  sign flips 4/54
+2026-09-22 17:55:19    Check electrode contact: E2 77%, E3 49% (all pairs median 14%)
+2026-09-22 17:55:19    Noise floor: median pair sd 0.00011 kohm (1.08%)  max 0.00229 kohm over 108 pairs
+2026-09-22 17:55:19  Indexed in scans\index.csv
