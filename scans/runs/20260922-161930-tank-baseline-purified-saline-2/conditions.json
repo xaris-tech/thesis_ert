@@ -1,0 +1,46 @@
+{
+  "run_id": "20260922-161930-tank-baseline-purified-saline-2",
+  "label": "tank-baseline purified saline 2",
+  "created_at": "2026-09-22T16:19:30",
+  "git_commit": "1f03fc3-dirty",
+  "conditions": {
+    "medium": "purified saline tank",
+    "saline_g_per_l": null,
+    "fill_depth_mm": null,
+    "water_temp_c": null,
+    "electrode_protrusion_mm": 15.0,
+    "grounding": "unknown",
+    "tank_contents": "wood at 7",
+    "target_description": "wood at 7",
+    "electrode_map": "E1 = marked nail, clockwise viewed from above",
+    "operator": "",
+    "notes": "",
+    "extra": {}
+  },
+  "settings": {
+    "port": "COM12",
+    "baud": 115200,
+    "pattern": "adjacent",
+    "current_range": "high",
+    "dac": 400,
+    "settle_ms": 30,
+    "samples": 16,
+    "warmup_frames": 5,
+    "target_warmup_frames": 5,
+    "baseline_frames": 5,
+    "frames": 10,
+    "diameter_cm": null,
+    "log_dir": "phase3a_logs",
+    "log_enabled": true,
+    "allow_unstable_baseline": false,
+    "lenient_quality": false,
+    "filter_pairs": false,
+    "electrode_offset": 0,
+    "electrode_reversed": false,
+    "self_test_frames": 3,
+    "expected_shunt_ohms": null
+  },
+  "incomplete": [
+    "grounding is not recorded (floating or grounded?)"
+  ]
+}

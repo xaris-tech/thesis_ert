@@ -1,0 +1,8 @@
+RECIPROCITY OVERRIDDEN - NOT VALID DATA (baseline: median reciprocity error 74.6% exceeds 10%; this run: median reciprocity error 74.8% exceeds 10%)
+peak +2.134e-01 at 120 deg (x=-0.46, y=+0.79)
+colour scale +/-2.134e-01  (auto-scaled to this image)
+pairs 108/108 kept  [ok]
+measurement noise floor 0.00032 kohm - a change below this is not a detection
+control peak -1.461e-01
+significance 1.46x the noise image
+baseline run: 20260922-115254-purified-saline

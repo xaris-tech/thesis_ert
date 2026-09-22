@@ -1,0 +1,7 @@
+peak -1.500e-03 at 315 deg (x=+0.56, y=-0.57)
+colour scale +/-1.500e-03  (auto-scaled to this image)
+pairs 108/108 kept  [ok]
+measurement noise floor 0.00003 kohm - a change below this is not a detection
+control peak +5.777e-04
+significance 2.60x the noise image
+baseline run: 20260922-143018-resistor-circle

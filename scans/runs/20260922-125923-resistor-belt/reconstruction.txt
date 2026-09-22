@@ -1,0 +1,8 @@
+RECIPROCITY OVERRIDDEN - NOT VALID DATA (baseline: median reciprocity error 66.8% exceeds 10%; this run: median reciprocity error 66.4% exceeds 10%)
+peak -1.361e-01 at 343 deg (x=+0.36, y=-0.11)
+colour scale +/-1.361e-01  (auto-scaled to this image)
+pairs 108/108 kept  [ok]
+measurement noise floor 0.00006 kohm - a change below this is not a detection
+control peak -1.505e-01
+significance 0.90x the noise image
+baseline run: 20260922-124443-resistor-belt
