@@ -1,6 +1,8 @@
 import unittest
 from dataclasses import replace
+from pathlib import Path
 
+from tree_ert import settings as settings_module
 from tree_ert.settings import UiSettings, parse_int_field, parse_float_field
 
 
@@ -60,3 +62,65 @@ class TestCurrentRange(unittest.TestCase):
     def test_rejects_an_unknown_range(self):
         with self.assertRaises(ValueError):
             replace(UiSettings.default(), current_range="turbo").validate()
+
+
+class SpecimenPresetTests(unittest.TestCase):
+    """Presets carry provenance and touch only instrument fields (ADR-0036)."""
+
+    def test_every_preset_states_where_its_numbers_came_from(self):
+        for preset in settings_module.SPECIMEN_PRESETS:
+            with self.subTest(preset.name):
+                self.assertTrue(preset.provenance.strip(), preset.name)
+
+    def test_the_three_specimen_classes_are_offered(self):
+        names = [p.name for p in settings_module.SPECIMEN_PRESETS]
+        self.assertEqual(len(names), len(set(names)))
+        joined = " ".join(names).lower()
+        for expected in ("resistor belt", "saline", "coconut"):
+            self.assertIn(expected, joined)
+
+    def test_coconut_is_marked_provisional_until_tuned(self):
+        coconut = next(
+            p for p in settings_module.SPECIMEN_PRESETS if "Coconut" in p.name
+        )
+        self.assertFalse(coconut.validated)
+
+    def test_applying_a_preset_keeps_port_and_logging(self):
+        # Port and scans root belong to the rig and session, not the specimen.
+        base = UiSettings(
+            port="COM12", log_dir=Path("scans"), electrode_offset=3, dac=7
+        )
+        applied = settings_module.preset_by_name("Resistor belt").apply_to(base)
+        self.assertEqual(applied.port, "COM12")
+        self.assertEqual(applied.log_dir, Path("scans"))
+        self.assertEqual(applied.electrode_offset, 3)
+        self.assertEqual(applied.dac, 400)
+
+    def test_applied_preset_matches_itself(self):
+        for preset in settings_module.SPECIMEN_PRESETS:
+            with self.subTest(preset.name):
+                applied = preset.apply_to(UiSettings())
+                self.assertTrue(preset.matches(applied))
+                self.assertIsNotNone(settings_module.matching_preset(applied))
+
+    def test_an_edited_profile_matches_no_preset(self):
+        applied = settings_module.preset_by_name("Saline tank").apply_to(UiSettings())
+        edited = replace(applied, settle_ms=applied.settle_ms + 5)
+        self.assertIsNone(settings_module.matching_preset(edited))
+
+    def test_unknown_preset_name_is_none_not_an_error(self):
+        self.assertIsNone(settings_module.preset_by_name("Banana pseudostem"))
+
+    def test_presets_respect_their_own_dac_ceiling(self):
+        # A preset above the range ceiling would be silently clipped by the
+        # firmware, so the recorded setting would not be the current driven.
+        for preset in settings_module.SPECIMEN_PRESETS:
+            with self.subTest(preset.name):
+                applied = preset.apply_to(UiSettings())
+                self.assertLessEqual(applied.dac, applied.max_dac_code())
+
+    def test_presets_validate(self):
+        for preset in settings_module.SPECIMEN_PRESETS:
+            with self.subTest(preset.name):
+                preset.apply_to(UiSettings(port="COM1")).validate()
+

@@ -32,6 +32,14 @@ _Avoid_: confirmed decayed tree, ERT-diagnosed tree
 A repeatable reconstruction pattern produced by the ERT prototype that indicates relative electrical variation inside the scanned trunk band, not a named disease.
 _Avoid_: disease detection, disease classification
 
+**Evidential reconstruction**:
+A difference reconstruction produced across a genuine before-after change that the researcher introduced, as in the saline phantom or the cut-trunk pilot, and which may therefore be cited as showing the known contrast target.
+_Avoid_: living-tree evidence, decay image
+
+**Illustrative reconstruction**:
+A difference reconstruction produced from observational living-tree scans, where no before-state exists, presented only as a conductivity variation pattern with its conditions and never cited as showing decay.
+_Avoid_: decay image, diagnostic tomogram
+
 **Tree-specific baseline**:
 The reference scan collected from the same coconut tree and electrode setup before interpreting difference reconstructions for that tree.
 _Avoid_: healthy-tree baseline, cross-tree baseline
@@ -39,6 +47,10 @@ _Avoid_: healthy-tree baseline, cross-tree baseline
 **Twelve-electrode ring**:
 The field electrode layout using 12 nail electrodes placed around the coconut trunk and labeled E1 through E12.
 _Avoid_: eight-electrode ring, fixed-injection layout
+
+**Specimen geometry record**:
+The measured circumference, per-nail arc positions, ovality and thickness of a scanned specimen, recorded because reconstruction assumes a circular boundary with equally spaced electrodes and real specimens depart from both.
+_Avoid_: nominal electrode spacing, assumed circular trunk
 
 **Electrode sector**:
 A coarse localization region described by nearby electrode labels in the twelve-electrode ring, such as near E3-E4, used instead of exact image coordinates.
@@ -75,6 +87,14 @@ _Avoid_: disease sample, biological target
 **Cut-trunk pilot**:
 A cut coconut trunk section used to test electrode placement, current settings, and scanning procedure before the final standing living coconut tree comparison.
 _Avoid_: final category tree, living-tree result
+
+**Cut-trunk disc**:
+A thin cross-sectional slice of coconut trunk used as the cut-trunk pilot specimen. Being thin, it approximately satisfies the two-dimensional assumption the reconstruction solver already makes, which a standing trunk does not.
+_Avoid_: cut-trunk section, log, trunk sample
+
+**Intact-disc survey**:
+The scan of every available cut-trunk disc in its undrilled state under one geometry and one settings profile, used to measure how far specimens of the same material differ when none carries a defect. It measures variability; it is not a reference scan and nothing is differenced against it.
+_Avoid_: healthy-tree baseline, cross-tree baseline, disc population baseline
 
 **Artificial trunk defect**:
 A deliberately cut internal region in the cut-trunk pilot used to test whether the prototype can show a repeatable conductivity variation near a known sector.
@@ -119,6 +139,14 @@ _Avoid_: final validated diagnostic claim
 **AI-assisted health category classification**:
 A downstream classification step that uses complete ERT raw values, reconstruction-derived features, or both to classify expert-defined coconut tree health categories.
 _Avoid_: disease diagnosis, classifier without stable reconstruction data
+
+**Normalised measurement vector**:
+The transfer resistances of one scan each divided by the mean of that scan, which cancels the specimen's resistivity and diameter and leaves only the geometry of the conductivity distribution. It is what makes two different specimens comparable at all.
+_Avoid_: raw measurement vector, apparent resistivity
+
+**Within-specimen contrast metric**:
+A scalar summarising how far transfer resistances spread inside a single scan, such as the maximum-to-minimum ratio or their difference. It compares a specimen only with itself, so specimen size, moisture and temperature do not enter.
+_Avoid_: cross-specimen metric, absolute resistivity threshold
 
 **Combined ERT feature set**:
 The classifier input made from both normalized raw ERT measurements and reconstruction-derived summary features.

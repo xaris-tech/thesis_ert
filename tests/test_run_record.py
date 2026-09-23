@@ -331,6 +331,95 @@ class IndexRowTests(unittest.TestCase):
         self.assertEqual(row["label"], "m")
 
 
+class SpecimenGeometryTests(unittest.TestCase):
+    """Geometry is recorded because reconstruction assumes it (ADR-0033)."""
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.root = Path(self._tmp.name)
+        self.addCleanup(self._tmp.cleanup)
+
+    def test_geometry_defaults_to_not_measured_without_complaint(self):
+        # A tank run has no circumference and is not thereby incomplete.
+        conditions = Conditions(medium="saline tank", grounding="floating")
+        self.assertIsNone(conditions.circumference_mm)
+        self.assertIsNone(conditions.thickness_mm)
+        self.assertEqual(conditions.specimen_id, "")
+        self.assertEqual(conditions.validate(), [])
+
+    def test_negative_geometry_is_reported(self):
+        problems = Conditions(
+            medium="disc", grounding="floating", circumference_mm=-1.0
+        ).validate()
+        self.assertIn("circumference_mm is negative", problems)
+
+    def test_minor_larger_than_major_is_reported(self):
+        # Swapped calipers are the likeliest way this goes wrong at the bench.
+        problems = Conditions(
+            medium="disc",
+            grounding="floating",
+            major_diameter_mm=180.0,
+            minor_diameter_mm=200.0,
+        ).validate()
+        self.assertIn("minor_diameter_mm is larger than major_diameter_mm", problems)
+
+    def test_validate_never_raises_on_geometry(self):
+        # ADR-0023: a capture already taken must always be recordable.
+        conditions = Conditions(
+            medium="disc",
+            grounding="floating",
+            circumference_mm=-5.0,
+            minor_diameter_mm=999.0,
+            major_diameter_mm=1.0,
+        )
+        self.assertIsInstance(conditions.validate(), list)
+
+    def test_geometry_reaches_the_index_row(self):
+        conditions = Conditions(
+            medium="coconut disc",
+            grounding="floating",
+            specimen_id="disc-03",
+            circumference_mm=540.0,
+            thickness_mm=65.0,
+            major_diameter_mm=180.0,
+            minor_diameter_mm=168.0,
+        )
+        recorder = create_run(self.root, "disc 3 intact", conditions=conditions)
+        recorder.close()
+        row = recorder.index_row()
+        self.assertEqual(row["specimen_id"], "disc-03")
+        self.assertAlmostEqual(row["circumference_mm"], 540.0)
+        self.assertAlmostEqual(row["thickness_mm"], 65.0)
+        self.assertAlmostEqual(row["major_diameter_mm"], 180.0)
+        self.assertAlmostEqual(row["minor_diameter_mm"], 168.0)
+
+    def test_geometry_columns_are_appended_not_reordered(self):
+        # INDEX_COLUMNS is append-only: renaming or reordering breaks every
+        # row already written to an existing index.csv.
+        self.assertEqual(run_record.INDEX_COLUMNS[:4],
+                         ["run_id", "captured_at", "label", "medium"])
+        for column in ("specimen_id", "circumference_mm", "thickness_mm",
+                       "major_diameter_mm", "minor_diameter_mm"):
+            self.assertIn(column, run_record.INDEX_COLUMNS)
+
+    def test_nail_arcs_survive_in_extra_and_reach_the_sheet(self):
+        conditions = Conditions(
+            medium="coconut disc",
+            grounding="floating",
+            specimen_id="disc-03",
+            extra={"nail_arc_mm": [0.0, 45.0, 90.0]},
+        )
+        recorder = create_run(self.root, "disc 3 intact", conditions=conditions)
+        recorder.close()
+        payload = json.loads((recorder.path / "conditions.json").read_text())
+        self.assertEqual(
+            payload["conditions"]["extra"]["nail_arc_mm"], [0.0, 45.0, 90.0]
+        )
+        sheet = (recorder.path / "conditions.md").read_text()
+        self.assertIn("nail_arc_mm", sheet)
+        self.assertIn("disc-03", sheet)
+
+
 class RunDiscoveryTests(unittest.TestCase):
     def setUp(self):
         self._tmp = tempfile.TemporaryDirectory()

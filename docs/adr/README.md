@@ -81,8 +81,12 @@ one costs a re-derivation.
 | [0025](0025-dedicated-scans-root-session-log-and-index.md) | A dedicated scans root, an append-only session log, and a scan index | Accepted |
 | [0026](0026-session-baseline-reconstruction-and-a-quantisation-check.md) | Session-baseline reconstruction in the UI, and a quantisation check replacing the resistance window | Accepted |
 | [0027](0027-control-image-makes-a-null-visible.md) | Every difference image is rendered beside the baseline against itself | Accepted |
-| [0028](0028-there-is-no-baseline-for-a-diseased-tree.md) | A diseased tree has no baseline; the thesis claim requires absolute imaging | Accepted |
+| [0028](0028-there-is-no-baseline-for-a-diseased-tree.md) | A diseased tree has no baseline; the thesis claim requires absolute imaging | Premise superseded by [0034](0034-living-tree-images-illustrate-the-cut-trunk-pilot-proves.md) |
 | [0029](0029-baseline-run-saves-its-control-image.md) | A baseline run saves its own control image, named as noise | Accepted |
 | [0030](0030-reciprocity-gates-the-difference-image.md) | Reciprocity gates the difference image (10 % median, stamped override) | Threshold superseded by [0032](0032-reciprocity-gate-at-15-percent-and-per-electrode-warning.md) |
 | [0031](0031-reciprocity-fault-was-a-v-minus-mux-wiring-error.md) | The reciprocity fault was a V- mux address wiring error; pre-fix data is compromised | Accepted |
 | [0032](0032-reciprocity-gate-at-15-percent-and-per-electrode-warning.md) | Reciprocity gate at 15 %, with a per-electrode contact warning (supersedes ADR-0030 threshold) | Accepted |
+| [0033](0033-record-specimen-geometry-with-every-run.md) | Record specimen geometry (id, circumference, thickness, ovality, nail arcs) with every run | Accepted |
+| [0034](0034-living-tree-images-illustrate-the-cut-trunk-pilot-proves.md) | Living-tree images illustrate; the cut-trunk pilot proves (supersedes ADR-0028 premise) | Accepted |
+| [0035](0035-intact-disc-survey-measures-between-specimen-spread.md) | The intact-disc survey measures between-specimen spread before any cross-specimen claim | Accepted |
+| [0036](0036-specimen-presets-carry-their-provenance.md) | Specimen presets (belt / saline / coconut) carry the run their numbers came from | Accepted |

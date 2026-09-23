@@ -95,6 +95,32 @@ class Conditions:
     """Which physical nail is E1 and which way numbering runs, e.g.
     'E1 = marked nail, numbering clockwise viewed from above'."""
 
+    specimen_id: str = ""
+    """Which physical specimen this is, e.g. 'disc-03', 'coconut-tree-1'.
+
+    Two runs of the same specimen may be differenced; two runs of different
+    specimens may not, because a cross-specimen difference images the specimens
+    rather than any change in one. The label alone cannot be trusted for this --
+    ten discs were all labelled 'reistor-belt-sanity-test' before this field
+    existed -- so the identity is recorded explicitly."""
+
+    circumference_mm: float | None = None
+    """Circumference at the electrode ring. With the per-nail arc positions in
+    ``extra`` it fixes the real electrode geometry."""
+
+    thickness_mm: float | None = None
+    """Specimen thickness along the trunk axis. A thin disc approximates the
+    two-dimensional domain the solver assumes; a standing trunk does not, and
+    this number is how far from that assumption a specimen sits."""
+
+    major_diameter_mm: float | None = None
+    """Longest width across the electrode ring."""
+
+    minor_diameter_mm: float | None = None
+    """Shortest width across the electrode ring. Recorded with the major so
+    ovality is measurable: reconstruction assumes a circular boundary, and
+    nothing in the record said how far a specimen departed from one."""
+
     operator: str = ""
     notes: str = ""
 
@@ -128,6 +154,18 @@ class Conditions:
             problems.append("fill_depth_mm is negative")
         if self.electrode_protrusion_mm is not None and self.electrode_protrusion_mm < 0:
             problems.append("electrode_protrusion_mm is negative")
+        for name in (
+            "circumference_mm",
+            "thickness_mm",
+            "major_diameter_mm",
+            "minor_diameter_mm",
+        ):
+            value = getattr(self, name)
+            if value is not None and value < 0:
+                problems.append(f"{name} is negative")
+        major, minor = self.major_diameter_mm, self.minor_diameter_mm
+        if major is not None and minor is not None and minor > major:
+            problems.append("minor_diameter_mm is larger than major_diameter_mm")
         return problems
 
 
@@ -406,6 +444,11 @@ class RunRecorder:
             "grounding": self.conditions.grounding,
             "tank_contents": self.conditions.tank_contents,
             "target": self.conditions.target_description,
+            "specimen_id": self.conditions.specimen_id,
+            "circumference_mm": self.conditions.circumference_mm,
+            "thickness_mm": self.conditions.thickness_mm,
+            "major_diameter_mm": self.conditions.major_diameter_mm,
+            "minor_diameter_mm": self.conditions.minor_diameter_mm,
             "pattern": self.settings.get("pattern"),
             "current_range": self.settings.get("current_range"),
             "dac": self.settings.get("dac"),
@@ -531,6 +574,11 @@ INDEX_COLUMNS = [
     "git_commit",
     "path",
     "reciprocity_gate",
+    "specimen_id",
+    "circumference_mm",
+    "thickness_mm",
+    "major_diameter_mm",
+    "minor_diameter_mm",
 ]
 
 

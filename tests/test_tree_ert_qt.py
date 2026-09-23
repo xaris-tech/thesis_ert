@@ -245,6 +245,48 @@ class ConditionsPanelTests(QtTestCase):
         self.assertTrue(any("grounding" in p for p in problems))
 
 
+class ConditionsPanelGeometryTests(QtTestCase):
+    """The panel must be able to record what the survey compares (ADR-0033)."""
+
+    def test_geometry_is_not_measured_until_filled(self):
+        conditions = ConditionsPanel().conditions()
+        self.assertIsNone(conditions.circumference_mm)
+        self.assertIsNone(conditions.thickness_mm)
+        self.assertIsNone(conditions.major_diameter_mm)
+        self.assertIsNone(conditions.minor_diameter_mm)
+        self.assertEqual(conditions.specimen_id, "")
+        self.assertEqual(conditions.extra, {})
+
+    def test_geometry_round_trips(self):
+        panel = ConditionsPanel()
+        panel.specimen_id.setText(" disc-03 ")
+        panel.circumference.setValue(540.0)
+        panel.thickness.setValue(65.0)
+        panel.major_diameter.setValue(180.0)
+        panel.minor_diameter.setValue(168.0)
+        conditions = panel.conditions()
+        self.assertEqual(conditions.specimen_id, "disc-03")
+        self.assertAlmostEqual(conditions.circumference_mm, 540.0)
+        self.assertAlmostEqual(conditions.thickness_mm, 65.0)
+        self.assertAlmostEqual(conditions.major_diameter_mm, 180.0)
+        self.assertAlmostEqual(conditions.minor_diameter_mm, 168.0)
+
+    def test_nail_arcs_parse_into_extra(self):
+        panel = ConditionsPanel()
+        panel.nail_arcs.setText("0, 45.5, 90 ; 135")
+        self.assertEqual(
+            panel.conditions().extra["nail_arc_mm"], [0.0, 45.5, 90.0, 135.0]
+        )
+
+    def test_unparseable_nail_arcs_are_kept_verbatim(self):
+        # Losing what the operator typed is worse than storing it unparsed.
+        panel = ConditionsPanel()
+        panel.nail_arcs.setText("0, about 45, 90")
+        extra = panel.conditions().extra
+        self.assertEqual(extra["nail_arc_mm_raw"], "0, about 45, 90")
+        self.assertNotIn("nail_arc_mm", extra)
+
+
 class SettingsPanelTests(QtTestCase):
     def test_dac_ceiling_follows_the_current_range(self):
         panel = SettingsPanel(demo_settings())
@@ -274,6 +316,65 @@ class SettingsPanelTests(QtTestCase):
         settings = SettingsPanel(base).settings()
         self.assertEqual(settings.expected_shunt_ohms, 97.9)
         self.assertEqual(settings.electrode_offset, 3)
+
+
+class SettingsPanelPresetTests(QtTestCase):
+    """The preset combo must never claim a provenance the settings lack."""
+
+    def _panel(self):
+        from tree_ert.qt.main_window import SettingsPanel
+
+        return SettingsPanel(UiSettings(port="COM12"))
+
+    def test_choosing_a_preset_pushes_its_values_into_the_fields(self):
+        panel = self._panel()
+        panel.preset.setCurrentText("Resistor belt")
+        settings = panel.settings()
+        self.assertEqual(settings.dac, 400)
+        self.assertEqual(settings.settle_ms, 30)
+        self.assertEqual(settings.samples, 16)
+        self.assertEqual(settings.frames, 10)
+        self.assertEqual(settings.pattern, "adjacent")
+        self.assertEqual(settings.current_range, "high")
+
+    def test_choosing_a_preset_keeps_the_port(self):
+        panel = self._panel()
+        panel.preset.setCurrentText("Saline tank")
+        self.assertEqual(panel.settings().port, "COM12")
+
+    def test_editing_a_field_falls_back_to_custom(self):
+        panel = self._panel()
+        panel.preset.setCurrentText("Resistor belt")
+        panel.settle.setValue(panel.settle.value() + 5)
+        self.assertEqual(panel.preset.currentText(), "Custom")
+        self.assertIn("Custom", panel.preset_note.text())
+
+    def test_editing_back_onto_a_preset_reselects_it(self):
+        panel = self._panel()
+        panel.preset.setCurrentText("Resistor belt")
+        original = panel.settle.value()
+        panel.settle.setValue(original + 5)
+        panel.settle.setValue(original)
+        self.assertEqual(panel.preset.currentText(), "Resistor belt")
+
+    def test_provisional_preset_says_so(self):
+        panel = self._panel()
+        panel.preset.setCurrentText("Coconut (provisional)")
+        self.assertIn("PROVISIONAL", panel.preset_note.text())
+
+    def test_validated_preset_shows_provenance_without_the_warning(self):
+        panel = self._panel()
+        panel.preset.setCurrentText("Resistor belt")
+        note = panel.preset_note.text()
+        self.assertNotIn("PROVISIONAL", note)
+        self.assertIn("20260923-123325", note)
+
+    def test_selecting_custom_changes_nothing(self):
+        panel = self._panel()
+        panel.preset.setCurrentText("Resistor belt")
+        before = panel.settings()
+        panel.preset.setCurrentText("Custom")
+        self.assertEqual(panel.settings(), before)
 
 
 class CaptureWorkerTests(QtTestCase):

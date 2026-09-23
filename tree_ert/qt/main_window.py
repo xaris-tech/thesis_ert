@@ -55,13 +55,19 @@ from tree_ert.qt.worker import (
     available_ports,
 )
 from tree_ert.settings import (
+    SPECIMEN_PRESETS,
     VALID_CURRENT_RANGES,
     VALID_PATTERNS,
+    SpecimenPreset,
     UiSettings,
     load_settings,
+    matching_preset,
+    preset_by_name,
     save_settings,
     settings_path,
 )
+
+CUSTOM_PRESET_LABEL = "Custom"
 
 RAW_COLUMNS = ["#", "Pol", "I+", "I-", "V+", "V-", "V mV", "I uA", "R kohm", "Q"]
 
@@ -126,6 +132,16 @@ class ConditionsPanel(QGroupBox):
         self.target = QLineEdit()
         self.target.setPlaceholderText("blank for a baseline run")
         self.electrode_map = QLineEdit("E1 = marked nail, clockwise viewed from above")
+
+        self.specimen_id = QLineEdit()
+        self.specimen_id.setPlaceholderText("disc-03 / coconut-tree-1")
+        self.circumference = self._number(" mm", maximum=5000.0, step=1.0)
+        self.thickness = self._number(" mm", maximum=5000.0, step=1.0)
+        self.major_diameter = self._number(" mm", maximum=2000.0, step=1.0)
+        self.minor_diameter = self._number(" mm", maximum=2000.0, step=1.0)
+        self.nail_arcs = QLineEdit()
+        self.nail_arcs.setPlaceholderText("12 arc positions from E1, mm, comma separated")
+
         self.operator = QLineEdit()
         self.notes = QPlainTextEdit()
         self.notes.setMaximumHeight(60)
@@ -140,6 +156,12 @@ class ConditionsPanel(QGroupBox):
         layout.addRow("Tank contents", self.contents)
         layout.addRow("Target", self.target)
         layout.addRow("Electrode map", self.electrode_map)
+        layout.addRow("Specimen", self.specimen_id)
+        layout.addRow("Circumference", self.circumference)
+        layout.addRow("Thickness", self.thickness)
+        layout.addRow("Major diameter", self.major_diameter)
+        layout.addRow("Minor diameter", self.minor_diameter)
+        layout.addRow("Nail arcs", self.nail_arcs)
         layout.addRow("Operator", self.operator)
         layout.addRow("Notes", self.notes)
         _tidy_form(layout)
@@ -173,9 +195,38 @@ class ConditionsPanel(QGroupBox):
             tank_contents=self.contents.text().strip(),
             target_description=self.target.text().strip(),
             electrode_map=self.electrode_map.text().strip(),
+            specimen_id=self.specimen_id.text().strip(),
+            circumference_mm=self._value(self.circumference),
+            thickness_mm=self._value(self.thickness),
+            major_diameter_mm=self._value(self.major_diameter),
+            minor_diameter_mm=self._value(self.minor_diameter),
             operator=self.operator.text().strip(),
             notes=self.notes.toPlainText().strip(),
+            extra=self._extra(),
         )
+
+    def _extra(self) -> dict[str, object]:
+        """Free-form conditions that have no column of their own.
+
+        The twelve nail arc positions live here rather than as twelve fields:
+        nothing sorts or filters by them, and a list is the shape the offline
+        geometry check wants anyway.
+        """
+        text = self.nail_arcs.text().strip()
+        if not text:
+            return {}
+        arcs: list[float] = []
+        for part in text.replace(";", ",").split(","):
+            part = part.strip()
+            if not part:
+                continue
+            try:
+                arcs.append(float(part))
+            except ValueError:
+                # An unparseable entry is kept verbatim rather than dropped:
+                # a capture already taken must always be recordable (ADR-0023).
+                return {"nail_arc_mm_raw": text}
+        return {"nail_arc_mm": arcs} if arcs else {"nail_arc_mm_raw": text}
 
 
 class SettingsPanel(QGroupBox):
@@ -189,6 +240,9 @@ class SettingsPanel(QGroupBox):
     def __init__(self, settings: UiSettings) -> None:
         super().__init__("Instrument")
         self._base = settings
+        # Guards the two-way binding between the preset combo and the fields it
+        # drives: applying a preset must not read back as a manual edit.
+        self._applying_preset = False
         layout = QFormLayout(self)
 
         self.port = QComboBox()
@@ -220,6 +274,16 @@ class SettingsPanel(QGroupBox):
         port_layout.addWidget(self.refresh)
 
         self.demo = QCheckBox("Demo mode (no hardware)")
+
+        # Presets carry provenance rather than bare numbers, so an operator can
+        # see what a profile actually measured before adopting it.
+        self.preset = QComboBox()
+        self.preset.addItem(CUSTOM_PRESET_LABEL)
+        for preset in SPECIMEN_PRESETS:
+            self.preset.addItem(preset.name)
+        self.preset_note = QLabel()
+        self.preset_note.setObjectName("Subtle")
+        self.preset_note.setWordWrap(True)
 
         self.pattern = QComboBox()
         self.pattern.addItems(VALID_PATTERNS)
@@ -253,6 +317,8 @@ class SettingsPanel(QGroupBox):
 
         layout.addRow("Port", port_row)
         layout.addRow("", self.demo)
+        layout.addRow("Preset", self.preset)
+        layout.addRow("", self.preset_note)
         layout.addRow("Pattern", self.pattern)
         layout.addRow("Current range", self.current_range)
         layout.addRow("DAC code", self.dac)
@@ -263,6 +329,64 @@ class SettingsPanel(QGroupBox):
         _tidy_form(layout)
 
         self._apply_dac_ceiling(self.current_range.currentText())
+
+        # Connected after the initial values are in place, so building the
+        # panel does not read as the operator editing it.
+        self.preset.currentTextChanged.connect(self._preset_chosen)
+        for widget in (self.pattern, self.current_range):
+            widget.currentTextChanged.connect(self._mark_custom)
+        for widget in (self.dac, self.settle, self.samples, self.warmup, self.frames):
+            widget.valueChanged.connect(self._mark_custom)
+        self._show_matching_preset()
+
+    def _preset_chosen(self, name: str) -> None:
+        """Push a preset into the widgets, or do nothing for Custom."""
+        preset = preset_by_name(name)
+        if preset is None:
+            return
+        self._base = preset.apply_to(self._base)
+        self._applying_preset = True
+        try:
+            self.pattern.setCurrentText(preset.pattern)
+            self.current_range.setCurrentText(preset.current_range)
+            self._apply_dac_ceiling(preset.current_range)
+            self.dac.setValue(preset.dac)
+            self.settle.setValue(preset.settle_ms)
+            self.samples.setValue(preset.samples)
+            self.warmup.setValue(preset.warmup_frames)
+            self.frames.setValue(preset.frames)
+        finally:
+            self._applying_preset = False
+        self._set_preset_note(preset)
+
+    def _mark_custom(self, *_args: object) -> None:
+        """An edited field means the profile is no longer the named preset.
+
+        Left showing the preset's name, the panel would claim a provenance the
+        settings no longer have. An edit that happens to land back on a preset
+        re-selects it, which is why the match is recomputed rather than assumed.
+        """
+        if self._applying_preset:
+            return
+        self._show_matching_preset()
+
+    def _show_matching_preset(self) -> None:
+        preset = matching_preset(self.settings())
+        self._applying_preset = True
+        try:
+            self.preset.setCurrentText(
+                preset.name if preset else CUSTOM_PRESET_LABEL
+            )
+        finally:
+            self._applying_preset = False
+        self._set_preset_note(preset)
+
+    def _set_preset_note(self, preset: SpecimenPreset | None) -> None:
+        if preset is None:
+            self.preset_note.setText("Custom profile - not from a recorded run.")
+            return
+        prefix = "" if preset.validated else "PROVISIONAL. "
+        self.preset_note.setText(f"{prefix}{preset.provenance}")
 
     def refresh_ports(self, keep: str = "") -> None:
         current = keep or self.port.currentText()

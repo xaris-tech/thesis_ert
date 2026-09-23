@@ -197,3 +197,153 @@ def load_settings(path: Path, default: UiSettings | None = None) -> UiSettings |
     if not isinstance(data, dict):
         return None
     return settings_from_dict(data, default)
+
+
+# --------------------------------------------------------------------------
+# Specimen presets
+# --------------------------------------------------------------------------
+# Every preset records where its numbers came from. A settings profile with no
+# provenance is a guess that looks like a measurement, and the project's rule is
+# that a recorded number says where it is from (ADR-0023). "validated" marks
+# whether the profile has actually been shown to work on that specimen class, or
+# is merely the profile that happened to be in use.
+
+
+@dataclass(frozen=True)
+class SpecimenPreset:
+    """An instrument profile known to suit one class of specimen."""
+
+    name: str
+    pattern: str
+    current_range: str
+    dac: int
+    settle_ms: int
+    samples: int
+    warmup_frames: int
+    baseline_frames: int
+    target_warmup_frames: int
+    frames: int
+    provenance: str
+    """Which run these came from and what it measured."""
+    validated: bool = True
+    """False when the profile is in use but has not been tuned for this
+    specimen. A provisional profile is still worth offering -- it beats the
+    bare defaults -- but must not read as a settled result."""
+
+    def apply_to(self, settings: "UiSettings") -> "UiSettings":
+        """This profile over ``settings``, leaving port and logging alone.
+
+        Only the instrument fields move. Port, demo mode, scans root and the
+        mapping corrections are properties of the rig and the session, not of
+        the specimen, and a preset that reset them would be a trap.
+        """
+        return replace(
+            settings,
+            pattern=self.pattern,
+            current_range=self.current_range,
+            dac=self.dac,
+            settle_ms=self.settle_ms,
+            samples=self.samples,
+            warmup_frames=self.warmup_frames,
+            baseline_frames=self.baseline_frames,
+            target_warmup_frames=self.target_warmup_frames,
+            frames=self.frames,
+        )
+
+    def matches(self, settings: "UiSettings") -> bool:
+        return all(
+            getattr(settings, field_name) == getattr(self, field_name)
+            for field_name in PRESET_FIELDS
+        )
+
+
+PRESET_FIELDS = (
+    "pattern",
+    "current_range",
+    "dac",
+    "settle_ms",
+    "samples",
+    "warmup_frames",
+    "baseline_frames",
+    "target_warmup_frames",
+    "frames",
+)
+
+# All three specimen classes have so far been scanned at one profile -- adjacent
+# / high / 400 / 30 ms / 16 samples -- so the presets differ only in provenance
+# and in whether they are validated. They are listed separately anyway, because
+# the point of a preset is to be tuned per specimen and the coconut profile is
+# the one being tuned; identical values today are a fact about the record, not a
+# reason to offer one entry.
+SPECIMEN_PRESETS = (
+    SpecimenPreset(
+        name="Resistor belt",
+        pattern="adjacent",
+        current_range="high",
+        dac=400,
+        settle_ms=30,
+        samples=16,
+        warmup_frames=5,
+        baseline_frames=5,
+        target_warmup_frames=5,
+        frames=10,
+        provenance=(
+            "20260923-123325: 216/216 OK, reciprocity 0.1% median / 0.3% max, "
+            "noise 0.14%, 18.14 ohm median against 18.33 expected"
+        ),
+        validated=True,
+    ),
+    SpecimenPreset(
+        name="Saline tank",
+        pattern="adjacent",
+        current_range="high",
+        dac=400,
+        settle_ms=30,
+        samples=16,
+        warmup_frames=5,
+        baseline_frames=5,
+        target_warmup_frames=5,
+        frames=10,
+        provenance=(
+            "20260922-174813 and the purified-saline series: reciprocity 10-15% "
+            "median, noise ~1.0%. Offset-dominated; adequate, not good"
+        ),
+        validated=True,
+    ),
+    SpecimenPreset(
+        name="Coconut (provisional)",
+        pattern="adjacent",
+        current_range="high",
+        dac=400,
+        settle_ms=30,
+        samples=16,
+        warmup_frames=5,
+        baseline_frames=5,
+        target_warmup_frames=5,
+        frames=10,
+        provenance=(
+            "20260923-125411: reciprocity 3.7% median, noise 0.79%, offset 3.5x "
+            "signal. NOT TUNED -- these are the values that happened to be set"
+        ),
+        validated=False,
+    ),
+)
+
+
+def preset_by_name(name: str) -> SpecimenPreset | None:
+    for preset in SPECIMEN_PRESETS:
+        if preset.name == name:
+            return preset
+    return None
+
+
+def matching_preset(settings: "UiSettings") -> SpecimenPreset | None:
+    """The preset whose profile ``settings`` currently equals, if any.
+
+    Returned so the UI can show that the operator has diverged from a preset
+    rather than silently continuing to display its name.
+    """
+    for preset in SPECIMEN_PRESETS:
+        if preset.matches(settings):
+            return preset
+    return None
