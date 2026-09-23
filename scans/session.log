@@ -3223,3 +3223,34 @@
 2026-09-23 18:14:22    Reciprocity: median 2.9%  max 60.2%  sign flips 0/54
 2026-09-23 18:14:22    Noise floor: median pair sd 0.00006 kohm (0.46%)  max 0.00036 kohm over 108 pairs
 2026-09-23 18:14:22  Indexed in scans\index.csv
+2026-09-23 18:27:51  Baseline cleared; the next run will become the new baseline.
+2026-09-23 18:28:16  Connecting to COM12...
+2026-09-23 18:28:16  Configuring instrument...
+
+------------------------------------------------------------------------
+2026-09-23 18:28:17  Run 20260923-182816-coconuttree-1-620-dac-32-samp-30-ms
+2026-09-23 18:28:17  Conditions: medium=saline tank saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-09-23 18:28:17  Recording to scans\runs\20260923-182816-coconuttree-1-620-dac-32-samp-30-ms
+2026-09-23 18:29:06  [warmup 1/5] 216/216 OK | I med 368.3 uA (228.2-472.6) | R med 0.0103 kohm | dV med 952 LSB
+2026-09-23 18:29:55  [warmup 2/5] 216/216 OK | I med 367.6 uA (228.3-473.1) | R med 0.0103 kohm | dV med 966 LSB
+2026-09-23 18:30:44  [warmup 3/5] 216/216 OK | I med 367.6 uA (229.1-473.6) | R med 0.0103 kohm | dV med 958 LSB
+2026-09-23 18:31:33  [warmup 4/5] 216/216 OK | I med 367.6 uA (229.0-472.8) | R med 0.0103 kohm | dV med 960 LSB
+2026-09-23 18:32:22  [warmup 5/5] 216/216 OK | I med 367.7 uA (228.6-472.7) | R med 0.0103 kohm | dV med 959 LSB
+2026-09-23 18:33:11  [frame 1] 216/216 OK | I med 367.7 uA (228.0-473.4) | R med 0.0103 kohm | dV med 950 LSB
+2026-09-23 18:34:00  [frame 2] 216/216 OK | I med 367.4 uA (228.5-472.2) | R med 0.0103 kohm | dV med 956 LSB
+2026-09-23 18:34:49  [frame 3] 216/216 OK | I med 367.3 uA (228.9-473.7) | R med 0.0104 kohm | dV med 951 LSB
+2026-09-23 18:35:38  [frame 4] 216/216 OK | I med 367.8 uA (228.6-472.8) | R med 0.0104 kohm | dV med 952 LSB
+2026-09-23 18:36:27  [frame 5] 216/216 OK | I med 367.4 uA (228.6-472.8) | R med 0.0104 kohm | dV med 959 LSB
+2026-09-23 18:37:16  [frame 6] 216/216 OK | I med 367.6 uA (228.7-472.1) | R med 0.0104 kohm | dV med 950 LSB
+2026-09-23 18:38:05  [frame 7] 216/216 OK | I med 367.5 uA (228.7-472.7) | R med 0.0104 kohm | dV med 962 LSB
+2026-09-23 18:38:54  [frame 8] 216/216 OK | I med 367.6 uA (228.9-472.9) | R med 0.0104 kohm | dV med 960 LSB
+2026-09-23 18:39:43  [frame 9] 216/216 OK | I med 367.5 uA (228.8-471.7) | R med 0.0104 kohm | dV med 955 LSB
+2026-09-23 18:40:32  [frame 10] 216/216 OK | I med 367.4 uA (229.3-473.0) | R med 0.0105 kohm | dV med 962 LSB
+2026-09-23 18:40:32  No reconstruction: This run is the session baseline; it has nothing to differ from.
+2026-09-23 18:40:34  Baseline control image saved to scans\runs\20260923-182816-coconuttree-1-620-dac-32-samp-30-ms\control.png
+2026-09-23 18:40:34  This run is now the session baseline (20260923-182816-coconuttree-1-620-dac-32-samp-30-ms).
+2026-09-23 18:40:34  Finished. Run saved to scans\runs\20260923-182816-coconuttree-1-620-dac-32-samp-30-ms
+2026-09-23 18:40:34    Frames captured: 10
+2026-09-23 18:40:34    Reciprocity: median 2.5%  max 32.0%  sign flips 0/54
+2026-09-23 18:40:34    Noise floor: median pair sd 0.00006 kohm (0.55%)  max 0.00049 kohm over 108 pairs
+2026-09-23 18:40:34  Indexed in scans\index.csv
