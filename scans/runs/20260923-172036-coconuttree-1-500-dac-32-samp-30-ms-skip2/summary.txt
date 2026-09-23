@@ -1,0 +1,3 @@
+Frames captured: 1
+Reciprocity: no reciprocal pairs captured
+Noise floor: needs at least 2 frames

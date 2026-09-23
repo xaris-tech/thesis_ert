@@ -1,0 +1,7 @@
+peak +1.011e-03 at 204 deg (x=-0.31, y=-0.13)
+colour scale +/-1.011e-03  (auto-scaled to this image)
+pairs 108/108 kept  [ok]
+measurement noise floor 0.00003 kohm - a change below this is not a detection
+control peak -2.096e-03
+significance 0.48x the noise image
+baseline run: 20260923-122941-reistor-belt-sanity-test

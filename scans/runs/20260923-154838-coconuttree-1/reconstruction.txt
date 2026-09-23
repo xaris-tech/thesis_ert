@@ -1,0 +1,7 @@
+peak -4.506e-03 at 271 deg (x=+0.01, y=-0.93)
+colour scale +/-4.506e-03  (auto-scaled to this image)
+pairs 108/108 kept  [ok]
+measurement noise floor 0.00011 kohm - a change below this is not a detection
+control peak +3.354e-03
+significance 1.34x the noise image
+baseline run: 20260923-153958-coconuttree-1
