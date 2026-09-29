@@ -1,0 +1,3 @@
+Frames captured: 1
+Reciprocity: median 46.6%  max 99.6%  sign flips 15/54
+Noise floor: needs at least 2 frames

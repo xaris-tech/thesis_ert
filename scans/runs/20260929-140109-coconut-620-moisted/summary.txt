@@ -1,0 +1,4 @@
+Frames captured: 1
+Reciprocity: median 35.3%  max 97.1%  sign flips 11/36
+Check electrode contact: E2 81% (all pairs median 35%)
+Noise floor: needs at least 2 frames
