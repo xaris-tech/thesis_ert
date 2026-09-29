@@ -1,0 +1,39 @@
+INTACT-DISC SURVEY (ADR-0035, ADR-0038)
+
+Profile: pattern=adjacent, current_range=high, dac=620, settle_ms=30, samples=32, electrode_offset=0, electrode_reversed=False
+Distances are RMS differences of normalised vectors, % of mean |R|.
+
+Spreads (reported separately, never combined):
+  S_noise        1.13 %   same specimen rescanned untouched
+  S_between         n/a   different intact specimens
+  S_defect       2.99 %   same specimen, before vs after drilling
+  S_defect / S_noise   = 2.65  (same-specimen detectability)
+  no verdict: needs both S_between and S_defect
+
+Scans:
+  run                                          specimen         state    bad  max/min  p95/p5  spread
+  20260929-153440-coconut-620-dry-32-samples   disc-01          intact     0    24.71    5.85    2.75
+  20260929-154607-coconut-620-dry-32-samples   disc-01          intact     0    18.03    5.66    2.69
+  20260929-160743-coconut-620-dry-32-samples   disc-01          intact     0    21.01    5.72    2.73
+  20260929-162756-coconut-620-dry-32-samples   disc-01          defect     0    18.43    5.68    2.73
+  20260929-172528-coconut-620-dry-32-samples   disc-01          defect     0    17.53    6.10    2.69
+  20260929-135221-coconut-620-moisted          disc-01          EXCLUDED  surface wetted; E3/E11 contact faults
+  20260929-140109-coconut-620-moisted          disc-01          EXCLUDED  surface wetted; 1 frame
+  20260929-141611-coconut-620-moisted          disc-01          EXCLUDED  surface wetted
+  20260929-142832-coconut-620-moisted          disc-01          EXCLUDED  surface wetted; samples 16
+  20260929-143805-coconut-620-moisted-32-samples disc-01          EXCLUDED  surface wetted
+  20260929-145046-coconut-620-moisted-32-samples disc-01          EXCLUDED  surface wetted
+  20260929-151207-coconut-620-moisted-32-samples disc-01          EXCLUDED  surface drying
+  20260929-165833-coconut-620-dry-32-samples   disc-01          EXCLUDED  E8 contact lost
+
+S_noise pairs:
+  disc-01          20260929-153440-coconut-620-dry-32-samples vs 20260929-154607-coconut-620-dry-32-samples: 1.13 %
+  disc-01          20260929-153440-coconut-620-dry-32-samples vs 20260929-160743-coconut-620-dry-32-samples: 1.31 %
+  disc-01          20260929-154607-coconut-620-dry-32-samples vs 20260929-160743-coconut-620-dry-32-samples: 0.63 %
+
+S_defect (each defect run against its specimen's intact reference):
+  disc-01          20260929-162756-coconut-620-dry-32-samples: 2.33 %  (20 min after last intact scan)
+  disc-01          20260929-172528-coconut-620-dry-32-samples: 3.65 %  (78 min after last intact scan)
+
+Notes:
+  - S_between needs intact scans of at least two specimens; this survey has 1.

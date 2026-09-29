@@ -223,7 +223,7 @@ class ConditionsPanelTests(QtTestCase):
         panel.temperature.setValue(28.5)
         panel.protrusion.setValue(4.0)
         panel.grounding.setCurrentText("floating")
-        panel.medium.setText("saline tank")
+        panel.medium.setCurrentText("saline tank")
         conditions = panel.conditions()
         self.assertAlmostEqual(conditions.saline_g_per_l, 2.5)
         self.assertAlmostEqual(conditions.fill_depth_mm, 40.0)
@@ -232,9 +232,11 @@ class ConditionsPanelTests(QtTestCase):
         self.assertEqual(conditions.grounding, "floating")
         self.assertEqual(conditions.validate(), [])
 
-    def test_blank_medium_falls_back_to_unknown_and_is_flagged(self):
+    def test_medium_starts_blank_and_is_flagged(self):
+        # No pre-filled medium: "saline tank" used to be recorded against every
+        # disc and belt run because nobody changed the default (ADR-0037).
         panel = ConditionsPanel()
-        panel.medium.setText("   ")
+        self.assertEqual(panel.medium.currentText(), "")
         conditions = panel.conditions()
         self.assertEqual(conditions.medium, "unknown")
         self.assertIn("medium is not set", conditions.validate())
@@ -358,9 +360,22 @@ class SettingsPanelPresetTests(QtTestCase):
         self.assertEqual(panel.preset.currentText(), "Resistor belt")
 
     def test_provisional_preset_says_so(self):
+        from dataclasses import replace
+
+        from tree_ert.settings import preset_by_name
+
         panel = self._panel()
-        panel.preset.setCurrentText("Coconut (provisional)")
+        panel._set_preset_note(replace(preset_by_name("Coconut"), validated=False))
         self.assertIn("PROVISIONAL", panel.preset_note.text())
+
+    def test_coconut_preset_applies_the_tuned_profile(self):
+        panel = self._panel()
+        panel.preset.setCurrentText("Coconut")
+        self.assertEqual(panel.dac.value(), 620)
+        self.assertEqual(panel.samples.value(), 32)
+        self.assertEqual(panel.settle.value(), 30)
+        self.assertEqual(panel.preset.currentText(), "Coconut")
+        self.assertNotIn("PROVISIONAL", panel.preset_note.text())
 
     def test_validated_preset_shows_provenance_without_the_warning(self):
         panel = self._panel()
@@ -934,6 +949,16 @@ class MainWindowTests(QtTestCase):
         window._on_finished(str(self.log_dir / "runs" / "second"), "s")
         self.assertEqual(window._baseline.run_id, "second")
 
+    def test_the_baseline_remembers_its_specimen(self):
+        import phase3a_unified_reconstruct as unified
+
+        window = MainWindow(log_dir=self.log_dir, demo=True)
+        self.addCleanup(window.close)
+        window.conditions_panel.specimen_id.setText("disc-03")
+        window._frames = [unified.UnifiedFrame(1, "ADJACENT", 100, 10, 4, [])]
+        window._on_finished(str(self.log_dir / "runs" / "first"), "s")
+        self.assertEqual(window._baseline.specimen_id, "disc-03")
+
     def test_a_skipped_reconstruction_states_its_reason_on_screen(self):
         window = MainWindow(log_dir=self.log_dir, demo=True)
         self.addCleanup(window.close)
@@ -1031,3 +1056,70 @@ class SettingsMigrationTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class StartGateTests(QtTestCase):
+    """Starting a scan is refused until the run is properly named (ADR-0037)."""
+
+    def setUp(self):
+        super().setUp()
+        self._tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self._tmp.cleanup)
+        self.window = MainWindow(log_dir=Path(self._tmp.name), demo=True)
+        self.addCleanup(self.window.close)
+
+    def _name(self, medium="cut disc", specimen="disc-03", target=""):
+        self.window.conditions_panel.medium.setCurrentText(medium)
+        self.window.conditions_panel.specimen_id.setText(specimen)
+        self.window.conditions_panel.target.setText(target)
+
+    def _problems(self):
+        conditions = self.window.conditions_panel.conditions()
+        return self.window.start_problems(conditions, self.window.label.text())
+
+    def test_a_fresh_window_cannot_start(self):
+        problems = self._problems()
+        self.assertTrue(any("medium" in p for p in problems))
+        self.assertTrue(any("specimen ID is empty" in p for p in problems))
+
+    def test_a_properly_named_run_may_start(self):
+        self._name()
+        self.assertEqual(self._problems(), [])
+
+    def test_the_label_is_generated_and_not_typed(self):
+        self.assertTrue(self.window.label.isReadOnly())
+        self._name()
+        self.assertEqual(self.window.label.text(), "disc-03-intact")
+        self._name(target="hole at E7, 20 mm deep")
+        self.assertEqual(self.window.label.text(), "disc-03-hole-at-e7-20-mm-deep")
+        self._name(medium="standing tree", specimen="coconut-tree-1")
+        self.assertEqual(self.window.label.text(), "coconut-tree-1-baseline")
+
+    def test_a_refused_start_launches_nothing(self):
+        from unittest import mock
+
+        with mock.patch("tree_ert.qt.main_window.QMessageBox.warning") as warning:
+            self.window.start_capture()
+        warning.assert_called_once()
+        self.assertIsNone(self.window._thread)
+        self.assertTrue(self.window.start_button.isEnabled())
+
+    def test_a_different_specimen_is_refused_while_a_baseline_is_held(self):
+        import phase3a_unified_reconstruct as unified
+
+        self._name()
+        self.window._frames = [unified.UnifiedFrame(1, "ADJACENT", 100, 10, 4, [])]
+        self.window._on_finished(str(Path(self._tmp.name) / "runs" / "first"), "s")
+        self._name(specimen="disc-04")
+        self.assertTrue(any("Clear the baseline" in p for p in self._problems()))
+        self.window.clear_baseline()
+        self.assertEqual(self._problems(), [])
+
+    def test_the_same_specimen_may_be_rescanned_against_its_baseline(self):
+        import phase3a_unified_reconstruct as unified
+
+        self._name()
+        self.window._frames = [unified.UnifiedFrame(1, "ADJACENT", 100, 10, 4, [])]
+        self.window._on_finished(str(Path(self._tmp.name) / "runs" / "first"), "s")
+        self._name(target="hole e7")
+        self.assertEqual(self._problems(), [])

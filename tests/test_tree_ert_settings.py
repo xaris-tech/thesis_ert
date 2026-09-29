@@ -79,11 +79,28 @@ class SpecimenPresetTests(unittest.TestCase):
         for expected in ("resistor belt", "saline", "coconut"):
             self.assertIn(expected, joined)
 
-    def test_coconut_is_marked_provisional_until_tuned(self):
-        coconut = next(
-            p for p in settings_module.SPECIMEN_PRESETS if "Coconut" in p.name
+    def test_coconut_carries_the_tuned_profile_and_its_runs(self):
+        # ADR-0039: values and provenance move together (ADR-0036).
+        coconut = settings_module.preset_by_name("Coconut")
+        self.assertTrue(coconut.validated)
+        self.assertEqual(
+            (coconut.pattern, coconut.current_range, coconut.dac, coconut.settle_ms, coconut.samples),
+            ("adjacent", "high", 620, 30, 32),
         )
-        self.assertFalse(coconut.validated)
+        for run_id in ("20260929-153440", "20260923-182816"):
+            self.assertIn(run_id, coconut.provenance)
+        self.assertIn("500 uA", coconut.provenance)
+
+    def test_no_two_presets_share_a_profile_with_coconut(self):
+        # The UI names the first preset whose values match; a duplicate of the
+        # coconut profile would display under the wrong name.
+        coconut = settings_module.preset_by_name("Coconut")
+        others = [p for p in settings_module.SPECIMEN_PRESETS if p is not coconut]
+        for preset in others:
+            self.assertFalse(
+                all(getattr(preset, f) == getattr(coconut, f) for f in settings_module.PRESET_FIELDS),
+                preset.name,
+            )
 
     def test_applying_a_preset_keeps_port_and_logging(self):
         # Port and scans root belong to the rig and session, not the specimen.

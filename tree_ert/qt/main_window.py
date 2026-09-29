@@ -118,7 +118,12 @@ class ConditionsPanel(QGroupBox):
         super().__init__("Conditions")
         layout = QFormLayout(self)
 
-        self.medium = QLineEdit("saline tank")
+        # No default on purpose: a pre-filled "saline tank" was recorded against
+        # every disc and belt run of 2026-09-29 (ADR-0037). The blank first item
+        # is refused by run_record.naming_problems, so it has to be chosen.
+        self.medium = QComboBox()
+        self.medium.addItem("")
+        self.medium.addItems(run_record.KNOWN_MEDIA)
         self.saline = self._number(" g/L", maximum=500.0, step=0.1)
         self.fill_depth = self._number(" mm", maximum=1000.0, step=1.0)
         self.temperature = self._number(" C", minimum=-10.0, maximum=100.0, step=0.1)
@@ -186,7 +191,7 @@ class ConditionsPanel(QGroupBox):
 
     def conditions(self) -> Conditions:
         return Conditions(
-            medium=self.medium.text().strip() or "unknown",
+            medium=self.medium.currentText().strip() or "unknown",
             saline_g_per_l=self._value(self.saline),
             fill_depth_mm=self._value(self.fill_depth),
             water_temp_c=self._value(self.temperature),
@@ -457,7 +462,15 @@ class MainWindow(QMainWindow):
         self.settings_panel.demo.setChecked(demo)
         self.conditions_panel = ConditionsPanel()
 
-        self.label = QLineEdit("tank-baseline")
+        # Generated, not typed (ADR-0040): it only restates the specimen and the
+        # target, and typed labels drifted into describing the settings instead.
+        self.label = QLineEdit()
+        self.label.setReadOnly(True)
+        self.label.setPlaceholderText("fills in from Specimen and Target")
+        panel = self.conditions_panel
+        panel.specimen_id.textChanged.connect(self._update_label)
+        panel.target.textChanged.connect(self._update_label)
+        panel.medium.currentTextChanged.connect(self._update_label)
         self.start_button = QPushButton("Start capture")
         self.start_button.setObjectName("Primary")
         self.start_button.clicked.connect(self.start_capture)
@@ -694,6 +707,21 @@ class MainWindow(QMainWindow):
             return
 
         conditions = self.conditions_panel.conditions()
+        label = run_record.run_label(conditions)
+        blocking = self.start_problems(conditions, label)
+        if blocking:
+            # A block, not a warning (ADR-0037). Identity is always known at the
+            # bench and cannot be recovered afterwards; every gap below it is
+            # something that may honestly not have been measured.
+            QMessageBox.warning(
+                self,
+                "Cannot start",
+                "Fix these before scanning:\n\n"
+                + "\n".join(f"  - {p}" for p in blocking),
+            )
+            self._log("Start refused: " + "; ".join(blocking))
+            return
+
         problems = conditions.validate()
         if problems:
             # A warning, never a block: a capture already worth taking must not
@@ -714,7 +742,7 @@ class MainWindow(QMainWindow):
         request = CaptureRequest(
             settings=settings,
             conditions=conditions,
-            label=self.label.text().strip() or "run",
+            label=label,
             frames=settings.frames,
             warmup_frames=settings.warmup_frames,
             baseline=self._baseline,
@@ -747,6 +775,20 @@ class MainWindow(QMainWindow):
             signal.connect(self._thread.quit)
         self._thread.finished.connect(self._on_thread_finished)
         self._thread.start()
+
+    def _update_label(self, *_args: object) -> None:
+        self.label.setText(run_record.run_label(self.conditions_panel.conditions()))
+
+    def start_problems(self, conditions: Conditions, label: str) -> list[str]:
+        """Everything that refuses a start: naming, then baseline identity."""
+        problems = run_record.naming_problems(conditions, label)
+        if self._baseline is not None:
+            mismatch = run_record.baseline_specimen_problem(
+                self._baseline.specimen_id, conditions.specimen_id
+            )
+            if mismatch:
+                problems.append(mismatch)
+        return problems
 
     def stop_capture(self) -> None:
         if self._worker is not None:
@@ -876,9 +918,13 @@ class MainWindow(QMainWindow):
                 run_id=Path(run_path).name,
                 frames=list(self._frames),
                 settings=settings_to_dict(self.settings_panel.settings()),
+                specimen_id=self.conditions_panel.conditions().specimen_id,
             )
             self.clear_baseline_button.setEnabled(True)
-            self.baseline_label.setText(f"Baseline: {self._baseline.run_id}")
+            self.baseline_label.setText(
+                f"Baseline: {self._baseline.run_id}"
+                f" ({self._baseline.specimen_id or 'no specimen ID'})"
+            )
             self._log(f"This run is now the session baseline ({self._baseline.run_id}).")
         self._log(f"Finished. Run saved to {run_path}")
         for line in summary.splitlines():

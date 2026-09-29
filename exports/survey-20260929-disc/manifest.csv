@@ -1,0 +1,16 @@
+# 2026-09-29 disc drill test. Taken before the ADR-0037 naming gate, so the runs
+# carry no specimen ID; "disc-01" is a placeholder for the real disc number.
+run_id,specimen_id,state,note
+20260929-135221-coconut-620-moisted,disc-01,excluded,surface wetted; E3/E11 contact faults
+20260929-140109-coconut-620-moisted,disc-01,excluded,surface wetted; 1 frame
+20260929-141611-coconut-620-moisted,disc-01,excluded,surface wetted
+20260929-142832-coconut-620-moisted,disc-01,excluded,surface wetted; samples 16
+20260929-143805-coconut-620-moisted-32-samples,disc-01,excluded,surface wetted
+20260929-145046-coconut-620-moisted-32-samples,disc-01,excluded,surface wetted
+20260929-151207-coconut-620-moisted-32-samples,disc-01,excluded,surface drying
+20260929-153440-coconut-620-dry-32-samples,disc-01,intact,
+20260929-154607-coconut-620-dry-32-samples,disc-01,intact,
+20260929-160743-coconut-620-dry-32-samples,disc-01,intact,
+20260929-162756-coconut-620-dry-32-samples,disc-01,defect,holes near E7-E9
+20260929-165833-coconut-620-dry-32-samples,disc-01,excluded,E8 contact lost
+20260929-172528-coconut-620-dry-32-samples,disc-01,defect,holes near E7-E9; E8 re-seated

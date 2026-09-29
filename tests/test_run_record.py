@@ -455,3 +455,115 @@ class RunDiscoveryTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class NamingProblemsTests(unittest.TestCase):
+    """Identity is refused rather than warned about (ADR-0037)."""
+
+    def _conditions(self, medium="cut disc", specimen="disc-03"):
+        return run_record.Conditions(medium=medium, specimen_id=specimen)
+
+    def test_a_properly_named_run_passes(self):
+        self.assertEqual(
+            run_record.naming_problems(self._conditions(), "disc-03-intact"), []
+        )
+
+    def test_multi_word_specimens_pass(self):
+        conditions = self._conditions(medium="standing tree", specimen="coconut-tree-1")
+        self.assertEqual(
+            run_record.naming_problems(conditions, "coconut-tree-1 dry 620"), []
+        )
+
+    def test_the_label_is_compared_after_slugifying(self):
+        # The folder name is what survives, so that is what has to be right.
+        self.assertEqual(
+            run_record.naming_problems(self._conditions(), "Disc-03 Hole E7"), []
+        )
+
+    def test_an_unknown_medium_is_refused(self):
+        for medium in ("unknown", "", "coconut trunk"):
+            problems = run_record.naming_problems(
+                self._conditions(medium=medium), "disc-03-intact"
+            )
+            self.assertTrue(any("medium must be one of" in p for p in problems), medium)
+
+    def test_an_empty_specimen_is_refused(self):
+        problems = run_record.naming_problems(self._conditions(specimen=""), "x")
+        self.assertTrue(any("specimen ID is empty" in p for p in problems))
+
+    def test_malformed_specimens_are_refused(self):
+        for specimen in ("disc", "Disc-03", "disc_03", "disc 03", "03", "disc-03-"):
+            problems = run_record.naming_problems(
+                self._conditions(specimen=specimen), f"{specimen}-intact"
+            )
+            self.assertTrue(
+                any("must be lowercase" in p for p in problems), specimen
+            )
+
+    def test_a_label_without_the_specimen_is_refused(self):
+        problems = run_record.naming_problems(
+            self._conditions(), "coconut-620-dry-32-samples"
+        )
+        self.assertTrue(any("label must start" in p for p in problems))
+
+    def test_a_label_that_is_only_the_specimen_is_refused(self):
+        # It has to say what the run is, not just which disc.
+        problems = run_record.naming_problems(self._conditions(), "disc-03")
+        self.assertTrue(any("label must start" in p for p in problems))
+
+    def test_a_prefix_collision_is_refused(self):
+        # disc-03 must not accept a label for disc-030.
+        problems = run_record.naming_problems(self._conditions(), "disc-030-intact")
+        self.assertTrue(any("label must start" in p for p in problems))
+
+
+class BaselineSpecimenTests(unittest.TestCase):
+    def test_the_same_specimen_is_allowed(self):
+        self.assertIsNone(run_record.baseline_specimen_problem("disc-03", "disc-03"))
+
+    def test_a_different_specimen_is_refused(self):
+        problem = run_record.baseline_specimen_problem("disc-03", "disc-04")
+        self.assertIn("disc-03", problem)
+        self.assertIn("Clear the baseline", problem)
+
+    def test_an_unrecorded_baseline_is_refused(self):
+        problem = run_record.baseline_specimen_problem("", "disc-03")
+        self.assertIn("unrecorded", problem)
+
+
+class RunLabelTests(unittest.TestCase):
+    """The label is generated from specimen and target (ADR-0040)."""
+
+    def _label(self, **fields):
+        return run_record.run_label(run_record.Conditions(**fields))
+
+    def test_an_intact_disc(self):
+        self.assertEqual(
+            self._label(medium="cut disc", specimen_id="disc-03"), "disc-03-intact"
+        )
+
+    def test_a_target_describes_the_run(self):
+        self.assertEqual(
+            self._label(
+                medium="cut disc", specimen_id="disc-03", target_description="Hole at E7"
+            ),
+            "disc-03-hole-at-e7",
+        )
+
+    def test_anything_but_a_disc_without_a_target_is_a_baseline(self):
+        # "intact" would be a claim about a standing tree nobody can make.
+        self.assertEqual(
+            self._label(medium="standing tree", specimen_id="coconut-tree-1"),
+            "coconut-tree-1-baseline",
+        )
+
+    def test_no_specimen_no_label(self):
+        self.assertEqual(self._label(medium="cut disc"), "")
+
+    def test_a_generated_label_always_passes_the_naming_rule(self):
+        conditions = run_record.Conditions(
+            medium="cut disc", specimen_id="disc-03", target_description="centre hole"
+        )
+        self.assertEqual(
+            run_record.naming_problems(conditions, run_record.run_label(conditions)), []
+        )

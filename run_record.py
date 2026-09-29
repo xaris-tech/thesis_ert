@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import csv
 import json
+import re
 import shutil
 import subprocess
 from dataclasses import asdict, dataclass, field
@@ -167,6 +168,97 @@ class Conditions:
         if major is not None and minor is not None and minor > major:
             problems.append("minor_diameter_mm is larger than major_diameter_mm")
         return problems
+
+
+# What a specimen can be. A closed list rather than free text because a free-text
+# field with a default was filled in by nobody: every run of 2026-09-29, disc and
+# belt alike, was recorded as "saline tank" because that was the pre-filled value
+# (ADR-0037). The survey groups runs by medium, so it has to be one of these.
+KNOWN_MEDIA = (
+    "cut disc",
+    "standing tree",
+    "resistor belt",
+    "saline tank",
+    "dummy load",
+)
+
+# Lowercase words joined by hyphens, ending in a number: disc-03, coconut-tree-1,
+# belt-1. The trailing number is required so that "disc" alone -- which names a
+# kind, not a specimen -- cannot pass.
+SPECIMEN_ID_PATTERN = re.compile(r"^[a-z][a-z0-9]*(?:-[a-z0-9]+)*-[0-9]+$")
+
+
+def naming_problems(conditions: Conditions, label: str) -> list[str]:
+    """Reasons a capture may not start. Empty list means it may.
+
+    Unlike :meth:`Conditions.validate`, these block. ``validate`` covers values
+    that may honestly not have been measured; these cover identity, which is
+    always known at the bench and cannot be recovered afterwards. A run whose
+    specimen is unrecorded cannot be placed in the survey (ADR-0035) nor safely
+    differenced (ADR-0037), so it is refused before it is taken.
+    """
+    problems: list[str] = []
+    if conditions.medium not in KNOWN_MEDIA:
+        problems.append(
+            f"medium must be one of: {', '.join(KNOWN_MEDIA)}"
+            f" (got {conditions.medium!r})"
+        )
+    specimen = conditions.specimen_id
+    if not specimen:
+        problems.append("specimen ID is empty (e.g. disc-03, coconut-tree-1)")
+    elif not SPECIMEN_ID_PATTERN.match(specimen):
+        problems.append(
+            f"specimen ID {specimen!r} must be lowercase words joined by hyphens"
+            " and end in a number (e.g. disc-03, coconut-tree-1)"
+        )
+    slug = slugify(label)
+    if specimen and SPECIMEN_ID_PATTERN.match(specimen):
+        prefix = f"{specimen}-"
+        if not slug.startswith(prefix) or len(slug) == len(prefix):
+            problems.append(
+                f"label must start with the specimen ID and say what the run is,"
+                f" e.g. '{specimen}-intact' or '{specimen}-hole-e7' (got {label.strip()!r})"
+            )
+    return problems
+
+
+def run_label(conditions: Conditions) -> str:
+    """The run label, built from the fields that already say what the run is.
+
+    ``<specimen ID>-<target>``, or ``-intact`` for a cut disc with no target
+    and ``-baseline`` for anything else with none. Generated rather than typed
+    because typing it only restated those fields, and on 2026-09-29 the typed
+    labels described the settings instead (ADR-0040). Empty until a specimen
+    ID is entered, which ``naming_problems`` then refuses.
+    """
+    specimen = conditions.specimen_id.strip()
+    if not specimen:
+        return ""
+    target = conditions.target_description.strip()
+    if target:
+        what = slugify(target)
+    elif conditions.medium == "cut disc":
+        what = "intact"
+    else:
+        what = "baseline"
+    return f"{specimen}-{what}"
+
+
+def baseline_specimen_problem(baseline_specimen: str, specimen: str) -> str | None:
+    """Why a run may not be differenced against the session baseline, if it may not.
+
+    A difference between two specimens images the specimens, not a change in
+    one of them, and the settings gate cannot see it because the instrument
+    settings match. A baseline recorded before specimen IDs existed has an empty
+    ID and cannot be shown to match, so it is refused too.
+    """
+    if baseline_specimen == specimen:
+        return None
+    shown = baseline_specimen or "an unrecorded specimen"
+    return (
+        f"the session baseline is from {shown}, this run is {specimen}."
+        " Clear the baseline before scanning a different specimen."
+    )
 
 
 def git_commit(repo_root: Path | None = None) -> str | None:

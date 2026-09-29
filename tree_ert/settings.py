@@ -269,12 +269,13 @@ PRESET_FIELDS = (
     "frames",
 )
 
-# All three specimen classes have so far been scanned at one profile -- adjacent
-# / high / 400 / 30 ms / 16 samples -- so the presets differ only in provenance
-# and in whether they are validated. They are listed separately anyway, because
-# the point of a preset is to be tuned per specimen and the coconut profile is
-# the one being tuned; identical values today are a fact about the record, not a
-# reason to offer one entry.
+# The belt and saline presets share one profile -- adjacent / high / 400 / 30 ms
+# / 16 samples -- because neither has been tuned past it; they are listed
+# separately because a preset is meant to be tuned per specimen. Coconut was
+# tuned on 2026-09-23 and 2026-09-29 and differs (ADR-0039). One coconut entry
+# covers cut discs and standing trees alike: the same profile was measured on
+# both, and two entries with identical values would display whichever matched
+# first.
 SPECIMEN_PRESETS = (
     SpecimenPreset(
         name="Resistor belt",
@@ -311,21 +312,24 @@ SPECIMEN_PRESETS = (
         validated=True,
     ),
     SpecimenPreset(
-        name="Coconut (provisional)",
+        name="Coconut",
         pattern="adjacent",
         current_range="high",
-        dac=400,
+        dac=620,
         settle_ms=30,
-        samples=16,
+        samples=32,
         warmup_frames=5,
         baseline_frames=5,
         target_warmup_frames=5,
         frames=10,
         provenance=(
-            "20260923-125411: reciprocity 3.7% median, noise 0.79%, offset 3.5x "
-            "signal. NOT TUNED -- these are the values that happened to be set"
+            "Dry cut disc 20260929-153440/154607/160743: 216/216 OK, noise "
+            "0.41-0.50%, reciprocity 4.1-4.5% median, drilled holes detected. "
+            "Standing tree 20260923-182816: noise 0.55%, reciprocity 2.5% median. "
+            "Worst pair up to 486 uA against the 500 uA limit -- check it on every "
+            "new specimen. Keep the surface dry (ADR-0039)"
         ),
-        validated=False,
+        validated=True,
     ),
 )
 

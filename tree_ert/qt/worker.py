@@ -39,6 +39,10 @@ class SessionBaseline:
     run_id: str
     frames: list
     settings: dict
+    specimen_id: str = ""
+    """Which specimen the baseline is of. A later run of a different specimen
+    is refused at start (ADR-0037); empty means unrecorded, which matches
+    nothing but another unrecorded run."""
 
 
 @dataclass(frozen=True)

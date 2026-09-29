@@ -1,0 +1,165 @@
+{
+  "profile": {
+    "pattern": "adjacent",
+    "current_range": "high",
+    "dac": 620,
+    "settle_ms": 30,
+    "samples": 32,
+    "electrode_offset": 0,
+    "electrode_reversed": false
+  },
+  "s_noise_percent": 1.1261951520876992,
+  "s_between_percent": null,
+  "s_defect_percent": 2.987237043287485,
+  "verdict": "no verdict: needs both S_between and S_defect",
+  "scans": [
+    {
+      "run_id": "20260929-153440-coconut-620-dry-32-samples",
+      "specimen_id": "disc-01",
+      "state": "intact",
+      "created_at": "2026-09-29T15:34:40",
+      "frames": 10,
+      "bad_cells": 0,
+      "contrast": {
+        "ratio": 24.706402765835474,
+        "robust_ratio": 5.846070650042717,
+        "spread": 2.752532988611312
+      }
+    },
+    {
+      "run_id": "20260929-154607-coconut-620-dry-32-samples",
+      "specimen_id": "disc-01",
+      "state": "intact",
+      "created_at": "2026-09-29T15:46:07",
+      "frames": 10,
+      "bad_cells": 0,
+      "contrast": {
+        "ratio": 18.02791059345957,
+        "robust_ratio": 5.6635083858236,
+        "spread": 2.6893458760810285
+      }
+    },
+    {
+      "run_id": "20260929-160743-coconut-620-dry-32-samples",
+      "specimen_id": "disc-01",
+      "state": "intact",
+      "created_at": "2026-09-29T16:07:43",
+      "frames": 10,
+      "bad_cells": 0,
+      "contrast": {
+        "ratio": 21.010626646926617,
+        "robust_ratio": 5.719366659132767,
+        "spread": 2.733297201278564
+      }
+    },
+    {
+      "run_id": "20260929-162756-coconut-620-dry-32-samples",
+      "specimen_id": "disc-01",
+      "state": "defect",
+      "created_at": "2026-09-29T16:27:56",
+      "frames": 10,
+      "bad_cells": 0,
+      "contrast": {
+        "ratio": 18.42974891844281,
+        "robust_ratio": 5.684032140809038,
+        "spread": 2.72672729407587
+      }
+    },
+    {
+      "run_id": "20260929-172528-coconut-620-dry-32-samples",
+      "specimen_id": "disc-01",
+      "state": "defect",
+      "created_at": "2026-09-29T17:25:28",
+      "frames": 10,
+      "bad_cells": 0,
+      "contrast": {
+        "ratio": 17.526687132956233,
+        "robust_ratio": 6.0973024045355295,
+        "spread": 2.6860904003349746
+      }
+    }
+  ],
+  "excluded": [
+    {
+      "run_id": "20260929-135221-coconut-620-moisted",
+      "specimen_id": "disc-01",
+      "note": "surface wetted; E3/E11 contact faults"
+    },
+    {
+      "run_id": "20260929-140109-coconut-620-moisted",
+      "specimen_id": "disc-01",
+      "note": "surface wetted; 1 frame"
+    },
+    {
+      "run_id": "20260929-141611-coconut-620-moisted",
+      "specimen_id": "disc-01",
+      "note": "surface wetted"
+    },
+    {
+      "run_id": "20260929-142832-coconut-620-moisted",
+      "specimen_id": "disc-01",
+      "note": "surface wetted; samples 16"
+    },
+    {
+      "run_id": "20260929-143805-coconut-620-moisted-32-samples",
+      "specimen_id": "disc-01",
+      "note": "surface wetted"
+    },
+    {
+      "run_id": "20260929-145046-coconut-620-moisted-32-samples",
+      "specimen_id": "disc-01",
+      "note": "surface wetted"
+    },
+    {
+      "run_id": "20260929-151207-coconut-620-moisted-32-samples",
+      "specimen_id": "disc-01",
+      "note": "surface drying"
+    },
+    {
+      "run_id": "20260929-165833-coconut-620-dry-32-samples",
+      "specimen_id": "disc-01",
+      "note": "E8 contact lost"
+    }
+  ],
+  "noise_pairs": [
+    {
+      "specimen_id": "disc-01",
+      "a": "20260929-153440-coconut-620-dry-32-samples",
+      "b": "20260929-154607-coconut-620-dry-32-samples",
+      "percent": 1.1261951520876992
+    },
+    {
+      "specimen_id": "disc-01",
+      "a": "20260929-153440-coconut-620-dry-32-samples",
+      "b": "20260929-160743-coconut-620-dry-32-samples",
+      "percent": 1.3078495844673794
+    },
+    {
+      "specimen_id": "disc-01",
+      "a": "20260929-154607-coconut-620-dry-32-samples",
+      "b": "20260929-160743-coconut-620-dry-32-samples",
+      "percent": 0.629100289014362
+    }
+  ],
+  "between_pairs": [],
+  "defects": [
+    {
+      "run_id": "20260929-162756-coconut-620-dry-32-samples",
+      "specimen_id": "disc-01",
+      "percent": 2.3290927449359367,
+      "minutes_after_intact": 20.216666666666665
+    },
+    {
+      "run_id": "20260929-172528-coconut-620-dry-32-samples",
+      "specimen_id": "disc-01",
+      "percent": 3.645381341639034,
+      "minutes_after_intact": 77.75
+    }
+  ],
+  "centre_distance_percent": {},
+  "cell_share_percent": {},
+  "electrode_share_percent": {},
+  "notes": [
+    "S_between needs intact scans of at least two specimens; this survey has 1."
+  ]
+}

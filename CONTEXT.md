@@ -96,6 +96,22 @@ _Avoid_: cut-trunk section, log, trunk sample
 The scan of every available cut-trunk disc in its undrilled state under one geometry and one settings profile, used to measure how far specimens of the same material differ when none carries a defect. It measures variability; it is not a reference scan and nothing is differenced against it.
 _Avoid_: healthy-tree baseline, cross-tree baseline, disc population baseline
 
+**Normalised measurement vector**:
+One scan's transfer resistances divided by their own mean magnitude, which cancels the specimen's resistivity and size and leaves only how the measurements are arranged. It is what the intact-disc survey compares; no image is involved.
+_Avoid_: normalised image, scaled reconstruction
+
+**Survey spread**:
+The typical distance between two normalised measurement vectors, as a percentage of the mean. There are three and they are always reported separately: `S_noise` (one specimen rescanned untouched), `S_between` (different intact specimens) and `S_defect` (one specimen before and after drilling).
+_Avoid_: survey error, survey noise (for `S_between` or `S_defect`), combined spread
+
+**Cohort**:
+The set of intact specimens scanned under one locked settings profile for the intact-disc survey. A specimen scanned at other settings, or one showing fungal colonisation, is excluded from the cohort with a recorded reason rather than retuned or kept.
+_Avoid_: population, sample (for the set of specimens)
+
+**Specimen ID**:
+The recorded name of one physical specimen, lowercase words joined by hyphens and ending in a number, such as `disc-03` or `coconut-tree-1`. A scan cannot be started without one, and it cannot be differenced against a baseline of a different specimen.
+_Avoid_: disc number (as free text), run label (for identity)
+
 **Artificial trunk defect**:
 A deliberately cut internal region in the cut-trunk pilot used to test whether the prototype can show a repeatable conductivity variation near a known sector.
 _Avoid_: natural disease, confirmed decay

@@ -90,3 +90,7 @@ one costs a re-derivation.
 | [0034](0034-living-tree-images-illustrate-the-cut-trunk-pilot-proves.md) | Living-tree images illustrate; the cut-trunk pilot proves (supersedes ADR-0028 premise) | Accepted |
 | [0035](0035-intact-disc-survey-measures-between-specimen-spread.md) | The intact-disc survey measures between-specimen spread before any cross-specimen claim | Accepted |
 | [0036](0036-specimen-presets-carry-their-provenance.md) | Specimen presets (belt / saline / coconut) carry the run their numbers came from | Accepted |
+| [0037](0037-refuse-a-scan-without-a-named-specimen.md) | Refuse to start a scan without a named specimen, and refuse a cross-specimen baseline | Accepted; label rule superseded by [0040](0040-generate-the-run-label-from-specimen-and-target.md) |
+| [0038](0038-survey-distances-on-normalised-vectors.md) | Survey spreads are RMS distances between mean-magnitude-normalised vectors | Accepted |
+| [0039](0039-coconut-preset-dac-620-32-samples.md) | The coconut preset is adjacent / high / DAC 620 / 30 ms / 32 samples, validated | Accepted |
+| [0040](0040-generate-the-run-label-from-specimen-and-target.md) | Generate the run label from specimen and target instead of typing it | Accepted |
