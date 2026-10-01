@@ -120,7 +120,7 @@ class ConditionsPanel(QGroupBox):
 
         # No default on purpose: a pre-filled "saline tank" was recorded against
         # every disc and belt run of 2026-09-29 (ADR-0037). The blank first item
-        # is refused by run_record.naming_problems, so it has to be chosen.
+        # is warned about by run_record.naming_problems (ADR-0041).
         self.medium = QComboBox()
         self.medium.addItem("")
         self.medium.addItems(run_record.KNOWN_MEDIA)
@@ -462,15 +462,18 @@ class MainWindow(QMainWindow):
         self.settings_panel.demo.setChecked(demo)
         self.conditions_panel = ConditionsPanel()
 
-        # Generated, not typed (ADR-0040): it only restates the specimen and the
-        # target, and typed labels drifted into describing the settings instead.
+        # Pre-filled from specimen and target, but editable (ADR-0042). Once the
+        # operator types in it, it stops following the conditions; clearing it
+        # hands it back to the generator.
         self.label = QLineEdit()
-        self.label.setReadOnly(True)
         self.label.setPlaceholderText("fills in from Specimen and Target")
+        self._label_typed = False
+        self.label.textEdited.connect(self._on_label_edited)
         panel = self.conditions_panel
         panel.specimen_id.textChanged.connect(self._update_label)
         panel.target.textChanged.connect(self._update_label)
         panel.medium.currentTextChanged.connect(self._update_label)
+        self._update_label()
         self.start_button = QPushButton("Start capture")
         self.start_button.setObjectName("Primary")
         self.start_button.clicked.connect(self.start_capture)
@@ -707,25 +710,15 @@ class MainWindow(QMainWindow):
             return
 
         conditions = self.conditions_panel.conditions()
-        label = run_record.run_label(conditions)
-        blocking = self.start_problems(conditions, label)
-        if blocking:
-            # A block, not a warning (ADR-0037). Identity is always known at the
-            # bench and cannot be recovered afterwards; every gap below it is
-            # something that may honestly not have been measured.
-            QMessageBox.warning(
-                self,
-                "Cannot start",
-                "Fix these before scanning:\n\n"
-                + "\n".join(f"  - {p}" for p in blocking),
-            )
-            self._log("Start refused: " + "; ".join(blocking))
-            return
-
-        problems = conditions.validate()
+        label = self.label.text().strip() or run_record.run_label(conditions)
+        naming = self.start_problems(conditions, label)
+        problems = naming + conditions.validate()
+        if naming:
+            self._log("Naming warnings: " + "; ".join(naming))
         if problems:
-            # A warning, never a block: a capture already worth taking must not
-            # be refused over metadata, and the gaps are recorded in the run.
+            # A warning, never a block (ADR-0041, superseding ADR-0037's refusal):
+            # a capture already worth taking must not be refused over metadata,
+            # and the gaps are recorded in the run.
             answer = QMessageBox.question(
                 self,
                 "Incomplete conditions",
@@ -777,10 +770,19 @@ class MainWindow(QMainWindow):
         self._thread.start()
 
     def _update_label(self, *_args: object) -> None:
-        self.label.setText(run_record.run_label(self.conditions_panel.conditions()))
+        generated = run_record.run_label(self.conditions_panel.conditions())
+        self.label.setPlaceholderText(generated)
+        if not self._label_typed:
+            self.label.setText(generated)
+
+    def _on_label_edited(self, text: str) -> None:
+        # Typing marks the label as the operator's. Emptying it is left empty,
+        # not refilled mid-edit; the generated name shows as the placeholder and
+        # is what start_capture uses for a blank field.
+        self._label_typed = True
 
     def start_problems(self, conditions: Conditions, label: str) -> list[str]:
-        """Everything that refuses a start: naming, then baseline identity."""
+        """Naming and baseline-identity warnings shown before a start (ADR-0041)."""
         problems = run_record.naming_problems(conditions, label)
         if self._baseline is not None:
             mismatch = run_record.baseline_specimen_problem(

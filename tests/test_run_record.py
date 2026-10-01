@@ -458,7 +458,7 @@ if __name__ == "__main__":
 
 
 class NamingProblemsTests(unittest.TestCase):
-    """Identity is refused rather than warned about (ADR-0037)."""
+    """Identity gaps are reported as warnings (ADR-0037, ADR-0041)."""
 
     def _conditions(self, medium="cut disc", specimen="disc-03"):
         return run_record.Conditions(medium=medium, specimen_id=specimen)
@@ -500,21 +500,10 @@ class NamingProblemsTests(unittest.TestCase):
                 any("must be lowercase" in p for p in problems), specimen
             )
 
-    def test_a_label_without_the_specimen_is_refused(self):
-        problems = run_record.naming_problems(
-            self._conditions(), "coconut-620-dry-32-samples"
-        )
-        self.assertTrue(any("label must start" in p for p in problems))
-
-    def test_a_label_that_is_only_the_specimen_is_refused(self):
-        # It has to say what the run is, not just which disc.
-        problems = run_record.naming_problems(self._conditions(), "disc-03")
-        self.assertTrue(any("label must start" in p for p in problems))
-
-    def test_a_prefix_collision_is_refused(self):
-        # disc-03 must not accept a label for disc-030.
-        problems = run_record.naming_problems(self._conditions(), "disc-030-intact")
-        self.assertTrue(any("label must start" in p for p in problems))
+    def test_any_label_is_accepted(self):
+        # The label is free text (ADR-0042).
+        for label in ("coconut-620-dry-32-samples", "disc-03", "", "my test"):
+            self.assertEqual(run_record.naming_problems(self._conditions(), label), [])
 
 
 class BaselineSpecimenTests(unittest.TestCase):
@@ -557,8 +546,9 @@ class RunLabelTests(unittest.TestCase):
             "coconut-tree-1-baseline",
         )
 
-    def test_no_specimen_no_label(self):
-        self.assertEqual(self._label(medium="cut disc"), "")
+    def test_no_specimen_falls_back_to_the_medium(self):
+        self.assertEqual(self._label(medium="cut disc"), "cut-disc-intact")
+        self.assertEqual(self._label(), "run-baseline")
 
     def test_a_generated_label_always_passes_the_naming_rule(self):
         conditions = run_record.Conditions(

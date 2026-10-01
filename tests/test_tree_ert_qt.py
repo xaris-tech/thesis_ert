@@ -1059,7 +1059,7 @@ if __name__ == "__main__":
 
 
 class StartGateTests(QtTestCase):
-    """Starting a scan is refused until the run is properly named (ADR-0037)."""
+    """Naming gaps warn before a scan but never refuse it (ADR-0041)."""
 
     def setUp(self):
         super().setUp()
@@ -1077,7 +1077,8 @@ class StartGateTests(QtTestCase):
         conditions = self.window.conditions_panel.conditions()
         return self.window.start_problems(conditions, self.window.label.text())
 
-    def test_a_fresh_window_cannot_start(self):
+    def test_a_fresh_window_warns_and_is_still_named(self):
+        self.assertEqual(self.window.label.text(), "run-baseline")
         problems = self._problems()
         self.assertTrue(any("medium" in p for p in problems))
         self.assertTrue(any("specimen ID is empty" in p for p in problems))
@@ -1086,8 +1087,8 @@ class StartGateTests(QtTestCase):
         self._name()
         self.assertEqual(self._problems(), [])
 
-    def test_the_label_is_generated_and_not_typed(self):
-        self.assertTrue(self.window.label.isReadOnly())
+    def test_the_label_is_generated_until_typed(self):
+        self.assertFalse(self.window.label.isReadOnly())
         self._name()
         self.assertEqual(self.window.label.text(), "disc-03-intact")
         self._name(target="hole at E7, 20 mm deep")
@@ -1095,16 +1096,35 @@ class StartGateTests(QtTestCase):
         self._name(medium="standing tree", specimen="coconut-tree-1")
         self.assertEqual(self.window.label.text(), "coconut-tree-1-baseline")
 
-    def test_a_refused_start_launches_nothing(self):
+    def test_a_typed_label_sticks_and_clearing_does_not_refill(self):
+        self._name()
+        self.window.label.setText("my disc test")
+        self.window._on_label_edited("my disc test")
+        self._name(target="hole e7")
+        self.assertEqual(self.window.label.text(), "my disc test")
+        self.window.label.setText("")
+        self.window._on_label_edited("")
+        # Emptying is not refilled mid-edit; the generated name is the placeholder.
+        self.assertEqual(self.window.label.text(), "")
+        self.assertEqual(self.window.label.placeholderText(), "disc-03-hole-e7")
+
+    def test_naming_gaps_warn_but_do_not_refuse(self):
         from unittest import mock
 
-        with mock.patch("tree_ert.qt.main_window.QMessageBox.warning") as warning:
-            self.window.start_capture()
-        warning.assert_called_once()
-        self.assertIsNone(self.window._thread)
-        self.assertTrue(self.window.start_button.isEnabled())
+        from PyQt6.QtWidgets import QMessageBox
 
-    def test_a_different_specimen_is_refused_while_a_baseline_is_held(self):
+        with mock.patch(
+            "tree_ert.qt.main_window.QMessageBox.question",
+            return_value=QMessageBox.StandardButton.No,
+        ) as question, mock.patch(
+            "tree_ert.qt.main_window.QMessageBox.warning"
+        ) as warning:
+            self.window.start_capture()
+        warning.assert_not_called()
+        question.assert_called_once()
+        self.assertIn("specimen ID is empty", question.call_args.args[2])
+
+    def test_a_different_specimen_is_warned_about_while_a_baseline_is_held(self):
         import phase3a_unified_reconstruct as unified
 
         self._name()
