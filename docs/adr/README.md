@@ -96,3 +96,4 @@ one costs a re-derivation.
 | [0040](0040-generate-the-run-label-from-specimen-and-target.md) | Generate the run label from specimen and target instead of typing it | Superseded by [0042](0042-the-run-label-is-editable.md) |
 | [0041](0041-naming-gaps-warn-instead-of-refusing.md) | Naming gaps warn instead of refusing a scan; the label stays generated | Accepted |
 | [0042](0042-the-run-label-is-editable.md) | The run label is editable, pre-filled from specimen and target | Accepted |
+| [0043](0043-load-a-recorded-run-as-the-baseline.md) | Load a recorded run as the baseline, remembered as the default; cross-specimen images stamped | Accepted |

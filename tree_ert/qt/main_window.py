@@ -53,6 +53,9 @@ from tree_ert.qt.worker import (
     CaptureWorker,
     SessionBaseline,
     available_ports,
+    baseline_from_run,
+    read_default_baseline,
+    write_default_baseline,
 )
 from tree_ert.settings import (
     SPECIMEN_PRESETS,
@@ -454,7 +457,8 @@ class MainWindow(QMainWindow):
         self._run_path: Path | None = None
         self._expected_frames = 0
         self._baseline: SessionBaseline | None = None
-        """First run of the session. Every later run differences against it."""
+        """First run of the session, or a run loaded from disk (ADR-0043).
+        Every later run differences against it."""
 
         self.setStyleSheet(theme.stylesheet())
 
@@ -496,6 +500,13 @@ class MainWindow(QMainWindow):
         self.clear_baseline_button.setObjectName("Subtle")
         self.clear_baseline_button.setEnabled(False)
         self.clear_baseline_button.clicked.connect(self.clear_baseline)
+        self.load_baseline_button = QPushButton("Load baseline from run...")
+        self.load_baseline_button.setObjectName("Subtle")
+        self.load_baseline_button.setToolTip(
+            "Use an existing recorded run as the baseline. It is remembered and "
+            "loaded again at the next start until cleared (ADR-0043)."
+        )
+        self.load_baseline_button.clicked.connect(self.choose_baseline)
         self.baseline_label = QLabel("Next run becomes the session baseline.")
         self.baseline_label.setWordWrap(True)
         self.override_reciprocity = QCheckBox(
@@ -514,6 +525,9 @@ class MainWindow(QMainWindow):
         existing = len(run_record.list_runs(self._log_dir))
         self._log(f"Scans folder: {self._log_dir.resolve()}")
         self._log(f"{existing} scan(s) already recorded here.")
+        default = read_default_baseline(self._log_dir)
+        if default is not None:
+            self.load_baseline(default)
         self._log("Ready. Settings are saved on exit.")
 
     # -- layout ----------------------------------------------------------
@@ -572,7 +586,10 @@ class MainWindow(QMainWindow):
         run_layout.addLayout(extras)
         run_layout.addWidget(self.scans_button)
         run_layout.addWidget(self.baseline_label)
-        run_layout.addWidget(self.clear_baseline_button)
+        baseline_buttons = QHBoxLayout()
+        baseline_buttons.addWidget(self.load_baseline_button)
+        baseline_buttons.addWidget(self.clear_baseline_button)
+        run_layout.addLayout(baseline_buttons)
         run_layout.addWidget(self.override_reciprocity)
         inner_layout.addWidget(run_box)
         inner_layout.addStretch(1)
@@ -908,9 +925,48 @@ class MainWindow(QMainWindow):
         accepted while describing a different specimen.
         """
         self._baseline = None
+        write_default_baseline(self._log_dir, None)
         self.clear_baseline_button.setEnabled(False)
         self.baseline_label.setText("Next run becomes the session baseline.")
         self._log("Baseline cleared; the next run will become the new baseline.")
+
+    def choose_baseline(self) -> None:
+        start = self._log_dir / run_record.RUNS_DIRNAME
+        path = QFileDialog.getExistingDirectory(
+            self, "Choose baseline run", str(start if start.is_dir() else self._log_dir)
+        )
+        if path:
+            self.load_baseline(Path(path))
+
+    def load_baseline(self, run_dir: Path) -> bool:
+        """Make a recorded run the baseline and remember it as the default.
+
+        A run that cannot be read is reported and leaves the current baseline
+        as it was; a stale default is forgotten so startup does not retry it.
+        """
+        try:
+            baseline = baseline_from_run(run_dir)
+        except Exception as exc:  # noqa: BLE001 - report, never crash the window
+            self._log(f"Could not load baseline {run_dir}: {type(exc).__name__}: {exc}")
+            if read_default_baseline(self._log_dir) == Path(run_dir):
+                write_default_baseline(self._log_dir, None)
+            return False
+        self._baseline = baseline
+        write_default_baseline(self._log_dir, baseline.run_id)
+        self.clear_baseline_button.setEnabled(True)
+        settings = baseline.settings
+        self.baseline_label.setText(
+            f"Baseline (loaded): {baseline.run_id}"
+            f" ({baseline.specimen_id or 'no specimen ID'})\n"
+            f"{settings.get('pattern', '?')} / DAC {settings.get('dac', '?')}"
+            f" / {len(baseline.frames)} frames - later runs must match its settings"
+        )
+        self._log(
+            f"Baseline loaded from {baseline.run_id} "
+            f"({len(baseline.frames)} frames, specimen "
+            f"{baseline.specimen_id or 'unrecorded'}); remembered as the default."
+        )
+        return True
 
     def _on_finished(self, run_path: str, summary: str) -> None:
         if self._baseline is None and self._frames:

@@ -22,7 +22,7 @@ from PyQt6.QtCore import QObject, pyqtSignal
 
 import run_record
 from run_record import Conditions
-from tree_ert import capture_view, reconstruction
+from tree_ert import capture_view, reconstruction, survey
 from tree_ert.acquisition import Acquisition
 from tree_ert.settings import UiSettings, settings_to_dict
 
@@ -31,9 +31,9 @@ from tree_ert.settings import UiSettings, settings_to_dict
 class SessionBaseline:
     """The run every later capture in this session is differenced against.
 
-    Frames are held in memory rather than re-read from disk: the baseline is by
-    definition from this session, and re-parsing its CSV would reconstruct the
-    vectors from a lossier source than the objects already in hand.
+    Frames from a run captured in this session are held in memory rather than
+    re-read from disk. A baseline loaded from an earlier run (ADR-0043) is
+    rebuilt from that run's ``frames.csv`` by :func:`baseline_from_run`.
     """
 
     run_id: str
@@ -43,6 +43,66 @@ class SessionBaseline:
     """Which specimen the baseline is of. A later run of a different specimen
     is refused at start (ADR-0037); empty means unrecorded, which matches
     nothing but another unrecorded run."""
+    loaded: bool = False
+    """True when loaded from a recorded run rather than captured this session."""
+
+
+DEFAULT_BASELINE_FILENAME = "default_baseline.txt"
+"""Holds the run id of the baseline loaded at startup (ADR-0043)."""
+
+
+def baseline_from_run(run_dir: Path) -> SessionBaseline:
+    """Rebuild a session baseline from a recorded run (ADR-0043).
+
+    Settings come from the run's own ``conditions.json``, so the settings gate
+    in :func:`reconstruction.reconstruct` still refuses a run taken under
+    different settings. Raises if the directory is not a run or has no frames.
+    """
+    run_dir = Path(run_dir)
+    record = run_record.load_run(run_dir)
+    frames = survey.load_frames(run_dir)
+    if not frames:
+        raise ValueError(f"{run_dir.name} has no frames")
+    return SessionBaseline(
+        run_id=run_dir.name,
+        frames=frames,
+        settings=dict(record.get("settings", {})),
+        specimen_id=record["conditions"].specimen_id,
+        loaded=True,
+    )
+
+
+def read_default_baseline(log_dir: Path) -> Path | None:
+    """The run directory remembered as the default baseline, if one is set."""
+    marker = Path(log_dir) / DEFAULT_BASELINE_FILENAME
+    if not marker.is_file():
+        return None
+    run_id = marker.read_text(encoding="utf-8").strip()
+    return Path(log_dir) / run_record.RUNS_DIRNAME / run_id if run_id else None
+
+
+def write_default_baseline(log_dir: Path, run_id: str | None) -> None:
+    """Remember ``run_id`` as the default baseline; None forgets it."""
+    marker = Path(log_dir) / DEFAULT_BASELINE_FILENAME
+    if run_id:
+        marker.write_text(run_id + "\n", encoding="utf-8")
+    elif marker.exists():
+        marker.unlink()
+
+
+def cross_specimen_note(baseline: SessionBaseline, specimen_id: str) -> str:
+    """Stamp for an image whose baseline is a different specimen (ADR-0043).
+
+    Empty when both IDs are recorded and equal. An unrecorded ID on either side
+    is stamped too: identity that cannot be checked is not assumed.
+    """
+    if baseline.specimen_id and baseline.specimen_id == specimen_id:
+        return ""
+    return (
+        "CROSS-SPECIMEN BASELINE "
+        f"({baseline.specimen_id or 'unrecorded'} -> {specimen_id or 'unrecorded'})"
+        " - shows specimen difference, not only defects"
+    )
 
 
 @dataclass(frozen=True)
@@ -258,6 +318,9 @@ class CaptureWorker(QObject):
             self.progress.emit(override_note)
         else:
             self._reciprocity_gate = "pass"
+        cross_note = cross_specimen_note(baseline, self._request.conditions.specimen_id)
+        if cross_note:
+            self.progress.emit(cross_note)
         try:
             noise = summary.noise
             result = reconstruction.reconstruct(
@@ -291,7 +354,9 @@ class CaptureWorker(QObject):
                 recorder.path / "reconstruction.npz",
                 title=f"{recorder.label} vs baseline",
                 subtitle="\n".join(
-                    line for line in (override_note, f"baseline: {baseline.run_id}") if line
+                    line
+                    for line in (override_note, cross_note, f"baseline: {baseline.run_id}")
+                    if line
                 ),
                 control=control,
             )
@@ -302,8 +367,9 @@ class CaptureWorker(QObject):
                     f"\nsignificance {reconstruction.significance(result, control):.2f}x"
                     " the noise image"
                 )
-            if override_note:
-                caption = f"{override_note}\n{caption}"
+            for note in (cross_note, override_note):
+                if note:
+                    caption = f"{note}\n{caption}"
             recorder.write_text(
                 "reconstruction.txt", caption + f"\nbaseline run: {baseline.run_id}\n"
             )
