@@ -1,0 +1,3 @@
+Frames captured: 10
+Reciprocity: no reciprocal pairs captured
+Noise floor: median pair sd 0.00009 kohm (0.15%)  max 0.00455 kohm over 96 pairs
