@@ -1,0 +1,7 @@
+# 2026-10-01 opposite-drive cohort. Separate from the adjacent manifest because the
+# survey refuses mixed settings. Specimen field in the UI read disc-07 by mistake.
+run_id,specimen_id,state,note
+20261001-202522-coco-disk-04-opp,disc-04,excluded,cancelled with 0 frames
+20261001-204339-coco-disk-04-opp,disc-04,intact,healthy; signal 3.17 mV noise 0.57%
+20261001-205506-coco-disk-04-opp,disc-04,intact,healthy back-to-back; S_noise vs 204339 6.4%
+20261001-211735-coco-disk-04-opp,disc-04,intact,healthy, nothing changed (operator); image 3.6x noise = false positive from inter-run drift

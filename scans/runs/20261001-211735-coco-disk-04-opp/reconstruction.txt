@@ -1,0 +1,8 @@
+RECIPROCITY OVERRIDDEN - NOT VALID DATA (baseline: reciprocity could not be measured (no reciprocal pairs); this run: reciprocity could not be measured (no reciprocal pairs))
+peak -5.203e-02 at 329 deg (x=+0.79, y=-0.47)
+colour scale +/-5.203e-02  (auto-scaled to this image)
+pairs 96/96 kept  [ok]
+measurement noise floor 0.00023 kohm - a change below this is not a detection
+control peak +1.462e-02
+significance 3.56x the noise image
+baseline run: 20261001-204339-coco-disk-04-opp

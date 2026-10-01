@@ -1,0 +1,25 @@
+INTACT-DISC SURVEY (ADR-0035, ADR-0038)
+
+Profile: pattern=opposite, current_range=high, dac=620, settle_ms=30, samples=32, electrode_offset=0, electrode_reversed=False
+Distances are RMS differences of normalised vectors, % of mean |R|.
+
+Spreads (reported separately, never combined):
+  S_noise        6.38 %   same specimen rescanned untouched
+  S_between         n/a   different intact specimens
+  S_defect          n/a   same specimen, before vs after drilling
+  no verdict: needs both S_between and S_defect
+
+Scans:
+  run                                          specimen         state    bad  max/min  p95/p5  spread
+  20261001-204339-coco-disk-04-opp             disc-04          intact     0    63.25    9.64    3.29
+  20261001-205506-coco-disk-04-opp             disc-04          intact     0    85.46    7.70    3.54
+  20261001-211735-coco-disk-04-opp             disc-04          intact     0   124.38    8.05    3.62
+  20261001-202522-coco-disk-04-opp             disc-04          EXCLUDED  cancelled with 0 frames
+
+S_noise pairs:
+  disc-04          20261001-204339-coco-disk-04-opp vs 20261001-205506-coco-disk-04-opp: 6.38 %
+  disc-04          20261001-204339-coco-disk-04-opp vs 20261001-211735-coco-disk-04-opp: 8.71 %
+  disc-04          20261001-205506-coco-disk-04-opp vs 20261001-211735-coco-disk-04-opp: 6.09 %
+
+Notes:
+  - S_between needs intact scans of at least two specimens; this survey has 1.
