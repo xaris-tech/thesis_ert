@@ -1,0 +1,29 @@
+run_id,role,target,electrode,expected_deg,peak_deg,angle_error_deg,peak_value,significance,baseline_run,note
+20261002-114218-ssim-saline,excluded-unsettled,,,,,,,,,"morning setup: drifting baselines, see README"
+20261002-115104-ssim-saline-1,excluded-unsettled,,,,171,,-9.090e-01,6.13,20261002-114218-ssim-saline,"morning setup: drifting baselines, see README"
+20261002-120201-ssim-saline-2,excluded-unsettled,,,,171,,-1.033e+00,6.97,20261002-114218-ssim-saline,"morning setup: drifting baselines, see README"
+20261002-121144-ssim-saline,excluded-unsettled,,,,,,,,,"morning setup: drifting baselines, see README"
+20261002-122207-ssim-saline,excluded-unsettled,,,,,,,,,"morning setup: drifting baselines, see README"
+20261002-125328-ssim-saline,excluded-unsettled,,,,,,,,,"morning setup: drifting baselines, see README"
+20261002-131348-ssim-saline-7,excluded-unsettled,,,,,,,,,"morning setup: drifting baselines, see README"
+20261002-132906-ssim-saline,excluded-unsettled,,,,,,,,,"morning setup: drifting baselines, see README"
+20261002-133531-ssim-saline,excluded-unsettled,,,,,,,,,"morning setup: drifting baselines, see README"
+20261002-134418-ssim-saline,excluded-unsettled,,,,150,,-1.733e-01,0.92,20261002-133531-ssim-saline,"wood at E1 vs unsettled baseline 133531: 0.92x, peak at E2 - failed, see README"
+20261002-135739-ssim-saline,baseline,empty,,,,,,,,
+20261002-140411-ssim-saline,target,"A: near E9 (block centre ~128 mm from tank centre, upright, 23 mm face to centre)",E9,300,305,5,-1.990e-01,9.35,20261002-135739-ssim-saline,target amended after capture
+20261002-141259-ssim-saline,target,wood block at 10,E10,270,274,4,-2.346e-01,11.01,20261002-135739-ssim-saline,
+20261002-141918-ssim-saline,target,wood block at 11,E11,240,236,-4,-2.347e-01,11.02,20261002-135739-ssim-saline,
+20261002-142601-ssim-saline,target,wood at 4,E4,90,87,-3,-2.733e-01,12.83,20261002-135739-ssim-saline,
+20261002-143242-ssim-saline,baseline,empty,,,,,,,,
+20261002-144109-ssim-saline,target,wood at e5,E5,60,69,9,-2.463e-01,35.49,20261002-143242-ssim-saline,
+20261002-144734-ssim-saline,target,wood at e6,E6,30,39,9,-2.389e-01,34.42,20261002-143242-ssim-saline,
+20261002-145332-ssim-saline,target,wood at e7,E7,0,0,0,-2.287e-01,32.94,20261002-143242-ssim-saline,
+20261002-150425-ssim-saline,target,wood at e8,E8,330,323,-7,-2.364e-01,34.06,20261002-143242-ssim-saline,
+20261002-151045-ssim-saline,baseline,empty,,,,,,,,
+20261002-151731-ssim-saline,target,wood at e12,E12,210,211,1,-2.191e-01,13.15,20261002-151045-ssim-saline,
+20261002-152426-ssim-saline,target,wood at e1,E1,180,184,4,-2.065e-01,12.39,20261002-151045-ssim-saline,
+20261002-153056-ssim-saline,baseline,empty,,,,,,,,
+20261002-153824-ssim-saline,target,wood at e3,E3,120,112,-8,-2.262e-01,17.77,20261002-153056-ssim-saline,
+20261002-164016-ssim-saline,target,wood at e2,E2,150,147,-3,-2.478e-01,19.46,20261002-153056-ssim-saline,baseline 70 min old; peak may include E2 drift - superseded by 165444
+20261002-164714-ssim-saline,baseline,empty,,,,,,,,
+20261002-165444-ssim-saline,target,wood at e2,E2,150,138,-12,-1.531e-01,6.50,20261002-164714-ssim-saline,E2 repeat on fresh baseline - use this one

@@ -1,0 +1,7 @@
+peak -2.463e-01 at 69 deg (x=+0.16, y=+0.42)
+colour scale +/-2.463e-01  (auto-scaled to this image)
+pairs 108/108 kept  [ok]
+measurement noise floor 0.00010 kohm - a change below this is not a detection
+control peak -6.941e-03
+significance 35.49x the noise image
+baseline run: 20261002-143242-ssim-saline

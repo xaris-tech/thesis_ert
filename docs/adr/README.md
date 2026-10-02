@@ -97,3 +97,4 @@ one costs a re-derivation.
 | [0041](0041-naming-gaps-warn-instead-of-refusing.md) | Naming gaps warn instead of refusing a scan; the label stays generated | Accepted |
 | [0042](0042-the-run-label-is-editable.md) | The run label is editable, pre-filled from specimen and target | Accepted |
 | [0043](0043-load-a-recorded-run-as-the-baseline.md) | Load a recorded run as the baseline, remembered as the default; cross-specimen images stamped | Accepted |
+| [0044](0044-saline-ssim-series-fresh-baseline-per-target-group.md) | Saline SSIM series: fresh self-checked baseline per target group; angle error is the headline metric | Accepted |
