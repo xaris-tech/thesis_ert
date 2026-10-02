@@ -5739,3 +5739,276 @@
 2026-10-02 17:01:50    Check electrode contact: E2 74%, E1 60%, E3 34% (all pairs median 13%)
 2026-10-02 17:01:50    Noise floor: median pair sd 0.00013 kohm (1.44%)  max 0.00222 kohm over 108 pairs
 2026-10-02 17:01:50  Indexed in scans\index.csv
+2026-10-02 17:04:47  Baseline cleared; the next run will become the new baseline.
+2026-10-02 17:05:39  Naming warnings: specimen ID 'saline-tank' must be lowercase words joined by hyphens and end in a number (e.g. disc-03, coconut-tree-1)
+2026-10-02 17:05:41  Connecting to COM12...
+2026-10-02 17:05:41  Configuring instrument...
+
+------------------------------------------------------------------------
+2026-10-02 17:05:41  Run 20261002-170541-ssim-saline
+2026-10-02 17:05:41  Conditions: medium=saline tank saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-02 17:05:41  Recording to scans\runs\20261002-170541-ssim-saline
+2026-10-02 17:06:09  [warmup 1/10] 216/216 OK | I med 228.1 uA (76.4-333.0) | R med 0.0064 kohm | dV med 369 LSB
+2026-10-02 17:06:38  [warmup 2/10] 216/216 OK | I med 227.6 uA (74.5-331.1) | R med 0.0063 kohm | dV med 370 LSB
+2026-10-02 17:07:06  [warmup 3/10] 216/216 OK | I med 227.1 uA (73.2-330.7) | R med 0.0062 kohm | dV med 367 LSB
+2026-10-02 17:07:34  [warmup 4/10] 216/216 OK | I med 227.0 uA (73.2-330.9) | R med 0.0061 kohm | dV med 369 LSB
+2026-10-02 17:08:03  [warmup 5/10] 216/216 OK | I med 227.3 uA (73.5-329.6) | R med 0.0063 kohm | dV med 369 LSB
+2026-10-02 17:08:31  [warmup 6/10] 216/216 OK | I med 227.2 uA (72.5-329.8) | R med 0.0062 kohm | dV med 372 LSB
+2026-10-02 17:08:59  [warmup 7/10] 216/216 OK | I med 227.0 uA (72.9-329.7) | R med 0.0062 kohm | dV med 367 LSB
+2026-10-02 17:09:28  [warmup 8/10] 216/216 OK | I med 227.3 uA (72.5-330.1) | R med 0.0062 kohm | dV med 367 LSB
+2026-10-02 17:09:56  [warmup 9/10] 216/216 OK | I med 226.7 uA (73.3-330.1) | R med 0.0061 kohm | dV med 369 LSB
+2026-10-02 17:10:24  [warmup 10/10] 216/216 OK | I med 227.2 uA (73.1-329.7) | R med 0.0062 kohm | dV med 370 LSB
+2026-10-02 17:10:52  [frame 1] 216/216 OK | I med 227.0 uA (72.9-329.5) | R med 0.0062 kohm | dV med 370 LSB
+2026-10-02 17:11:21  [frame 2] 216/216 OK | I med 227.0 uA (73.3-329.1) | R med 0.0063 kohm | dV med 367 LSB
+2026-10-02 17:11:49  [frame 3] 216/216 OK | I med 227.1 uA (73.2-329.5) | R med 0.0063 kohm | dV med 370 LSB
+2026-10-02 17:12:17  [frame 4] 216/216 OK | I med 226.8 uA (72.8-329.3) | R med 0.0063 kohm | dV med 366 LSB
+2026-10-02 17:12:46  [frame 5] 216/216 OK | I med 227.4 uA (73.0-329.3) | R med 0.0063 kohm | dV med 367 LSB
+2026-10-02 17:12:46  No reconstruction: This run is the session baseline; it has nothing to differ from.
+2026-10-02 17:12:47  Baseline control image saved to scans\runs\20261002-170541-ssim-saline\control.png
+2026-10-02 17:12:47  This run is now the session baseline (20261002-170541-ssim-saline).
+2026-10-02 17:12:47  Finished. Run saved to scans\runs\20261002-170541-ssim-saline
+2026-10-02 17:12:47    Frames captured: 5
+2026-10-02 17:12:47    Reciprocity: median 12.4%  max 99.4%  sign flips 1/54
+2026-10-02 17:12:47    Check electrode contact: E2 86%, E1 62%, E3 37% (all pairs median 12%)
+2026-10-02 17:12:47    Noise floor: median pair sd 0.00012 kohm (1.34%)  max 0.00312 kohm over 108 pairs
+2026-10-02 17:12:47  Indexed in scans\index.csv
+2026-10-02 17:13:19  Naming warnings: specimen ID 'saline-tank' must be lowercase words joined by hyphens and end in a number (e.g. disc-03, coconut-tree-1)
+2026-10-02 17:13:21  Connecting to COM12...
+2026-10-02 17:13:21  Configuring instrument...
+
+------------------------------------------------------------------------
+2026-10-02 17:13:21  Run 20261002-171321-ssim-saline
+2026-10-02 17:13:21  Conditions: medium=saline tank saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-02 17:13:21  Recording to scans\runs\20261002-171321-ssim-saline
+2026-10-02 17:13:49  [warmup 1/10] 216/216 OK | I med 229.0 uA (76.0-332.1) | R med 0.0072 kohm | dV med 428 LSB
+2026-10-02 17:14:18  [warmup 2/10] 216/216 OK | I med 228.2 uA (73.1-330.8) | R med 0.0070 kohm | dV med 432 LSB
+2026-10-02 17:14:46  [warmup 3/10] 216/216 OK | I med 227.8 uA (73.9-330.1) | R med 0.0071 kohm | dV med 433 LSB
+2026-10-02 17:15:14  [warmup 4/10] 216/216 OK | I med 228.0 uA (72.6-329.7) | R med 0.0070 kohm | dV med 427 LSB
+2026-10-02 17:15:43  [warmup 5/10] 216/216 OK | I med 227.7 uA (72.5-329.7) | R med 0.0070 kohm | dV med 428 LSB
+2026-10-02 17:16:11  [warmup 6/10] 216/216 OK | I med 227.9 uA (72.6-329.6) | R med 0.0071 kohm | dV med 429 LSB
+2026-10-02 17:16:39  [warmup 7/10] 216/216 OK | I med 227.8 uA (73.1-329.1) | R med 0.0070 kohm | dV med 430 LSB
+2026-10-02 17:17:07  [warmup 8/10] 216/216 OK | I med 227.7 uA (72.9-330.2) | R med 0.0071 kohm | dV med 435 LSB
+2026-10-02 17:17:36  [warmup 9/10] 216/216 OK | I med 227.5 uA (72.6-330.1) | R med 0.0070 kohm | dV med 426 LSB
+2026-10-02 17:18:04  [warmup 10/10] 216/216 OK | I med 227.6 uA (72.1-329.7) | R med 0.0070 kohm | dV med 427 LSB
+2026-10-02 17:18:32  [frame 1] 216/216 OK | I med 227.4 uA (72.7-330.0) | R med 0.0071 kohm | dV med 433 LSB
+2026-10-02 17:19:01  [frame 2] 216/216 OK | I med 227.6 uA (72.9-329.7) | R med 0.0071 kohm | dV med 430 LSB
+2026-10-02 17:19:29  [frame 3] 216/216 OK | I med 227.6 uA (72.9-329.7) | R med 0.0070 kohm | dV med 431 LSB
+2026-10-02 17:19:57  [frame 4] 216/216 OK | I med 227.5 uA (73.2-329.2) | R med 0.0070 kohm | dV med 429 LSB
+2026-10-02 17:20:26  [frame 5] 216/216 OK | I med 227.4 uA (72.7-329.5) | R med 0.0071 kohm | dV med 430 LSB
+2026-10-02 17:20:28  Reconstruction: Peak -1.277e-01 at 54 deg  |  pairs 108/108 [ok]  |  5.8x the noise image
+2026-10-02 17:20:28  Finished. Run saved to scans\runs\20261002-171321-ssim-saline
+2026-10-02 17:20:28    Frames captured: 5
+2026-10-02 17:20:28    Reciprocity: median 13.2%  max 96.3%  sign flips 1/54
+2026-10-02 17:20:28    Check electrode contact: E2 77%, E1 65%, E3 32% (all pairs median 13%)
+2026-10-02 17:20:28    Noise floor: median pair sd 0.00010 kohm (1.02%)  max 0.00092 kohm over 108 pairs
+2026-10-02 17:20:28  Indexed in scans\index.csv
+2026-10-02 17:23:19  Naming warnings: specimen ID 'saline-tank' must be lowercase words joined by hyphens and end in a number (e.g. disc-03, coconut-tree-1)
+2026-10-02 17:23:21  Connecting to COM12...
+2026-10-02 17:23:21  Configuring instrument...
+
+------------------------------------------------------------------------
+2026-10-02 17:23:21  Run 20261002-172321-ssim-saline
+2026-10-02 17:23:21  Conditions: medium=saline tank saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-02 17:23:21  Recording to scans\runs\20261002-172321-ssim-saline
+2026-10-02 17:23:49  [warmup 1/10] 216/216 OK | I med 225.6 uA (74.6-331.3) | R med 0.0080 kohm | dV med 465 LSB
+2026-10-02 17:24:18  [warmup 2/10] 216/216 OK | I med 224.5 uA (74.0-328.8) | R med 0.0078 kohm | dV med 452 LSB
+2026-10-02 17:24:46  [warmup 3/10] 216/216 OK | I med 224.6 uA (73.5-327.9) | R med 0.0080 kohm | dV med 452 LSB
+2026-10-02 17:25:14  [warmup 4/10] 216/216 OK | I med 224.4 uA (73.6-327.9) | R med 0.0080 kohm | dV med 452 LSB
+2026-10-02 17:25:42  [warmup 5/10] 216/216 OK | I med 224.3 uA (72.7-327.6) | R med 0.0080 kohm | dV med 450 LSB
+2026-10-02 17:26:11  [warmup 6/10] 216/216 OK | I med 224.0 uA (72.8-327.4) | R med 0.0080 kohm | dV med 449 LSB
+2026-10-02 17:26:39  [warmup 7/10] 216/216 OK | I med 224.4 uA (72.5-326.5) | R med 0.0080 kohm | dV med 451 LSB
+2026-10-02 17:27:07  [warmup 8/10] 216/216 OK | I med 224.5 uA (72.8-326.8) | R med 0.0079 kohm | dV med 452 LSB
+2026-10-02 17:27:36  [warmup 9/10] 216/216 OK | I med 224.2 uA (73.0-327.5) | R med 0.0079 kohm | dV med 455 LSB
+2026-10-02 17:28:04  [warmup 10/10] 216/216 OK | I med 224.4 uA (73.1-326.6) | R med 0.0079 kohm | dV med 450 LSB
+2026-10-02 17:28:32  [frame 1] 216/216 OK | I med 224.4 uA (73.3-327.3) | R med 0.0078 kohm | dV med 450 LSB
+2026-10-02 17:29:01  [frame 2] 216/216 OK | I med 224.3 uA (73.2-326.9) | R med 0.0077 kohm | dV med 452 LSB
+2026-10-02 17:29:29  [frame 3] 216/216 OK | I med 224.4 uA (72.5-326.9) | R med 0.0079 kohm | dV med 451 LSB
+2026-10-02 17:29:57  [frame 4] 216/216 OK | I med 224.5 uA (73.4-327.3) | R med 0.0079 kohm | dV med 455 LSB
+2026-10-02 17:30:25  [frame 5] 216/216 OK | I med 224.3 uA (73.1-326.5) | R med 0.0079 kohm | dV med 452 LSB
+2026-10-02 17:30:27  Reconstruction: Peak -1.759e-01 at 356 deg  |  pairs 108/108 [ok]  |  8.0x the noise image
+2026-10-02 17:30:27  Finished. Run saved to scans\runs\20261002-172321-ssim-saline
+2026-10-02 17:30:27    Frames captured: 5
+2026-10-02 17:30:27    Reciprocity: median 12.9%  max 95.3%  sign flips 1/54
+2026-10-02 17:30:27    Check electrode contact: E2 79%, E1 39% (all pairs median 13%)
+2026-10-02 17:30:27    Noise floor: median pair sd 0.00012 kohm (1.22%)  max 0.00229 kohm over 108 pairs
+2026-10-02 17:30:27  Indexed in scans\index.csv
+2026-10-02 17:31:21  Naming warnings: specimen ID 'saline-tank' must be lowercase words joined by hyphens and end in a number (e.g. disc-03, coconut-tree-1)
+2026-10-02 17:31:23  Connecting to COM12...
+2026-10-02 17:31:23  Configuring instrument...
+
+------------------------------------------------------------------------
+2026-10-02 17:31:23  Run 20261002-173123-ssim-saline
+2026-10-02 17:31:23  Conditions: medium=saline tank saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-02 17:31:23  Recording to scans\runs\20261002-173123-ssim-saline
+2026-10-02 17:31:51  [warmup 1/10] 216/216 OK | I med 228.2 uA (74.9-332.8) | R med 0.0079 kohm | dV med 452 LSB
+2026-10-02 17:32:19  [warmup 2/10] 216/216 OK | I med 228.0 uA (72.7-330.9) | R med 0.0077 kohm | dV med 457 LSB
+2026-10-02 17:32:48  [warmup 3/10] 216/216 OK | I med 227.3 uA (72.6-330.3) | R med 0.0075 kohm | dV med 455 LSB
+2026-10-02 17:33:16  [warmup 4/10] 216/216 OK | I med 226.6 uA (72.5-329.8) | R med 0.0077 kohm | dV med 461 LSB
+2026-10-02 17:33:44  [warmup 5/10] 216/216 OK | I med 227.1 uA (73.0-329.8) | R med 0.0077 kohm | dV med 454 LSB
+2026-10-02 17:34:13  [warmup 6/10] 216/216 OK | I med 226.9 uA (73.1-329.5) | R med 0.0076 kohm | dV med 460 LSB
+2026-10-02 17:34:41  [warmup 7/10] 216/216 OK | I med 227.0 uA (73.7-329.7) | R med 0.0076 kohm | dV med 454 LSB
+2026-10-02 17:35:09  [warmup 8/10] 216/216 OK | I med 227.1 uA (73.0-331.3) | R med 0.0077 kohm | dV med 455 LSB
+2026-10-02 17:35:37  [warmup 9/10] 216/216 OK | I med 227.0 uA (72.9-330.8) | R med 0.0078 kohm | dV med 452 LSB
+2026-10-02 17:36:06  [warmup 10/10] 216/216 OK | I med 227.5 uA (73.5-330.9) | R med 0.0077 kohm | dV med 452 LSB
+2026-10-02 17:36:34  [frame 1] 216/216 OK | I med 227.3 uA (72.9-331.7) | R med 0.0077 kohm | dV med 450 LSB
+2026-10-02 17:37:02  [frame 2] 216/216 OK | I med 227.2 uA (72.6-331.8) | R med 0.0078 kohm | dV med 462 LSB
+2026-10-02 17:37:31  [frame 3] 216/216 OK | I med 227.3 uA (73.3-332.1) | R med 0.0080 kohm | dV med 460 LSB
+2026-10-02 17:37:59  [frame 4] 216/216 OK | I med 227.2 uA (73.2-332.1) | R med 0.0079 kohm | dV med 463 LSB
+2026-10-02 17:38:27  [frame 5] 216/216 OK | I med 227.2 uA (73.3-332.4) | R med 0.0079 kohm | dV med 462 LSB
+2026-10-02 17:38:29  Reconstruction: Peak -1.667e-01 at 294 deg  |  pairs 108/108 [ok]  |  7.6x the noise image
+2026-10-02 17:38:29  Finished. Run saved to scans\runs\20261002-173123-ssim-saline
+2026-10-02 17:38:29    Frames captured: 5
+2026-10-02 17:38:29    Reciprocity: median 14.9%  max 94.4%  sign flips 1/54
+2026-10-02 17:38:29    Check electrode contact: E2 69%, E1 50%, E3 37% (all pairs median 15%)
+2026-10-02 17:38:29    Noise floor: median pair sd 0.00013 kohm (1.49%)  max 0.00809 kohm over 108 pairs
+2026-10-02 17:38:29  Indexed in scans\index.csv
+2026-10-02 17:39:49  Naming warnings: specimen ID 'saline-tank' must be lowercase words joined by hyphens and end in a number (e.g. disc-03, coconut-tree-1)
+2026-10-02 17:39:51  Connecting to COM12...
+2026-10-02 17:39:51  Configuring instrument...
+
+------------------------------------------------------------------------
+2026-10-02 17:39:51  Run 20261002-173951-ssim-saline
+2026-10-02 17:39:51  Conditions: medium=saline tank saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-02 17:39:51  Recording to scans\runs\20261002-173951-ssim-saline
+2026-10-02 17:40:19  [warmup 1/10] 216/216 OK | I med 228.1 uA (74.6-334.8) | R med 0.0082 kohm | dV med 448 LSB
+2026-10-02 17:40:47  [warmup 2/10] 216/216 OK | I med 228.1 uA (73.1-332.8) | R med 0.0076 kohm | dV med 444 LSB
+2026-10-02 17:41:16  [warmup 3/10] 216/216 OK | I med 227.8 uA (73.5-333.2) | R med 0.0078 kohm | dV med 445 LSB
+2026-10-02 17:41:44  [warmup 4/10] 216/216 OK | I med 228.0 uA (73.3-332.3) | R med 0.0078 kohm | dV med 444 LSB
+2026-10-02 17:42:12  [warmup 5/10] 216/216 OK | I med 227.7 uA (72.4-331.6) | R med 0.0078 kohm | dV med 442 LSB
+2026-10-02 17:42:40  [warmup 6/10] 216/216 OK | I med 227.8 uA (72.2-332.9) | R med 0.0077 kohm | dV med 443 LSB
+2026-10-02 17:43:09  [warmup 7/10] 216/216 OK | I med 228.0 uA (72.3-332.2) | R med 0.0078 kohm | dV med 442 LSB
+2026-10-02 17:43:37  [warmup 8/10] 216/216 OK | I med 227.9 uA (72.6-331.7) | R med 0.0078 kohm | dV med 442 LSB
+2026-10-02 17:44:05  [warmup 9/10] 216/216 OK | I med 228.0 uA (72.9-332.0) | R med 0.0077 kohm | dV med 442 LSB
+2026-10-02 17:44:34  [warmup 10/10] 216/216 OK | I med 227.9 uA (72.7-331.1) | R med 0.0077 kohm | dV med 444 LSB
+2026-10-02 17:45:02  [frame 1] 216/216 OK | I med 227.9 uA (73.1-332.2) | R med 0.0078 kohm | dV med 442 LSB
+2026-10-02 17:45:30  [frame 2] 216/216 OK | I med 228.0 uA (72.8-331.9) | R med 0.0078 kohm | dV med 442 LSB
+2026-10-02 17:45:59  [frame 3] 216/216 OK | I med 228.1 uA (72.4-331.7) | R med 0.0077 kohm | dV med 448 LSB
+2026-10-02 17:46:27  [frame 4] 216/216 OK | I med 228.0 uA (72.5-331.5) | R med 0.0078 kohm | dV med 442 LSB
+2026-10-02 17:46:55  [frame 5] 216/216 OK | I med 228.1 uA (72.4-331.6) | R med 0.0078 kohm | dV med 442 LSB
+2026-10-02 17:46:57  Reconstruction: Peak -1.667e-01 at 294 deg  |  pairs 108/108 [ok]  |  7.6x the noise image
+2026-10-02 17:46:57  Finished. Run saved to scans\runs\20261002-173951-ssim-saline
+2026-10-02 17:46:57    Frames captured: 5
+2026-10-02 17:46:57    Reciprocity: median 11.8%  max 96.0%  sign flips 1/54
+2026-10-02 17:46:57    Check electrode contact: E1 76%, E2 76%, E3 40% (all pairs median 12%)
+2026-10-02 17:46:57    Noise floor: median pair sd 0.00010 kohm (1.09%)  max 0.00167 kohm over 108 pairs
+2026-10-02 17:46:57  Indexed in scans\index.csv
+2026-10-02 17:47:36  Naming warnings: specimen ID 'saline-tank' must be lowercase words joined by hyphens and end in a number (e.g. disc-03, coconut-tree-1)
+2026-10-02 17:47:38  Connecting to COM12...
+2026-10-02 17:47:38  Configuring instrument...
+
+------------------------------------------------------------------------
+2026-10-02 17:47:38  Run 20261002-174738-ssim-saline
+2026-10-02 17:47:38  Conditions: medium=saline tank saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-02 17:47:38  Recording to scans\runs\20261002-174738-ssim-saline
+2026-10-02 17:48:06  [warmup 1/10] 216/216 OK | I med 228.9 uA (75.1-334.8) | R med 0.0078 kohm | dV med 437 LSB
+2026-10-02 17:48:35  [warmup 2/10] 216/216 OK | I med 228.3 uA (72.1-333.8) | R med 0.0078 kohm | dV med 433 LSB
+2026-10-02 17:49:03  [warmup 3/10] 216/216 OK | I med 228.1 uA (72.3-332.6) | R med 0.0078 kohm | dV med 435 LSB
+2026-10-02 17:49:31  [warmup 4/10] 216/216 OK | I med 228.5 uA (72.4-331.5) | R med 0.0079 kohm | dV med 436 LSB
+2026-10-02 17:49:59  [warmup 5/10] 216/216 OK | I med 228.2 uA (71.9-332.5) | R med 0.0078 kohm | dV med 436 LSB
+2026-10-02 17:50:28  [warmup 6/10] 216/216 OK | I med 228.5 uA (72.0-332.2) | R med 0.0078 kohm | dV med 432 LSB
+2026-10-02 17:50:56  [warmup 7/10] 216/216 OK | I med 228.6 uA (71.7-332.8) | R med 0.0079 kohm | dV med 436 LSB
+2026-10-02 17:51:24  [warmup 8/10] 216/216 OK | I med 228.4 uA (72.0-332.6) | R med 0.0079 kohm | dV med 432 LSB
+2026-10-02 17:51:53  [warmup 9/10] 216/216 OK | I med 228.3 uA (71.8-332.1) | R med 0.0079 kohm | dV med 436 LSB
+2026-10-02 17:52:21  [warmup 10/10] 216/216 OK | I med 228.3 uA (71.1-332.1) | R med 0.0079 kohm | dV med 433 LSB
+2026-10-02 17:52:49  [frame 1] 216/216 OK | I med 228.7 uA (71.6-332.3) | R med 0.0078 kohm | dV med 435 LSB
+2026-10-02 17:53:18  [frame 2] 216/216 OK | I med 228.3 uA (71.0-332.8) | R med 0.0079 kohm | dV med 433 LSB
+2026-10-02 17:53:46  [frame 3] 216/216 OK | I med 228.3 uA (71.6-332.4) | R med 0.0079 kohm | dV med 435 LSB
+2026-10-02 17:54:14  [frame 4] 216/216 OK | I med 228.4 uA (71.3-332.0) | R med 0.0078 kohm | dV med 434 LSB
+2026-10-02 17:54:42  [frame 5] 216/216 OK | I med 228.2 uA (71.7-332.6) | R med 0.0078 kohm | dV med 435 LSB
+2026-10-02 17:54:44  Reconstruction: Peak -1.705e-01 at 276 deg  |  pairs 108/108 [ok]  |  7.8x the noise image
+2026-10-02 17:54:44  Finished. Run saved to scans\runs\20261002-174738-ssim-saline
+2026-10-02 17:54:44    Frames captured: 5
+2026-10-02 17:54:44    Reciprocity: median 13.2%  max 96.5%  sign flips 1/54
+2026-10-02 17:54:44    Check electrode contact: E2 87%, E1 71%, E3 34% (all pairs median 13%)
+2026-10-02 17:54:44    Noise floor: median pair sd 0.00010 kohm (1.07%)  max 0.00129 kohm over 108 pairs
+2026-10-02 17:54:44  Indexed in scans\index.csv
+2026-10-02 17:55:14  Naming warnings: specimen ID 'saline-tank' must be lowercase words joined by hyphens and end in a number (e.g. disc-03, coconut-tree-1)
+2026-10-02 17:55:16  Connecting to COM12...
+2026-10-02 17:55:16  Configuring instrument...
+
+------------------------------------------------------------------------
+2026-10-02 17:55:16  Run 20261002-175516-ssim-saline
+2026-10-02 17:55:16  Conditions: medium=saline tank saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-02 17:55:16  Recording to scans\runs\20261002-175516-ssim-saline
+2026-10-02 17:55:44  [warmup 1/10] 216/216 OK | I med 229.7 uA (74.6-333.6) | R med 0.0078 kohm | dV med 450 LSB
+2026-10-02 17:56:12  [warmup 2/10] 216/216 OK | I med 229.1 uA (71.8-332.2) | R med 0.0076 kohm | dV med 443 LSB
+2026-10-02 17:56:41  [warmup 3/10] 216/216 OK | I med 229.1 uA (71.7-332.2) | R med 0.0075 kohm | dV med 442 LSB
+2026-10-02 17:57:09  [warmup 4/10] 216/216 OK | I med 228.9 uA (72.5-331.7) | R med 0.0075 kohm | dV med 443 LSB
+2026-10-02 17:57:37  [warmup 5/10] 216/216 OK | I med 228.6 uA (72.5-331.4) | R med 0.0075 kohm | dV med 444 LSB
+2026-10-02 17:58:05  [warmup 6/10] 216/216 OK | I med 229.1 uA (71.8-331.5) | R med 0.0076 kohm | dV med 443 LSB
+2026-10-02 17:58:34  [warmup 7/10] 216/216 OK | I med 228.8 uA (71.9-331.1) | R med 0.0076 kohm | dV med 444 LSB
+2026-10-02 17:59:02  [warmup 8/10] 216/216 OK | I med 228.8 uA (72.1-331.7) | R med 0.0076 kohm | dV med 444 LSB
+2026-10-02 17:59:30  [warmup 9/10] 216/216 OK | I med 229.1 uA (72.5-331.5) | R med 0.0075 kohm | dV med 444 LSB
+2026-10-02 17:59:59  [warmup 10/10] 216/216 OK | I med 229.1 uA (72.2-331.2) | R med 0.0075 kohm | dV med 443 LSB
+2026-10-02 18:00:27  [frame 1] 216/216 OK | I med 228.9 uA (72.2-331.1) | R med 0.0075 kohm | dV med 442 LSB
+2026-10-02 18:00:55  [frame 2] 216/216 OK | I med 228.9 uA (71.5-331.7) | R med 0.0075 kohm | dV med 442 LSB
+2026-10-02 18:01:24  [frame 3] 216/216 OK | I med 228.9 uA (72.2-331.6) | R med 0.0074 kohm | dV med 442 LSB
+2026-10-02 18:01:52  [frame 4] 216/216 OK | I med 229.0 uA (72.2-331.2) | R med 0.0075 kohm | dV med 443 LSB
+2026-10-02 18:02:20  [frame 5] 216/216 OK | I med 229.0 uA (72.1-331.3) | R med 0.0075 kohm | dV med 443 LSB
+2026-10-02 18:02:22  Reconstruction: Peak -1.842e-01 at 236 deg  |  pairs 108/108 [ok]  |  8.4x the noise image
+2026-10-02 18:02:22  Finished. Run saved to scans\runs\20261002-175516-ssim-saline
+2026-10-02 18:02:22    Frames captured: 5
+2026-10-02 18:02:22    Reciprocity: median 12.0%  max 97.5%  sign flips 2/54
+2026-10-02 18:02:22    Check electrode contact: E2 86%, E1 63%, E3 35% (all pairs median 12%)
+2026-10-02 18:02:22    Noise floor: median pair sd 0.00011 kohm (1.27%)  max 0.00349 kohm over 108 pairs
+2026-10-02 18:02:22  Indexed in scans\index.csv
+2026-10-02 18:04:02  Naming warnings: specimen ID 'saline-tank' must be lowercase words joined by hyphens and end in a number (e.g. disc-03, coconut-tree-1)
+2026-10-02 18:04:03  Connecting to COM12...
+2026-10-02 18:04:03  Configuring instrument...
+
+------------------------------------------------------------------------
+2026-10-02 18:04:03  Run 20261002-180403-ssim-saline
+2026-10-02 18:04:03  Conditions: medium=saline tank saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-02 18:04:03  Recording to scans\runs\20261002-180403-ssim-saline
+2026-10-02 18:04:32  [warmup 1/10] 216/216 OK | I med 229.1 uA (75.5-331.8) | R med 0.0072 kohm | dV med 452 LSB
+2026-10-02 18:05:00  [warmup 2/10] 216/216 OK | I med 227.8 uA (71.3-330.0) | R med 0.0076 kohm | dV med 450 LSB
+2026-10-02 18:05:28  [warmup 3/10] 216/216 OK | I med 227.4 uA (71.6-330.4) | R med 0.0076 kohm | dV med 446 LSB
+2026-10-02 18:05:57  [warmup 4/10] 216/216 OK | I med 227.5 uA (71.5-330.5) | R med 0.0077 kohm | dV med 449 LSB
+2026-10-02 18:06:25  [warmup 5/10] 216/216 OK | I med 227.3 uA (71.7-329.8) | R med 0.0077 kohm | dV med 446 LSB
+2026-10-02 18:06:53  [warmup 6/10] 216/216 OK | I med 227.6 uA (72.0-330.1) | R med 0.0077 kohm | dV med 450 LSB
+2026-10-02 18:07:22  [warmup 7/10] 216/216 OK | I med 227.7 uA (71.6-329.7) | R med 0.0076 kohm | dV med 447 LSB
+2026-10-02 18:07:50  [warmup 8/10] 216/216 OK | I med 227.5 uA (72.5-330.0) | R med 0.0076 kohm | dV med 449 LSB
+2026-10-02 18:08:18  [warmup 9/10] 216/216 OK | I med 227.4 uA (72.1-329.0) | R med 0.0077 kohm | dV med 445 LSB
+2026-10-02 18:08:46  [warmup 10/10] 216/216 OK | I med 227.5 uA (71.7-329.4) | R med 0.0077 kohm | dV med 446 LSB
+2026-10-02 18:09:15  [frame 1] 216/216 OK | I med 227.2 uA (71.3-328.9) | R med 0.0077 kohm | dV med 450 LSB
+2026-10-02 18:09:43  [frame 2] 216/216 OK | I med 227.3 uA (71.8-328.9) | R med 0.0077 kohm | dV med 444 LSB
+2026-10-02 18:10:11  [frame 3] 216/216 OK | I med 227.2 uA (72.4-329.7) | R med 0.0077 kohm | dV med 448 LSB
+2026-10-02 18:10:40  [frame 4] 216/216 OK | I med 227.1 uA (71.5-329.7) | R med 0.0076 kohm | dV med 443 LSB
+2026-10-02 18:11:08  [frame 5] 216/216 OK | I med 227.2 uA (71.3-328.7) | R med 0.0076 kohm | dV med 444 LSB
+2026-10-02 18:11:10  Reconstruction: Peak -1.648e-01 at 206 deg  |  pairs 108/108 [ok]  |  7.5x the noise image
+2026-10-02 18:11:10  Finished. Run saved to scans\runs\20261002-180403-ssim-saline
+2026-10-02 18:11:10    Frames captured: 5
+2026-10-02 18:11:10    Reciprocity: median 12.6%  max 99.6%  sign flips 2/54
+2026-10-02 18:11:10    Check electrode contact: E2 82%, E1 61%, E3 29% (all pairs median 13%)
+2026-10-02 18:11:10    Noise floor: median pair sd 0.00015 kohm (1.53%)  max 0.00228 kohm over 108 pairs
+2026-10-02 18:11:10  Indexed in scans\index.csv
+2026-10-02 18:12:03  Naming warnings: specimen ID 'saline-tank' must be lowercase words joined by hyphens and end in a number (e.g. disc-03, coconut-tree-1)
+2026-10-02 18:12:05  Connecting to COM12...
+2026-10-02 18:12:05  Configuring instrument...
+
+------------------------------------------------------------------------
+2026-10-02 18:12:05  Run 20261002-181205-ssim-saline
+2026-10-02 18:12:05  Conditions: medium=saline tank saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-02 18:12:05  Recording to scans\runs\20261002-181205-ssim-saline
+2026-10-02 18:12:33  [warmup 1/10] 216/216 OK | I med 231.4 uA (75.3-338.6) | R med 0.0079 kohm | dV med 457 LSB
+2026-10-02 18:13:02  [warmup 2/10] 216/216 OK | I med 230.7 uA (73.1-335.0) | R med 0.0074 kohm | dV med 445 LSB
+2026-10-02 18:13:30  [warmup 3/10] 216/216 OK | I med 230.3 uA (73.4-334.0) | R med 0.0073 kohm | dV med 441 LSB
+2026-10-02 18:13:58  [warmup 4/10] 216/216 OK | I med 229.9 uA (73.8-334.4) | R med 0.0073 kohm | dV med 441 LSB
+2026-10-02 18:14:26  [warmup 5/10] 216/216 OK | I med 229.9 uA (73.8-333.7) | R med 0.0074 kohm | dV med 439 LSB
+2026-10-02 18:14:55  [warmup 6/10] 216/216 OK | I med 229.7 uA (73.5-333.3) | R med 0.0074 kohm | dV med 438 LSB
+2026-10-02 18:15:23  [warmup 7/10] 216/216 OK | I med 230.0 uA (72.6-333.2) | R med 0.0074 kohm | dV med 445 LSB
+2026-10-02 18:15:51  [warmup 8/10] 216/216 OK | I med 229.7 uA (72.9-333.6) | R med 0.0074 kohm | dV med 440 LSB
+2026-10-02 18:16:20  [warmup 9/10] 216/216 OK | I med 229.6 uA (73.0-333.9) | R med 0.0073 kohm | dV med 437 LSB
+2026-10-02 18:16:48  [warmup 10/10] 216/216 OK | I med 229.9 uA (73.6-333.6) | R med 0.0073 kohm | dV med 438 LSB
+2026-10-02 18:17:16  [frame 1] 216/216 OK | I med 229.7 uA (73.0-333.6) | R med 0.0074 kohm | dV med 442 LSB
+2026-10-02 18:17:45  [frame 2] 216/216 OK | I med 229.7 uA (73.7-333.2) | R med 0.0074 kohm | dV med 440 LSB
+2026-10-02 18:18:13  [frame 3] 216/216 OK | I med 229.7 uA (73.6-333.2) | R med 0.0074 kohm | dV med 441 LSB
+2026-10-02 18:18:41  [frame 4] 216/216 OK | I med 229.7 uA (72.4-333.6) | R med 0.0073 kohm | dV med 442 LSB
+2026-10-02 18:19:09  [frame 5] 216/216 OK | I med 229.7 uA (73.6-333.7) | R med 0.0075 kohm | dV med 441 LSB
+2026-10-02 18:19:11  Reconstruction: Peak -1.749e-01 at 329 deg  |  pairs 108/108 [ok]  |  8.0x the noise image
+2026-10-02 18:19:11  Finished. Run saved to scans\runs\20261002-181205-ssim-saline
+2026-10-02 18:19:11    Frames captured: 5
+2026-10-02 18:19:11    Reciprocity: median 12.8%  max 95.6%  sign flips 2/54
+2026-10-02 18:19:11    Check electrode contact: E2 63%, E1 56%, E3 34% (all pairs median 13%)
+2026-10-02 18:19:11    Noise floor: median pair sd 0.00010 kohm (1.11%)  max 0.00215 kohm over 108 pairs
+2026-10-02 18:19:11  Indexed in scans\index.csv

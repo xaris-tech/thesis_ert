@@ -95,6 +95,44 @@ The first E2 run (`164016`, 147°, 19.5×, peak −0.248) was imaged against a
 baseline 70 minutes old. Because E2 is where the drift appears, that peak cannot
 be separated from drift. It is superseded by the repeat `165444` (−0.153).
 
+### Results: centre and opposite pairs (7/7 located)
+
+All are against baseline `170541` (17:05). The plan called for a fresh baseline
+before the E2 pair; none was taken, and the E2+E8 redo came 66 minutes after it.
+
+| Run | Blocks | Angle error per block | Raw SSIM | Blurred SSIM |
+|---|---|---|---|---|
+| `171321` | centre | peak 0.13 R from the centre | 0.53 | 0.70 |
+| `172321` | E1 + E7 | −1.5°, +2.1° | 0.35 | 0.37 |
+| `173951` | E3 + E9 † | +1.4°, −4.4° | 0.39 | 0.41 |
+| `174738` | E4 + E10 | −1.7°, +2.7° | 0.38 | 0.37 |
+| `175516` | E5 + E11 | −4.2°, −9.0° | 0.31 | 0.31 |
+| `180403` | E6 + E12 | +15.0°, −8.5° | 0.32 | 0.34 |
+| `181205` | E2 + E8 | −0.4°, +2.5° | 0.38 | 0.47 |
+
+† Typed as "e3 e10". The plan for that slot was E3+E9, and the image fits
+E9 (−4°), not E10 (+26°). I relabelled the run to the plan, so the ground truth
+is inferred partly from the result. **This is unconfirmed until the photo is
+checked.** If the photo shows E10, relabel the run and re-score it.
+
+Excluded: `173123`. Its target text was left over from the previous run
+("e1 e7"), and its blobs (about 163° and 296°) match no planned pair. It was
+superseded by the E2+E8 redo `181205`.
+
+Both blocks of every pair appear as separate blobs. The pairs score lower SSIM
+than single blocks, because two blobs pulled toward the centre miss two masks.
+
+### SSIM summary (ADR-0045)
+
+19 scored runs. Raw SSIM: mean 0.438, range 0.28–0.59. Blurred SSIM: mean
+0.458. Angle error: |error| ≤ 12° on 22 of 24 angled block placements (the centre run has no angle); the exceptions
+are E6 (+18°, single) and E6 in its pair (+15°). Both E6 placements read high,
+which is worth checking against the photos. Full table:
+`ssim_results.csv`. Images beside their masks: `ssim_contact_sheet.png`.
+
+Angle errors here come from the pixel-grid wedge search. They differ by a few
+degrees from the UI's peak angle quoted in the single-block table above.
+
 ### Known limitation: radius
 
 Peaks come out at about 0.35–0.5 R although the blocks were at about 0.8 R. A

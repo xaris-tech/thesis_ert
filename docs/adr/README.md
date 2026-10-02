@@ -98,3 +98,4 @@ one costs a re-derivation.
 | [0042](0042-the-run-label-is-editable.md) | The run label is editable, pre-filled from specimen and target | Accepted |
 | [0043](0043-load-a-recorded-run-as-the-baseline.md) | Load a recorded run as the baseline, remembered as the default; cross-specimen images stamped | Accepted |
 | [0044](0044-saline-ssim-series-fresh-baseline-per-target-group.md) | Saline SSIM series: fresh self-checked baseline per target group; angle error is the headline metric | Accepted |
+| [0045](0045-ssim-scoring-against-block-masks.md) | SSIM scored on the resistive lobe against block masks; 0.2 R blur; per-block ±45° wedge for angle error | Accepted |

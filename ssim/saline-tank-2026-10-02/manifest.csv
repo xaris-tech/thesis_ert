@@ -27,3 +27,12 @@ run_id,role,target,electrode,expected_deg,peak_deg,angle_error_deg,peak_value,si
 20261002-164016-ssim-saline,target,wood at e2,E2,150,147,-3,-2.478e-01,19.46,20261002-153056-ssim-saline,baseline 70 min old; peak may include E2 drift - superseded by 165444
 20261002-164714-ssim-saline,baseline,empty,,,,,,,,
 20261002-165444-ssim-saline,target,wood at e2,E2,150,138,-12,-1.531e-01,6.50,20261002-164714-ssim-saline,E2 repeat on fresh baseline - use this one
+20261002-170541-ssim-saline,baseline,empty,,,,,,,,
+20261002-171321-ssim-saline,target,wood at centre,centre,,54,,-1.277e-01,5.80,20261002-170541-ssim-saline,
+20261002-172321-ssim-saline,target,wood at e1 e7,E1+E7,180 0,356,,-1.759e-01,7.99,20261002-170541-ssim-saline,
+20261002-173123-ssim-saline,excluded-unidentified,wood at e1 e7 (stale text),,,294,,-1.667e-01,7.58,20261002-170541-ssim-saline,placement unidentified; superseded by 181205
+20261002-173951-ssim-saline,target,wood at e3 and e9,E3+E9,120 300,294,,-1.667e-01,7.58,20261002-170541-ssim-saline,"typed e3 e10; relabelled to plan, unconfirmed until photo"
+20261002-174738-ssim-saline,target,wood at e4 e10,E4+E10,90 270,276,,-1.705e-01,7.75,20261002-170541-ssim-saline,
+20261002-175516-ssim-saline,target,wood at e5 e11,E5+E11,60 240,236,,-1.842e-01,8.37,20261002-170541-ssim-saline,
+20261002-180403-ssim-saline,target,wood at e6 e12,E6+E12,30 210,206,,-1.648e-01,7.49,20261002-170541-ssim-saline,
+20261002-181205-ssim-saline,target,wood at e2 e8,E2+E8,150 330,329,,-1.749e-01,7.95,20261002-170541-ssim-saline,redo of E2+E8; baseline 170541 is 66 min old

@@ -65,6 +65,7 @@ Two generations coexist here too:
 - **`ert.py`** — legacy `SCAN:`-protocol tool, deprecated, do not extend.
 - **`dummy_load_sweep.py`** — bench tool, not part of the capture path. Drives the firmware `d` (debug hold) command, which emits a `HOLD` record read through the instrument's own shunt, and fits `I = Vth / (Rout + Rload)` across hand-fitted resistors to measure the current source's output impedance (ADR-0015). `measure` runs one resistor, `fit` solves across the CSV they append to.
 - **`disc_survey.py`** — CLI for the intact-disc survey (`tree_ert/survey.py`, ADR-0035/0038). `--manifest m.csv` (`run_id,specimen_id,state[,note]`, state intact/defect/excluded) or `--from-conditions [--medium "cut disc"]`; writes `survey.txt` and `survey.json` under `exports/`.
+- **`ssim_eval.py`** — offline SSIM scoring of a saline-tank series (`tree_ert/ssim.py`, ADR-0044/0045). `ssim_eval.py ssim/<series> [--since RUN_ID]` reconstructs each target against the baseline its `reconstruction.txt` names and writes `ssim_results.csv` (raw SSIM, blurred-mask SSIM, per-block angle error) and `ssim_contact_sheet.png` into the series directory. Block positions are parsed from the target text (`wood at e5`, `e1 and e7`, `at centre`); electrode angles come from the mesh's `el_pos`.
 - **`pyeit_analyzer.py`** — offline analysis of exported `.npz`/`.csv` capture files (`load_export`, `summarize_export`, `plot_export`), independent of the live serial path.
 
 ### `tree_ert/` package — Tkinter debug UI

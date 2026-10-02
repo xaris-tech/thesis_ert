@@ -1,59 +1,54 @@
 # Next steps
 
-## 1. Photos
+Captures for the simplified plan are complete: 12 single-block positions,
+centre, and 6 opposite pairs, 19 scored runs in all. What is left:
+
+## 1. Photos — needed to close the series
 
 Put one top-down photo per target run in `photos/`, named by run ID (see
-`photos/README.md`). Without photos the true block position is only the
-operator's word, and the E5/E6 errors (+9°) cannot be told apart from placement.
+`photos/README.md`). Priority:
 
-## 2. Remaining captures (18 of 30)
+1. `20261002-173951`: was it **E3+E9** (the plan) or **E3+E10** (the typed
+   text)? The run is relabelled to the plan and marked unconfirmed until
+   then.
+2. `20261002-144734` and `20261002-180403`: both E6 placements read high
+   (+18°, +15°). Was the block offset toward E5?
+3. `20261002-144109` (E5, +9° in the UI).
+4. All others.
 
-Same settings and procedure as the afternoon: settle, empty baseline, 2–3
-targets, new baseline. Write the full target text and check it before pressing
-Start. Distances are from tank centre to block centre: near = 128 mm,
-halfway = 80 mm, centre = 0.
+## 2. Record the missing conditions
 
-| # | Block A | Block B |
-|---|---|---|
-| 13 | centre | — |
-| 14 | near E1 | near E7 |
-| 15 | near E2 | near E8 |
-| 16 | near E3 | near E9 |
-| 17 | near E4 | near E10 |
-| 18 | near E5 | near E11 |
-| 19 | near E6 | near E12 |
-| 20 | halfway E1 | — |
-| 21 | halfway E4 | — |
-| 22 | halfway E7 | — |
-| 23 | halfway E10 | — |
-| 24 | halfway E1 | halfway E7 |
-| 25 | halfway E4 | halfway E10 |
-| 26 | centre | near E1 |
-| 27 | centre | near E7 |
-| 28 | near E1 + near E2, side by side | — |
-| 29 | repeat near E7 | — |
-| 30 | repeat centre | — |
+Saline g/L, fill depth, water temperature and grounding were never recorded.
+Estimate them if they cannot be measured, write them into the README, and
+mark them as estimates.
 
-Expect the centre and halfway runs to be weaker. The block covers about 0.6% of
-the tank, and sensitivity is lowest at the centre. A result under 2× there is a
-finding, not a failure.
+## 3. Re-score after any relabel
 
-Every ~10 runs, capture one control: a baseline followed by a second empty
-capture. It should come out under 2×.
+```powershell
+.\.venv\Scripts\python.exe ssim_eval.py ssim/saline-tank-2026-10-02
+```
 
-Record salinity (g/L), fill depth and water temperature once for the session.
+It writes `ssim_results.csv` and `ssim_contact_sheet.png` here. It scores the
+manifest's `target` rows, using each run's `target_description` from
+`conditions.json`. Add `--since RUN_ID` to include later runs from
+`scans/runs` that are not in the manifest yet.
 
-## 3. SSIM script (to be written)
+## 4. Optional captures, if the tank is set up again
 
-Planned, per ADR-0044:
+Use the same settings, and take a fresh baseline before each group.
 
-1. Read `manifest.csv` and each run's target text, and turn it into block
-   positions.
-2. Rasterise a ground-truth mask (23 × 22 mm footprint per block) on the
-   reconstruction grid.
-3. Reconstruct each target against its own baseline, using the same code path
-   as the UI (`tree_ert.reconstruction.reconstruct`).
-4. Report three numbers per run: raw SSIM, SSIM against the mask blurred to
-   the system's point-spread width, and angle error. Angle error is the
-   headline; raw SSIM is reported but not used to judge detection.
-5. Write `ssim_results.csv` and a contact sheet of image vs mask.
+- Centre repeat ×2, and one pair repeat (E1+E7): measures how much the score
+  changes when a block is placed again at the same spot.
+- One control: a baseline followed by a second empty capture. It should
+  score under 2×.
+- E2+E8 again right after a fresh baseline. The redo `181205` came 66 minutes
+  after its baseline.
+
+## 5. For the thesis
+
+- Headline: angle localisation, |error| ≤ 12° for 22 of 24 angled block placements (the centre run has no angle),
+  every target detected.
+- Quote raw and blurred SSIM next to it, and state the radial pull toward the
+  centre (blocks at 0.8 R appear at about 0.35–0.6 R) as a limitation of the
+  one-step JAC reconstruction (ADR-0044, ADR-0045).
+- Only compare SSIM values within this series.
