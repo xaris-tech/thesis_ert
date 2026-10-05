@@ -74,6 +74,25 @@ SSIM_SIGMA_PX = 1.5
 WEDGE_DEG = 45.0
 CENTRE_SEARCH_R = 0.4
 
+CENTROID_HALF_DEG = 45.0
+"""Half-width of the window the lobe centroid is measured over.
+
+Equal to ``WEDGE_DEG``, anchored to the true angle. Measured bias against synthetic
+blocks at known offsets (ADR-0051):
+
+    window                  bias over 0-10 deg    real series: median / max / <=10deg
+    +-45 deg (this)              -0.45              2.97 / 9.87 / 24 of 24
+    +-90 deg                     +0.11              4.70 / 14.32 / 20 of 24
+    peak-centred +-45            +0.33              3.55 / 14.54 / 23 of 24
+
+The wider window is unbiased on an isolated synthetic blob but worse on real data,
+because real lobes carry neighbouring structure a single simulated block does not. The
+peak-centred window follows a rim artefact when one exists. The narrow window is kept
+for its better real-data behaviour and **its under-report is documented rather than
+corrected in code**: add 0.45 deg to any reported ``centroid_angle_error_deg`` to remove
+the known bias.
+"""
+
 REGION_DILATE_PX = 2
 """How far the block mask is dilated to form the region ``ssim`` averages over.
 
@@ -397,7 +416,18 @@ def score_blocks(values_grid: np.ndarray, blocks: Sequence[Block], n: int = GRID
         row, col = np.unravel_index(flat, local.shape)
         peak_angle = float(angle[row, col])
         is_centre = block.label == "centre"
-        centroid = _lobe_centroid(resistive, region)
+        # Centre the centroid on the TRUE angle, but over a window twice as wide as the
+        # search wedge. A +-45 deg window clips an off-centre lobe and drags its
+        # centroid back toward the truth, so errors are under-reported: injected
+        # offsets of 10/20/30 deg came back as 8.9/16.1/23.4. Widening to +-90 deg
+        # removes the clipping (bias +0.11 deg over 0-10 deg against -0.45 for +-45)
+        # while staying anchored to the truth, so unlike a peak-centred window it
+        # cannot follow a rim artefact (ADR-0051).
+        centroid_region = (
+            region if is_centre
+            else inside & (np.abs(_angle_diff(angle, block.angle_deg)) <= CENTROID_HALF_DEG)
+        )
+        centroid = _lobe_centroid(resistive, centroid_region)
         centroid_angle, centroid_radius = centroid if centroid else (None, None)
         scores.append(
             BlockScore(

@@ -1,6 +1,6 @@
-# ADR-0048: Take the reported angle from the lobe centroid, not the strongest pixel
+﻿# ADR-0048: Take the reported angle from the lobe centroid, not the strongest pixel
 
-- **Status:** Accepted
+- **Status:** Accepted; its angle figures corrected by [ADR-0051](0051-the-centroid-angle-estimator-has-a-measured-bias.md), which found the estimator under-reports by 0.45 deg
 - **Date:** 2026-10-05
 - **Affects:** `tree_ert/ssim.py` (`score_blocks`, `BlockScore`, `SsimScore.max_abs_centroid_angle_error`), every reported `angle_error_deg`. Reconstruction is unchanged.
 - **Related:** ADR-0044, ADR-0045, ADR-0046, ADR-0047; `ssim/saline-tank-2026-10-02/`

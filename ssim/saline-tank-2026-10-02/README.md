@@ -199,8 +199,13 @@ independent evidence for localisation is the angle error against the photographs
 `ssim_results.csv` is **wrong**, not merely stale — it was scored against masks at the
 wrong radius and size, and must be regenerated.
 
-The result: **angle error median 3.4°, max 9.9° (ADR-0048), and NCC 0.72 mean against a
-0.03 control with 19 of 19 runs clearing it.**
+The angle result, validated against injected offsets (ADR-0051): n = 24 angled block
+placements, **median 2.97 deg, mean 3.00 deg, max 9.87 deg, 21 of 24 within 5 deg and
+24 of 24 within 10 deg** as measured. The estimator has a measured -0.45 deg
+under-report bias at these magnitudes, so add about half a degree: median ~3.4 deg,
+max ~10.3 deg. Quote the bias, not the rosier raw figure.
+
+NCC 0.72 mean against a 0.03 control, with 19 of 19 runs clearing it (ADR-0050).
 
 Full table: `ssim_results.csv` (**needs regenerating**). Images beside their masks:
 `ssim_contact_sheet.png` (**also stale** — same masks).
