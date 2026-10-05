@@ -11,7 +11,8 @@ ssim/saline-tank-2026-10-02/
     README.md        this file: what was done and what was found
     NEXT-STEPS.md    what still has to be done
     manifest.csv     one row per run: role, target, expected vs reconstructed angle
-    photos/          top-down photographs, one per target run (see photos/README.md)
+    photos/          top-down photographs, one per target run, named <run_id>.jpg
+                     (photos/README.md, PHOTO-INDEX.csv, SSIM-REFERENCE.csv)
     runs/            copies of the run directories from scans/runs/ (originals stay there)
 ```
 
@@ -112,8 +113,10 @@ before the E2 pair; none was taken, and the E2+E8 redo came 66 minutes after it.
 
 † Typed as "e3 e10". The plan for that slot was E3+E9, and the image fits
 E9 (−4°), not E10 (+26°). I relabelled the run to the plan, so the ground truth
-is inferred partly from the result. **This is unconfirmed until the photo is
-checked.** If the photo shows E10, relabel the run and re-score it.
+is inferred partly from the result. **This is unconfirmed: no photograph of this
+setup was taken** (see `photos/README.md`). The single-block photos `3.jpg`,
+`9.jpg` and `10.jpg` — now `20261002-153824`, `-140411` and `-141259` — are from
+two to three hours earlier and are not ground truth for it.
 
 Excluded: `173123`. Its target text was left over from the previous run
 ("e1 e7"), and its blobs (about 163° and 296°) match no planned pair. It was
@@ -122,24 +125,60 @@ superseded by the E2+E8 redo `181205`.
 Both blocks of every pair appear as separate blobs. The pairs score lower SSIM
 than single blocks, because two blobs pulled toward the centre miss two masks.
 
-### SSIM summary (ADR-0045)
+### SSIM summary (ADR-0045) — and why the SSIM numbers must not be quoted
 
-19 scored runs. Raw SSIM: mean 0.438, range 0.28–0.59. Blurred SSIM: mean
-0.458. Angle error: |error| ≤ 12° on 22 of 24 angled block placements (the centre run has no angle); the exceptions
-are E6 (+18°, single) and E6 in its pair (+15°). Both E6 placements read high,
-which is worth checking against the photos. Full table:
-`ssim_results.csv`. Images beside their masks: `ssim_contact_sheet.png`.
+19 scored runs. Raw SSIM: mean 0.438, range 0.284–0.591. Blurred SSIM: mean
+0.458. Angle error: |error| ≤ 12° on 22 of 24 angled block placements (the
+centre run has no angle); the exceptions are E6 (+18°, single) and E6 in its
+pair (+15°). Full table: `ssim_results.csv`. Images beside their masks:
+`ssim_contact_sheet.png`.
 
-Angle errors here come from the pixel-grid wedge search. They differ by a few
-degrees from the UI's peak angle quoted in the single-block table above.
+**The SSIM values are not usable as a quality measure, in either direction.**
+`tree_ert/ssim.py:258` averages SSIM over the whole disc, but the block mask is
+16–42 px of a 3228 px disc. In the remaining 99 % both rasters are near zero, so
+the luminance term carries the ratio to ≈1 whatever the image contains. Measured
+against the same masks:
+
+| image | `ssim_raw` |
+|---|---|
+| perfect block at 0.80 R | 1.0000 |
+| **empty tank (all zeros)** | **0.904 – 0.957** |
+| the 19 runs in this series | 0.284 – 0.591 |
+
+**All 19 runs score below an empty tank.** Per-run reference scores are in
+`photos/SSIM-REFERENCE.csv`. So the mean of 0.438 does not mean "moderate
+structural agreement", and a future empty-tank control scoring 0.9 would look
+like the best run in the series.
+
+This is a property of where the mean is taken, not of the instrument and not of
+the reconstruction. It was found on 2026-10-05, after ADR-0045 was accepted;
+ADR-0045's own verification (`tests/test_ssim.py:62`) only checks that
+right-place beats wrong-place, never that a null loses, so a green suite did not
+catch it. **Fixing it means changing `tree_ert/ssim.py`, which is outside this
+directory, and superseding ADR-0045. Not done here.**
+
+Until that is fixed, quote the **angle errors** from this series and do not
+quote the SSIM values. The angle result stands on its own: it is a direct
+measurement against the photo ground truth, and it does not go through this
+metric.
+
+Angle errors in `ssim_results.csv` come from the pixel-grid wedge search. They
+differ by a few degrees from the UI's peak angle quoted in the single-block table
+above.
 
 ### Known limitation: radius
 
-Peaks come out at about 0.35–0.5 R although the blocks were at about 0.8 R. A
-one-step JAC reconstruction with regularisation pulls targets toward the centre
-and blurs them. The angle is reliable; the radius is not. Raw SSIM against a
-sharp, correctly placed mask will therefore score low even for a correct
-detection. ADR-0044 sets out how this will be reported.
+Peaks come out at about 0.27–0.61 R although the blocks were placed at about
+0.8 R. A one-step JAC reconstruction with regularisation pulls targets toward
+the centre and blurs them. The angle is reliable; the radius is not.
+
+Two things make the radius weaker than it looks. The 0.8 R ground truth is not
+measured — no photo has a ruler in frame, so 0.80 is the hard-coded
+`128/160 mm` ratio in `tree_ert/ssim.py`, applied unchanged to every run. And
+`score_blocks` searches a ±45° wedge with **no radial bound**, so the reported
+`peak_radius` for each block is the strongest pixel anywhere in that wedge. A
+centre-collapsed artefact at 0.42 R would be reported as a clean localisation
+with a small angle error. ADR-0044 sets out how this will be reported.
 
 ### Record amendments
 

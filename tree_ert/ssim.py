@@ -50,6 +50,20 @@ SSIM_SIGMA_PX = 1.5
 WEDGE_DEG = 45.0
 CENTRE_SEARCH_R = 0.4
 
+REGION_DILATE_PX = 2
+"""How far the block mask is dilated to form the region ``ssim`` averages over.
+
+The mean must not be taken over the whole disc. The mask is 16-42 px of a
+3228 px disc, so across the remaining ~99% both rasters sit near zero and the
+luminance term carries SSIM to ~0.95 for *any* image whatsoever, an empty tank
+included. On the 2026-10-02 saline series that put all 19 runs (0.28-0.59)
+below an empty tank (0.90-0.96), which made the number unusable.
+
+Two pixels puts the mask at ~36% of the region, enough that structure inside
+the mask has to agree for the score to rise, while leaving room for the solver's
+own blur so a detection is not punished for being diffuse.
+"""
+
 
 @dataclass(frozen=True)
 class Block:
@@ -186,6 +200,18 @@ def blur(mask: np.ndarray, sigma: float = PSF_SIGMA, n: int = GRID) -> np.ndarra
     return out / peak if peak > 0 else out
 
 
+def score_region(mask: np.ndarray, n: int = GRID) -> np.ndarray:
+    """Region the ``ssim`` mean is taken over: the mask, dilated.
+
+    Dilation is applied to the ground-truth mask alone and never to the image,
+    so the region cannot follow a blob that landed somewhere else. A region
+    derived from the image would let a detection in the wrong place enlarge the
+    very region that judges it.
+    """
+    _, _, inside = grid_coordinates(n)
+    return ndimage.binary_dilation(mask > 0, iterations=REGION_DILATE_PX) & inside
+
+
 def resistive_image(values_grid: np.ndarray) -> np.ndarray:
     """Wood is resistive: keep the negative lobe, flip it positive, scale to [0, 1].
 
@@ -251,11 +277,11 @@ def score(values: np.ndarray, eit_mesh, labels: Sequence[str], psf_sigma: float 
         raise ValueError("no target in the run's description; nothing to build a mask from")
     blocks = blocks_for(labels, eit_mesh)
     grid = rasterise(values, eit_mesh, n)
-    _, _, inside = grid_coordinates(n)
     image = resistive_image(grid)
     mask = block_mask(blocks, n)
+    region = score_region(mask, n)
     return SsimScore(
-        ssim_raw=ssim(image, mask, inside),
-        ssim_blurred=ssim(image, blur(mask, psf_sigma, n), inside),
+        ssim_raw=ssim(image, mask, region),
+        ssim_blurred=ssim(image, blur(mask, psf_sigma, n), region),
         blocks=score_blocks(grid, blocks, n),
     )
