@@ -98,6 +98,27 @@ class SsimScore:
     ssim_raw: float
     ssim_blurred: float
     blocks: list[BlockScore] = field(default_factory=list)
+    ncc: float | None = None
+    """Normalised cross-correlation against the template. See ``ncc``.
+
+    Reported alongside SSIM, not instead of it. SSIM carries a luminance term that
+    punishes a dim-but-correct blob, and it saturates once both images are mostly
+    background; NCC is scale-invariant and needs no threshold. On the 2026-10-02
+    saline series it separated 17 of 19 runs from their own empty-tank controls
+    against 16 of 19 for SSIM (ADR-0047).
+
+    NCC is not SSIM and is not a similarity index in that sense. It measures linear
+    agreement of the intensity pattern and nothing more. A blob in entirely the
+    wrong place scores near zero, which is the point, and the reason the empty-tank
+    control has to be scored alongside it.
+    """
+
+    dice: float | None = None
+    """Overlap of the thresholded resistive lobes. See ``dice``.
+
+    Readable as "how much of the claimed block is where the block is", but it
+    depends on ``dice_threshold``, which makes it the weakest of the three.
+    """
 
     @property
     def max_abs_angle_error(self) -> float | None:
@@ -224,6 +245,52 @@ def resistive_image(values_grid: np.ndarray) -> np.ndarray:
     return image / peak if peak > 0 else image
 
 
+def ncc(a: np.ndarray, b: np.ndarray, region: np.ndarray) -> float:
+    """Normalised cross-correlation of two images over ``region``, in [-1, 1].
+
+    The Pearson correlation of the pixel values. Scale-invariant, so a correct but
+    dim blob is not punished for being dim, and position-sensitive, so a blob in the
+    wrong place scores near zero instead of high.
+
+    SSIM's luminance term is what makes it awkward here: the reconstructed lobe is
+    routinely dimmer than the mask it is compared against, and SSIM treats that as a
+    structural mismatch. NCC does not care about absolute level, only about whether
+    the bright parts coincide with the bright parts.
+
+    Returns 0.0 when either image is flat inside ``region`` -- there is no pattern to
+    agree or disagree with, and a divide-by-zero would otherwise produce a NaN that
+    silently propagates into a report.
+    """
+    x = np.asarray(a, dtype=float)[region]
+    y = np.asarray(b, dtype=float)[region]
+    if x.size < 2:
+        return 0.0
+    sx, sy = x.std(), y.std()
+    if sx < 1e-12 or sy < 1e-12:
+        return 0.0
+    return float(np.clip(((x - x.mean()) * (y - y.mean())).mean() / (sx * sy), -1.0, 1.0))
+
+
+DICE_THRESHOLD = 0.5
+"""Lobe level treated as "block present". Half of peak, on the [0, 1] image."""
+
+
+def dice(a: np.ndarray, b: np.ndarray, region: np.ndarray, threshold: float = DICE_THRESHOLD) -> float:
+    """Overlap of two thresholded lobes over ``region``, in [0, 1].
+
+    Dice = 2|A and B| / (|A| + |B|) on the pixels above ``threshold``. Readable as
+    "what fraction of the claimed block is actually where the block is", which is why
+    it is worth reporting even though the threshold is a judgement call and two
+    images that are both empty give 0.0 by definition.
+    """
+    a_hit = np.asarray(a, dtype=float)[region] > threshold
+    b_hit = np.asarray(b, dtype=float)[region] > threshold
+    total = int(a_hit.sum()) + int(b_hit.sum())
+    if total == 0:
+        return 0.0
+    return float(2 * np.logical_and(a_hit, b_hit).sum() / total)
+
+
 def ssim(a: np.ndarray, b: np.ndarray, region: np.ndarray, sigma_px: float = SSIM_SIGMA_PX, data_range: float = 1.0) -> float:
     """Mean SSIM (Wang et al. 2004, Gaussian window) over ``region``."""
     c1 = (0.01 * data_range) ** 2
@@ -272,7 +339,27 @@ def score_blocks(values_grid: np.ndarray, blocks: Sequence[Block], n: int = GRID
     return scores
 
 
-def score(values: np.ndarray, eit_mesh, labels: Sequence[str], psf_sigma: float = PSF_SIGMA, n: int = GRID) -> SsimScore:
+def score(
+    values: np.ndarray,
+    eit_mesh,
+    labels: Sequence[str],
+    psf_sigma: float = PSF_SIGMA,
+    n: int = GRID,
+    template: np.ndarray | None = None,
+    template_label: str = "block mask",
+) -> SsimScore:
+    """Score one reconstructed image against the target it was meant to find.
+
+    ``template`` is an optional expected image -- typically a resistive block
+    simulated through the same solver -- to compare against instead of the
+    geometric ``template_label``. It matters: on the 2026-10-02 saline series, NCC
+    against a simulated block separated 17 of 19 runs from their own empty-tank
+    controls, and it is the recommended comparison. Against the sharp geometric mask
+    the same runs score far lower, because the mask sits at the true 0.80 R while
+    the reconstruction peaks nearer the centre (ADR-0046). Whichever is passed, the
+    caller should also score the run's own empty-tank control the same way; these
+    numbers mean nothing without it.
+    """
     if not labels:
         raise ValueError("no target in the run's description; nothing to build a mask from")
     blocks = blocks_for(labels, eit_mesh)
@@ -280,8 +367,11 @@ def score(values: np.ndarray, eit_mesh, labels: Sequence[str], psf_sigma: float 
     image = resistive_image(grid)
     mask = block_mask(blocks, n)
     region = score_region(mask, n)
+    reference = mask if template is None else template
     return SsimScore(
         ssim_raw=ssim(image, mask, region),
         ssim_blurred=ssim(image, blur(mask, psf_sigma, n), region),
         blocks=score_blocks(grid, blocks, n),
+        ncc=ncc(image, reference, region),
+        dice=dice(image, reference, region),
     )

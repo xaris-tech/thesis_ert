@@ -129,25 +129,34 @@ than single blocks, because two blobs pulled toward the centre miss two masks.
 
 19 scored runs. **After the region fix** (ADR-0046; the mean now runs over a dilated
 neighbourhood of the mask instead of the whole disc), re-measured against each run's
-own empty-tank control:
+own empty-tank control, comparing against a simulated block of the recorded
+23 × 22 mm footprint pushed through the same solver (ADR-0047):
 
-| metric | min | max | mean | empty tank |
-|---|---|---|---|---|
-| significance | 5.80 | 35.49 | 14.94 | 1.0 by definition |
-| angle error (deg) | 0.96 | 18.18 | 5.81 | — |
-| SSIM vs sharp block mask | −0.061 | 0.272 | 0.130 | 0.023 |
-| SSIM vs simulated-physics template | −0.081 | 0.911 | 0.364 | 0.071 |
+| metric | min | max | mean | empty tank | beats its control |
+|---|---|---|---|---|---|
+| significance | 5.80 | 35.49 | 14.94 | 1.0 by definition | — |
+| angle error (deg) | 0.96 | 18.18 | 5.81 | — | — |
+| **NCC** | −0.155 | 0.873 | **0.569** | −0.011 | **17 / 19** |
+| Dice | 0.000 | 1.000 | 0.588 | 0.085 | 15 / 19 |
+| SSIM | −0.061 | 0.272 | 0.130 | 0.023 | 16 / 19 |
 
-Detection beats its own empty-tank control on **16 of 19 runs**. The three that do
-not: E2 (`165444`, the documented drift electrode), and the pairs `174738` and
-`175516`, both marginal against their control.
+**NCC is the recommended score** (ADR-0047). It is scale-invariant, so it does not
+punish the dim-but-correct lobe that sinks SSIM, and it is position-sensitive, so a
+blob in the wrong place scores near zero. It is not SSIM and is not "SSIM-like" — it
+measures linear agreement of the intensity pattern, and two blobs of different size
+sharing a bright centre correlate highly. The empty-tank column is part of the result,
+not decoration.
 
-**The published values in `ssim_results.csv` are stale** — 0.284–0.591, mean 0.438 —
-because they predate the region fix. Regenerate with
-`python ssim_eval.py ssim/saline-tank-2026-10-02`.
+The three runs that fail to beat their own control: E2 (`165444`, the documented
+drift electrode), and the pairs `174738` and `175516`, both marginal.
 
-**Even after the fix, the SSIM values must not be quoted as published.** Before it,
-`tree_ert/ssim.py:258` averaged SSIM over the whole disc while the block mask is
+**The published values in `ssim_results.csv` are stale** — 0.284–0.591, mean 0.438,
+from before the region fix, and SSIM-only. `ssim_eval.py` does not yet emit the NCC and
+Dice columns, so that CSV needs the tool changed before it can be regenerated
+(ADR-0047).
+
+**Even after the fix, the SSIM column must not be quoted as published.** Before it,
+`tree_ert/ssim.py` averaged SSIM over the whole disc while the block mask is
 16–42 px of a 3228 px disc. In the remaining 99 % both rasters sit near zero, so the
 luminance term carried the ratio to ≈1 whatever the image contained — an empty tank
 scored 0.904–0.957 and **all 19 runs scored below it**. A mean of 0.438 therefore did
@@ -155,17 +164,13 @@ not mean "moderate structural agreement".
 
 That defect is fixed. The remaining limit is the reconstruction, not the metric: the
 peak lands at 0.27–0.61 R against a block at 0.80 R, so the shape genuinely does not
-match a sharp footprint. Five scoring variants were measured (whole-disc, dilated
-region, leave-one-out empirical template, registered crop, simulated-physics
-template); the registered crop is the only one above 0.90 and it scores an empty
-tank at 0.94, so it is not a measurement. Ruled out as causes: template shape,
-template conductivity (0.366/0.366/0.368 across a 15x contrast sweep), mesh density
-(0.366 → 0.379 over a 6x element increase), and baseline-to-target drift (correlation
-+0.12). See ADR-0046.
+match a sharp footprint. Ruled out as causes: template shape, template conductivity
+(0.366/0.366/0.368 across a 15x contrast sweep), mesh density (0.366 → 0.379 over a 6x
+element increase), and baseline-to-target drift (correlation +0.12). See ADR-0046.
 
 The usable result is the **angle error: median 2.9°, 20 of 24 angled placements
-within 10°**. Angle error is unaffected by the radial bias and does not pass through
-this metric.
+within 10°**, with NCC 0.57 mean against a −0.01 control as the supporting
+image-similarity figure.
 
 Full table: `ssim_results.csv`. Images beside their masks: `ssim_contact_sheet.png`.
 
