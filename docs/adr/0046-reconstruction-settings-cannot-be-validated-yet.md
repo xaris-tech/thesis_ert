@@ -94,10 +94,33 @@ reason for the disagreement is found.
   because the forward model does not describe this instrument. That blocks the
   resolution-study route to choosing `lamb`, and it is a prerequisite for absolute
   reconstruction.
-- A one-line diagnostic exists to make progress: compare a simulated measurement
-  vector against a real one on the same electrode pair, normalised. If the shapes
-  disagree, the contact/measurement chain is the culprit; if they agree, the block
-  model is.
+
+### Hypotheses ruled out on 2026-10-05
+
+Each was tested and each failed to explain the gap. Recorded so they are not
+retried. Unless stated, measured on the 19-run series with the physics template and
+each run's own empty-tank control.
+
+| hypothesis | test | result |
+|---|---|---|
+| Template assumes a disc, block is rectangular | modelled the recorded 23x22 mm footprint exactly | no change, 0.364 -> 0.366 |
+| Template conductivity is wrong | swept contrast 0.02 / 0.08 / 0.30 | 0.366 / 0.366 / 0.368 — flat, nothing to tune |
+| Mesh cannot resolve the block | swept `h0` 0.12 -> 0.05, 476 -> 2821 elements | 0.366 -> 0.379, no material gain |
+| Drift between baseline and target | correlated score against minutes since baseline | +0.12, no relationship |
+| The peak is at the wrong radius, so even a correct angle scores badly | E9 has 1.0 deg angle error but −0.032 SSIM | confirmed; this is the residual, not an explanation |
+
+The mesh result is the informative one. The shipped element is 19.7 mm and the block
+is 1.2 elements across, which *looks* like an obvious resolution wall — but refining
+the mesh sixfold changes nothing, so discretisation is not what caps the score.
+
+**Leading remaining candidate: non-uniform drive current across excitation pairs.**
+The Howland source's current is not guaranteed equal for all 12 drive pairs
+(ADR-0011, ADR-0013, ADR-0015 are all about this), and `reconstruct_difference`
+applies a single scalar `a = dot(v1, v0) / dot(v0, v0)` to the whole vector, so it
+cannot correct a per-pair error. Unequal drive reweights near-field against far-field
+pairs, which biases backprojection toward the tank centre — the observed symptom. The
+forward model injects ideal balanced current, which is exactly why it does not
+reproduce the recorded collapse.
 
 ## Verification
 

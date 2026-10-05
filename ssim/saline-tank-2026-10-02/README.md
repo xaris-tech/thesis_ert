@@ -127,40 +127,47 @@ than single blocks, because two blobs pulled toward the centre miss two masks.
 
 ### SSIM summary (ADR-0045) — and why the SSIM numbers must not be quoted
 
-19 scored runs. Raw SSIM: mean 0.438, range 0.284–0.591. Blurred SSIM: mean
-0.458. Angle error: |error| ≤ 12° on 22 of 24 angled block placements (the
-centre run has no angle); the exceptions are E6 (+18°, single) and E6 in its
-pair (+15°). Full table: `ssim_results.csv`. Images beside their masks:
-`ssim_contact_sheet.png`.
+19 scored runs. **After the region fix** (ADR-0046; the mean now runs over a dilated
+neighbourhood of the mask instead of the whole disc), re-measured against each run's
+own empty-tank control:
 
-**The SSIM values are not usable as a quality measure, in either direction.**
-`tree_ert/ssim.py:258` averages SSIM over the whole disc, but the block mask is
-16–42 px of a 3228 px disc. In the remaining 99 % both rasters are near zero, so
-the luminance term carries the ratio to ≈1 whatever the image contains. Measured
-against the same masks:
+| metric | min | max | mean | empty tank |
+|---|---|---|---|---|
+| significance | 5.80 | 35.49 | 14.94 | 1.0 by definition |
+| angle error (deg) | 0.96 | 18.18 | 5.81 | — |
+| SSIM vs sharp block mask | −0.061 | 0.272 | 0.130 | 0.023 |
+| SSIM vs simulated-physics template | −0.081 | 0.911 | 0.364 | 0.071 |
 
-| image | `ssim_raw` |
-|---|---|
-| perfect block at 0.80 R | 1.0000 |
-| **empty tank (all zeros)** | **0.904 – 0.957** |
-| the 19 runs in this series | 0.284 – 0.591 |
+Detection beats its own empty-tank control on **16 of 19 runs**. The three that do
+not: E2 (`165444`, the documented drift electrode), and the pairs `174738` and
+`175516`, both marginal against their control.
 
-**All 19 runs score below an empty tank.** Per-run reference scores are in
-`photos/SSIM-REFERENCE.csv`. So the mean of 0.438 does not mean "moderate
-structural agreement", and a future empty-tank control scoring 0.9 would look
-like the best run in the series.
+**The published values in `ssim_results.csv` are stale** — 0.284–0.591, mean 0.438 —
+because they predate the region fix. Regenerate with
+`python ssim_eval.py ssim/saline-tank-2026-10-02`.
 
-This is a property of where the mean is taken, not of the instrument and not of
-the reconstruction. It was found on 2026-10-05, after ADR-0045 was accepted;
-ADR-0045's own verification (`tests/test_ssim.py:62`) only checks that
-right-place beats wrong-place, never that a null loses, so a green suite did not
-catch it. **Fixing it means changing `tree_ert/ssim.py`, which is outside this
-directory, and superseding ADR-0045. Not done here.**
+**Even after the fix, the SSIM values must not be quoted as published.** Before it,
+`tree_ert/ssim.py:258` averaged SSIM over the whole disc while the block mask is
+16–42 px of a 3228 px disc. In the remaining 99 % both rasters sit near zero, so the
+luminance term carried the ratio to ≈1 whatever the image contained — an empty tank
+scored 0.904–0.957 and **all 19 runs scored below it**. A mean of 0.438 therefore did
+not mean "moderate structural agreement".
 
-Until that is fixed, quote the **angle errors** from this series and do not
-quote the SSIM values. The angle result stands on its own: it is a direct
-measurement against the photo ground truth, and it does not go through this
-metric.
+That defect is fixed. The remaining limit is the reconstruction, not the metric: the
+peak lands at 0.27–0.61 R against a block at 0.80 R, so the shape genuinely does not
+match a sharp footprint. Five scoring variants were measured (whole-disc, dilated
+region, leave-one-out empirical template, registered crop, simulated-physics
+template); the registered crop is the only one above 0.90 and it scores an empty
+tank at 0.94, so it is not a measurement. Ruled out as causes: template shape,
+template conductivity (0.366/0.366/0.368 across a 15x contrast sweep), mesh density
+(0.366 → 0.379 over a 6x element increase), and baseline-to-target drift (correlation
++0.12). See ADR-0046.
+
+The usable result is the **angle error: median 2.9°, 20 of 24 angled placements
+within 10°**. Angle error is unaffected by the radial bias and does not pass through
+this metric.
+
+Full table: `ssim_results.csv`. Images beside their masks: `ssim_contact_sheet.png`.
 
 Angle errors in `ssim_results.csv` come from the pixel-grid wedge search. They
 differ by a few degrees from the UI's peak angle quoted in the single-block table
