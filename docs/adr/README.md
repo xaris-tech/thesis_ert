@@ -98,6 +98,7 @@ one costs a re-derivation.
 | [0042](0042-the-run-label-is-editable.md) | The run label is editable, pre-filled from specimen and target | Accepted |
 | [0043](0043-load-a-recorded-run-as-the-baseline.md) | Load a recorded run as the baseline, remembered as the default; cross-specimen images stamped | Accepted |
 | [0044](0044-saline-ssim-series-fresh-baseline-per-target-group.md) | Saline SSIM series: fresh self-checked baseline per target group; angle error is the headline metric | Accepted |
+| [0050](0050-ncc-and-dice-are-the-primary-scores.md) | NCC primary, Dice secondary, SSIM demoted to a diagnostic; each with its empty-tank control | Accepted |
 | [0049](0049-the-tank-geometry-constants-were-wrong.md) | Tank is 128mm with electrodes 30mm in; the radial collapse was a units error | Accepted |
 | [0048](0048-take-the-angle-from-the-lobe-centroid.md) | Angle from the wedge-restricted lobe centroid; 24/24 within 10 deg, max 9.9 | Accepted |
 | [0047](0047-report-ncc-and-dice-beside-ssim.md) | NCC and Dice reported beside SSIM; NCC separated 17/19 from empty-tank controls | Accepted |

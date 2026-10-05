@@ -97,10 +97,37 @@ Alternatives rejected:
   operator's recollection of "0.56 or something". Neither is a tape measure. Every mask
   radius inherits this uncertainty, and it is now the largest single uncertainty in the
   scoring. **One measurement — block centre to tank centre, in mm — would settle it.**
-- **The electrode inset is still unmodelled.** The mesh places electrodes on the domain
-  boundary; the hardware has them ~23% of the radius further in. That is a real
-  model/hardware mismatch, now documented rather than accidentally assumed away.
-- The series README's "known limitation: radius" section is void and must be rewritten.
+- The series README's "known limitation: radius" section is void and has been rewritten.
+
+### The electrode inset: tested, unresolved
+
+Modelling the hardware properly — domain the 128 mm bucket, electrodes on the 98 mm
+ring — builds cleanly and preserves electrode angles exactly (E1 180°, E4 90°, E7 0°,
+E10 270°). Measured against the series, the two geometries disagree, and **neither wins
+on all counts**:
+
+| | boundary (shipped) | electrodes inset (real) |
+|---|---|---|
+| real lobe centroid | 0.498 | 0.563 |
+| mask says block is at | 0.561 | 0.561 |
+| radial agreement | 0.063 off | **0.002 off** |
+| implied block radius | 0.491 | **0.590** |
+| NCC vs its own template | **0.721** | 0.566 |
+
+The inset geometry is the physically correct one and it agrees with the operator's
+recollection of "0.56 or something" far better (0.590 against 0.491). It also puts the
+reconstruction essentially exactly where the mask says the block is. But it produces a
+*lower* NCC, which should not happen if the geometry is more faithful, and the reason is
+not understood — most likely the simulated template in that mesh has a different effective
+shape, so this is not a clean comparison.
+
+**Not adopted.** Choosing between them on this evidence would be a guess, and ADR-0046
+already established what happens when reconstruction settings are chosen on the basis of
+which one scores better. Kept as the top open question, alongside the block radius.
+
+Note the control cannot be compared across the two: `control_values` in each stored
+`reconstruction.npz` is 476 elements long and only aligns with the `h0=0.12` boundary
+mesh, so no empty-tank baseline exists for the inset mesh.
 - **A caution worth carrying forward:** three separate wrong assumptions survived for the
   life of the series because each was internally consistent — the solver with a bad flag
   looked self-consistent, the mask looked self-consistent, and the scores looked
