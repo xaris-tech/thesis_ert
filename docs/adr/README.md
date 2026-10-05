@@ -98,6 +98,7 @@ one costs a re-derivation.
 | [0042](0042-the-run-label-is-editable.md) | The run label is editable, pre-filled from specimen and target | Accepted |
 | [0043](0043-load-a-recorded-run-as-the-baseline.md) | Load a recorded run as the baseline, remembered as the default; cross-specimen images stamped | Accepted |
 | [0044](0044-saline-ssim-series-fresh-baseline-per-target-group.md) | Saline SSIM series: fresh self-checked baseline per target group; angle error is the headline metric | Accepted |
+| [0052](0052-measure-the-lobe-not-a-window.md) | Lobe connected-component centroid, no angular window; window choice was worth 12.3 deg | Accepted |
 | [0051](0051-the-centroid-angle-estimator-has-a-measured-bias.md) | Centroid window validated against injected offsets; -0.45 deg bias documented, not corrected in code | Accepted |
 | [0050](0050-ncc-and-dice-are-the-primary-scores.md) | NCC primary, Dice secondary, SSIM demoted to a diagnostic; each with its empty-tank control | Accepted |
 | [0049](0049-the-tank-geometry-constants-were-wrong.md) | Tank is 128mm with electrodes 30mm in; the radial collapse was a units error | Accepted |

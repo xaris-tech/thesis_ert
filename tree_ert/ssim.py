@@ -1,4 +1,4 @@
-"""SSIM of a difference image against a ground-truth block mask (ADR-0044, ADR-0045).
+﻿"""SSIM of a difference image against a ground-truth block mask (ADR-0044, ADR-0045).
 
 Offline and solver-agnostic: everything here works on a recorded run's
 reconstruction and the target text the operator typed, so a whole series can be
@@ -14,7 +14,7 @@ Three numbers per run, deliberately reported together:
   ``psf_sigma``. That asks "is the blob where it should be, at the resolution
   this system has?"
 - ``angle_error_deg``: per block, the strongest resistive pixel inside the
-  block's ±45° wedge, compared with the true angle. This is the headline
+  block's Â±45Â° wedge, compared with the true angle. This is the headline
   (ADR-0044).
 
 The tank geometry comes from the mesh's own electrode nodes (``el_pos``), not
@@ -73,25 +73,6 @@ SSIM_SIGMA_PX = 1.5
 
 WEDGE_DEG = 45.0
 CENTRE_SEARCH_R = 0.4
-
-CENTROID_HALF_DEG = 45.0
-"""Half-width of the window the lobe centroid is measured over.
-
-Equal to ``WEDGE_DEG``, anchored to the true angle. Measured bias against synthetic
-blocks at known offsets (ADR-0051):
-
-    window                  bias over 0-10 deg    real series: median / max / <=10deg
-    +-45 deg (this)              -0.45              2.97 / 9.87 / 24 of 24
-    +-90 deg                     +0.11              4.70 / 14.32 / 20 of 24
-    peak-centred +-45            +0.33              3.55 / 14.54 / 23 of 24
-
-The wider window is unbiased on an isolated synthetic blob but worse on real data,
-because real lobes carry neighbouring structure a single simulated block does not. The
-peak-centred window follows a rim artefact when one exists. The narrow window is kept
-for its better real-data behaviour and **its under-report is documented rather than
-corrected in code**: add 0.45 deg to any reported ``centroid_angle_error_deg`` to remove
-the known bias.
-"""
 
 REGION_DILATE_PX = 2
 """How far the block mask is dilated to form the region ``ssim`` averages over.
@@ -379,14 +360,50 @@ def _angle_diff(a: float, b: float) -> float:
     return ((a - b + 180.0) % 360.0) - 180.0
 
 
-def _lobe_centroid(image: np.ndarray, region: np.ndarray) -> tuple[float, float] | None:
-    """Angle and radius of the resistive lobe's intensity-weighted centroid in ``region``.
+LOBE_THRESHOLD = 0.5
+"""Lobe level, as a fraction of its own peak, that separates the lobe from background.
 
-    More stable than the single strongest pixel for the diffuse lobes this solver
-    produces, but it must be confined to one block's wedge: over the whole disc a
-    two-block run's lobes merge and the centroid collapses to the tank centre, which
-    is how the pair runs came out at radius 0.03-0.13.
+Half of peak, the same natural cut as ``DICE_THRESHOLD``. The estimator is stable across
+0.5-0.6 (a placement moves about 1-2 deg), but it is *not* stable below that: at 0.3 a
+two-block run's two lobes merge into one component and the centroid lands 60-170 deg
+off. Do not lower it (ADR-0052).
+"""
+
+
+def _lobe_centroid(
+    image: np.ndarray,
+    wedge: np.ndarray,
+    fallback: np.ndarray,
+) -> tuple[float, float] | None:
+    """Angle and radius of the connected lobe containing the strongest pixel.
+
+    Threshold at ``LOBE_THRESHOLD`` of the peak, keep the connected component the peak
+    falls in, and take that component's centroid. This has no angular window at all,
+    which matters because the window choice was worth up to 12.3 deg on a single
+    placement (ADR-0052): a window centred on the true angle clips an off-centre lobe,
+    a wider one drags in neighbouring structure, and there was no defensible way to
+    choose between them.
+
+    ``fallback`` is the wedge-restricted centroid, used if the component turns out to be
+    implausibly wide â€” which is what happens when a low threshold merges two lobes.
     """
+    local = np.where(wedge, image, -np.inf)
+    peak = np.unravel_index(int(np.argmax(local)), local.shape)
+    threshold = LOBE_THRESHOLD * float(image[peak])
+    labels, count = (None, 0) if threshold <= 0 else ndimage.label(image >= threshold)
+    component = 0 if labels is None else labels[peak]
+    if component:
+        member = labels == component
+        xx, yy, _ = grid_coordinates(image.shape[0])
+        peak_angle = float(np.degrees(np.arctan2(yy[peak], xx[peak])) % 360.0)
+        member_angle = float(np.degrees(np.arctan2(yy[member].mean(), xx[member].mean())) % 360.0)
+        if abs(_angle_diff(member_angle, peak_angle)) <= WEDGE_DEG:
+            return _centroid_over(image, member)
+    return _centroid_over(image, fallback)
+
+
+def _centroid_over(image: np.ndarray, region: np.ndarray) -> tuple[float, float] | None:
+    """Intensity-weighted angle and radius of ``image`` restricted to ``region``."""
     weight = np.where(region, image, 0.0)
     total = weight.sum()
     if total <= 0:
@@ -416,18 +433,10 @@ def score_blocks(values_grid: np.ndarray, blocks: Sequence[Block], n: int = GRID
         row, col = np.unravel_index(flat, local.shape)
         peak_angle = float(angle[row, col])
         is_centre = block.label == "centre"
-        # Centre the centroid on the TRUE angle, but over a window twice as wide as the
-        # search wedge. A +-45 deg window clips an off-centre lobe and drags its
-        # centroid back toward the truth, so errors are under-reported: injected
-        # offsets of 10/20/30 deg came back as 8.9/16.1/23.4. Widening to +-90 deg
-        # removes the clipping (bias +0.11 deg over 0-10 deg against -0.45 for +-45)
-        # while staying anchored to the truth, so unlike a peak-centred window it
-        # cannot follow a rim artefact (ADR-0051).
-        centroid_region = (
-            region if is_centre
-            else inside & (np.abs(_angle_diff(angle, block.angle_deg)) <= CENTROID_HALF_DEG)
-        )
-        centroid = _lobe_centroid(resistive, centroid_region)
+        # Lobe centroid with no angular window: the connected component the peak falls
+        # in, thresholded at half its peak. The wedge is still used to *find* the peak,
+        # and as the fallback if that component is implausibly wide (ADR-0052).
+        centroid = _lobe_centroid(resistive, region, region)
         centroid_angle, centroid_radius = centroid if centroid else (None, None)
         scores.append(
             BlockScore(

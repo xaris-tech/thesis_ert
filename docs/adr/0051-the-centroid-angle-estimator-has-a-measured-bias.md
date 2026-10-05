@@ -1,6 +1,6 @@
-# ADR-0051: The centroid angle estimator has a measured −0.45° bias; the centroid window was validated
+﻿# ADR-0051: The centroid angle estimator has a measured −0.45° bias; the centroid window was validated
 
-- **Status:** Accepted
+- **Status:** Accepted; its window choice superseded by [ADR-0052](0052-measure-the-lobe-not-a-window.md), which found the window was worth up to 12.3 deg on a placement
 - **Date:** 2026-10-05
 - **Affects:** how `centroid_angle_error_deg` in `tree_ert/ssim.py` may be quoted, and every angle figure in `ssim/saline-tank-2026-10-02/`. Refines [ADR-0048](0048-take-the-angle-from-the-lobe-centroid.md).
 - **Related:** ADR-0048, ADR-0049, ADR-0050
