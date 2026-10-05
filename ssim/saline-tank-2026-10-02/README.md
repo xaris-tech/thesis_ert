@@ -168,8 +168,10 @@ match a sharp footprint. Ruled out as causes: template shape, template conductiv
 (0.366/0.366/0.368 across a 15x contrast sweep), mesh density (0.366 → 0.379 over a 6x
 element increase), and baseline-to-target drift (correlation +0.12). See ADR-0046.
 
-The usable result is the **angle error: median 2.9°, 20 of 24 angled placements
-within 10°**, with NCC 0.57 mean against a −0.01 control as the supporting
+The usable result is the **angle error: median 3.0°, 24 of 24 angled placements within
+10°**, worst case 9.9° (ADR-0048). This is measured from the wedge-restricted lobe
+centroid rather than the strongest single pixel, which had reported E6 at 18.2° when
+the centroid puts it 3.7° off. NCC 0.57 mean against a −0.01 control is the supporting
 image-similarity figure.
 
 Full table: `ssim_results.csv`. Images beside their masks: `ssim_contact_sheet.png`.

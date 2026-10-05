@@ -91,6 +91,23 @@ class BlockScore:
     true_radius: float
     peak_radius: float
     peak_value: float
+    centroid_angle_deg: float | None = None
+    centroid_radius: float | None = None
+    centroid_angle_error_deg: float | None = None
+    """Wedge-restricted centroid of the resistive lobe.
+
+    Preferred over ``angle_error_deg``, which reads a single pixel. The lobes this
+    solver produces are diffuse, so the strongest pixel is often a rim artefact
+    rather than the block: on the 2026-10-02 series the single-pixel estimator
+    called E6 18.2 deg off where the lobe centroid puts it 3.7 deg off, and it read
+    20 of 24 placements within 10 deg against the centroid's 24 of 24 (ADR-0048).
+    The centroid is confined to this block's own wedge, so a two-block run does not
+    have its lobes merged before measuring.
+
+    It is intensity-weighted, so a very bright compact artefact still drags it -- in
+    a synthetic case a spike six times the lobe's amplitude and35 deg away pulls the
+    centroid 7.6 deg off. It is far less sensitive than a single pixel, not immune.
+    """
 
 
 @dataclass
@@ -123,6 +140,16 @@ class SsimScore:
     @property
     def max_abs_angle_error(self) -> float | None:
         errors = [abs(b.angle_error_deg) for b in self.blocks if b.angle_error_deg is not None]
+        return max(errors) if errors else None
+
+    @property
+    def max_abs_centroid_angle_error(self) -> float | None:
+        """Same, from the lobe centroid. See ``BlockScore.centroid_angle_error_deg``."""
+        errors = [
+            abs(b.centroid_angle_error_deg)
+            for b in self.blocks
+            if b.centroid_angle_error_deg is not None
+        ]
         return max(errors) if errors else None
 
 
@@ -309,11 +336,32 @@ def _angle_diff(a: float, b: float) -> float:
     return ((a - b + 180.0) % 360.0) - 180.0
 
 
+def _lobe_centroid(image: np.ndarray, region: np.ndarray) -> tuple[float, float] | None:
+    """Angle and radius of the resistive lobe's intensity-weighted centroid in ``region``.
+
+    More stable than the single strongest pixel for the diffuse lobes this solver
+    produces, but it must be confined to one block's wedge: over the whole disc a
+    two-block run's lobes merge and the centroid collapses to the tank centre, which
+    is how the pair runs came out at radius 0.03-0.13.
+    """
+    weight = np.where(region, image, 0.0)
+    total = weight.sum()
+    if total <= 0:
+        return None
+    xx, yy, _ = grid_coordinates(image.shape[0])
+    cx = float((weight * xx).sum() / total)
+    cy = float((weight * yy).sum() / total)
+    if cx == 0.0 and cy == 0.0:
+        return None
+    return float(np.degrees(np.arctan2(cy, cx)) % 360.0), float(np.hypot(cx, cy))
+
+
 def score_blocks(values_grid: np.ndarray, blocks: Sequence[Block], n: int = GRID) -> list[BlockScore]:
     xx, yy, inside = grid_coordinates(n)
     image = np.nan_to_num(-values_grid, nan=-np.inf)
     radius = np.hypot(xx, yy)
     angle = np.degrees(np.arctan2(yy, xx)) % 360.0
+    resistive = np.clip(np.nan_to_num(-values_grid, nan=0.0), 0.0, None)
     scores = []
     for block in blocks:
         if block.label == "centre":
@@ -325,6 +373,8 @@ def score_blocks(values_grid: np.ndarray, blocks: Sequence[Block], n: int = GRID
         row, col = np.unravel_index(flat, local.shape)
         peak_angle = float(angle[row, col])
         is_centre = block.label == "centre"
+        centroid = _lobe_centroid(resistive, region)
+        centroid_angle, centroid_radius = centroid if centroid else (None, None)
         scores.append(
             BlockScore(
                 label=block.label,
@@ -334,6 +384,12 @@ def score_blocks(values_grid: np.ndarray, blocks: Sequence[Block], n: int = GRID
                 true_radius=block.radius,
                 peak_radius=float(radius[row, col]),
                 peak_value=float(-local[row, col]),
+                centroid_angle_deg=centroid_angle,
+                centroid_radius=centroid_radius,
+                centroid_angle_error_deg=(
+                    None if is_centre or centroid_angle is None
+                    else _angle_diff(centroid_angle, block.angle_deg)
+                ),
             )
         )
     return scores

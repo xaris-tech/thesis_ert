@@ -148,5 +148,80 @@ class NccTests(unittest.TestCase):
         self.assertAlmostEqual(with_mask, with_template, places=6)
 
 
+class CentroidAngleTests(unittest.TestCase):
+    """The lobe centroid is the better angle estimator (ADR-0048).
+
+    The single strongest pixel is unreliable on the diffuse lobes this solver
+    produces: on the 2026-10-02 series it put E6 18.2 deg off where the centroid
+    puts it 3.7 deg off, and it read 20 of 24 placements within 10 deg against the
+    centroid's 24 of 24.
+    """
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.mesh = mesh()
+        cls.centres = np.mean(cls.mesh.node[cls.mesh.element], axis=1)[:, :2]
+
+    def blob_at(self, x: float, y: float, scale: float = 0.02) -> np.ndarray:
+        d2 = (self.centres[:, 0] - x) ** 2 + (self.centres[:, 1] - y) ** 2
+        return -np.exp(-d2 / scale)
+
+    def test_centroid_beats_argmax_when_a_rim_artefact_is_stronger(self) -> None:
+        # A resistive lobe at the right place, plus a much brighter spike near the rim
+        # inside the same wedge. The strongest pixel is the spike; the centroid still
+        # reports the lobe. Built at grid resolution because a sub-pixel spike would
+        # simply be lost in rasterisation.
+        xx, yy, inside = ssim.grid_coordinates()
+        lobe = np.exp(-(((xx - 0.8) ** 2 + yy**2) / 0.02))
+        spike_r, spike_a = 0.93, np.deg2rad(35.0)
+        spike = 6.0 * np.exp(-(
+            ((xx - spike_r * np.cos(spike_a)) ** 2 + (yy - spike_r * np.sin(spike_a)) ** 2) / 0.0008))
+        values = np.where(inside, -(lobe + spike), 0.0)
+
+        blocks = ssim.blocks_for(["E7"], self.mesh)
+        scored = ssim.score_blocks(values, blocks)[0]
+
+        # The spike wins the argmax outright; the centroid is pulled somewhat, because
+        # it is intensity-weighted, but stays an order of magnitude closer.
+        self.assertGreater(scored.peak_radius, 0.85, "spike should win the argmax")
+        self.assertGreater(abs(scored.angle_error_deg), 20.0)
+        self.assertLess(abs(scored.centroid_angle_error_deg), 10.0)
+        self.assertLess(
+            abs(scored.centroid_angle_error_deg),
+            abs(scored.angle_error_deg) / 2,
+            "centroid should be much less sensitive to a compact spike than argmax",
+        )
+
+    def test_centroid_error_is_reported_for_a_clean_blob(self) -> None:
+        blocks = ssim.blocks_for(["E7"], self.mesh)
+        scored = ssim.score_blocks(ssim.rasterise(self.blob_at(0.8, 0.0), self.mesh), blocks)[0]
+        self.assertLess(abs(scored.centroid_angle_error_deg), 2.0)
+        self.assertAlmostEqual(scored.centroid_radius, 0.8, delta=0.05)
+
+    def test_two_blocks_do_not_collapse_to_the_tank_centre(self) -> None:
+        # The reason the centroid is wedge-restricted: over the whole disc these two
+        # lobes merge and the centroid falls to radius 0.03.
+        angle_a, angle_b = np.deg2rad(0.0), np.deg2rad(180.0)
+        values = self.blob_at(0.8 * np.cos(angle_a), 0.8 * np.sin(angle_a))
+        values = values + self.blob_at(0.8 * np.cos(angle_b), 0.8 * np.sin(angle_b))
+        blocks = ssim.blocks_for(["E1", "E7"], self.mesh)
+        scored = ssim.score_blocks(ssim.rasterise(values, self.mesh), blocks)
+        for block in scored:
+            self.assertGreater(block.centroid_radius, 0.5, block.label)
+            self.assertLess(abs(block.centroid_angle_error_deg), 5.0, block.label)
+
+    def test_a_flat_image_reports_no_centroid(self) -> None:
+        blocks = ssim.blocks_for(["E7"], self.mesh)
+        scored = ssim.score_blocks(np.zeros((ssim.GRID, ssim.GRID)), blocks)[0]
+        self.assertIsNone(scored.centroid_angle_deg)
+        self.assertIsNone(scored.centroid_angle_error_deg)
+
+    def test_max_abs_centroid_angle_error_property(self) -> None:
+        values = self.blob_at(0.8, 0.0)
+        result = ssim.score(values, self.mesh, ["E7"])
+        self.assertIsNotNone(result.max_abs_centroid_angle_error)
+        self.assertLess(result.max_abs_centroid_angle_error, 5.0)
+
+
 if __name__ == "__main__":
     unittest.main()

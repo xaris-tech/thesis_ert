@@ -98,6 +98,7 @@ one costs a re-derivation.
 | [0042](0042-the-run-label-is-editable.md) | The run label is editable, pre-filled from specimen and target | Accepted |
 | [0043](0043-load-a-recorded-run-as-the-baseline.md) | Load a recorded run as the baseline, remembered as the default; cross-specimen images stamped | Accepted |
 | [0044](0044-saline-ssim-series-fresh-baseline-per-target-group.md) | Saline SSIM series: fresh self-checked baseline per target group; angle error is the headline metric | Accepted |
+| [0048](0048-take-the-angle-from-the-lobe-centroid.md) | Angle from the wedge-restricted lobe centroid; 24/24 within 10 deg, max 9.9 | Accepted |
 | [0047](0047-report-ncc-and-dice-beside-ssim.md) | NCC and Dice reported beside SSIM; NCC separated 17/19 from empty-tank controls | Accepted |
 | [0046](0046-reconstruction-settings-cannot-be-validated-yet.md) | Reconstruction settings frozen: the recorded series and the forward model disagree on radius | Accepted |
 | [0045](0045-ssim-scoring-against-block-masks.md) | SSIM scored on the resistive lobe against block masks; 0.2 R blur; per-block ±45° wedge for angle error | Accepted |
