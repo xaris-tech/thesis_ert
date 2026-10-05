@@ -1,4 +1,4 @@
-"""SSIM scoring against block masks (ADR-0045), on synthetic images; no board, no recorded runs."""
+﻿"""SSIM scoring against block masks (ADR-0045), on synthetic images; no board, no recorded runs."""
 
 from __future__ import annotations
 
@@ -13,6 +13,12 @@ from tree_ert import ssim
 def mesh():
     eit_mesh, _ = base.create_solver(base.build_adjacent_protocol())
     return eit_mesh
+
+
+# Where the block actually sits, in the units the mesh uses (electrodes at radius 1.0).
+# Derived rather than hard-coded so a geometry correction cannot leave these stale.
+NEAR = ssim.NEAR_RADIUS_MM / ssim.ELECTRODE_RING_RADIUS_MM
+FAR = -NEAR
 
 
 class ParseTargetTests(unittest.TestCase):
@@ -43,13 +49,13 @@ class GeometryTests(unittest.TestCase):
             block = ssim.blocks_for([label], self.mesh)[0]
             diff = ((block.angle_deg - angle + 180) % 360) - 180
             self.assertAlmostEqual(diff, 0.0, delta=1.0, msg=label)
-            self.assertAlmostEqual(block.radius, 0.8, places=6)
+            self.assertAlmostEqual(block.radius, NEAR, places=6)
 
-    def test_mask_lands_on_the_block(self) -> None:
+    def test_mask_lands_on_the_block(self):
         mask = ssim.block_mask(ssim.blocks_for(["E7"], self.mesh))
         xx, yy, _ = ssim.grid_coordinates()
         self.assertGreater(mask.sum(), 0)
-        self.assertAlmostEqual(float(xx[mask > 0].mean()), 0.8, delta=0.05)
+        self.assertAlmostEqual(float(xx[mask > 0].mean()), NEAR, delta=0.05)
         self.assertAlmostEqual(float(yy[mask > 0].mean()), 0.0, delta=0.05)
 
 
@@ -66,8 +72,8 @@ class SsimTests(unittest.TestCase):
         def blob_at(x: float, y: float) -> np.ndarray:
             return -np.exp(-((centres[:, 0] - x) ** 2 + (centres[:, 1] - y) ** 2) / 0.02)
 
-        right = ssim.score(blob_at(0.8, 0.0), eit_mesh, ["E7"])
-        wrong = ssim.score(blob_at(-0.8, 0.0), eit_mesh, ["E7"])
+        right = ssim.score(blob_at(NEAR, 0.0), eit_mesh, ["E7"])
+        wrong = ssim.score(blob_at(FAR, 0.0), eit_mesh, ["E7"])
         self.assertGreater(right.ssim_raw, wrong.ssim_raw)
         self.assertGreater(right.ssim_blurred, wrong.ssim_blurred)
         self.assertLess(abs(right.blocks[0].angle_error_deg), 10.0)
@@ -116,8 +122,8 @@ class NccTests(unittest.TestCase):
 
         mask = ssim.block_mask(ssim.blocks_for(["E7"], self.mesh))
         region = ssim.score_region(mask)
-        right = ssim.ncc(ssim.resistive_image(ssim.rasterise(blob_at(0.8, 0.0), self.mesh)), mask, region)
-        wrong = ssim.ncc(ssim.resistive_image(ssim.rasterise(blob_at(-0.8, 0.0), self.mesh)), mask, region)
+        right = ssim.ncc(ssim.resistive_image(ssim.rasterise(blob_at(NEAR, 0.0), self.mesh)), mask, region)
+        wrong = ssim.ncc(ssim.resistive_image(ssim.rasterise(blob_at(FAR, 0.0), self.mesh)), mask, region)
         self.assertGreater(right, 0.5)
         self.assertLess(wrong, 0.3)
 
@@ -127,13 +133,13 @@ class NccTests(unittest.TestCase):
 
     def test_dice_is_one_for_identical_lobes(self) -> None:
         centres = np.mean(self.mesh.node[self.mesh.element], axis=1)[:, :2]
-        blob = -np.exp(-((centres[:, 0] - 0.8) ** 2 + (centres[:, 1]) ** 2) / 0.02)
+        blob = -np.exp(-((centres[:, 0] - NEAR) ** 2 + (centres[:, 1]) ** 2) / 0.02)
         image = ssim.resistive_image(ssim.rasterise(blob, self.mesh))
         self.assertAlmostEqual(ssim.dice(image, image, ssim.score_region(image > 0.1)), 1.0, places=6)
 
     def test_score_reports_the_new_metrics(self) -> None:
         centres = np.mean(self.mesh.node[self.mesh.element], axis=1)[:, :2]
-        blob = -np.exp(-((centres[:, 0] - 0.8) ** 2 + (centres[:, 1]) ** 2) / 0.02)
+        blob = -np.exp(-((centres[:, 0] - NEAR) ** 2 + (centres[:, 1]) ** 2) / 0.02)
         result = ssim.score(blob, self.mesh, ["E7"])
         self.assertIsNotNone(result.ncc)
         self.assertIsNotNone(result.dice)
@@ -141,7 +147,7 @@ class NccTests(unittest.TestCase):
 
     def test_an_explicit_template_is_used_for_ncc(self) -> None:
         centres = np.mean(self.mesh.node[self.mesh.element], axis=1)[:, :2]
-        blob = -np.exp(-((centres[:, 0] - 0.8) ** 2 + (centres[:, 1]) ** 2) / 0.02)
+        blob = -np.exp(-((centres[:, 0] - NEAR) ** 2 + (centres[:, 1]) ** 2) / 0.02)
         expected = ssim.block_mask(ssim.blocks_for(["E7"], self.mesh))
         with_mask = ssim.score(blob, self.mesh, ["E7"]).ncc
         with_template = ssim.score(blob, self.mesh, ["E7"], template=expected).ncc
@@ -172,7 +178,7 @@ class CentroidAngleTests(unittest.TestCase):
         # reports the lobe. Built at grid resolution because a sub-pixel spike would
         # simply be lost in rasterisation.
         xx, yy, inside = ssim.grid_coordinates()
-        lobe = np.exp(-(((xx - 0.8) ** 2 + yy**2) / 0.02))
+        lobe = np.exp(-(((xx - NEAR) ** 2 + yy**2) / 0.02))
         spike_r, spike_a = 0.93, np.deg2rad(35.0)
         spike = 6.0 * np.exp(-(
             ((xx - spike_r * np.cos(spike_a)) ** 2 + (yy - spike_r * np.sin(spike_a)) ** 2) / 0.0008))
@@ -194,16 +200,16 @@ class CentroidAngleTests(unittest.TestCase):
 
     def test_centroid_error_is_reported_for_a_clean_blob(self) -> None:
         blocks = ssim.blocks_for(["E7"], self.mesh)
-        scored = ssim.score_blocks(ssim.rasterise(self.blob_at(0.8, 0.0), self.mesh), blocks)[0]
+        scored = ssim.score_blocks(ssim.rasterise(self.blob_at(NEAR, 0.0), self.mesh), blocks)[0]
         self.assertLess(abs(scored.centroid_angle_error_deg), 2.0)
-        self.assertAlmostEqual(scored.centroid_radius, 0.8, delta=0.05)
+        self.assertAlmostEqual(scored.centroid_radius, NEAR, delta=0.06)
 
     def test_two_blocks_do_not_collapse_to_the_tank_centre(self) -> None:
         # The reason the centroid is wedge-restricted: over the whole disc these two
         # lobes merge and the centroid falls to radius 0.03.
         angle_a, angle_b = np.deg2rad(0.0), np.deg2rad(180.0)
-        values = self.blob_at(0.8 * np.cos(angle_a), 0.8 * np.sin(angle_a))
-        values = values + self.blob_at(0.8 * np.cos(angle_b), 0.8 * np.sin(angle_b))
+        values = self.blob_at(NEAR * np.cos(angle_a), 0.8 * np.sin(angle_a))
+        values = values + self.blob_at(NEAR * np.cos(angle_b), NEAR * np.sin(angle_b))
         blocks = ssim.blocks_for(["E1", "E7"], self.mesh)
         scored = ssim.score_blocks(ssim.rasterise(values, self.mesh), blocks)
         for block in scored:
@@ -217,7 +223,7 @@ class CentroidAngleTests(unittest.TestCase):
         self.assertIsNone(scored.centroid_angle_error_deg)
 
     def test_max_abs_centroid_angle_error_property(self) -> None:
-        values = self.blob_at(0.8, 0.0)
+        values = self.blob_at(NEAR, 0.0)
         result = ssim.score(values, self.mesh, ["E7"])
         self.assertIsNotNone(result.max_abs_centroid_angle_error)
         self.assertLess(result.max_abs_centroid_angle_error, 5.0)

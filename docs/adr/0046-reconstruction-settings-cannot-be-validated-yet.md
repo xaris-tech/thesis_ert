@@ -1,6 +1,6 @@
-# ADR-0046: Reconstruction settings cannot currently be validated, and the recorded series disagrees with the forward model
+﻿# ADR-0046: Reconstruction settings cannot currently be validated, and the recorded series disagrees with the forward model
 
-- **Status:** Accepted
+- **Status:** Accepted, conclusion superseded by [ADR-0049](0049-the-tank-geometry-constants-were-wrong.md) (the cause was wrong geometry constants, not drive-current non-uniformity)
 - **Affects:** `phase3a_reconstruct.create_solver`, every reconstruction path, and any claim about target radius or about tuning `jac_normalized`, `p`, `lamb`, or mesh density.
 - **Related:** ADR-0044, ADR-0045; `ssim/saline-tank-2026-10-02/`
 

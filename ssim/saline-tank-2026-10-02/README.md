@@ -1,4 +1,4 @@
-# SSIM series — saline tank, 2026-10-02
+﻿# SSIM series — saline tank, 2026-10-02
 
 Purpose: measure how well the instrument localises a known target in a saline
 tank, scored by SSIM (structural similarity) between each reconstruction and a
@@ -23,13 +23,21 @@ capture series (ADR-0025); if the two ever disagree, `scans/` wins.
 
 | Item | Value |
 |---|---|
-| Tank | circular, radius ≈ 160 mm, 12 electrodes |
+| Tank | circular bucket, inner radius 128 mm, 12 electrodes |
+| Electrode ring | radius 98 mm — the nails are driven ~30 mm into the bucket wall |
 | Electrode map | E1 = marked nail, clockwise viewed from above |
 | Image angle of Ek | 180° − 30°·(k−1): E1 180°, E4 90°, E7 0°, E10 270° |
 | Target | wooden block, 23 × 22 mm footprint, 51 mm tall, standing upright |
-| Position | "near Ek" = block centre ≈ 128 mm from tank centre, on the line to Ek |
+| Position | "near Ek" = block centre ≈ 55 mm from tank centre (0.56 of the electrode ring), on the line to Ek |
 | Settings | adjacent, high range, DAC 400, settle 30 ms, 16 samples, 10 warmup, 5 frames |
 | Not recorded | saline g/L, fill depth, water temperature, grounding |
+
+**Corrected 2026-10-05 (ADR-0049).** This table previously said the tank radius was
+160 mm and the block sat 128 mm from the centre, i.e. 0.80 of that tank — level with
+the bucket wall, which is not a placement anyone can make by accident. Measured: the
+bucket is 128 mm and the nails sit 30 mm inside it. The block is at ≈55 mm, about
+0.56 of the electrode ring. **The block radius is a reconstruction from the data, not
+a tape measurement, and is the largest remaining uncertainty in this series.**
 
 ## What happened
 
@@ -162,38 +170,60 @@ luminance term carried the ratio to ≈1 whatever the image contained — an emp
 scored 0.904–0.957 and **all 19 runs scored below it**. A mean of 0.438 therefore did
 not mean "moderate structural agreement".
 
-That defect is fixed. The remaining limit is the reconstruction, not the metric: the
-peak lands at 0.27–0.61 R against a block at 0.80 R, so the shape genuinely does not
-match a sharp footprint. Ruled out as causes: template shape, template conductivity
-(0.366/0.366/0.368 across a 15x contrast sweep), mesh density (0.366 → 0.379 over a 6x
-element increase), and baseline-to-target drift (correlation +0.12). See ADR-0046.
+That defect is fixed. **And the second apparent defect — a radius mismatch — was also a
+units error, not a reconstruction failure (ADR-0049).** `TANK_RADIUS_MM` was 160 mm
+when the bucket is 128 mm, and every normalised length was divided by the bucket radius
+where the mesh normalises to the 98 mm electrode ring, making every mask radius and the
+block's half-widths 1.31× too large. With that corrected:
 
-The usable result is the **angle error: median 3.0°, 24 of 24 angled placements within
-10°**, worst case 9.9° (ADR-0048). This is measured from the wedge-restricted lobe
-centroid rather than the strongest single pixel, which had reported E6 at 18.2° when
-the centroid puts it 3.7° off. NCC 0.57 mean against a −0.01 control is the supporting
-image-similarity figure.
+| metric | before | after | empty tank | beats control |
+|---|---|---|---|---|
+| NCC | 0.569 mean, −0.155 min | **0.721 mean, 0.461 min** | 0.031 | **19 / 19** |
+| Dice | 0.588 mean | **0.929 mean** | 0.204 | **19 / 19** |
+| SSIM | 0.130 mean | 0.155 mean | −0.004 | 19 / 19 |
 
-Full table: `ssim_results.csv`. Images beside their masks: `ssim_contact_sheet.png`.
+Every run now clears its own empty-tank control; the worst case moved from negative to
+0.461. `ssim_results.csv` is **wrong**, not merely stale — it was scored against masks
+at the wrong radius and size, and must be regenerated.
 
-Angle errors in `ssim_results.csv` come from the pixel-grid wedge search. They
-differ by a few degrees from the UI's peak angle quoted in the single-block table
-above.
+The result: **angle error median 3.4°, max 9.9° (ADR-0048), and NCC 0.72 mean against a
+0.03 control with 19 of 19 runs clearing it.**
+
+Full table: `ssim_results.csv` (**needs regenerating**). Images beside their masks:
+`ssim_contact_sheet.png` (**also stale** — same masks).
+
+Angle errors come from the pixel-grid wedge search. They differ by a few degrees from
+the UI's peak angle quoted in the single-block table above.
 
 ### Known limitation: radius
 
-Peaks come out at about 0.27–0.61 R although the blocks were placed at about
-0.8 R. A one-step JAC reconstruction with regularisation pulls targets toward
-the centre and blurs them. The angle is reliable; the radius is not.
+This section described a defect that did not exist. Corrected 2026-10-05; the original
+text is in the git history and in ADR-0049.
 
-Two things make the radius weaker than it looks. The 0.8 R ground truth is not
-measured — no photo has a ruler in frame, so 0.80 is the hard-coded
-`128/160 mm` ratio in `tree_ert/ssim.py`, applied unchanged to every run. And
-`score_blocks` searches a ±45° wedge with **no radial bound**, so the reported
-`peak_radius` for each block is the strongest pixel anywhere in that wedge. A
-centre-collapsed artefact at 0.42 R would be reported as a clean localisation
-with a small angle error. ADR-0044 sets out how this will be reported.
+**There is no radial collapse.** Once `TANK_RADIUS_MM` was corrected to the measured
+128 mm and lengths were normalised against the 98 mm electrode ring, the forward model
+reproduces the recorded series without any tuning:
 
+| block placed at (fraction of the electrode ring) | recovered centroid |
+|---|---|
+| 0.40 | 0.390 |
+| 0.50 | 0.472 |
+| 0.60 | 0.555 |
+| 0.70 | 0.673 |
+| 0.80 | 0.721 |
+
+Near-linear, no systematic inward bias. The series measured centroid of 0.483 inverts
+to a placed radius of 0.51, consistent with the block at about 0.56 of the ring.
+
+What replaces it as the open question: **the block radius is inferred, not measured.**
+0.56 of the ring comes from inverting the forward model against this data, corroborated
+only by recollection. One tape measurement - block centre to tank centre, in mm - would
+close it, and every mask radius in this series depends on it.
+
+Also still open: the electrode inset itself is unmodelled. The mesh places electrodes on
+the domain boundary; the hardware has them 30 mm further in, which is 23% of the radius.
+Correcting it made agreement worse rather than better on the first attempt, so it was not
+adopted - but it is a genuine model/hardware mismatch, not an approximation.
 ### Record amendments
 
 Some target fields were blank or truncated at capture. They were filled in

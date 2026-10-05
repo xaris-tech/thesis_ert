@@ -31,12 +31,36 @@ from typing import Sequence
 import numpy as np
 from scipy import ndimage
 
-TANK_RADIUS_MM = 160.0
-NEAR_RADIUS_MM = 128.0
-"""'Near Ek' in the 2026-10-02 series: block centre this far from the tank centre."""
+TANK_RADIUS_MM = 128.0
+"""Bucket inner radius, measured 2026-10-05. The old value here was 160.0 mm, which
+was wrong by 25% and is the origin of most of the trouble recorded in ADR-0046 and
+ADR-0049."""
+
+ELECTRODE_INSET_MM = 30.0
+"""How far the nails are driven in from the bucket wall, measured 2026-10-05 as
+"at least 30 mm". Point-type electrodes therefore sit on a ring noticeably inside
+the domain, not on its boundary."""
+
+ELECTRODE_RING_RADIUS_MM = TANK_RADIUS_MM - ELECTRODE_INSET_MM
+"""Radius of the electrode ring, 98 mm. This -- not the bucket radius -- is the
+length unit every normalised radius in this module is expressed against, because
+PyEIT's mesh puts the electrodes at radius 1.0. Dividing a length by TANK_RADIUS_MM
+was wrong by a factor of 128/98 = 1.31 throughout."""
+
+NEAR_RADIUS_MM = 55.0
+"""'Near Ek' in the 2026-10-02 series: block centre this far from the tank centre.
+
+**Approximate.** The series README previously recorded 128 mm, i.e. 0.80 of a 160 mm
+tank -- which put the block level with the bucket wall and cannot have been measured.
+Inverting the reconstruction puts it at 0.51-0.56 of the electrode ring, i.e.50-55 mm;
+the operator independently recalled "0.56 or something" (ADR-0049). This is the
+number a tape measure should replace. If it is wrong, every mask radius is wrong
+with it."""
 
 BLOCK_FOOTPRINT_MM = (23.0, 22.0)
-"""Wooden block footprint, tangential x radial, standing upright."""
+"""Wooden block footprint, tangential x radial, standing upright. Normalised against
+ELECTRODE_RING_RADIUS_MM, not the bucket: dividing by TANK_RADIUS_MM made the mask
+1.31x too small on every axis (ADR-0049)."""
 
 GRID = 64
 """Raster side in pixels across the unit disc; 2/64 R = 5 mm per pixel at R = 160 mm."""
@@ -188,7 +212,7 @@ def electrode_unit_vectors(eit_mesh) -> list[tuple[float, float]]:
     return vectors
 
 
-def blocks_for(labels: Sequence[str], eit_mesh, near_radius: float = NEAR_RADIUS_MM / TANK_RADIUS_MM) -> list[Block]:
+def blocks_for(labels: Sequence[str], eit_mesh, near_radius: float = NEAR_RADIUS_MM / ELECTRODE_RING_RADIUS_MM) -> list[Block]:
     vectors = electrode_unit_vectors(eit_mesh)
     blocks = []
     for label in labels:
@@ -224,8 +248,8 @@ def rasterise(values: np.ndarray, eit_mesh, n: int = GRID) -> np.ndarray:
 def block_mask(blocks: Sequence[Block], n: int = GRID) -> np.ndarray:
     """Binary footprint of every block, oriented with its radial side toward the centre."""
     xx, yy, inside = grid_coordinates(n)
-    half_t = BLOCK_FOOTPRINT_MM[0] / 2.0 / TANK_RADIUS_MM
-    half_r = BLOCK_FOOTPRINT_MM[1] / 2.0 / TANK_RADIUS_MM
+    half_t = BLOCK_FOOTPRINT_MM[0] / 2.0 / ELECTRODE_RING_RADIUS_MM
+    half_r = BLOCK_FOOTPRINT_MM[1] / 2.0 / ELECTRODE_RING_RADIUS_MM
     mask = np.zeros(xx.shape)
     for block in blocks:
         if block.radius > 0:
