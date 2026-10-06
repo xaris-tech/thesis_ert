@@ -1,0 +1,5 @@
+Frames captured: 1
+Reciprocity: median 15.0%  max 95.0%  sign flips 3/54
+Check electrode contact: E1 35% (all pairs median 15%)
+Noise floor: needs at least 2 frames
+absolute: REFUSED: median reciprocity 15.0% > 15%; too few frames for a split-half noise image (need 4)
