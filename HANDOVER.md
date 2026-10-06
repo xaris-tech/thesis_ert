@@ -252,6 +252,8 @@ If COM port access is denied, close Arduino Serial Monitor or any other serial p
 
 ## Current Known Issues
 
+0. **Read `docs/session-2026-10-06-absolute-disc-series.md` first.** Gated absolute reconstruction now exists (ADR-0041 to ADR-0043). In the ten-disc series only disc-01 passed. **E2's lead/clip/channel is the suspected fault** behind most refusals: it was worst or second-worst on 8 of 9 failing discs. Fix it and confirm on the resistor ring before scanning again. All coconut data to date is from cut discs; no standing tree has been scanned.
+
 1. Current can be too low.
 
    When median current is around `14 uA`, reconstructions become mostly random and baseline stability often fails. The practical current target for this breadboard prototype is roughly `100-500 uA`, with `300 uA` being a useful initial target.
