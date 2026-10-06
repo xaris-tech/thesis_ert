@@ -453,6 +453,22 @@ class RunDiscoveryTests(unittest.TestCase):
         self.assertEqual(loaded["run_id"], recorder.run_id)
 
 
+class IndexHeaderDriftTests(unittest.TestCase):
+    def test_rows_longer_than_an_old_header_keep_the_new_columns(self):
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as root:
+            path = Path(root) / run_record.INDEX_FILENAME
+            old = run_record.INDEX_COLUMNS[:5]
+            path.write_text(",".join(old) + "\n", encoding="utf-8")
+            run_record.append_index_row(
+                Path(root), {"run_id": "r1", "absolute_gate": "pass"}
+            )
+            row = run_record.read_index(Path(root))[0]
+            self.assertEqual(row["run_id"], "r1")
+            self.assertEqual(row["absolute_gate"], "pass")
+
+
 if __name__ == "__main__":
     unittest.main()
 

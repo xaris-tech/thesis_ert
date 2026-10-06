@@ -94,3 +94,6 @@ one costs a re-derivation.
 | [0038](0038-survey-distances-on-normalised-vectors.md) | Survey spreads are RMS distances between mean-magnitude-normalised vectors | Accepted |
 | [0039](0039-coconut-preset-dac-620-32-samples.md) | The coconut preset is adjacent / high / DAC 620 / 30 ms / 32 samples, validated | Accepted |
 | [0040](0040-generate-the-run-label-from-specimen-and-target.md) | Generate the run label from specimen and target instead of typing it | Accepted |
+| [0041](0041-gated-absolute-reconstruction-with-continuous-recalibration.md) | Gate absolute reconstruction on reciprocity, misfit and significance; re-acquire until it passes | Accepted |
+| [0042](0042-regularised-absolute-solve-and-varied-recalibration-ramp.md) | Regularise the absolute solve; recalibrate down a varied ramp that stops on contact faults | Accepted |
+| [0043](0043-stall-stop-and-conductivity-bound.md) | Stop recalibration on a reciprocity stall; bound element conductivity to sigma0 ×/÷ 100 | Accepted |
