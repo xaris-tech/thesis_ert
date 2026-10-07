@@ -1,0 +1,4 @@
+Frames captured: 10
+Reciprocity: median 17.1%  max 44.7%  sign flips 1/36
+Noise floor: median pair sd 0.00251 kohm (4.65%)  max 0.50929 kohm over 90 pairs
+absolute: REFUSED: median reciprocity 17.1% > 15%; model misfit 80.4% > 15%; significance 0.86 < 2.0
