@@ -189,13 +189,12 @@ SPECIMEN_ID_PATTERN = re.compile(r"^[a-z][a-z0-9]*(?:-[a-z0-9]+)*-[0-9]+$")
 
 
 def naming_problems(conditions: Conditions, label: str) -> list[str]:
-    """Reasons a capture may not start. Empty list means it may.
+    """Naming gaps to warn about before a capture. Empty list means none.
 
-    Unlike :meth:`Conditions.validate`, these block. ``validate`` covers values
-    that may honestly not have been measured; these cover identity, which is
-    always known at the bench and cannot be recovered afterwards. A run whose
-    specimen is unrecorded cannot be placed in the survey (ADR-0035) nor safely
-    differenced (ADR-0037), so it is refused before it is taken.
+    Warnings, like :meth:`Conditions.validate` (ADR-0044 superseded the
+    refusal of ADR-0037). A run whose specimen is unrecorded cannot be placed
+    in the survey (ADR-0035) without a manifest, so the gap is shown before
+    the run is taken, but the operator may go ahead.
     """
     problems: list[str] = []
     if conditions.medium not in KNOWN_MEDIA:
@@ -211,14 +210,7 @@ def naming_problems(conditions: Conditions, label: str) -> list[str]:
             f"specimen ID {specimen!r} must be lowercase words joined by hyphens"
             " and end in a number (e.g. disc-03, coconut-tree-1)"
         )
-    slug = slugify(label)
-    if specimen and SPECIMEN_ID_PATTERN.match(specimen):
-        prefix = f"{specimen}-"
-        if not slug.startswith(prefix) or len(slug) == len(prefix):
-            problems.append(
-                f"label must start with the specimen ID and say what the run is,"
-                f" e.g. '{specimen}-intact' or '{specimen}-hole-e7' (got {label.strip()!r})"
-            )
+    # The label is free text (ADR-0045); it is not checked here.
     return problems
 
 
@@ -228,12 +220,13 @@ def run_label(conditions: Conditions) -> str:
     ``<specimen ID>-<target>``, or ``-intact`` for a cut disc with no target
     and ``-baseline`` for anything else with none. Generated rather than typed
     because typing it only restated those fields, and on 2026-09-29 the typed
-    labels described the settings instead (ADR-0040). Empty until a specimen
-    ID is entered, which ``naming_problems`` then refuses.
+    labels described the settings instead (ADR-0040). With no specimen ID the
+    medium (or ``run``) stands in for it, so a run is always named (ADR-0044);
+    ``naming_problems`` still warns about the missing ID.
     """
     specimen = conditions.specimen_id.strip()
     if not specimen:
-        return ""
+        specimen = slugify(conditions.medium) if conditions.medium in KNOWN_MEDIA else "run"
     target = conditions.target_description.strip()
     if target:
         what = slugify(target)

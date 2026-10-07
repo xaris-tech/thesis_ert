@@ -1,0 +1,20 @@
+run_id,baseline_run,target,blocks,ssim_raw,ssim_blurred,max_abs_angle_error_deg,angle_errors_deg,peak_radius,true_radius
+20261002-140411-ssim-saline,20261002-135739-ssim-saline,"A: near E9 (block centre ~128 mm from tank centre, upright, 23 mm face to centre)",E9,0.409,0.394,1.0,+1.0,0.27,0.80
+20261002-141259-ssim-saline,20261002-135739-ssim-saline,wood block at 10,E10,0.403,0.414,11.3,+11.3,0.40,0.80
+20261002-141918-ssim-saline,20261002-135739-ssim-saline,wood block at 11,E11,0.472,0.475,9.0,-9.0,0.42,0.80
+20261002-142601-ssim-saline,20261002-135739-ssim-saline,wood at 4,E4,0.413,0.404,1.7,-1.7,0.52,0.80
+20261002-144109-ssim-saline,20261002-143242-ssim-saline,wood at e5,E5,0.585,0.617,5.9,+5.9,0.50,0.80
+20261002-144734-ssim-saline,20261002-143242-ssim-saline,wood at e6,E6,0.456,0.482,18.2,+18.2,0.40,0.80
+20261002-145332-ssim-saline,20261002-143242-ssim-saline,wood at e7,E7,0.320,0.326,2.7,+2.7,0.33,0.80
+20261002-150425-ssim-saline,20261002-143242-ssim-saline,wood at e8,E8,0.284,0.323,3.1,-3.1,0.43,0.80
+20261002-151731-ssim-saline,20261002-151045-ssim-saline,wood at e12,E12,0.572,0.588,2.5,-2.5,0.44,0.80
+20261002-152426-ssim-saline,20261002-151045-ssim-saline,wood at e1,E1,0.559,0.557,1.8,+1.8,0.48,0.80
+20261002-153824-ssim-saline,20261002-153056-ssim-saline,wood at e3,E3,0.578,0.595,9.2,-9.2,0.48,0.80
+20261002-165444-ssim-saline,20261002-164714-ssim-saline,wood at e2,E2,0.591,0.566,11.4,-11.4,0.35,0.80
+20261002-171321-ssim-saline,20261002-170541-ssim-saline,wood at centre,centre,0.531,0.699,,,0.13,0.00
+20261002-172321-ssim-saline,20261002-170541-ssim-saline,wood at e1 e7,E1+E7,0.353,0.367,2.1,-1.5 +2.1,0.61 0.42,0.80 0.80
+20261002-173951-ssim-saline,20261002-170541-ssim-saline,wood at e3 and e9,E3+E9,0.394,0.409,4.4,+1.4 -4.4,0.75 0.40,0.80 0.80
+20261002-174738-ssim-saline,20261002-170541-ssim-saline,wood at e4 e10,E4+E10,0.384,0.370,2.7,-1.7 +2.7,0.52 0.33,0.80 0.80
+20261002-175516-ssim-saline,20261002-170541-ssim-saline,wood at e5 e11,E5+E11,0.314,0.308,9.0,-4.2 -9.0,0.47 0.42,0.80 0.80
+20261002-180403-ssim-saline,20261002-170541-ssim-saline,wood at e6 e12,E6+E12,0.319,0.342,15.0,+15.0 -8.5,0.46 0.55,0.80 0.80
+20261002-181205-ssim-saline,20261002-170541-ssim-saline,wood at e2 e8,E2+E8,0.378,0.467,2.5,-0.4 +2.5,0.53 0.44,0.80 0.80

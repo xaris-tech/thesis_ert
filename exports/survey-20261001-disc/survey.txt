@@ -1,0 +1,71 @@
+INTACT-DISC SURVEY (ADR-0035, ADR-0038)
+
+Profile: pattern=adjacent, current_range=high, dac=620, settle_ms=30, samples=32, electrode_offset=0, electrode_reversed=False
+Distances are RMS differences of normalised vectors, % of mean |R|.
+
+Spreads (reported separately, never combined):
+  S_noise       19.26 %   same specimen rescanned untouched
+  S_between    130.80 %   different intact specimens
+  S_defect          n/a   same specimen, before vs after drilling
+  S_between / S_noise  = 6.79
+  no verdict: needs both S_between and S_defect
+
+Scans:
+  run                                          specimen         state    bad  max/min  p95/p5  spread
+  20261001-155316-coco-disk-3                  disc-03          intact     0    28.62    4.31    4.20
+  20261001-161511-coco-disk-3                  disc-03          intact     0    84.85    5.01    3.45
+  20261001-163035-coco-disk-2                  disc-02          intact     0    77.90    8.97    8.62
+  20261001-164149-coco-disk-2                  disc-02          intact     0   166.00   10.41   11.07
+  20261001-171006-coco-disk-5                  disc-05          intact     0   562.55   23.39   15.85
+  20261001-171931-coco-disk-5                  disc-05          intact     0   365.53   37.11   15.60
+  20261001-173658-coco-disk-06                 disc-06          intact     0    49.02    5.95    2.98
+  20261001-174848-coco-disk-06                 disc-06          intact     0   372.50    4.07    2.59
+  20261001-193706-coco-disk-04                 disc-04          intact     0   615.45  118.59    9.47
+  20261001-195034-coco-disk-04                 disc-04          intact     0   412.25   22.47   14.97
+  20261001-151200-cut-disc-intact              unknown-disc     EXCLUDED  contact faults E11/E12 (5-7 uA) and E2 dead frames 0-4; 72 I_LOW
+  20261001-165937-coco-disk-5                  disc-05          EXCLUDED  contact faults E1 (1 uA) and E10 (~30 uA); 36 I_LOW; stopped at 7 frames
+  20261001-180429-coco-disk-07                 disc-07          EXCLUDED  E2 spot offset ~120 mV; recip 39%
+  20261001-183134-coco-disk-07                 disc-07          EXCLUDED  E2 spot offset ~120 mV unchanged; S_noise vs 180429 52.7%
+  20261001-185058-coco-disk-07                 disc-07          EXCLUDED  E2 moved a few mm; offset still ~146 mV; recip 48%
+  20261001-190226-coco-disk-07                 disc-07          EXCLUDED  E2 moved; offset ~138 mV; recip 46%; disc skipped
+  20261001-192137-coco-disk-08                 disc-08          EXCLUDED  recorded as disc-07 by mistake; all currents 22-70 uA; E9 offset ~430 mV; I_REVERSED on E9-E10; stopped at 5 frames
+
+S_noise pairs:
+  disc-02          20261001-163035-coco-disk-2 vs 20261001-164149-coco-disk-2: 39.20 %
+  disc-03          20261001-155316-coco-disk-3 vs 20261001-161511-coco-disk-3: 19.26 %
+  disc-04          20261001-193706-coco-disk-04 vs 20261001-195034-coco-disk-04: 34.30 %
+  disc-05          20261001-171006-coco-disk-5 vs 20261001-171931-coco-disk-5: 16.71 %
+  disc-06          20261001-173658-coco-disk-06 vs 20261001-174848-coco-disk-06: 9.92 %
+
+S_between pairs:
+  disc-02 vs disc-03: 125.28 %
+  disc-02 vs disc-04: 133.74 %
+  disc-02 vs disc-05: 124.87 %
+  disc-02 vs disc-06: 159.83 %
+  disc-03 vs disc-04: 101.89 %
+  disc-03 vs disc-05: 158.36 %
+  disc-03 vs disc-06: 56.44 %
+  disc-04 vs disc-05: 161.21 %
+  disc-04 vs disc-06: 127.86 %
+  disc-05 vs disc-06: 186.75 %
+
+Distance of each specimen from the cohort centre (outliers first):
+  disc-05          106.79 %
+  disc-06          99.35 %
+  disc-02          84.83 %
+  disc-04          80.26 %
+  disc-03          63.43 %
+
+Cells contributing most to S_between (top 10):
+  E9-E10|E11-E12      20.2 %
+  E3-E4|E1-E2         13.3 %
+  E11-E12|E9-E10      12.8 %
+  E2-E3|E4-E5         12.2 %
+  E12-E1|E2-E3         5.9 %
+  E1-E2|E3-E4          4.1 %
+  E12-E1|E10-E11       3.7 %
+  E10-E11|E12-E1       2.7 %
+  E5-E6|E1-E2          2.3 %
+  E4-E5|E2-E3          2.0 %
+Per-electrode share of S_between (contact faults live here):
+  E1 10.2%  E2 12.3%  E3 10.6%  E4 9.5%  E5 5.9%  E6 2.3%  E7 1.7%  E8 2.2%  E9 9.9%  E10 11.1%  E11 11.6%  E12 12.5%

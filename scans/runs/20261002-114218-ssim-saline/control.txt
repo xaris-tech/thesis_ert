@@ -1,0 +1,5 @@
+peak -1.482e-01 at 173 deg (x=-0.84, y=+0.10)
+colour scale +/-1.482e-01  (auto-scaled to this image)
+pairs 108/108 kept  [ok]
+measurement noise floor 0.00022 kohm - a change below this is not a detection
+baseline against itself: this is noise, not a detection

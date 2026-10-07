@@ -53,6 +53,9 @@ from tree_ert.qt.worker import (
     CaptureWorker,
     SessionBaseline,
     available_ports,
+    baseline_from_run,
+    read_default_baseline,
+    write_default_baseline,
 )
 from tree_ert.settings import (
     SPECIMEN_PRESETS,
@@ -120,7 +123,7 @@ class ConditionsPanel(QGroupBox):
 
         # No default on purpose: a pre-filled "saline tank" was recorded against
         # every disc and belt run of 2026-09-29 (ADR-0037). The blank first item
-        # is refused by run_record.naming_problems, so it has to be chosen.
+        # is warned about by run_record.naming_problems (ADR-0044).
         self.medium = QComboBox()
         self.medium.addItem("")
         self.medium.addItems(run_record.KNOWN_MEDIA)
@@ -454,7 +457,8 @@ class MainWindow(QMainWindow):
         self._run_path: Path | None = None
         self._expected_frames = 0
         self._baseline: SessionBaseline | None = None
-        """First run of the session. Every later run differences against it."""
+        """First run of the session, or a run loaded from disk (ADR-0046).
+        Every later run differences against it."""
 
         self.setStyleSheet(theme.stylesheet())
 
@@ -462,15 +466,18 @@ class MainWindow(QMainWindow):
         self.settings_panel.demo.setChecked(demo)
         self.conditions_panel = ConditionsPanel()
 
-        # Generated, not typed (ADR-0040): it only restates the specimen and the
-        # target, and typed labels drifted into describing the settings instead.
+        # Pre-filled from specimen and target, but editable (ADR-0045). Once the
+        # operator types in it, it stops following the conditions; clearing it
+        # hands it back to the generator.
         self.label = QLineEdit()
-        self.label.setReadOnly(True)
         self.label.setPlaceholderText("fills in from Specimen and Target")
+        self._label_typed = False
+        self.label.textEdited.connect(self._on_label_edited)
         panel = self.conditions_panel
         panel.specimen_id.textChanged.connect(self._update_label)
         panel.target.textChanged.connect(self._update_label)
         panel.medium.currentTextChanged.connect(self._update_label)
+        self._update_label()
         self.start_button = QPushButton("Start capture")
         self.start_button.setObjectName("Primary")
         self.start_button.clicked.connect(self.start_capture)
@@ -493,6 +500,13 @@ class MainWindow(QMainWindow):
         self.clear_baseline_button.setObjectName("Subtle")
         self.clear_baseline_button.setEnabled(False)
         self.clear_baseline_button.clicked.connect(self.clear_baseline)
+        self.load_baseline_button = QPushButton("Load baseline from run...")
+        self.load_baseline_button.setObjectName("Subtle")
+        self.load_baseline_button.setToolTip(
+            "Use an existing recorded run as the baseline. It is remembered and "
+            "loaded again at the next start until cleared (ADR-0046)."
+        )
+        self.load_baseline_button.clicked.connect(self.choose_baseline)
         self.baseline_label = QLabel("Next run becomes the session baseline.")
         self.baseline_label.setWordWrap(True)
         self.override_reciprocity = QCheckBox(
@@ -520,6 +534,9 @@ class MainWindow(QMainWindow):
         existing = len(run_record.list_runs(self._log_dir))
         self._log(f"Scans folder: {self._log_dir.resolve()}")
         self._log(f"{existing} scan(s) already recorded here.")
+        default = read_default_baseline(self._log_dir)
+        if default is not None:
+            self.load_baseline(default)
         self._log("Ready. Settings are saved on exit.")
 
     # -- layout ----------------------------------------------------------
@@ -578,7 +595,10 @@ class MainWindow(QMainWindow):
         run_layout.addLayout(extras)
         run_layout.addWidget(self.scans_button)
         run_layout.addWidget(self.baseline_label)
-        run_layout.addWidget(self.clear_baseline_button)
+        baseline_buttons = QHBoxLayout()
+        baseline_buttons.addWidget(self.load_baseline_button)
+        baseline_buttons.addWidget(self.clear_baseline_button)
+        run_layout.addLayout(baseline_buttons)
         run_layout.addWidget(self.override_reciprocity)
         run_layout.addWidget(self.recalibrate)
         inner_layout.addWidget(run_box)
@@ -739,25 +759,15 @@ class MainWindow(QMainWindow):
             return
 
         conditions = self.conditions_panel.conditions()
-        label = run_record.run_label(conditions)
-        blocking = self.start_problems(conditions, label)
-        if blocking:
-            # A block, not a warning (ADR-0037). Identity is always known at the
-            # bench and cannot be recovered afterwards; every gap below it is
-            # something that may honestly not have been measured.
-            QMessageBox.warning(
-                self,
-                "Cannot start",
-                "Fix these before scanning:\n\n"
-                + "\n".join(f"  - {p}" for p in blocking),
-            )
-            self._log("Start refused: " + "; ".join(blocking))
-            return
-
-        problems = conditions.validate()
+        label = self.label.text().strip() or run_record.run_label(conditions)
+        naming = self.start_problems(conditions, label)
+        problems = naming + conditions.validate()
+        if naming:
+            self._log("Naming warnings: " + "; ".join(naming))
         if problems:
-            # A warning, never a block: a capture already worth taking must not
-            # be refused over metadata, and the gaps are recorded in the run.
+            # A warning, never a block (ADR-0044, superseding ADR-0037's refusal):
+            # a capture already worth taking must not be refused over metadata,
+            # and the gaps are recorded in the run.
             answer = QMessageBox.question(
                 self,
                 "Incomplete conditions",
@@ -813,10 +823,19 @@ class MainWindow(QMainWindow):
         self._thread.start()
 
     def _update_label(self, *_args: object) -> None:
-        self.label.setText(run_record.run_label(self.conditions_panel.conditions()))
+        generated = run_record.run_label(self.conditions_panel.conditions())
+        self.label.setPlaceholderText(generated)
+        if not self._label_typed:
+            self.label.setText(generated)
+
+    def _on_label_edited(self, text: str) -> None:
+        # Typing marks the label as the operator's. Emptying it is left empty,
+        # not refilled mid-edit; the generated name shows as the placeholder and
+        # is what start_capture uses for a blank field.
+        self._label_typed = True
 
     def start_problems(self, conditions: Conditions, label: str) -> list[str]:
-        """Everything that refuses a start: naming, then baseline identity."""
+        """Naming and baseline-identity warnings shown before a start (ADR-0044)."""
         problems = run_record.naming_problems(conditions, label)
         if self._baseline is not None:
             mismatch = run_record.baseline_specimen_problem(
@@ -978,9 +997,48 @@ class MainWindow(QMainWindow):
         accepted while describing a different specimen.
         """
         self._baseline = None
+        write_default_baseline(self._log_dir, None)
         self.clear_baseline_button.setEnabled(False)
         self.baseline_label.setText("Next run becomes the session baseline.")
         self._log("Baseline cleared; the next run will become the new baseline.")
+
+    def choose_baseline(self) -> None:
+        start = self._log_dir / run_record.RUNS_DIRNAME
+        path = QFileDialog.getExistingDirectory(
+            self, "Choose baseline run", str(start if start.is_dir() else self._log_dir)
+        )
+        if path:
+            self.load_baseline(Path(path))
+
+    def load_baseline(self, run_dir: Path) -> bool:
+        """Make a recorded run the baseline and remember it as the default.
+
+        A run that cannot be read is reported and leaves the current baseline
+        as it was; a stale default is forgotten so startup does not retry it.
+        """
+        try:
+            baseline = baseline_from_run(run_dir)
+        except Exception as exc:  # noqa: BLE001 - report, never crash the window
+            self._log(f"Could not load baseline {run_dir}: {type(exc).__name__}: {exc}")
+            if read_default_baseline(self._log_dir) == Path(run_dir):
+                write_default_baseline(self._log_dir, None)
+            return False
+        self._baseline = baseline
+        write_default_baseline(self._log_dir, baseline.run_id)
+        self.clear_baseline_button.setEnabled(True)
+        settings = baseline.settings
+        self.baseline_label.setText(
+            f"Baseline (loaded): {baseline.run_id}"
+            f" ({baseline.specimen_id or 'no specimen ID'})\n"
+            f"{settings.get('pattern', '?')} / DAC {settings.get('dac', '?')}"
+            f" / {len(baseline.frames)} frames - later runs must match its settings"
+        )
+        self._log(
+            f"Baseline loaded from {baseline.run_id} "
+            f"({len(baseline.frames)} frames, specimen "
+            f"{baseline.specimen_id or 'unrecorded'}); remembered as the default."
+        )
+        return True
 
     def _on_finished(self, run_path: str, summary: str) -> None:
         if self._baseline is None and self._frames:

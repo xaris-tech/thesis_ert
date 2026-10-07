@@ -1,0 +1,9 @@
+RECIPROCITY OVERRIDDEN - NOT VALID DATA (baseline: reciprocity could not be measured (no reciprocal pairs); this run: reciprocity could not be measured (no reciprocal pairs))
+CROSS-SPECIMEN BASELINE (disc-07 -> unrecorded) - shows specimen difference, not only defects
+peak -1.151e+00 at 151 deg (x=-0.75, y=+0.42)
+colour scale +/-1.151e+00  (auto-scaled to this image)
+pairs 96/96 kept  [ok]
+measurement noise floor 0.00010 kohm - a change below this is not a detection
+control peak +1.462e-02
+significance 78.72x the noise image
+baseline run: 20261001-204339-coco-disk-04-opp

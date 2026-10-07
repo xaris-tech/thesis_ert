@@ -1,0 +1,8 @@
+CROSS-SPECIMEN BASELINE (disc-06 -> unrecorded) - shows specimen difference, not only defects
+peak -5.932e-01 at 274 deg (x=+0.03, y=-0.43)
+colour scale +/-5.932e-01  (auto-scaled to this image)
+pairs 108/108 kept  [ok]
+measurement noise floor 0.00009 kohm - a change below this is not a detection
+control peak -1.081e-02
+significance 54.90x the noise image
+baseline run: 20261001-173658-coco-disk-06

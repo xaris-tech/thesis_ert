@@ -1,0 +1,8 @@
+CROSS-SPECIMEN BASELINE (unrecorded -> unrecorded) - shows specimen difference, not only defects
+peak -1.033e+00 at 171 deg (x=-0.47, y=+0.07)
+colour scale +/-1.033e+00  (auto-scaled to this image)
+pairs 108/108 kept  [ok]
+measurement noise floor 0.00024 kohm - a change below this is not a detection
+control peak -1.482e-01
+significance 6.97x the noise image
+baseline run: 20261002-114218-ssim-saline

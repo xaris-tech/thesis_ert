@@ -41,6 +41,10 @@ if PYQT_AVAILABLE:
         CaptureWorker,
         SessionBaseline,
         available_ports,
+        baseline_from_run,
+        cross_specimen_note,
+        read_default_baseline,
+        write_default_baseline,
     )
 
 
@@ -839,6 +843,92 @@ class ReconstructionFlowTests(QtTestCase):
         self.assertIn("failed", events["skipped"][0].lower())
 
 
+class LoadedBaselineTests(ReconstructionFlowTests):
+    """A recorded run reused as the baseline (ADR-0046)."""
+
+    def recorded_baseline_run(self, specimen="disc-04", **settings) -> Path:
+        request = CaptureRequest(
+            settings=demo_settings(**settings),
+            conditions=Conditions(
+                medium="cut disc", grounding="floating", specimen_id=specimen
+            ),
+            label="baseline",
+            frames=4,
+            warmup_frames=0,
+        )
+        self.capture(CaptureWorker(DemoAcquisition(), request, self.log_dir))
+        return run_record.list_runs(self.log_dir)[0]
+
+    def test_a_recorded_run_rebuilds_into_a_baseline(self):
+        run = self.recorded_baseline_run()
+        baseline = baseline_from_run(run)
+        self.assertEqual(baseline.run_id, run.name)
+        self.assertEqual(len(baseline.frames), 4)
+        self.assertEqual(baseline.specimen_id, "disc-04")
+        self.assertEqual(baseline.settings["dac"], 100)
+        self.assertTrue(baseline.loaded)
+
+    def test_a_later_run_reconstructs_against_a_loaded_baseline(self):
+        baseline = baseline_from_run(self.recorded_baseline_run())
+        events = self.capture(self.make_worker(baseline=baseline, label="target", frames=4))
+        self.assertEqual(events["failed"], [])
+        self.assertEqual(len(events["images"]), 1)
+
+    def test_settings_gate_still_applies_to_a_loaded_baseline(self):
+        baseline = baseline_from_run(self.recorded_baseline_run(dac=400))
+        events = self.capture(self.make_worker(baseline=baseline, label="target"))
+        self.assertEqual(events["images"], [])
+        self.assertTrue(events["skipped"])
+
+    def test_cross_specimen_image_is_stamped(self):
+        baseline = baseline_from_run(self.recorded_baseline_run(specimen="disc-04"))
+        self.capture(self.make_worker(baseline=baseline, label="target", frames=4))
+        run = [r for r in run_record.list_runs(self.log_dir) if "target" in r.name][0]
+        text = (run / "reconstruction.txt").read_text(encoding="utf-8")
+        self.assertIn("CROSS-SPECIMEN BASELINE", text)
+
+    def test_same_specimen_is_not_stamped_but_unrecorded_is(self):
+        baseline = SessionBaseline("b", [], {}, specimen_id="disc-04")
+        self.assertEqual(cross_specimen_note(baseline, "disc-04"), "")
+        self.assertIn("CROSS-SPECIMEN", cross_specimen_note(baseline, "disc-05"))
+        self.assertIn("CROSS-SPECIMEN", cross_specimen_note(SessionBaseline("b", [], {}), ""))
+
+    def test_a_directory_that_is_not_a_run_raises(self):
+        with self.assertRaises(Exception):
+            baseline_from_run(self.log_dir)
+
+    def test_default_baseline_round_trips_and_clears(self):
+        self.assertIsNone(read_default_baseline(self.log_dir))
+        write_default_baseline(self.log_dir, "20261001-000000-x")
+        self.assertEqual(read_default_baseline(self.log_dir).name, "20261001-000000-x")
+        write_default_baseline(self.log_dir, None)
+        self.assertIsNone(read_default_baseline(self.log_dir))
+
+    def test_window_loads_the_default_baseline_at_startup(self):
+        run = self.recorded_baseline_run()
+        write_default_baseline(self.log_dir, run.name)
+        window = MainWindow(log_dir=self.log_dir, demo=True)
+        self.addCleanup(window.close)
+        self.assertIsNotNone(window._baseline)
+        self.assertEqual(window._baseline.run_id, run.name)
+        self.assertTrue(window.clear_baseline_button.isEnabled())
+
+    def test_clearing_forgets_the_default(self):
+        run = self.recorded_baseline_run()
+        window = MainWindow(log_dir=self.log_dir, demo=True)
+        self.addCleanup(window.close)
+        self.assertTrue(window.load_baseline(run))
+        window.clear_baseline()
+        self.assertIsNone(read_default_baseline(self.log_dir))
+
+    def test_a_stale_default_is_forgotten_without_crashing(self):
+        write_default_baseline(self.log_dir, "no-such-run")
+        window = MainWindow(log_dir=self.log_dir, demo=True)
+        self.addCleanup(window.close)
+        self.assertIsNone(window._baseline)
+        self.assertIsNone(read_default_baseline(self.log_dir))
+
+
 class MainWindowTests(QtTestCase):
     def test_window_constructs_and_starts_with_no_frames(self):
         window = MainWindow(log_dir=self.log_dir, demo=True)
@@ -1121,7 +1211,7 @@ if __name__ == "__main__":
 
 
 class StartGateTests(QtTestCase):
-    """Starting a scan is refused until the run is properly named (ADR-0037)."""
+    """Naming gaps warn before a scan but never refuse it (ADR-0044)."""
 
     def setUp(self):
         super().setUp()
@@ -1139,7 +1229,8 @@ class StartGateTests(QtTestCase):
         conditions = self.window.conditions_panel.conditions()
         return self.window.start_problems(conditions, self.window.label.text())
 
-    def test_a_fresh_window_cannot_start(self):
+    def test_a_fresh_window_warns_and_is_still_named(self):
+        self.assertEqual(self.window.label.text(), "run-baseline")
         problems = self._problems()
         self.assertTrue(any("medium" in p for p in problems))
         self.assertTrue(any("specimen ID is empty" in p for p in problems))
@@ -1148,8 +1239,8 @@ class StartGateTests(QtTestCase):
         self._name()
         self.assertEqual(self._problems(), [])
 
-    def test_the_label_is_generated_and_not_typed(self):
-        self.assertTrue(self.window.label.isReadOnly())
+    def test_the_label_is_generated_until_typed(self):
+        self.assertFalse(self.window.label.isReadOnly())
         self._name()
         self.assertEqual(self.window.label.text(), "disc-03-intact")
         self._name(target="hole at E7, 20 mm deep")
@@ -1157,16 +1248,35 @@ class StartGateTests(QtTestCase):
         self._name(medium="standing tree", specimen="coconut-tree-1")
         self.assertEqual(self.window.label.text(), "coconut-tree-1-baseline")
 
-    def test_a_refused_start_launches_nothing(self):
+    def test_a_typed_label_sticks_and_clearing_does_not_refill(self):
+        self._name()
+        self.window.label.setText("my disc test")
+        self.window._on_label_edited("my disc test")
+        self._name(target="hole e7")
+        self.assertEqual(self.window.label.text(), "my disc test")
+        self.window.label.setText("")
+        self.window._on_label_edited("")
+        # Emptying is not refilled mid-edit; the generated name is the placeholder.
+        self.assertEqual(self.window.label.text(), "")
+        self.assertEqual(self.window.label.placeholderText(), "disc-03-hole-e7")
+
+    def test_naming_gaps_warn_but_do_not_refuse(self):
         from unittest import mock
 
-        with mock.patch("tree_ert.qt.main_window.QMessageBox.warning") as warning:
-            self.window.start_capture()
-        warning.assert_called_once()
-        self.assertIsNone(self.window._thread)
-        self.assertTrue(self.window.start_button.isEnabled())
+        from PyQt6.QtWidgets import QMessageBox
 
-    def test_a_different_specimen_is_refused_while_a_baseline_is_held(self):
+        with mock.patch(
+            "tree_ert.qt.main_window.QMessageBox.question",
+            return_value=QMessageBox.StandardButton.No,
+        ) as question, mock.patch(
+            "tree_ert.qt.main_window.QMessageBox.warning"
+        ) as warning:
+            self.window.start_capture()
+        warning.assert_not_called()
+        question.assert_called_once()
+        self.assertIn("specimen ID is empty", question.call_args.args[2])
+
+    def test_a_different_specimen_is_warned_about_while_a_baseline_is_held(self):
         import phase3a_unified_reconstruct as unified
 
         self._name()

@@ -1,0 +1,20 @@
+# 2026-10-01 intact-disc survey. Runs recorded with medium/specimen unset get their
+# identity here. state: intact (healthy) / defect / excluded.
+run_id,specimen_id,state,note
+20261001-155316-coco-disk-3,disc-03,intact,healthy; low signal 0.9 mV, noise 1.85%, recip 15% - suspect surface moisture
+20261001-161511-coco-disk-3,disc-03,intact,healthy rescan; signal 0.94 mV noise 1.62% recip 16.6%
+20261001-163035-coco-disk-2,disc-02,intact,healthy; recip 32%, noise 2.95%, E2 drive ~125 uA
+20261001-164149-coco-disk-2,disc-02,intact,healthy rescan; recip 31%, currents down ~15% vs first
+20261001-151200-cut-disc-intact,unknown-disc,excluded,contact faults E11/E12 (5-7 uA) and E2 dead frames 0-4; 72 I_LOW
+20261001-165937-coco-disk-5,disc-05,excluded,contact faults E1 (1 uA) and E10 (~30 uA); 36 I_LOW; stopped at 7 frames
+20261001-171006-coco-disk-5,disc-05,intact,healthy; contacts stable 181-325 uA; signal 0.48 mV noise-limited
+20261001-171931-coco-disk-5,disc-05,intact,healthy back-to-back rescan; currents within 1% of 171006
+20261001-173658-coco-disk-06,disc-06,intact,healthy; best of day: signal 1.22 mV noise 0.83% recip 12.7%
+20261001-174848-coco-disk-06,disc-06,intact,healthy back-to-back rescan; S_noise 9.9%
+20261001-180429-coco-disk-07,disc-07,excluded,E2 spot offset ~120 mV; recip 39%
+20261001-183134-coco-disk-07,disc-07,excluded,E2 spot offset ~120 mV unchanged; S_noise vs 180429 52.7%
+20261001-185058-coco-disk-07,disc-07,excluded,E2 moved a few mm; offset still ~146 mV; recip 48%
+20261001-190226-coco-disk-07,disc-07,excluded,E2 moved; offset ~138 mV; recip 46%; disc skipped
+20261001-192137-coco-disk-08,disc-08,excluded,recorded as disc-07 by mistake; all currents 22-70 uA; E9 offset ~430 mV; I_REVERSED on E9-E10; stopped at 5 frames
+20261001-193706-coco-disk-04,disc-04,intact,recorded as disc-07 by mistake; healthy; signal 0.56 mV recip 35%
+20261001-195034-coco-disk-04,disc-04,intact,recorded as disc-07 by mistake; healthy back-to-back rescan; recip 41%
