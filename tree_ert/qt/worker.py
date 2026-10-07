@@ -22,7 +22,7 @@ from PyQt6.QtCore import QObject, pyqtSignal
 
 import run_record
 from run_record import Conditions
-from tree_ert import capture_view, reconstruction, survey
+from tree_ert import absolute, capture_view, reconstruction, survey
 from tree_ert.acquisition import Acquisition
 from tree_ert.settings import UiSettings, settings_to_dict
 
@@ -126,6 +126,11 @@ class CaptureRequest:
     override_reciprocity: bool = False
     """Reconstruct even when the reciprocity gate fails (ADR-0030). The image
     is then stamped OVERRIDDEN in its figure, text file and index row."""
+    recalibrate: bool = False
+    """Continuous recalibration (ADR-0041): when the absolute image is refused,
+    re-acquire down the drift-tuning ladder until one passes. Each attempt is
+    its own recorded run."""
+    recalibrate_rounds: int = 1
 
 
 class CaptureWorker(QObject):
@@ -160,6 +165,12 @@ class CaptureWorker(QObject):
     is what makes the image readable; None means the baseline was too short to
     split, and the image then has nothing to be compared against."""
 
+    absolute_ready = pyqtSignal(str, object)
+    """(image path, absolute.Attempt) for every run, baseline included (ADR-0041)."""
+
+    attempt_started = pyqtSignal(int, object)
+    """(attempt number, UiSettings) at the start of each recalibration attempt."""
+
     reconstruction_skipped = pyqtSignal(str)
     """Why no image was produced. Always emitted when one was not, so the
     absence of an image is never silent."""
@@ -180,6 +191,7 @@ class CaptureWorker(QObject):
         self._reciprocity_gate = ""
         """pass / fail / overridden once a reconstruction was attempted; empty
         for a baseline, which is never gated (ADR-0030)."""
+        self._last_absolute: absolute.Attempt | None = None
         self._captured: list = []
         """Frames recorded so far. Kept on the worker so a failure part-way
         through can still index what was captured before it."""
@@ -208,28 +220,87 @@ class CaptureWorker(QObject):
             self.progress.emit("Configuring instrument...")
             self._acquisition.configure(settings)
 
-            recorder = run_record.create_run(
-                self._log_dir,
-                self._request.label,
-                conditions=self._request.conditions,
-                settings=settings_to_dict(settings),
-            )
-            self.started.emit(recorder.run_id)
-            self.progress.emit(f"Recording to {recorder.path}")
+            if self._request.recalibrate:
+                # The operator's settings first, then the varied ramp (ADR-0042).
+                ramp = [
+                    step for step in absolute.recalibration_ladder(settings)
+                    if step != settings
+                ]
+                ladder = [settings] + ramp * self._request.recalibrate_rounds
+                total = sum(absolute.estimated_minutes(step) for step in ladder)
+                self.progress.emit(
+                    f"Recalibration ladder: {len(ladder)} attempts, up to ~{total:.0f} min"
+                )
+            else:
+                ladder = [settings]
+            history: list = []
 
-            self._warm_up(self._request.warmup_frames)
-            frames = self._capture(recorder, self._request.frames)
+            for number, attempt_settings in enumerate(ladder, start=1):
+                first = number == 1
+                if not first:
+                    self.progress.emit(
+                        f"Recalibrating: attempt {number}/{len(ladder)} "
+                        f"settle={attempt_settings.settle_ms}ms "
+                        f"samples={attempt_settings.samples} "
+                        f"warmup={attempt_settings.warmup_frames} "
+                        f"frames={attempt_settings.frames} dac={attempt_settings.dac} "
+                        f"(~{absolute.estimated_minutes(attempt_settings):.0f} min)"
+                    )
+                    self._acquisition.configure(attempt_settings)
+                self.attempt_started.emit(number, attempt_settings)
+                self._captured = []
+                self._last_absolute = None
+                recorder = run_record.create_run(
+                    self._log_dir,
+                    self._request.label,
+                    conditions=self._request.conditions,
+                    settings=settings_to_dict(attempt_settings),
+                )
+                self.started.emit(recorder.run_id)
+                self.progress.emit(f"Recording to {recorder.path}")
 
-            summary = capture_view.session_summary(frames)
-            summary_text = capture_view.format_session_summary(summary)
-            recorder.write_text("summary.txt", summary_text + "\n")
-            image = self._reconstruct(recorder, frames, settings, summary)
-            self._index(
-                recorder,
-                "cancelled" if self._cancel.is_set() else "complete",
-                summary,
-                image,
-            )
+                self._warm_up(
+                    self._request.warmup_frames if first else attempt_settings.warmup_frames
+                )
+                frames = self._capture(
+                    recorder, self._request.frames if first else attempt_settings.frames
+                )
+
+                summary = capture_view.session_summary(frames)
+                summary_text = capture_view.format_session_summary(summary)
+                image = self._reconstruct(recorder, frames, attempt_settings, summary)
+                verdict = self._absolute(recorder, frames, attempt_settings)
+                recorder.write_text(
+                    "summary.txt", summary_text + f"\nabsolute: {verdict}\n"
+                )
+                self._index(
+                    recorder,
+                    "cancelled" if self._cancel.is_set() else "complete",
+                    summary,
+                    image,
+                )
+                passed = (
+                    self._last_absolute is not None and self._last_absolute.report.passed
+                )
+                if not passed and self._last_absolute is not None:
+                    history.append(
+                        (self._last_absolute.report, absolute.contact_fault(frames))
+                    )
+                    reason = absolute.stop_reason(history)
+                    if reason:
+                        self.progress.emit(
+                            f"Recalibration stopped: {reason}. No capture setting "
+                            "repairs this -- reseat, blot the faces dry, then rescan."
+                        )
+                        break
+                if self._cancel.is_set() or passed or number == len(ladder):
+                    if self._request.recalibrate and not passed and not self._cancel.is_set():
+                        self.progress.emit(
+                            f"Recalibration exhausted after {number} attempts; "
+                            "no run passed the absolute gates -- check contacts."
+                        )
+                    break
+                recorder.close()
             self.finished.emit(str(recorder.path), summary_text)
         except Exception as exc:  # noqa: BLE001 - a worker must not raise into Qt
             # A failed run is still a scan that happened, and the index is the
@@ -269,6 +340,35 @@ class CaptureWorker(QObject):
             frame = self._acquisition.capture_frame()
             text = capture_view.format_frame_summary(capture_view.frame_summary(frame))
             self.warmup_frame.emit(index + 1, count, text)
+
+    def _absolute(
+        self, recorder: run_record.RunRecorder, frames: list, settings: UiSettings
+    ) -> str:
+        """Solve and gate the absolute image (ADR-0041). Returns the verdict text.
+
+        Never raises: an image must not fail a capture.
+        """
+        try:
+            result, noise, report = absolute.evaluate(frames, settings)
+            attempt = absolute.Attempt(settings, list(frames), result, noise, report)
+            self._last_absolute = attempt
+            verdict = "PASS" if report.passed else "REFUSED: " + "; ".join(report.reasons)
+            self.progress.emit(f"Absolute: {verdict}")
+            if result is None:
+                return verdict
+            image_path = recorder.path / "absolute.png"
+            absolute.save_absolute(
+                attempt,
+                image_path,
+                recorder.path / "absolute.npz",
+                title=f"{recorder.run_id} (absolute)",
+                thickness_mm=self._request.conditions.thickness_mm,
+            )
+            self.absolute_ready.emit(str(image_path), attempt)
+            return verdict
+        except Exception as exc:  # noqa: BLE001 - an image must not fail a capture
+            self.progress.emit(f"Absolute image failed: {type(exc).__name__}: {exc}")
+            return f"failed: {exc}"
 
     def _reconstruct(
         self,
@@ -445,6 +545,7 @@ class CaptureWorker(QObject):
             recorder.index_row(
                 outcome=outcome,
                 baseline_run=baseline.run_id if baseline else "",
+                **self._absolute_index_fields(),
                 peak_value=image.peak_value if image else None,
                 peak_angle_deg=image.peak_angle_deg if image else None,
                 control_peak=(
@@ -472,6 +573,17 @@ class CaptureWorker(QObject):
                 ),
             ),
         )
+
+    def _absolute_index_fields(self) -> dict:
+        attempt = self._last_absolute
+        if attempt is None:
+            return {}
+        result, report = attempt.result, attempt.report
+        return {
+            "absolute_sigma0_ms": result.sigma0 if result else None,
+            "absolute_misfit_percent": result.residual_percent if result else None,
+            "absolute_gate": "pass" if report.passed else "; ".join(report.reasons),
+        }
 
     def _capture(self, recorder: run_record.RunRecorder, count: int) -> list:
         frames = self._captured

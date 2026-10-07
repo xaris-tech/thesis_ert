@@ -1,4 +1,4 @@
-﻿"""SSIM of a difference image against a ground-truth block mask (ADR-0047, ADR-0048).
+"""SSIM of a difference image against a ground-truth block mask (ADR-0047, ADR-0048).
 
 Offline and solver-agnostic: everything here works on a recorded run's
 reconstruction and the target text the operator typed, so a whole series can be
@@ -14,7 +14,7 @@ Three numbers per run, deliberately reported together:
   ``psf_sigma``. That asks "is the blob where it should be, at the resolution
   this system has?"
 - ``angle_error_deg``: per block, the strongest resistive pixel inside the
-  block's Â±45Â° wedge, compared with the true angle. This is the headline
+  block's ±45° wedge, compared with the true angle. This is the headline
   (ADR-0047).
 
 The tank geometry comes from the mesh's own electrode nodes (``el_pos``), not

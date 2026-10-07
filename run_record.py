@@ -664,6 +664,9 @@ INDEX_COLUMNS = [
     "thickness_mm",
     "major_diameter_mm",
     "minor_diameter_mm",
+    "absolute_sigma0_ms",
+    "absolute_misfit_percent",
+    "absolute_gate",
 ]
 
 
@@ -704,4 +707,40 @@ def read_index(root: Path) -> list[dict[str, str]]:
     if not path.is_file():
         return []
     with path.open("r", encoding="utf-8", newline="") as handle:
-        return list(csv.DictReader(handle))
+        rows = list(csv.reader(handle))
+    if not rows:
+        return []
+    header, body = rows[0], rows[1:]
+    return [_index_row_by_layout(header, cells) for cells in body]
+
+
+_APPEND_ONLY_FROM = 32
+"""INDEX_COLUMNS has been append-only since commit 5440678 (32 columns); its 37-
+and 40-column successors only add to the end. Before that, columns were inserted
+ahead of ``git_commit``, so ``scans/index.csv`` -- whose header is written once,
+at creation, with 26 columns -- holds rows of several layouts that the header
+does not describe (2026-10-06: lengths 26, 29, 31, 32, 37, 40)."""
+
+_PRE_APPEND_SHARED = 24
+"""Columns ``run_id`` .. ``outcome``, in the same place in every layout."""
+
+
+def _index_row_by_layout(header: list[str], cells: list[str]) -> dict[str, str]:
+    """Name one row's cells by the layout its length identifies.
+
+    A row of 32+ cells is read with the current column list; a row the header's
+    length is read with the header. The 29- and 31-cell rows came from code that
+    was never committed, so only the shared leading columns and the trailing
+    ``git_commit``/``path`` pair -- which ended every pre-32 layout -- are
+    named; the cells between are kept under ``_unmapped`` rather than guessed.
+    """
+    if len(cells) >= _APPEND_ONLY_FROM and INDEX_COLUMNS[: len(header)] != header:
+        names = INDEX_COLUMNS
+    elif len(cells) == len(header) or INDEX_COLUMNS[: len(header)] == header:
+        names = header if len(cells) <= len(header) else INDEX_COLUMNS
+    else:
+        row = {INDEX_COLUMNS[i]: cells[i] for i in range(_PRE_APPEND_SHARED)}
+        row["git_commit"], row["path"] = cells[-2], cells[-1]
+        row["_unmapped"] = ",".join(cells[_PRE_APPEND_SHARED:-2])
+        return row
+    return {name: (cells[i] if i < len(cells) else "") for i, name in enumerate(names)}

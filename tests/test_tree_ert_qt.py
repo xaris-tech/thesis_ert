@@ -1,3 +1,4 @@
+import pathlib
 """Qt front-end tests.
 
 Run offscreen so they work in CI and over SSH. The widget layer is deliberately
@@ -407,8 +408,68 @@ class CaptureWorkerTests(QtTestCase):
             label=overrides.pop("label", "demo"),
             frames=overrides.pop("frames", 3),
             warmup_frames=overrides.pop("warmup_frames", 2),
+            recalibrate=overrides.pop("recalibrate", False),
+            recalibrate_rounds=overrides.pop("recalibrate_rounds", 2),
         )
         return CaptureWorker(DemoAcquisition(), request, self.log_dir)
+
+    def test_every_run_gets_a_gated_absolute_image(self):
+        worker = self.make_worker(frames=4, warmup_frames=0)
+        images = []
+        worker.absolute_ready.connect(lambda path, attempt: images.append((path, attempt)))
+        events = self.collect(worker)
+        self.assertEqual(events["failed"], [])
+        self.assertEqual(len(images), 1)
+        path, attempt = images[0]
+        self.assertTrue(pathlib.Path(path).is_file())
+        # Demo frames are not a physical medium: the misfit gate must refuse them.
+        self.assertFalse(attempt.report.passed)
+        run = run_record.list_runs(self.log_dir)[0]
+        self.assertIn("absolute: REFUSED", (run / "summary.txt").read_text())
+        row = run_record.read_index(self.log_dir)[-1]
+        self.assertTrue(row["absolute_gate"])
+        self.assertTrue(row["absolute_misfit_percent"])
+
+    def test_recalibration_reacquires_down_the_ladder_until_exhausted(self):
+        from unittest import mock
+
+        from tree_ert import absolute
+
+        worker = self.make_worker(
+            frames=4, warmup_frames=0, recalibrate=True, recalibrate_rounds=1
+        )
+        settings = worker._request.settings
+        ladder = 1 + len(
+            [s for s in absolute.recalibration_ladder(settings) if s != settings]
+        )
+        attempts = []
+        worker.attempt_started.connect(lambda n, s: attempts.append((n, s)))
+        # Shorten the ramp's warmup/frames so the demo runs fast; the order and
+        # count of attempts is what is under test.
+        with mock.patch.object(absolute, "contact_fault", return_value=()),                 mock.patch.object(absolute, "stop_reason", return_value=None):
+            events = self.collect(worker)
+        self.assertEqual(events["failed"], [])
+        self.assertEqual([n for n, _ in attempts], list(range(1, ladder + 1)))
+        self.assertEqual(attempts[0][1], settings)
+        settles = [s.settle_ms for _, s in attempts[1:]]
+        self.assertEqual(settles, sorted(settles))
+        self.assertEqual(len(run_record.list_runs(self.log_dir)), ladder)
+        self.assertEqual(len(events["finished"]), 1)
+
+    def test_recalibration_stops_on_repeated_contact_faults(self):
+        from unittest import mock
+
+        from tree_ert import absolute
+
+        worker = self.make_worker(frames=4, warmup_frames=0, recalibrate=True)
+        attempts = []
+        worker.attempt_started.connect(lambda n, s: attempts.append(n))
+        messages = []
+        worker.progress.connect(messages.append)
+        with mock.patch.object(absolute, "contact_fault", return_value=((2, 52.0),)):
+            self.collect(worker)
+        self.assertEqual(attempts, [1, 2, 3])
+        self.assertTrue(any("E3" in m and "stopped" in m for m in messages))
 
     def collect(self, worker: CaptureWorker) -> dict:
         events = {"frames": [], "warmups": [], "finished": [], "failed": []}
@@ -995,9 +1056,10 @@ class MainWindowTests(QtTestCase):
     def test_right_pane_has_measurements_and_reconstruction_tabs(self):
         window = MainWindow(log_dir=self.log_dir, demo=True)
         self.addCleanup(window.close)
-        self.assertEqual(window.tabs.count(), 2)
+        self.assertEqual(window.tabs.count(), 3)
         self.assertEqual(window.tabs.tabText(0), "Measurements")
         self.assertEqual(window.tabs.tabText(1), "Reconstruction")
+        self.assertEqual(window.tabs.tabText(2), "Absolute")
 
     def test_first_finished_run_becomes_the_session_baseline(self):
         import phase3a_unified_reconstruct as unified

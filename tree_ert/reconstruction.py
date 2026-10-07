@@ -1,7 +1,8 @@
 """Difference reconstruction between two recorded runs.
 
-Only *difference* imaging. Absolute reconstruction stays unlicensed while the
-57.5 percent reciprocity violation is open (ADR-0017, ADR-0018), and a
+Only *difference* imaging; gated absolute imaging lives in ``tree_ert/absolute.py``
+(ADR-0041). Historically absolute stayed unlicensed while the 57.5 percent
+reciprocity violation was open (ADR-0017, ADR-0018), and a
 difference image survives that fault only because a systematic error stable
 between the two captures subtracts out. That last clause is load-bearing: it is
 why the settings of the two runs are checked before anything is computed, and

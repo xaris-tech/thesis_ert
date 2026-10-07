@@ -518,6 +518,15 @@ class MainWindow(QMainWindow):
             "(ADR-0030). Ticking this images anyway and marks the image, its "
             "text file and the index row as overridden."
         )
+        self.recalibrate = QCheckBox("Recalibrate until absolute image passes")
+        self.recalibrate.setToolTip(
+            "Every run is also solved absolutely and gated on reciprocity, model "
+            "misfit and significance (ADR-0041). Ticked, a refused run is "
+            "re-acquired down a varied ramp (settle 10-200 ms; samples, warmup, "
+            "frames and DAC varied too, ADR-0042) until one passes. It stops early "
+            "after 3 attempts in a row flag an electrode contact. Each attempt is "
+            "its own recorded run; the log gives the time estimate."
+        )
 
         self.setCentralWidget(self._build_layout())
 
@@ -591,6 +600,7 @@ class MainWindow(QMainWindow):
         baseline_buttons.addWidget(self.clear_baseline_button)
         run_layout.addLayout(baseline_buttons)
         run_layout.addWidget(self.override_reciprocity)
+        run_layout.addWidget(self.recalibrate)
         inner_layout.addWidget(run_box)
         inner_layout.addStretch(1)
 
@@ -687,6 +697,28 @@ class MainWindow(QMainWindow):
         self.tabs.addTab(measurements, "Measurements")
         self.tabs.addTab(image_tab, "Reconstruction")
 
+        # Absolute image (ADR-0041): one per run, baseline included, so it needs
+        # no session baseline. Same file-backed pixmap approach as above.
+        self.absolute_label = QLabel(
+            "No absolute image yet.\n\n"
+            "Every run is solved on its own and shown here when it finishes."
+        )
+        self.absolute_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.absolute_label.setWordWrap(True)
+        self.absolute_label.setObjectName("ImageCanvas")
+        self.absolute_label.setMinimumHeight(320)
+        self._absolute_path: Path | None = None
+        self.absolute_status = QLabel("")
+        self.absolute_status.setObjectName("StatusPill")
+        self.absolute_status.setWordWrap(True)
+        absolute_tab = QWidget()
+        absolute_layout = QVBoxLayout(absolute_tab)
+        absolute_layout.setContentsMargins(0, 8, 0, 0)
+        absolute_layout.setSpacing(8)
+        absolute_layout.addWidget(self.absolute_status)
+        absolute_layout.addWidget(self.absolute_label, stretch=1)
+        self.tabs.addTab(absolute_tab, "Absolute")
+
         right = QWidget()
         layout = QVBoxLayout(right)
         layout.setContentsMargins(14, 10, 14, 14)
@@ -757,7 +789,9 @@ class MainWindow(QMainWindow):
             warmup_frames=settings.warmup_frames,
             baseline=self._baseline,
             override_reciprocity=self.override_reciprocity.isChecked(),
+            recalibrate=self.recalibrate.isChecked(),
         )
+        self._attempt_settings = settings
 
         self._frames = []
         self._expected_frames = settings.frames
@@ -781,6 +815,8 @@ class MainWindow(QMainWindow):
         self._worker.failed.connect(self._on_failed)
         self._worker.reconstructed.connect(self._on_reconstructed)
         self._worker.reconstruction_skipped.connect(self._on_reconstruction_skipped)
+        self._worker.absolute_ready.connect(self._on_absolute)
+        self._worker.attempt_started.connect(self._on_attempt_started)
         for signal in (self._worker.finished, self._worker.failed):
             signal.connect(self._thread.quit)
         self._thread.finished.connect(self._on_thread_finished)
@@ -886,6 +922,38 @@ class MainWindow(QMainWindow):
         self._log(f"Reconstruction: {message}")
         self.tabs.setCurrentIndex(1)
 
+    def _on_attempt_started(self, number: int, settings) -> None:
+        # A recalibration attempt is a fresh run: its frames and settings, not
+        # the previous attempt's, are what a baseline taken from it must hold.
+        self._attempt_settings = settings
+        self._frames = []
+        self._expected_frames = settings.frames
+        self.table.setRowCount(0)
+        if number > 1:
+            self._set_run_status(f"Recalibrating  attempt {number}", "busy")
+
+    def _on_absolute(self, image_path: str, attempt) -> None:
+        self._absolute_path = Path(image_path)
+        self._render_image()
+        result, report = attempt.result, attempt.report
+        sig = f"{report.significance:.1f}x" if report.significance is not None else "n/a"
+        message = (
+            f"sigma0 {result.sigma0:.3g} mS  |  peak {result.peak_value:+.3g} at "
+            f"{result.peak_angle_deg:.0f} deg  |  misfit {result.residual_percent:.1f}%"
+            f"  |  significance {sig}"
+        )
+        if report.passed:
+            message = "PASS  |  " + message
+            state = "ok"
+        else:
+            message = "REFUSED: " + "; ".join(report.reasons) + "  |  " + message
+            state = "bad"
+        self.absolute_status.setText(message)
+        theme.apply_state(self.absolute_status, state)
+        self._log(f"Absolute: {message}")
+        if self._baseline is None or report.passed:
+            self.tabs.setCurrentIndex(2)
+
     def _on_reconstruction_skipped(self, reason: str) -> None:
         self.image_status.setText(reason)
         theme.apply_state(
@@ -897,21 +965,25 @@ class MainWindow(QMainWindow):
         self._log(f"No reconstruction: {reason}")
 
     def _render_image(self) -> None:
-        """Draw the saved figure, scaled to the tab without distorting it."""
-        if self._image_path is None or not self._image_path.is_file():
-            return
+        """Draw the saved figures, scaled to their tabs without distorting them."""
         from PyQt6.QtGui import QPixmap
 
-        pixmap = QPixmap(str(self._image_path))
-        if pixmap.isNull():
-            return
-        self.image_label.setPixmap(
-            pixmap.scaled(
-                self.image_label.size(),
-                Qt.AspectRatioMode.KeepAspectRatio,
-                Qt.TransformationMode.SmoothTransformation,
+        for path, label in (
+            (self._image_path, self.image_label),
+            (getattr(self, "_absolute_path", None), getattr(self, "absolute_label", None)),
+        ):
+            if path is None or label is None or not path.is_file():
+                continue
+            pixmap = QPixmap(str(path))
+            if pixmap.isNull():
+                continue
+            label.setPixmap(
+                pixmap.scaled(
+                    label.size(),
+                    Qt.AspectRatioMode.KeepAspectRatio,
+                    Qt.TransformationMode.SmoothTransformation,
+                )
             )
-        )
 
     def resizeEvent(self, event) -> None:  # noqa: N802 - Qt naming
         super().resizeEvent(event)
@@ -975,7 +1047,9 @@ class MainWindow(QMainWindow):
             self._baseline = SessionBaseline(
                 run_id=Path(run_path).name,
                 frames=list(self._frames),
-                settings=settings_to_dict(self.settings_panel.settings()),
+                settings=settings_to_dict(
+                    getattr(self, "_attempt_settings", None) or self.settings_panel.settings()
+                ),
                 specimen_id=self.conditions_panel.conditions().specimen_id,
             )
             self.clear_baseline_button.setEnabled(True)

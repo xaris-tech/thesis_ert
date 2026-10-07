@@ -94,6 +94,9 @@ one costs a re-derivation.
 | [0038](0038-survey-distances-on-normalised-vectors.md) | Survey spreads are RMS distances between mean-magnitude-normalised vectors | Accepted |
 | [0039](0039-coconut-preset-dac-620-32-samples.md) | The coconut preset is adjacent / high / DAC 620 / 30 ms / 32 samples, validated | Accepted |
 | [0040](0040-generate-the-run-label-from-specimen-and-target.md) | Generate the run label from specimen and target instead of typing it | Superseded by [0045](0045-the-run-label-is-editable.md) |
+| [0041](0041-gated-absolute-reconstruction-with-continuous-recalibration.md) | Gate absolute reconstruction on reciprocity, misfit and significance; re-acquire until it passes | Accepted |
+| [0042](0042-regularised-absolute-solve-and-varied-recalibration-ramp.md) | Regularise the absolute solve; recalibrate down a varied ramp that stops on contact faults | Accepted |
+| [0043](0043-stall-stop-and-conductivity-bound.md) | Stop recalibration on a reciprocity stall; bound element conductivity to sigma0 ×/÷ 100 | Accepted |
 | [0044](0044-naming-gaps-warn-instead-of-refusing.md) | Naming gaps warn instead of refusing a scan; the label stays generated | Accepted |
 | [0045](0045-the-run-label-is-editable.md) | The run label is editable, pre-filled from specimen and target | Accepted |
 | [0046](0046-load-a-recorded-run-as-the-baseline.md) | Load a recorded run as the baseline, remembered as the default; cross-specimen images stamped | Accepted |
@@ -106,3 +109,5 @@ one costs a re-derivation.
 | [0050](0050-report-ncc-and-dice-beside-ssim.md) | NCC and Dice reported beside SSIM; NCC separated 17/19 from empty-tank controls | Accepted |
 | [0049](0049-reconstruction-settings-cannot-be-validated-yet.md) | Reconstruction settings frozen: the recorded series and the forward model disagree on radius | Accepted |
 | [0048](0048-ssim-scoring-against-block-masks.md) | SSIM scored on the resistive lobe against block masks; 0.2 R blur; per-block ±45° wedge for angle error | Accepted |
+
+**Renumbering, 2026-10-07.** ADR-0044 to ADR-0048 were first written on branch `new` as 0041 to 0045. `main` had meanwhile accepted different ADRs under 0041 to 0043 (absolute reconstruction), so the `new` ADRs were renumbered when the branches were merged. Their content did not change. Commit messages from before the merge cite the old numbers; to translate, add 3 (old 0041 → 0044, ..., old 0045 → 0048). ADR-0049 to ADR-0055 were written on branch `ssim` as 0046 to 0052 and renumbered by the same +3 when `main` was merged into it; ssim commit messages before that merge cite the old numbers.

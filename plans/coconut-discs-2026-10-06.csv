@@ -1,0 +1,11 @@
+specimen_id,state,target,note
+disc-01,defect,holes near E4-E7,known holes near E4 E5 E6 E7
+disc-02,intact,,
+disc-03,intact,,
+disc-04,intact,,
+disc-05,intact,,
+disc-06,intact,,
+disc-07,intact,,
+disc-08,defect,holes near E10,known holes near E10
+disc-09,intact,,
+disc-10,excluded,,lighter than the rest (cause unknown: dryness, thickness, size, cavity or stem position untested); scanned but kept out of the intact cohort

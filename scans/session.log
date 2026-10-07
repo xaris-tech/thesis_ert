@@ -6012,3 +6012,1173 @@
 2026-10-02 18:19:11    Check electrode contact: E2 63%, E1 56%, E3 34% (all pairs median 13%)
 2026-10-02 18:19:11    Noise floor: median pair sd 0.00010 kohm (1.11%)  max 0.00215 kohm over 108 pairs
 2026-10-02 18:19:11  Indexed in scans\index.csv
+
+------------------------------------------------------------------------
+2026-10-02 18:27:48  Session ended
+
+------------------------------------------------------------------------
+2026-10-06 10:47:12  Session started (hardware)
+2026-10-06 10:47:12  Scans folder: D:\Here\zxc\thesis_ert\scans
+2026-10-06 10:47:12  129 scan(s) already recorded here.
+2026-10-06 10:47:12  Ready. Settings are saved on exit.
+2026-10-06 10:52:27  Start refused: specimen ID '1' must be lowercase words joined by hyphens and end in a number (e.g. disc-03, coconut-tree-1)
+2026-10-06 10:52:49  Start refused: specimen ID 'resistor' must be lowercase words joined by hyphens and end in a number (e.g. disc-03, coconut-tree-1)
+2026-10-06 10:52:57  Start refused: specimen ID 'resistor1' must be lowercase words joined by hyphens and end in a number (e.g. disc-03, coconut-tree-1)
+2026-10-06 10:53:04  Connecting to COM12...
+2026-10-06 10:53:04  FAILED: SerialException: could not open port 'COM12': FileNotFoundError(2, 'The system cannot find the file specified.', None, 2)
+2026-10-06 10:53:22  Connecting to COM7...
+2026-10-06 10:53:22  Configuring instrument...
+
+------------------------------------------------------------------------
+2026-10-06 10:53:22  Run 20261006-105322-resistor-1-ring
+2026-10-06 10:53:22  Conditions: medium=resistor belt saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-06 10:53:22  Recording to scans\runs\20261006-105322-resistor-1-ring
+2026-10-06 10:53:46  [warmup 1/5] 0/216 OK | I med 0.3 uA (0.0-0.8) | R med n/a | flags I_LOWx216
+2026-10-06 10:54:11  [warmup 2/5] 0/216 OK | I med 0.3 uA (0.0-0.9) | R med n/a | flags I_LOWx216
+2026-10-06 10:54:36  [warmup 3/5] 0/216 OK | I med 0.3 uA (0.0-0.8) | R med n/a | flags I_LOWx216
+2026-10-06 10:55:00  [warmup 4/5] 0/216 OK | I med 0.3 uA (0.0-0.7) | R med n/a | flags I_LOWx216
+2026-10-06 10:55:25  [warmup 5/5] 0/216 OK | I med 0.3 uA (0.0-1.0) | R med n/a | flags I_LOWx216
+2026-10-06 10:55:29  Stopping after the frame in flight...
+2026-10-06 10:55:49  [frame 1] 0/216 OK | I med 0.3 uA (0.0-0.7) | R med n/a | flags I_LOWx216
+2026-10-06 10:55:49  Cancelled after 1 frame(s); the run is kept.
+2026-10-06 10:55:50  No reconstruction: This run is the session baseline; it has nothing to differ from.
+2026-10-06 10:55:50  Baseline has fewer than 4 frames, so no control image was saved.
+2026-10-06 10:55:50  This run is now the session baseline (20261006-105322-resistor-1-ring).
+2026-10-06 10:55:50  Finished. Run saved to scans\runs\20261006-105322-resistor-1-ring
+2026-10-06 10:55:50    Frames captured: 1
+2026-10-06 10:55:50    Reciprocity: no reciprocal pairs captured
+2026-10-06 10:55:50    Noise floor: needs at least 2 frames
+2026-10-06 10:55:50  Indexed in scans\index.csv
+2026-10-06 10:56:55  Connecting to COM7...
+2026-10-06 10:56:55  Configuring instrument...
+
+------------------------------------------------------------------------
+2026-10-06 10:56:55  Run 20261006-105655-resistor-1-ring
+2026-10-06 10:56:55  Conditions: medium=resistor belt saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-06 10:56:55  Recording to scans\runs\20261006-105655-resistor-1-ring
+2026-10-06 10:57:19  [warmup 1/5] 216/216 OK | I med 492.2 uA (488.9-495.0) | R med 0.0181 kohm | dV med 2283 LSB
+2026-10-06 10:57:44  [warmup 2/5] 216/216 OK | I med 491.3 uA (488.3-494.0) | R med 0.0181 kohm | dV med 2278 LSB
+2026-10-06 10:58:09  [warmup 3/5] 216/216 OK | I med 490.9 uA (488.1-493.6) | R med 0.0181 kohm | dV med 2278 LSB
+2026-10-06 10:58:33  [warmup 4/5] 216/216 OK | I med 490.6 uA (487.8-493.5) | R med 0.0181 kohm | dV med 2276 LSB
+2026-10-06 10:58:58  [warmup 5/5] 216/216 OK | I med 490.4 uA (487.7-493.3) | R med 0.0181 kohm | dV med 2275 LSB
+2026-10-06 10:59:23  [frame 1] 216/216 OK | I med 490.1 uA (487.6-493.2) | R med 0.0181 kohm | dV med 2274 LSB
+2026-10-06 10:59:47  [frame 2] 216/216 OK | I med 490.1 uA (487.5-493.0) | R med 0.0181 kohm | dV med 2274 LSB
+2026-10-06 11:00:12  [frame 3] 216/216 OK | I med 489.9 uA (487.3-492.9) | R med 0.0181 kohm | dV med 2275 LSB
+2026-10-06 11:00:36  [frame 4] 216/216 OK | I med 489.8 uA (487.0-492.9) | R med 0.0181 kohm | dV med 2273 LSB
+2026-10-06 11:01:01  [frame 5] 216/216 OK | I med 489.7 uA (487.0-492.7) | R med 0.0181 kohm | dV med 2272 LSB
+2026-10-06 11:01:26  [frame 6] 216/216 OK | I med 489.6 uA (486.9-492.5) | R med 0.0181 kohm | dV med 2273 LSB
+2026-10-06 11:01:50  [frame 7] 216/216 OK | I med 489.6 uA (486.9-492.5) | R med 0.0181 kohm | dV med 2272 LSB
+2026-10-06 11:02:15  [frame 8] 216/216 OK | I med 489.4 uA (486.8-492.3) | R med 0.0181 kohm | dV med 2271 LSB
+2026-10-06 11:02:40  [frame 9] 216/216 OK | I med 489.3 uA (486.7-492.4) | R med 0.0181 kohm | dV med 2271 LSB
+2026-10-06 11:03:04  [frame 10] 216/216 OK | I med 489.3 uA (486.7-492.2) | R med 0.0181 kohm | dV med 2271 LSB
+2026-10-06 11:03:18  No reconstruction: Reciprocity check failed, so no image was made (baseline: reciprocity could not be measured (no reciprocal pairs)). Frames are saved. Fix reciprocity first, or tick the override to image anyway.
+2026-10-06 11:03:18  Finished. Run saved to scans\runs\20261006-105655-resistor-1-ring
+2026-10-06 11:03:18    Frames captured: 10
+2026-10-06 11:03:18    Reciprocity: median 0.1%  max 0.4%  sign flips 0/54
+2026-10-06 11:03:18    Noise floor: median pair sd 0.00002 kohm (0.11%)  max 0.00004 kohm over 108 pairs
+2026-10-06 11:03:18  Indexed in scans\index.csv
+
+------------------------------------------------------------------------
+2026-10-06 11:19:26  Session ended
+
+------------------------------------------------------------------------
+2026-10-06 11:19:48  Session started (hardware)
+2026-10-06 11:19:48  Scans folder: D:\Here\zxc\thesis_ert\scans
+2026-10-06 11:19:48  131 scan(s) already recorded here.
+2026-10-06 11:19:48  Ready. Settings are saved on exit.
+
+------------------------------------------------------------------------
+2026-10-06 11:22:24  Session ended
+
+------------------------------------------------------------------------
+2026-10-06 11:32:13  Session started (hardware)
+2026-10-06 11:32:13  Scans folder: D:\Here\zxc\thesis_ert\scans
+2026-10-06 11:32:13  131 scan(s) already recorded here.
+2026-10-06 11:32:13  Ready. Settings are saved on exit.
+2026-10-06 11:40:56  Connecting to COM7...
+2026-10-06 11:40:56  Configuring instrument...
+
+------------------------------------------------------------------------
+2026-10-06 11:40:56  Run 20261006-114056-disc-02-intact
+2026-10-06 11:40:56  Conditions: medium=cut disc saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-06 11:40:56  Recording to scans\runs\20261006-114056-disc-02-intact
+2026-10-06 11:41:37  [warmup 1/5] 216/216 OK | I med 282.8 uA (158.9-428.2) | R med 0.0158 kohm | dV med 234 LSB
+2026-10-06 11:42:19  [warmup 2/5] 216/216 OK | I med 266.6 uA (163.1-428.1) | R med 0.0153 kohm | dV med 236 LSB
+2026-10-06 11:43:01  [warmup 3/5] 216/216 OK | I med 267.4 uA (163.8-427.8) | R med 0.0144 kohm | dV med 236 LSB
+2026-10-06 11:43:43  [warmup 4/5] 216/216 OK | I med 266.7 uA (163.8-427.5) | R med 0.0141 kohm | dV med 239 LSB
+2026-10-06 11:44:25  [warmup 5/5] 216/216 OK | I med 266.4 uA (163.2-428.9) | R med 0.0137 kohm | dV med 241 LSB
+2026-10-06 11:45:07  [frame 1] 216/216 OK | I med 267.1 uA (164.2-429.0) | R med 0.0158 kohm | dV med 237 LSB
+2026-10-06 11:45:50  [frame 2] 216/216 OK | I med 275.3 uA (164.4-423.1) | R med 0.0140 kohm | dV med 241 LSB
+2026-10-06 11:46:34  [frame 3] 216/216 OK | I med 275.1 uA (163.6-426.7) | R med 0.0163 kohm | dV med 233 LSB
+2026-10-06 11:47:19  [frame 4] 216/216 OK | I med 274.7 uA (163.6-426.8) | R med 0.0160 kohm | dV med 234 LSB
+2026-10-06 11:48:03  [frame 5] 216/216 OK | I med 274.5 uA (165.5-427.2) | R med 0.0143 kohm | dV med 240 LSB
+2026-10-06 11:48:48  [frame 6] 216/216 OK | I med 275.1 uA (166.3-418.2) | R med 0.0128 kohm | dV med 245 LSB
+2026-10-06 11:49:34  [frame 7] 216/216 OK | I med 273.0 uA (164.6-419.4) | R med 0.0135 kohm | dV med 237 LSB
+2026-10-06 11:50:23  [frame 8] 216/216 OK | I med 272.3 uA (163.3-419.0) | R med 0.0145 kohm | dV med 235 LSB
+2026-10-06 11:51:12  [frame 9] 216/216 OK | I med 272.1 uA (163.8-417.8) | R med 0.0138 kohm | dV med 229 LSB
+2026-10-06 11:52:01  [frame 10] 216/216 OK | I med 271.8 uA (163.2-417.1) | R med 0.0140 kohm | dV med 232 LSB
+2026-10-06 11:52:16  No reconstruction: This run is the session baseline; it has nothing to differ from.
+2026-10-06 11:52:17  Baseline control image saved to scans\runs\20261006-114056-disc-02-intact\control.png
+2026-10-06 11:52:22  Absolute: REFUSED: median reciprocity 20.9% > 15%; model misfit 73.5% > 15%; significance 0.66 < 2.0
+2026-10-06 11:52:23  Absolute: REFUSED: median reciprocity 20.9% > 15%; model misfit 73.5% > 15%; significance 0.66 < 2.0  |  sigma0 4.84 mS  |  peak +2.85e+05 at 154 deg  |  misfit 73.5%  |  significance 0.7x
+2026-10-06 11:52:23  Recalibrating: attempt 2/10 settle=100ms samples=32 warmup=20
+
+------------------------------------------------------------------------
+2026-10-06 11:52:23  Run 20261006-115223-disc-02-intact
+2026-10-06 11:52:23  Conditions: medium=cut disc saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-06 11:52:23  Recording to scans\runs\20261006-115223-disc-02-intact
+2026-10-06 11:53:27  [warmup 1/20] 216/216 OK | I med 252.3 uA (155.1-397.4) | R med 0.0148 kohm | dV med 234 LSB
+2026-10-06 11:54:31  [warmup 2/20] 216/216 OK | I med 252.0 uA (154.5-397.6) | R med 0.0150 kohm | dV med 230 LSB
+2026-10-06 11:55:35  [warmup 3/20] 216/216 OK | I med 252.3 uA (155.8-398.4) | R med 0.0145 kohm | dV med 241 LSB
+2026-10-06 11:56:39  [warmup 4/20] 216/216 OK | I med 252.5 uA (155.4-398.6) | R med 0.0146 kohm | dV med 236 LSB
+2026-10-06 11:57:44  [warmup 5/20] 216/216 OK | I med 252.8 uA (155.5-398.0) | R med 0.0153 kohm | dV med 238 LSB
+2026-10-06 11:58:48  [warmup 6/20] 216/216 OK | I med 252.5 uA (155.8-398.7) | R med 0.0148 kohm | dV med 242 LSB
+2026-10-06 11:59:52  [warmup 7/20] 216/216 OK | I med 251.7 uA (155.3-397.6) | R med 0.0145 kohm | dV med 238 LSB
+2026-10-06 12:00:56  [warmup 8/20] 216/216 OK | I med 252.3 uA (155.4-397.1) | R med 0.0140 kohm | dV med 237 LSB
+2026-10-06 12:02:00  [warmup 9/20] 216/216 OK | I med 252.0 uA (155.8-397.3) | R med 0.0141 kohm | dV med 234 LSB
+2026-10-06 12:03:04  [warmup 10/20] 216/216 OK | I med 252.1 uA (155.0-398.5) | R med 0.0148 kohm | dV med 240 LSB
+2026-10-06 12:04:09  [warmup 11/20] 216/216 OK | I med 251.9 uA (155.2-398.2) | R med 0.0148 kohm | dV med 239 LSB
+2026-10-06 12:05:13  [warmup 12/20] 216/216 OK | I med 252.0 uA (155.7-399.1) | R med 0.0147 kohm | dV med 243 LSB
+2026-10-06 12:06:17  [warmup 13/20] 216/216 OK | I med 251.8 uA (155.1-398.5) | R med 0.0145 kohm | dV med 234 LSB
+2026-10-06 12:07:21  [warmup 14/20] 216/216 OK | I med 251.3 uA (155.5-397.5) | R med 0.0144 kohm | dV med 244 LSB
+2026-10-06 12:08:25  [warmup 15/20] 216/216 OK | I med 251.3 uA (155.2-397.1) | R med 0.0147 kohm | dV med 244 LSB
+2026-10-06 12:09:29  [warmup 16/20] 216/216 OK | I med 251.0 uA (155.3-396.2) | R med 0.0143 kohm | dV med 237 LSB
+2026-10-06 12:10:33  [warmup 17/20] 216/216 OK | I med 251.2 uA (155.4-398.4) | R med 0.0155 kohm | dV med 239 LSB
+2026-10-06 12:11:38  [warmup 18/20] 216/216 OK | I med 252.0 uA (155.4-399.7) | R med 0.0155 kohm | dV med 242 LSB
+2026-10-06 12:12:42  [warmup 19/20] 216/216 OK | I med 252.1 uA (156.1-398.1) | R med 0.0152 kohm | dV med 238 LSB
+2026-10-06 12:13:46  [warmup 20/20] 216/216 OK | I med 252.1 uA (155.3-397.5) | R med 0.0155 kohm | dV med 238 LSB
+2026-10-06 12:14:50  [frame 1] 216/216 OK | I med 251.9 uA (155.5-398.0) | R med 0.0155 kohm | dV med 239 LSB
+2026-10-06 12:15:54  [frame 2] 216/216 OK | I med 252.0 uA (156.0-397.5) | R med 0.0153 kohm | dV med 236 LSB
+2026-10-06 12:16:58  [frame 3] 216/216 OK | I med 252.0 uA (155.1-396.4) | R med 0.0152 kohm | dV med 238 LSB
+2026-10-06 12:18:03  [frame 4] 216/216 OK | I med 252.4 uA (155.7-397.8) | R med 0.0160 kohm | dV med 236 LSB
+2026-10-06 12:19:07  [frame 5] 216/216 OK | I med 252.8 uA (156.1-397.1) | R med 0.0154 kohm | dV med 238 LSB
+2026-10-06 12:20:11  [frame 6] 216/216 OK | I med 253.0 uA (155.9-397.2) | R med 0.0152 kohm | dV med 240 LSB
+2026-10-06 12:21:15  [frame 7] 216/216 OK | I med 253.0 uA (155.2-396.5) | R med 0.0161 kohm | dV med 240 LSB
+2026-10-06 12:22:19  [frame 8] 216/216 OK | I med 253.1 uA (155.5-397.6) | R med 0.0161 kohm | dV med 237 LSB
+2026-10-06 12:23:23  [frame 9] 216/216 OK | I med 253.1 uA (155.5-396.5) | R med 0.0164 kohm | dV med 237 LSB
+2026-10-06 12:24:27  [frame 10] 216/216 OK | I med 252.7 uA (155.1-396.1) | R med 0.0157 kohm | dV med 238 LSB
+2026-10-06 12:24:27  No reconstruction: This run is the session baseline; it has nothing to differ from.
+2026-10-06 12:25:36  Baseline control image saved to scans\runs\20261006-115223-disc-02-intact\control.png
+2026-10-06 12:25:51  Absolute: REFUSED: median reciprocity 15.1% > 15%; model misfit 65.3% > 15%
+2026-10-06 12:26:03  Absolute: REFUSED: median reciprocity 15.1% > 15%; model misfit 65.3% > 15%  |  sigma0 3.82 mS  |  peak +9.43e+03 at 206 deg  |  misfit 65.3%  |  significance 4.8x
+2026-10-06 12:26:03  Recalibrating: attempt 3/10 settle=100ms samples=32 warmup=30
+
+------------------------------------------------------------------------
+2026-10-06 12:26:04  Run 20261006-122603-disc-02-intact
+2026-10-06 12:26:04  Conditions: medium=cut disc saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-06 12:26:04  Recording to scans\runs\20261006-122603-disc-02-intact
+2026-10-06 12:27:08  [warmup 1/30] 216/216 OK | I med 253.7 uA (154.0-397.2) | R med 0.0160 kohm | dV med 235 LSB
+2026-10-06 12:28:12  [warmup 2/30] 216/216 OK | I med 254.7 uA (154.2-397.2) | R med 0.0153 kohm | dV med 241 LSB
+2026-10-06 12:29:16  [warmup 3/30] 216/216 OK | I med 255.0 uA (154.8-397.4) | R med 0.0162 kohm | dV med 242 LSB
+2026-10-06 12:30:20  [warmup 4/30] 216/216 OK | I med 255.6 uA (154.7-398.6) | R med 0.0150 kohm | dV med 238 LSB
+2026-10-06 12:31:24  [warmup 5/30] 216/216 OK | I med 255.7 uA (155.6-399.6) | R med 0.0156 kohm | dV med 236 LSB
+2026-10-06 12:32:28  [warmup 6/30] 216/216 OK | I med 255.8 uA (155.9-399.9) | R med 0.0166 kohm | dV med 238 LSB
+2026-10-06 12:33:33  [warmup 7/30] 216/216 OK | I med 256.5 uA (155.9-400.4) | R med 0.0153 kohm | dV med 239 LSB
+2026-10-06 12:34:37  [warmup 8/30] 216/216 OK | I med 256.9 uA (156.3-400.5) | R med 0.0161 kohm | dV med 230 LSB
+2026-10-06 12:35:41  [warmup 9/30] 216/216 OK | I med 257.2 uA (156.2-400.6) | R med 0.0158 kohm | dV med 226 LSB
+2026-10-06 12:36:45  [warmup 10/30] 216/216 OK | I med 257.8 uA (156.7-401.5) | R med 0.0161 kohm | dV med 223 LSB
+2026-10-06 12:37:49  [warmup 11/30] 216/216 OK | I med 258.2 uA (156.8-401.3) | R med 0.0152 kohm | dV med 223 LSB
+2026-10-06 12:38:53  [warmup 12/30] 216/216 OK | I med 258.6 uA (157.2-403.0) | R med 0.0153 kohm | dV med 224 LSB
+2026-10-06 12:39:57  [warmup 13/30] 216/216 OK | I med 259.1 uA (158.0-403.1) | R med 0.0149 kohm | dV med 225 LSB
+2026-10-06 12:41:02  [warmup 14/30] 216/216 OK | I med 258.9 uA (157.7-403.1) | R med 0.0149 kohm | dV med 223 LSB
+2026-10-06 12:42:06  [warmup 15/30] 216/216 OK | I med 260.0 uA (158.2-404.7) | R med 0.0148 kohm | dV med 217 LSB
+2026-10-06 12:43:10  [warmup 16/30] 216/216 OK | I med 259.9 uA (159.1-405.5) | R med 0.0147 kohm | dV med 225 LSB
+2026-10-06 12:43:40  Stopping after the frame in flight...
+2026-10-06 12:44:14  [warmup 17/30] 216/216 OK | I med 257.9 uA (58.4-408.2) | R med 0.0159 kohm | dV med 226 LSB
+2026-10-06 12:44:14  Cancelled after 0 frame(s); the run is kept.
+2026-10-06 12:44:14  No reconstruction: This run is the session baseline; it has nothing to differ from.
+2026-10-06 12:44:14  Baseline has fewer than 4 frames, so no control image was saved.
+2026-10-06 12:44:14  Absolute: REFUSED: reciprocity could not be measured (no reciprocal pairs); absolute solve failed
+2026-10-06 12:44:14  Finished. Run saved to scans\runs\20261006-122603-disc-02-intact
+2026-10-06 12:44:14    Frames captured: 0
+2026-10-06 12:44:14    Reciprocity: no reciprocal pairs captured
+2026-10-06 12:44:14    Noise floor: needs at least 2 frames
+2026-10-06 12:44:14  Indexed in scans\index.csv
+2026-10-06 12:46:36  Connecting to COM7...
+2026-10-06 12:46:36  Configuring instrument...
+
+------------------------------------------------------------------------
+2026-10-06 12:46:36  Run 20261006-124636-disc-02-intact
+2026-10-06 12:46:36  Conditions: medium=cut disc saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-06 12:46:36  Recording to scans\runs\20261006-124636-disc-02-intact
+2026-10-06 12:47:25  [warmup 1/5] 216/216 OK | I med 322.4 uA (216.7-541.9) | R med 0.0205 kohm | dV med 270 LSB
+2026-10-06 12:48:15  [warmup 2/5] 216/216 OK | I med 323.1 uA (215.5-538.6) | R med 0.0186 kohm | dV med 269 LSB
+2026-10-06 12:49:04  [warmup 3/5] 216/216 OK | I med 324.7 uA (216.1-539.4) | R med 0.0172 kohm | dV med 269 LSB
+2026-10-06 12:49:53  [warmup 4/5] 216/216 OK | I med 325.7 uA (217.4-540.5) | R med 0.0171 kohm | dV med 271 LSB
+2026-10-06 12:50:42  [warmup 5/5] 216/216 OK | I med 328.2 uA (220.0-543.8) | R med 0.0163 kohm | dV med 272 LSB
+2026-10-06 12:51:31  [frame 1] 216/216 OK | I med 341.3 uA (228.5-568.3) | R med 0.0152 kohm | dV med 282 LSB
+2026-10-06 12:52:20  [frame 2] 216/216 OK | I med 386.8 uA (234.2-1153.5) | R med 0.0136 kohm | dV med 398 LSB
+2026-10-06 12:53:09  [frame 3] 216/216 OK | I med 311.9 uA (221.3-521.3) | R med 0.0178 kohm | dV med 279 LSB
+2026-10-06 12:53:58  [frame 4] 216/216 OK | I med 310.6 uA (219.0-521.5) | R med 0.0162 kohm | dV med 273 LSB
+2026-10-06 12:54:47  [frame 5] 216/216 OK | I med 310.3 uA (217.6-521.3) | R med 0.0157 kohm | dV med 275 LSB
+2026-10-06 12:55:36  [frame 6] 216/216 OK | I med 310.4 uA (216.4-521.1) | R med 0.0152 kohm | dV med 270 LSB
+2026-10-06 12:56:25  [frame 7] 216/216 OK | I med 311.2 uA (214.3-520.8) | R med 0.0153 kohm | dV med 265 LSB
+2026-10-06 12:57:14  [frame 8] 216/216 OK | I med 312.2 uA (213.8-520.0) | R med 0.0150 kohm | dV med 264 LSB
+2026-10-06 12:58:03  [frame 9] 216/216 OK | I med 312.7 uA (213.2-519.9) | R med 0.0150 kohm | dV med 266 LSB
+2026-10-06 12:58:52  [frame 10] 216/216 OK | I med 313.5 uA (212.3-520.5) | R med 0.0148 kohm | dV med 266 LSB
+2026-10-06 12:58:52  No reconstruction: This run is the session baseline; it has nothing to differ from.
+2026-10-06 12:58:53  Baseline control image saved to scans\runs\20261006-124636-disc-02-intact\control.png
+2026-10-06 12:58:56  Absolute: REFUSED: median reciprocity 18.8% > 15%; model misfit 71.3% > 15%; significance 1.97 < 2.0
+2026-10-06 12:58:57  Absolute: REFUSED: median reciprocity 18.8% > 15%; model misfit 71.3% > 15%; significance 1.97 < 2.0  |  sigma0 5.51 mS  |  peak +3.21e+05 at 93 deg  |  misfit 71.3%  |  significance 2.0x
+2026-10-06 12:58:57  Recalibrating: attempt 2/10 settle=100ms samples=32 warmup=20
+
+------------------------------------------------------------------------
+2026-10-06 12:58:57  Run 20261006-125857-disc-02-intact
+2026-10-06 12:58:57  Conditions: medium=cut disc saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-06 12:58:57  Recording to scans\runs\20261006-125857-disc-02-intact
+2026-10-06 13:00:01  [warmup 1/20] 216/216 OK | I med 300.6 uA (205.7-505.7) | R med 0.0161 kohm | dV med 261 LSB
+2026-10-06 13:01:05  [warmup 2/20] 216/216 OK | I med 301.1 uA (201.4-1157.4) | R med 0.0168 kohm | dV med 267 LSB
+2026-10-06 13:02:10  [warmup 3/20] 216/216 OK | I med 310.2 uA (205.7-514.8) | R med 0.0149 kohm | dV med 269 LSB
+2026-10-06 13:03:14  [warmup 4/20] 216/216 OK | I med 311.1 uA (204.1-514.1) | R med 0.0147 kohm | dV med 268 LSB
+2026-10-06 13:04:18  [warmup 5/20] 216/216 OK | I med 310.7 uA (202.5-513.0) | R med 0.0147 kohm | dV med 268 LSB
+2026-10-06 13:05:22  [warmup 6/20] 216/216 OK | I med 311.9 uA (199.1-514.0) | R med 0.0147 kohm | dV med 273 LSB
+2026-10-06 13:06:26  [warmup 7/20] 216/216 OK | I med 312.3 uA (197.5-512.4) | R med 0.0152 kohm | dV med 270 LSB
+2026-10-06 13:07:30  [warmup 8/20] 216/216 OK | I med 312.3 uA (194.4-511.6) | R med 0.0152 kohm | dV med 268 LSB
+2026-10-06 13:08:35  [warmup 9/20] 216/216 OK | I med 312.1 uA (190.9-510.8) | R med 0.0151 kohm | dV med 269 LSB
+2026-10-06 13:09:39  [warmup 10/20] 216/216 OK | I med 311.9 uA (188.1-510.7) | R med 0.0146 kohm | dV med 270 LSB
+2026-10-06 13:10:43  [warmup 11/20] 216/216 OK | I med 311.8 uA (186.2-510.0) | R med 0.0148 kohm | dV med 265 LSB
+2026-10-06 13:11:47  [warmup 12/20] 216/216 OK | I med 311.5 uA (183.7-509.4) | R med 0.0148 kohm | dV med 260 LSB
+2026-10-06 13:12:51  [warmup 13/20] 216/216 OK | I med 310.1 uA (182.4-509.0) | R med 0.0141 kohm | dV med 266 LSB
+2026-10-06 13:13:55  [warmup 14/20] 216/216 OK | I med 308.6 uA (180.5-509.3) | R med 0.0136 kohm | dV med 260 LSB
+2026-10-06 13:14:59  [warmup 15/20] 216/216 OK | I med 307.2 uA (179.0-508.1) | R med 0.0135 kohm | dV med 258 LSB
+2026-10-06 13:16:04  [warmup 16/20] 216/216 OK | I med 306.0 uA (178.1-507.2) | R med 0.0136 kohm | dV med 258 LSB
+2026-10-06 13:17:08  [warmup 17/20] 216/216 OK | I med 303.8 uA (176.6-506.7) | R med 0.0136 kohm | dV med 260 LSB
+2026-10-06 13:18:12  [warmup 18/20] 216/216 OK | I med 303.5 uA (175.1-506.5) | R med 0.0134 kohm | dV med 256 LSB
+2026-10-06 13:19:16  [warmup 19/20] 216/216 OK | I med 302.4 uA (173.4-505.4) | R med 0.0130 kohm | dV med 262 LSB
+2026-10-06 13:20:20  [warmup 20/20] 216/216 OK | I med 302.2 uA (171.0-505.8) | R med 0.0132 kohm | dV med 257 LSB
+2026-10-06 13:21:24  [frame 1] 216/216 OK | I med 301.7 uA (170.7-505.1) | R med 0.0129 kohm | dV med 253 LSB
+2026-10-06 13:22:29  [frame 2] 216/216 OK | I med 301.2 uA (170.4-504.7) | R med 0.0134 kohm | dV med 259 LSB
+2026-10-06 13:23:33  [frame 3] 216/216 OK | I med 301.0 uA (168.5-505.1) | R med 0.0132 kohm | dV med 254 LSB
+2026-10-06 13:24:37  [frame 4] 216/216 OK | I med 300.6 uA (167.1-504.3) | R med 0.0128 kohm | dV med 253 LSB
+2026-10-06 13:25:41  [frame 5] 216/216 OK | I med 300.0 uA (166.1-503.9) | R med 0.0133 kohm | dV med 257 LSB
+2026-10-06 13:26:45  [frame 6] 216/216 OK | I med 299.7 uA (165.2-503.8) | R med 0.0131 kohm | dV med 251 LSB
+2026-10-06 13:27:49  [frame 7] 216/216 OK | I med 299.6 uA (164.5-503.3) | R med 0.0132 kohm | dV med 254 LSB
+2026-10-06 13:28:54  [frame 8] 216/216 OK | I med 299.4 uA (163.9-503.0) | R med 0.0135 kohm | dV med 257 LSB
+2026-10-06 13:29:58  [frame 9] 216/216 OK | I med 299.2 uA (162.6-502.5) | R med 0.0129 kohm | dV med 253 LSB
+2026-10-06 13:31:02  [frame 10] 216/216 OK | I med 299.2 uA (162.3-502.5) | R med 0.0140 kohm | dV med 252 LSB
+2026-10-06 13:31:02  No reconstruction: This run is the session baseline; it has nothing to differ from.
+2026-10-06 13:31:03  Baseline control image saved to scans\runs\20261006-125857-disc-02-intact\control.png
+2026-10-06 13:31:07  Absolute: REFUSED: median reciprocity 20.2% > 15%; model misfit 73.1% > 15%
+2026-10-06 13:31:08  Absolute: REFUSED: median reciprocity 20.2% > 15%; model misfit 73.1% > 15%  |  sigma0 3.79 mS  |  peak +3.7e+04 at 154 deg  |  misfit 73.1%  |  significance 3.2x
+2026-10-06 13:31:08  Recalibrating: attempt 3/10 settle=100ms samples=32 warmup=30
+
+------------------------------------------------------------------------
+2026-10-06 13:31:08  Run 20261006-133108-disc-02-intact
+2026-10-06 13:31:08  Conditions: medium=cut disc saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-06 13:31:08  Recording to scans\runs\20261006-133108-disc-02-intact
+2026-10-06 13:32:12  [warmup 1/30] 216/216 OK | I med 298.4 uA (167.8-502.8) | R med 0.0136 kohm | dV med 251 LSB
+2026-10-06 13:33:16  [warmup 2/30] 216/216 OK | I med 299.2 uA (161.0-502.7) | R med 0.0136 kohm | dV med 255 LSB
+2026-10-06 13:34:20  [warmup 3/30] 216/216 OK | I med 298.5 uA (160.8-502.9) | R med 0.0138 kohm | dV med 255 LSB
+2026-10-06 13:35:24  [warmup 4/30] 216/216 OK | I med 298.7 uA (159.8-503.5) | R med 0.0138 kohm | dV med 250 LSB
+2026-10-06 13:36:29  [warmup 5/30] 216/216 OK | I med 298.3 uA (159.2-502.1) | R med 0.0145 kohm | dV med 251 LSB
+2026-10-06 13:37:16  Stopping after the frame in flight...
+2026-10-06 13:37:33  [warmup 6/30] 216/216 OK | I med 297.7 uA (157.9-501.9) | R med 0.0145 kohm | dV med 248 LSB
+2026-10-06 13:37:33  Cancelled after 0 frame(s); the run is kept.
+2026-10-06 13:37:33  No reconstruction: This run is the session baseline; it has nothing to differ from.
+2026-10-06 13:37:33  Baseline has fewer than 4 frames, so no control image was saved.
+2026-10-06 13:37:33  Absolute: REFUSED: reciprocity could not be measured (no reciprocal pairs); absolute solve failed
+2026-10-06 13:37:33  Finished. Run saved to scans\runs\20261006-133108-disc-02-intact
+2026-10-06 13:37:33    Frames captured: 0
+2026-10-06 13:37:33    Reciprocity: no reciprocal pairs captured
+2026-10-06 13:37:33    Noise floor: needs at least 2 frames
+2026-10-06 13:37:33  Indexed in scans\index.csv
+
+------------------------------------------------------------------------
+2026-10-06 13:39:19  Session ended
+
+------------------------------------------------------------------------
+2026-10-06 13:48:21  Session started (hardware)
+2026-10-06 13:48:21  Scans folder: D:\Here\zxc\thesis_ert\scans
+2026-10-06 13:48:21  137 scan(s) already recorded here.
+2026-10-06 13:48:21  Ready. Settings are saved on exit.
+2026-10-06 13:48:54  Connecting to COM7...
+2026-10-06 13:48:54  Configuring instrument...
+
+------------------------------------------------------------------------
+2026-10-06 13:48:54  Run 20261006-134854-disc-02-intact
+2026-10-06 13:48:54  Conditions: medium=cut disc saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-06 13:48:54  Recording to scans\runs\20261006-134854-disc-02-intact
+2026-10-06 13:49:43  [warmup 1/5] 216/216 OK | I med 309.7 uA (167.4-521.9) | R med 0.0133 kohm | dV med 254 LSB
+2026-10-06 13:50:33  [warmup 2/5] 216/216 OK | I med 311.8 uA (159.3-521.4) | R med 0.0130 kohm | dV med 249 LSB
+2026-10-06 13:51:22  [warmup 3/5] 216/216 OK | I med 311.9 uA (158.8-521.5) | R med 0.0132 kohm | dV med 255 LSB
+2026-10-06 13:52:11  [warmup 4/5] 216/216 OK | I med 311.6 uA (158.4-520.9) | R med 0.0128 kohm | dV med 260 LSB
+2026-10-06 13:53:00  [warmup 5/5] 216/216 OK | I med 311.0 uA (157.7-520.1) | R med 0.0132 kohm | dV med 258 LSB
+2026-10-06 13:53:49  [frame 1] 216/216 OK | I med 310.5 uA (157.0-519.8) | R med 0.0127 kohm | dV med 254 LSB
+2026-10-06 13:54:38  [frame 2] 216/216 OK | I med 310.1 uA (157.5-519.1) | R med 0.0129 kohm | dV med 255 LSB
+2026-10-06 13:55:27  [frame 3] 216/216 OK | I med 309.4 uA (156.2-519.3) | R med 0.0122 kohm | dV med 254 LSB
+2026-10-06 13:56:16  [frame 4] 216/216 OK | I med 309.5 uA (155.7-518.5) | R med 0.0127 kohm | dV med 253 LSB
+2026-10-06 13:57:05  [frame 5] 216/216 OK | I med 309.2 uA (154.8-518.8) | R med 0.0126 kohm | dV med 254 LSB
+2026-10-06 13:57:54  [frame 6] 216/216 OK | I med 309.1 uA (154.0-519.3) | R med 0.0127 kohm | dV med 254 LSB
+2026-10-06 13:58:43  [frame 7] 216/216 OK | I med 308.6 uA (153.9-518.8) | R med 0.0128 kohm | dV med 252 LSB
+2026-10-06 13:59:32  [frame 8] 216/216 OK | I med 308.7 uA (153.7-519.6) | R med 0.0128 kohm | dV med 253 LSB
+2026-10-06 14:00:21  [frame 9] 216/216 OK | I med 309.1 uA (153.0-518.9) | R med 0.0128 kohm | dV med 258 LSB
+2026-10-06 14:01:10  [frame 10] 216/216 OK | I med 309.0 uA (153.0-519.3) | R med 0.0127 kohm | dV med 261 LSB
+2026-10-06 14:01:25  No reconstruction: This run is the session baseline; it has nothing to differ from.
+2026-10-06 14:01:26  Baseline control image saved to scans\runs\20261006-134854-disc-02-intact\control.png
+2026-10-06 14:01:37  Absolute: REFUSED: median reciprocity 18.7% > 15%; model misfit 62.1% > 15%; significance 0.25 < 2.0
+2026-10-06 14:01:38  Absolute: REFUSED: median reciprocity 18.7% > 15%; model misfit 62.1% > 15%; significance 0.25 < 2.0  |  sigma0 4.2 mS  |  peak +6.35e+03 at 29 deg  |  misfit 62.1%  |  significance 0.3x
+2026-10-06 14:01:38  This run is now the session baseline (20261006-134854-disc-02-intact).
+2026-10-06 14:01:38  Finished. Run saved to scans\runs\20261006-134854-disc-02-intact
+2026-10-06 14:01:38    Frames captured: 10
+2026-10-06 14:01:38    Reciprocity: median 18.7%  max 85.2%  sign flips 5/54
+2026-10-06 14:01:38    Check electrode contact: E2 57%, E3 51% (all pairs median 19%)
+2026-10-06 14:01:38    Noise floor: median pair sd 0.00040 kohm (3.05%)  max 0.00494 kohm over 108 pairs
+2026-10-06 14:01:38  Indexed in scans\index.csv
+2026-10-06 14:02:56  Connecting to COM7...
+2026-10-06 14:02:56  Configuring instrument...
+2026-10-06 14:02:56  Recalibration ladder: 8 attempts, up to ~252 min
+
+------------------------------------------------------------------------
+2026-10-06 14:02:56  Run 20261006-140256-disc-02-intact
+2026-10-06 14:02:56  Conditions: medium=cut disc saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-06 14:02:56  Recording to scans\runs\20261006-140256-disc-02-intact
+2026-10-06 14:03:45  [warmup 1/5] 216/216 OK | I med 307.0 uA (159.7-521.4) | R med 0.0128 kohm | dV med 255 LSB
+2026-10-06 14:04:34  [warmup 2/5] 216/216 OK | I med 308.3 uA (151.5-520.1) | R med 0.0126 kohm | dV med 255 LSB
+2026-10-06 14:05:23  [warmup 3/5] 216/216 OK | I med 308.2 uA (151.8-520.1) | R med 0.0123 kohm | dV med 252 LSB
+2026-10-06 14:06:12  [warmup 4/5] 216/216 OK | I med 307.7 uA (151.7-519.3) | R med 0.0123 kohm | dV med 254 LSB
+2026-10-06 14:07:01  [warmup 5/5] 216/216 OK | I med 307.4 uA (150.9-519.5) | R med 0.0119 kohm | dV med 253 LSB
+2026-10-06 14:07:50  [frame 1] 216/216 OK | I med 306.6 uA (150.9-519.4) | R med 0.0120 kohm | dV med 254 LSB
+2026-10-06 14:08:39  [frame 2] 216/216 OK | I med 307.0 uA (150.4-518.9) | R med 0.0116 kohm | dV med 252 LSB
+2026-10-06 14:09:28  [frame 3] 216/216 OK | I med 306.4 uA (149.8-520.1) | R med 0.0117 kohm | dV med 262 LSB
+2026-10-06 14:10:17  [frame 4] 216/216 OK | I med 307.9 uA (151.0-520.1) | R med 0.0114 kohm | dV med 252 LSB
+2026-10-06 14:11:06  [frame 5] 216/216 OK | I med 307.9 uA (151.2-520.7) | R med 0.0112 kohm | dV med 261 LSB
+2026-10-06 14:11:55  [frame 6] 216/216 OK | I med 307.2 uA (150.4-520.5) | R med 0.0113 kohm | dV med 255 LSB
+2026-10-06 14:12:44  [frame 7] 216/216 OK | I med 307.1 uA (150.5-520.0) | R med 0.0112 kohm | dV med 252 LSB
+2026-10-06 14:13:33  [frame 8] 216/216 OK | I med 307.6 uA (150.5-520.3) | R med 0.0111 kohm | dV med 253 LSB
+2026-10-06 14:14:22  [frame 9] 216/216 OK | I med 307.2 uA (149.2-519.8) | R med 0.0113 kohm | dV med 251 LSB
+2026-10-06 14:15:11  [frame 10] 216/216 OK | I med 307.8 uA (151.0-521.4) | R med 0.0115 kohm | dV med 251 LSB
+2026-10-06 14:15:11  No reconstruction: Reciprocity check failed, so no image was made (baseline: median reciprocity error 18.7% exceeds 15%; this run: median reciprocity error 18.1% exceeds 15%). Frames are saved. Fix reciprocity first, or tick the override to image anyway.
+2026-10-06 14:16:16  Absolute: REFUSED: median reciprocity 18.1% > 15%; model misfit 62.6% > 15%; significance 1.83 < 2.0
+2026-10-06 14:16:17  Absolute: REFUSED: median reciprocity 18.1% > 15%; model misfit 62.6% > 15%; significance 1.83 < 2.0  |  sigma0 4.15 mS  |  peak +6.1e+03 at 29 deg  |  misfit 62.6%  |  significance 1.8x
+2026-10-06 14:16:17  Recalibrating: attempt 2/8 settle=10ms samples=8 warmup=5 frames=10 dac=620 (~4 min)
+
+------------------------------------------------------------------------
+2026-10-06 14:16:17  Run 20261006-141617-disc-02-intact
+2026-10-06 14:16:17  Conditions: medium=cut disc saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-06 14:16:17  Recording to scans\runs\20261006-141617-disc-02-intact
+2026-10-06 14:16:31  [warmup 1/5] 216/216 OK | I med 328.3 uA (169.2-549.8) | R med 0.0113 kohm | dV med 270 LSB
+2026-10-06 14:16:45  [warmup 2/5] 216/216 OK | I med 329.0 uA (162.6-547.4) | R med 0.0112 kohm | dV med 269 LSB
+2026-10-06 14:16:58  [warmup 3/5] 216/216 OK | I med 329.0 uA (162.5-547.6) | R med 0.0112 kohm | dV med 269 LSB
+2026-10-06 14:17:12  [warmup 4/5] 216/216 OK | I med 328.8 uA (162.3-547.1) | R med 0.0111 kohm | dV med 271 LSB
+2026-10-06 14:17:25  [warmup 5/5] 216/216 OK | I med 329.0 uA (163.3-548.2) | R med 0.0102 kohm | dV med 275 LSB
+2026-10-06 14:17:39  [frame 1] 216/216 OK | I med 328.3 uA (162.2-548.9) | R med 0.0108 kohm | dV med 274 LSB
+2026-10-06 14:17:53  [frame 2] 216/216 OK | I med 328.6 uA (163.1-546.6) | R med 0.0110 kohm | dV med 274 LSB
+2026-10-06 14:18:06  [frame 3] 216/216 OK | I med 327.3 uA (163.3-545.8) | R med 0.0111 kohm | dV med 276 LSB
+2026-10-06 14:18:20  [frame 4] 216/216 OK | I med 326.9 uA (163.0-545.7) | R med 0.0110 kohm | dV med 270 LSB
+2026-10-06 14:18:34  [frame 5] 216/216 OK | I med 327.3 uA (169.5-546.0) | R med 0.0107 kohm | dV med 269 LSB
+2026-10-06 14:18:47  [frame 6] 216/216 OK | I med 327.1 uA (161.4-547.9) | R med 0.0114 kohm | dV med 273 LSB
+2026-10-06 14:19:01  [frame 7] 216/216 OK | I med 327.7 uA (162.0-547.1) | R med 0.0111 kohm | dV med 272 LSB
+2026-10-06 14:19:14  [frame 8] 216/216 OK | I med 327.7 uA (159.9-543.9) | R med 0.0105 kohm | dV med 267 LSB
+2026-10-06 14:19:28  [frame 9] 216/216 OK | I med 327.6 uA (160.4-547.6) | R med 0.0108 kohm | dV med 270 LSB
+2026-10-06 14:19:42  [frame 10] 216/216 OK | I med 327.6 uA (163.6-546.3) | R med 0.0112 kohm | dV med 268 LSB
+2026-10-06 14:19:42  No reconstruction: Reciprocity check failed, so no image was made (baseline: median reciprocity error 18.7% exceeds 15%; this run: median reciprocity error 15.6% exceeds 15%). Frames are saved. Fix reciprocity first, or tick the override to image anyway.
+2026-10-06 14:21:17  Absolute: REFUSED: median reciprocity 15.6% > 15%; model misfit 60.0% > 15%; significance 1.35 < 2.0
+2026-10-06 14:21:18  Absolute: REFUSED: median reciprocity 15.6% > 15%; model misfit 60.0% > 15%; significance 1.35 < 2.0  |  sigma0 4.05 mS  |  peak +8.26e+03 at 101 deg  |  misfit 60.0%  |  significance 1.4x
+2026-10-06 14:21:18  Recalibrating: attempt 3/8 settle=30ms samples=16 warmup=5 frames=10 dac=620 (~9 min)
+
+------------------------------------------------------------------------
+2026-10-06 14:21:20  Run 20261006-142118-disc-02-intact
+2026-10-06 14:21:20  Conditions: medium=cut disc saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-06 14:21:20  Recording to scans\runs\20261006-142118-disc-02-intact
+2026-10-06 14:21:48  [warmup 1/5] 216/216 OK | I med 309.5 uA (160.4-529.8) | R med 0.0110 kohm | dV med 257 LSB
+2026-10-06 14:22:17  [warmup 2/5] 180/216 OK | I med 310.5 uA (0.0-527.4) | R med 0.0177 kohm | dV med 351 LSB | flags I_LOWx36
+2026-10-06 14:22:45  [warmup 3/5] 180/216 OK | I med 310.6 uA (0.0-518.5) | R med 0.0137 kohm | dV med 349 LSB | flags I_LOWx36
+2026-10-06 14:23:13  [warmup 4/5] 180/216 OK | I med 313.1 uA (0.0-532.0) | R med 0.0129 kohm | dV med 340 LSB | flags I_LOWx36
+2026-10-06 14:23:42  [warmup 5/5] 180/216 OK | I med 323.5 uA (0.0-551.3) | R med 0.0138 kohm | dV med 376 LSB | flags I_LOWx36
+2026-10-06 14:24:10  [frame 1] 180/216 OK | I med 347.9 uA (0.0-1155.4) | R med 0.0141 kohm | dV med 432 LSB | flags I_LOWx36
+2026-10-06 14:24:39  [frame 2] 180/216 OK | I med 293.8 uA (0.0-496.8) | R med 0.0176 kohm | dV med 322 LSB | flags I_LOWx36
+2026-10-06 14:25:07  [frame 3] 180/216 OK | I med 292.3 uA (0.0-498.8) | R med 0.0177 kohm | dV med 290 LSB | flags I_LOWx36
+2026-10-06 14:25:35  [frame 4] 180/216 OK | I med 289.8 uA (0.0-500.6) | R med 0.0173 kohm | dV med 315 LSB | flags I_LOWx36
+2026-10-06 14:26:04  [frame 5] 180/216 OK | I med 288.5 uA (0.0-481.2) | R med 0.0166 kohm | dV med 312 LSB | flags I_LOWx36
+2026-10-06 14:26:32  [frame 6] 180/216 OK | I med 288.1 uA (0.1-475.2) | R med 0.0162 kohm | dV med 280 LSB | flags I_LOWx36
+2026-10-06 14:27:00  [frame 7] 180/216 OK | I med 290.2 uA (0.0-481.8) | R med 0.0170 kohm | dV med 320 LSB | flags I_LOWx36
+2026-10-06 14:27:28  [frame 8] 180/216 OK | I med 289.9 uA (0.0-485.0) | R med 0.0159 kohm | dV med 326 LSB | flags I_LOWx36
+2026-10-06 14:27:57  [frame 9] 180/216 OK | I med 289.5 uA (0.0-481.6) | R med 0.0155 kohm | dV med 296 LSB | flags I_LOWx36
+2026-10-06 14:28:25  [frame 10] 180/216 OK | I med 290.4 uA (0.0-485.7) | R med 0.0142 kohm | dV med 326 LSB | flags I_LOWx36
+2026-10-06 14:28:25  No reconstruction: Reciprocity check failed, so no image was made (baseline: median reciprocity error 18.7% exceeds 15%). Frames are saved. Fix reciprocity first, or tick the override to image anyway.
+2026-10-06 14:28:38  Absolute: REFUSED: model misfit 52.4% > 15%
+2026-10-06 14:28:38  Absolute: REFUSED: model misfit 52.4% > 15%  |  sigma0 2.08 mS  |  peak +1.63e+03 at 356 deg  |  misfit 52.4%  |  significance 3.7x
+2026-10-06 14:28:38  Recalibration stopped: 3 attempts in a row flagged electrode contacts (latest E2, E1). No capture setting repairs a contact -- reseat and dry, then rescan.
+2026-10-06 14:28:38  Finished. Run saved to scans\runs\20261006-142118-disc-02-intact
+2026-10-06 14:28:38    Frames captured: 10
+2026-10-06 14:28:38    Reciprocity: median 8.8%  max 89.3%  sign flips 1/36
+2026-10-06 14:28:38    Check electrode contact: E2 40%, E1 30% (all pairs median 9%)
+2026-10-06 14:28:38    Noise floor: median pair sd 0.00199 kohm (9.92%)  max 0.05554 kohm over 90 pairs
+2026-10-06 14:28:38  Indexed in scans\index.csv
+2026-10-06 14:33:16  Start refused: the session baseline is from disc-02, this run is disc-01. Clear the baseline before scanning a different specimen.
+2026-10-06 14:33:17  Baseline cleared; the next run will become the new baseline.
+2026-10-06 14:33:50  Connecting to COM7...
+2026-10-06 14:33:50  Configuring instrument...
+2026-10-06 14:33:50  Recalibration ladder: 8 attempts, up to ~252 min
+
+------------------------------------------------------------------------
+2026-10-06 14:33:50  Run 20261006-143350-disc-01-holes-near-4-5-6-7
+2026-10-06 14:33:50  Conditions: medium=cut disc saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-06 14:33:50  Recording to scans\runs\20261006-143350-disc-01-holes-near-4-5-6-7
+2026-10-06 14:34:39  [warmup 1/5] 216/216 OK | I med 348.8 uA (18.8-507.5) | R med 0.0110 kohm | dV med 903 LSB
+2026-10-06 14:35:28  [warmup 2/5] 216/216 OK | I med 353.4 uA (237.4-513.2) | R med 0.0108 kohm | dV med 911 LSB
+2026-10-06 14:36:17  [warmup 3/5] 216/216 OK | I med 352.0 uA (217.1-1145.1) | R med 0.0109 kohm | dV med 914 LSB
+2026-10-06 14:37:06  [warmup 4/5] 216/216 OK | I med 334.9 uA (218.1-487.9) | R med 0.0108 kohm | dV med 867 LSB
+2026-10-06 14:37:55  [warmup 5/5] 216/216 OK | I med 335.6 uA (218.9-488.7) | R med 0.0108 kohm | dV med 868 LSB
+2026-10-06 14:38:44  [frame 1] 216/216 OK | I med 336.9 uA (220.1-491.3) | R med 0.0108 kohm | dV med 875 LSB
+2026-10-06 14:39:33  [frame 2] 216/216 OK | I med 338.4 uA (12.5-492.4) | R med 0.0109 kohm | dV med 756 LSB
+2026-10-06 14:40:22  [frame 3] 216/216 OK | I med 341.5 uA (14.2-497.0) | R med 0.0108 kohm | dV med 734 LSB
+2026-10-06 14:41:11  [frame 4] 216/216 OK | I med 345.9 uA (34.8-506.2) | R med 0.0112 kohm | dV med 887 LSB
+2026-10-06 14:42:00  [frame 5] 216/216 OK | I med 375.1 uA (37.9-1143.9) | R med 0.0109 kohm | dV med 920 LSB
+2026-10-06 14:42:49  [frame 6] 216/216 OK | I med 349.1 uA (18.3-504.3) | R med 0.0111 kohm | dV med 842 LSB
+2026-10-06 14:43:38  [frame 7] 216/216 OK | I med 350.1 uA (26.5-504.2) | R med 0.0111 kohm | dV med 747 LSB
+2026-10-06 14:44:27  [frame 8] 216/216 OK | I med 350.0 uA (15.9-504.5) | R med 0.0116 kohm | dV med 742 LSB
+2026-10-06 14:45:16  [frame 9] 216/216 OK | I med 349.9 uA (19.3-504.3) | R med 0.0099 kohm | dV med 745 LSB
+2026-10-06 14:46:05  [frame 10] 216/216 OK | I med 350.6 uA (22.2-505.3) | R med 0.0102 kohm | dV med 750 LSB
+2026-10-06 14:46:05  No reconstruction: This run is the session baseline; it has nothing to differ from.
+2026-10-06 14:46:06  Baseline control image saved to scans\runs\20261006-143350-disc-01-holes-near-4-5-6-7\control.png
+2026-10-06 14:46:19  Absolute: REFUSED: model misfit 36.2% > 15%
+2026-10-06 14:46:20  Absolute: REFUSED: model misfit 36.2% > 15%  |  sigma0 1.71 mS  |  peak +66.3 at 206 deg  |  misfit 36.2%  |  significance 2.4x
+2026-10-06 14:46:20  Recalibrating: attempt 2/8 settle=10ms samples=8 warmup=5 frames=10 dac=620 (~4 min)
+
+------------------------------------------------------------------------
+2026-10-06 14:46:20  Run 20261006-144620-disc-01-holes-near-4-5-6-7
+2026-10-06 14:46:20  Conditions: medium=cut disc saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-06 14:46:20  Recording to scans\runs\20261006-144620-disc-01-holes-near-4-5-6-7
+2026-10-06 14:46:34  [warmup 1/5] 216/216 OK | I med 355.8 uA (31.6-510.1) | R med 0.0109 kohm | dV med 764 LSB
+2026-10-06 14:46:48  [warmup 2/5] 216/216 OK | I med 355.8 uA (17.6-510.9) | R med 0.0112 kohm | dV med 765 LSB
+2026-10-06 14:47:01  [warmup 3/5] 216/216 OK | I med 357.3 uA (22.8-510.6) | R med 0.0113 kohm | dV med 785 LSB
+2026-10-06 14:47:15  [warmup 4/5] 216/216 OK | I med 356.8 uA (31.8-510.7) | R med 0.0111 kohm | dV med 754 LSB
+2026-10-06 14:47:28  [warmup 5/5] 216/216 OK | I med 356.9 uA (18.0-512.5) | R med 0.0117 kohm | dV med 761 LSB
+2026-10-06 14:47:42  [frame 1] 216/216 OK | I med 357.0 uA (18.0-511.7) | R med 0.0112 kohm | dV med 771 LSB
+2026-10-06 14:47:56  [frame 2] 216/216 OK | I med 357.1 uA (17.6-510.9) | R med 0.0119 kohm | dV med 764 LSB
+2026-10-06 14:48:09  [frame 3] 216/216 OK | I med 356.9 uA (21.7-511.0) | R med 0.0106 kohm | dV med 755 LSB
+2026-10-06 14:48:23  [frame 4] 216/216 OK | I med 356.5 uA (20.9-511.4) | R med 0.0119 kohm | dV med 756 LSB
+2026-10-06 14:48:36  [frame 5] 216/216 OK | I med 356.9 uA (20.9-510.9) | R med 0.0111 kohm | dV med 757 LSB
+2026-10-06 14:48:50  [frame 6] 216/216 OK | I med 357.5 uA (21.9-512.3) | R med 0.0110 kohm | dV med 769 LSB
+2026-10-06 14:48:58  Stopping after the frame in flight...
+2026-10-06 14:49:04  [frame 7] 216/216 OK | I med 356.9 uA (31.8-511.7) | R med 0.0113 kohm | dV med 759 LSB
+2026-10-06 14:49:04  Cancelled after 7 frame(s); the run is kept.
+2026-10-06 14:49:04  No reconstruction: This run is the session baseline; it has nothing to differ from.
+2026-10-06 14:49:05  Baseline control image saved to scans\runs\20261006-144620-disc-01-holes-near-4-5-6-7\control.png
+2026-10-06 14:49:33  Absolute: REFUSED: model misfit 28.6% > 15%; significance 0.75 < 2.0
+2026-10-06 14:49:34  Absolute: REFUSED: model misfit 28.6% > 15%; significance 0.75 < 2.0  |  sigma0 1.53 mS  |  peak +62 at 305 deg  |  misfit 28.6%  |  significance 0.8x
+2026-10-06 14:49:34  This run is now the session baseline (20261006-144620-disc-01-holes-near-4-5-6-7).
+2026-10-06 14:49:34  Finished. Run saved to scans\runs\20261006-144620-disc-01-holes-near-4-5-6-7
+2026-10-06 14:49:34    Frames captured: 7
+2026-10-06 14:49:34    Reciprocity: median 6.1%  max 99.5%  sign flips 4/54
+2026-10-06 14:49:34    Check electrode contact: E10 45%, E11 36%, E9 24% (all pairs median 6%)
+2026-10-06 14:49:34    Noise floor: median pair sd 0.00017 kohm (2.18%)  max 0.08115 kohm over 108 pairs
+2026-10-06 14:49:34  Indexed in scans\index.csv
+2026-10-06 14:52:38  Connecting to COM7...
+2026-10-06 14:52:38  Configuring instrument...
+2026-10-06 14:52:38  Recalibration ladder: 8 attempts, up to ~252 min
+
+------------------------------------------------------------------------
+2026-10-06 14:52:38  Run 20261006-145238-disc-01-holes-near-4-5-6-7
+2026-10-06 14:52:38  Conditions: medium=cut disc saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-06 14:52:38  Recording to scans\runs\20261006-145238-disc-01-holes-near-4-5-6-7
+2026-10-06 14:53:27  [warmup 1/5] 210/216 OK | I med 342.4 uA (0.0-493.1) | R med 0.0108 kohm | dV med 880 LSB | flags I_LOWx6
+2026-10-06 14:54:16  [warmup 2/5] 216/216 OK | I med 349.6 uA (240.0-493.6) | R med 0.0108 kohm | dV med 945 LSB
+2026-10-06 14:55:05  [warmup 3/5] 216/216 OK | I med 350.5 uA (245.6-494.2) | R med 0.0108 kohm | dV med 947 LSB
+2026-10-06 14:55:54  [warmup 4/5] 216/216 OK | I med 350.9 uA (252.8-495.0) | R med 0.0109 kohm | dV med 951 LSB
+2026-10-06 14:56:43  [warmup 5/5] 216/216 OK | I med 352.0 uA (255.5-497.4) | R med 0.0108 kohm | dV med 955 LSB
+2026-10-06 14:57:32  [frame 1] 216/216 OK | I med 355.0 uA (260.0-501.5) | R med 0.0108 kohm | dV med 962 LSB
+2026-10-06 14:58:21  [frame 2] 216/216 OK | I med 386.7 uA (269.1-1141.8) | R med 0.0108 kohm | dV med 1080 LSB
+2026-10-06 14:59:10  [frame 3] 216/216 OK | I med 360.5 uA (257.6-506.8) | R med 0.0109 kohm | dV med 980 LSB
+2026-10-06 14:59:59  [frame 4] 216/216 OK | I med 362.3 uA (258.7-507.9) | R med 0.0108 kohm | dV med 980 LSB
+2026-10-06 15:00:48  [frame 5] 216/216 OK | I med 362.8 uA (259.8-508.8) | R med 0.0109 kohm | dV med 985 LSB
+2026-10-06 15:01:37  [frame 6] 216/216 OK | I med 364.2 uA (262.6-509.2) | R med 0.0109 kohm | dV med 988 LSB
+2026-10-06 15:02:26  [frame 7] 216/216 OK | I med 363.9 uA (263.2-510.5) | R med 0.0109 kohm | dV med 986 LSB
+2026-10-06 15:03:15  [frame 8] 216/216 OK | I med 366.0 uA (266.9-512.7) | R med 0.0109 kohm | dV med 990 LSB
+2026-10-06 15:04:04  [frame 9] 216/216 OK | I med 386.0 uA (262.9-1139.9) | R med 0.0109 kohm | dV med 1074 LSB
+2026-10-06 15:04:53  [frame 10] 216/216 OK | I med 355.8 uA (256.9-500.9) | R med 0.0109 kohm | dV med 964 LSB
+2026-10-06 15:04:53  No reconstruction: baseline and target were captured with different settings: settle_ms: 10 vs 30; samples: 8 vs 32
+2026-10-06 15:04:58  Absolute: PASS
+2026-10-06 15:04:59  Absolute: PASS  |  sigma0 2.33 mS  |  peak +5.35 at 56 deg  |  misfit 8.6%  |  significance 3.9x
+2026-10-06 15:04:59  Finished. Run saved to scans\runs\20261006-145238-disc-01-holes-near-4-5-6-7
+2026-10-06 15:04:59    Frames captured: 10
+2026-10-06 15:04:59    Reciprocity: median 2.8%  max 97.8%  sign flips 1/54
+2026-10-06 15:04:59    Noise floor: median pair sd 0.00009 kohm (0.80%)  max 0.00543 kohm over 108 pairs
+2026-10-06 15:04:59  Indexed in scans\index.csv
+2026-10-06 15:07:31  Connecting to COM7...
+2026-10-06 15:07:31  Configuring instrument...
+2026-10-06 15:07:31  Recalibration ladder: 8 attempts, up to ~252 min
+
+------------------------------------------------------------------------
+2026-10-06 15:07:31  Run 20261006-150731-disc-01-holes-near-4-5-6-7
+2026-10-06 15:07:31  Conditions: medium=cut disc saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-06 15:07:31  Recording to scans\runs\20261006-150731-disc-01-holes-near-4-5-6-7
+2026-10-06 15:08:20  [warmup 1/5] 216/216 OK | I med 359.5 uA (261.0-505.7) | R med 0.0109 kohm | dV med 976 LSB
+2026-10-06 15:09:09  [warmup 2/5] 216/216 OK | I med 360.7 uA (263.3-506.7) | R med 0.0109 kohm | dV med 978 LSB
+2026-10-06 15:09:58  [warmup 3/5] 216/216 OK | I med 362.7 uA (263.9-508.5) | R med 0.0108 kohm | dV med 980 LSB
+2026-10-06 15:10:47  [warmup 4/5] 216/216 OK | I med 363.6 uA (265.2-509.2) | R med 0.0108 kohm | dV med 985 LSB
+2026-10-06 15:11:36  [warmup 5/5] 216/216 OK | I med 365.4 uA (267.5-512.1) | R med 0.0109 kohm | dV med 989 LSB
+2026-10-06 15:12:25  [frame 1] 216/216 OK | I med 369.1 uA (276.1-518.8) | R med 0.0108 kohm | dV med 1002 LSB
+2026-10-06 15:13:14  [frame 2] 216/216 OK | I med 394.1 uA (258.7-1150.4) | R med 0.0109 kohm | dV med 1013 LSB
+2026-10-06 15:14:03  [frame 3] 216/216 OK | I med 357.3 uA (260.6-502.9) | R med 0.0108 kohm | dV med 966 LSB
+2026-10-06 15:14:52  [frame 4] 216/216 OK | I med 358.6 uA (260.9-504.0) | R med 0.0109 kohm | dV med 971 LSB
+2026-10-06 15:15:41  [frame 5] 216/216 OK | I med 359.5 uA (261.6-505.2) | R med 0.0109 kohm | dV med 975 LSB
+2026-10-06 15:16:30  [frame 6] 216/216 OK | I med 360.0 uA (262.5-506.1) | R med 0.0109 kohm | dV med 977 LSB
+2026-10-06 15:17:19  [frame 7] 216/216 OK | I med 361.1 uA (262.5-506.1) | R med 0.0108 kohm | dV med 978 LSB
+2026-10-06 15:18:08  [frame 8] 216/216 OK | I med 361.2 uA (264.0-506.6) | R med 0.0108 kohm | dV med 975 LSB
+2026-10-06 15:18:57  [frame 9] 216/216 OK | I med 361.5 uA (263.6-506.7) | R med 0.0108 kohm | dV med 981 LSB
+2026-10-06 15:19:46  [frame 10] 216/216 OK | I med 361.5 uA (264.4-507.7) | R med 0.0109 kohm | dV med 978 LSB
+2026-10-06 15:19:46  No reconstruction: baseline and target were captured with different settings: settle_ms: 10 vs 30; samples: 8 vs 32
+2026-10-06 15:19:53  Absolute: PASS
+2026-10-06 15:19:53  Absolute: PASS  |  sigma0 2.34 mS  |  peak +5.48 at 56 deg  |  misfit 7.8%  |  significance 13.2x
+2026-10-06 15:19:53  Finished. Run saved to scans\runs\20261006-150731-disc-01-holes-near-4-5-6-7
+2026-10-06 15:19:53    Frames captured: 10
+2026-10-06 15:19:53    Reciprocity: median 2.5%  max 72.7%  sign flips 0/54
+2026-10-06 15:19:53    Noise floor: median pair sd 0.00008 kohm (0.62%)  max 0.00418 kohm over 108 pairs
+2026-10-06 15:19:53  Indexed in scans\index.csv
+2026-10-06 15:23:03  Start refused: the session baseline is from disc-01, this run is disc-05. Clear the baseline before scanning a different specimen.
+2026-10-06 15:23:04  Baseline cleared; the next run will become the new baseline.
+2026-10-06 15:23:07  Connecting to COM7...
+2026-10-06 15:23:07  Configuring instrument...
+2026-10-06 15:23:07  Recalibration ladder: 8 attempts, up to ~252 min
+
+------------------------------------------------------------------------
+2026-10-06 15:23:07  Run 20261006-152307-disc-05-intact
+2026-10-06 15:23:07  Conditions: medium=cut disc saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-06 15:23:07  Recording to scans\runs\20261006-152307-disc-05-intact
+2026-10-06 15:23:56  [warmup 1/5] 216/216 OK | I med 298.2 uA (79.8-1149.8) | R med 0.0044 kohm | dV med 201 LSB
+2026-10-06 15:24:45  [warmup 2/5] 216/216 OK | I med 260.4 uA (166.7-370.9) | R med 0.0038 kohm | dV med 176 LSB
+2026-10-06 15:25:34  [warmup 3/5] 216/216 OK | I med 255.1 uA (170.5-368.4) | R med 0.0039 kohm | dV med 178 LSB
+2026-10-06 15:26:23  [warmup 4/5] 216/216 OK | I med 254.2 uA (169.7-367.2) | R med 0.0037 kohm | dV med 171 LSB
+2026-10-06 15:27:12  [warmup 5/5] 216/216 OK | I med 253.6 uA (171.3-366.5) | R med 0.0036 kohm | dV med 175 LSB
+2026-10-06 15:28:01  [frame 1] 216/216 OK | I med 253.9 uA (170.5-366.2) | R med 0.0038 kohm | dV med 175 LSB
+2026-10-06 15:28:50  [frame 2] 216/216 OK | I med 254.4 uA (170.6-365.0) | R med 0.0037 kohm | dV med 174 LSB
+2026-10-06 15:29:39  [frame 3] 216/216 OK | I med 254.7 uA (171.9-365.9) | R med 0.0036 kohm | dV med 176 LSB
+2026-10-06 15:30:28  [frame 4] 216/216 OK | I med 254.8 uA (170.0-365.4) | R med 0.0038 kohm | dV med 175 LSB
+2026-10-06 15:31:17  [frame 5] 216/216 OK | I med 254.9 uA (166.1-364.7) | R med 0.0040 kohm | dV med 179 LSB
+2026-10-06 15:32:06  [frame 6] 216/216 OK | I med 255.5 uA (167.2-364.6) | R med 0.0039 kohm | dV med 175 LSB
+2026-10-06 15:32:56  [frame 7] 216/216 OK | I med 256.3 uA (166.9-364.3) | R med 0.0038 kohm | dV med 177 LSB
+2026-10-06 15:33:45  [frame 8] 216/216 OK | I med 257.0 uA (166.3-364.8) | R med 0.0039 kohm | dV med 174 LSB
+2026-10-06 15:34:34  [frame 9] 216/216 OK | I med 256.6 uA (166.0-365.0) | R med 0.0039 kohm | dV med 174 LSB
+2026-10-06 15:35:23  [frame 10] 216/216 OK | I med 256.8 uA (166.2-364.7) | R med 0.0040 kohm | dV med 174 LSB
+2026-10-06 15:35:23  No reconstruction: This run is the session baseline; it has nothing to differ from.
+2026-10-06 15:35:24  Baseline control image saved to scans\runs\20261006-152307-disc-05-intact\control.png
+2026-10-06 15:35:34  Absolute: REFUSED: median reciprocity 33.0% > 15%; model misfit 53.8% > 15%
+2026-10-06 15:35:35  Absolute: REFUSED: median reciprocity 33.0% > 15%; model misfit 53.8% > 15%  |  sigma0 6.43 mS  |  peak +1.79e+03 at 112 deg  |  misfit 53.8%  |  significance 14.7x
+2026-10-06 15:35:35  Recalibrating: attempt 2/8 settle=10ms samples=8 warmup=5 frames=10 dac=620 (~4 min)
+
+------------------------------------------------------------------------
+2026-10-06 15:35:35  Run 20261006-153535-disc-05-intact
+2026-10-06 15:35:35  Conditions: medium=cut disc saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-06 15:35:35  Recording to scans\runs\20261006-153535-disc-05-intact
+2026-10-06 15:35:49  [warmup 1/5] 216/216 OK | I med 296.9 uA (199.2-402.2) | R med 0.0037 kohm | dV med 190 LSB
+2026-10-06 15:36:02  [warmup 2/5] 216/216 OK | I med 296.7 uA (196.2-401.6) | R med 0.0038 kohm | dV med 192 LSB
+2026-10-06 15:36:16  [warmup 3/5] 216/216 OK | I med 297.0 uA (195.8-402.0) | R med 0.0037 kohm | dV med 190 LSB
+2026-10-06 15:36:29  [warmup 4/5] 216/216 OK | I med 296.5 uA (196.3-402.5) | R med 0.0038 kohm | dV med 190 LSB
+2026-10-06 15:36:43  [warmup 5/5] 216/216 OK | I med 297.1 uA (195.5-402.4) | R med 0.0039 kohm | dV med 190 LSB
+2026-10-06 15:36:57  [frame 1] 216/216 OK | I med 295.8 uA (193.3-401.4) | R med 0.0037 kohm | dV med 186 LSB
+2026-10-06 15:37:10  [frame 2] 216/216 OK | I med 295.1 uA (193.4-397.9) | R med 0.0037 kohm | dV med 192 LSB
+2026-10-06 15:37:24  [frame 3] 216/216 OK | I med 295.3 uA (194.4-399.6) | R med 0.0039 kohm | dV med 188 LSB
+2026-10-06 15:37:38  [frame 4] 216/216 OK | I med 294.9 uA (194.4-398.5) | R med 0.0037 kohm | dV med 187 LSB
+2026-10-06 15:37:51  [frame 5] 216/216 OK | I med 296.0 uA (194.2-400.3) | R med 0.0039 kohm | dV med 191 LSB
+2026-10-06 15:38:05  [frame 6] 216/216 OK | I med 296.2 uA (193.0-399.0) | R med 0.0037 kohm | dV med 186 LSB
+2026-10-06 15:38:19  [frame 7] 216/216 OK | I med 295.7 uA (196.2-400.8) | R med 0.0035 kohm | dV med 186 LSB
+2026-10-06 15:38:32  [frame 8] 216/216 OK | I med 296.4 uA (196.6-397.7) | R med 0.0035 kohm | dV med 191 LSB
+2026-10-06 15:38:46  [frame 9] 216/216 OK | I med 296.7 uA (197.4-400.0) | R med 0.0035 kohm | dV med 189 LSB
+2026-10-06 15:38:59  [frame 10] 216/216 OK | I med 296.6 uA (195.8-399.5) | R med 0.0034 kohm | dV med 185 LSB
+2026-10-06 15:38:59  No reconstruction: This run is the session baseline; it has nothing to differ from.
+2026-10-06 15:39:00  Baseline control image saved to scans\runs\20261006-153535-disc-05-intact\control.png
+2026-10-06 15:39:10  Absolute: REFUSED: median reciprocity 30.4% > 15%; model misfit 56.6% > 15%
+2026-10-06 15:39:11  Absolute: REFUSED: median reciprocity 30.4% > 15%; model misfit 56.6% > 15%  |  sigma0 7.48 mS  |  peak +1.88e+03 at 112 deg  |  misfit 56.6%  |  significance 47.1x
+2026-10-06 15:39:11  Recalibrating: attempt 3/8 settle=30ms samples=16 warmup=5 frames=10 dac=620 (~9 min)
+
+------------------------------------------------------------------------
+2026-10-06 15:39:11  Run 20261006-153911-disc-05-intact
+2026-10-06 15:39:11  Conditions: medium=cut disc saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-06 15:39:11  Recording to scans\runs\20261006-153911-disc-05-intact
+2026-10-06 15:39:40  [warmup 1/5] 216/216 OK | I med 260.9 uA (177.2-367.4) | R med 0.0039 kohm | dV med 174 LSB
+2026-10-06 15:40:08  [warmup 2/5] 216/216 OK | I med 262.6 uA (177.9-368.2) | R med 0.0039 kohm | dV med 180 LSB
+2026-10-06 15:40:36  [warmup 3/5] 216/216 OK | I med 262.9 uA (177.6-369.2) | R med 0.0039 kohm | dV med 174 LSB
+2026-10-06 15:41:04  [warmup 4/5] 216/216 OK | I med 263.9 uA (178.4-369.7) | R med 0.0039 kohm | dV med 176 LSB
+2026-10-06 15:41:33  [warmup 5/5] 216/216 OK | I med 264.3 uA (178.0-370.7) | R med 0.0039 kohm | dV med 179 LSB
+2026-10-06 15:42:02  [frame 1] 216/216 OK | I med 265.3 uA (183.4-370.8) | R med 0.0038 kohm | dV med 183 LSB
+2026-10-06 15:42:30  [frame 2] 216/216 OK | I med 266.1 uA (181.5-371.4) | R med 0.0036 kohm | dV med 176 LSB
+2026-10-06 15:42:58  [frame 3] 216/216 OK | I med 266.9 uA (181.9-372.8) | R med 0.0036 kohm | dV med 179 LSB
+2026-10-06 15:43:27  [frame 4] 216/216 OK | I med 267.7 uA (181.3-372.5) | R med 0.0035 kohm | dV med 179 LSB
+2026-10-06 15:43:55  [frame 5] 216/216 OK | I med 268.3 uA (178.5-372.3) | R med 0.0037 kohm | dV med 179 LSB
+2026-10-06 15:44:23  [frame 6] 216/216 OK | I med 268.8 uA (179.0-371.4) | R med 0.0040 kohm | dV med 177 LSB
+2026-10-06 15:44:52  [frame 7] 216/216 OK | I med 268.9 uA (178.8-371.5) | R med 0.0039 kohm | dV med 183 LSB
+2026-10-06 15:45:20  [frame 8] 216/216 OK | I med 269.1 uA (179.4-370.4) | R med 0.0039 kohm | dV med 180 LSB
+2026-10-06 15:45:48  [frame 9] 216/216 OK | I med 269.2 uA (179.3-369.6) | R med 0.0038 kohm | dV med 181 LSB
+2026-10-06 15:46:16  [frame 10] 216/216 OK | I med 269.3 uA (180.3-367.8) | R med 0.0038 kohm | dV med 183 LSB
+2026-10-06 15:46:16  No reconstruction: This run is the session baseline; it has nothing to differ from.
+2026-10-06 15:46:17  Baseline control image saved to scans\runs\20261006-153911-disc-05-intact\control.png
+2026-10-06 15:46:26  Absolute: REFUSED: median reciprocity 39.3% > 15%; model misfit 49.1% > 15%
+2026-10-06 15:46:27  Absolute: REFUSED: median reciprocity 39.3% > 15%; model misfit 49.1% > 15%  |  sigma0 6.78 mS  |  peak +1.79e+03 at 112 deg  |  misfit 49.1%  |  significance 2.6x
+2026-10-06 15:46:27  Recalibrating: attempt 4/8 settle=50ms samples=32 warmup=10 frames=10 dac=620 (~23 min)
+
+------------------------------------------------------------------------
+2026-10-06 15:46:27  Run 20261006-154627-disc-05-intact
+2026-10-06 15:46:27  Conditions: medium=cut disc saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-06 15:46:27  Recording to scans\runs\20261006-154627-disc-05-intact
+2026-10-06 15:47:08  Stopping after the frame in flight...
+2026-10-06 15:47:20  [warmup 1/10] 216/216 OK | I med 256.3 uA (170.8-356.0) | R med 0.0038 kohm | dV med 179 LSB
+2026-10-06 15:47:20  Cancelled after 0 frame(s); the run is kept.
+2026-10-06 15:47:20  No reconstruction: This run is the session baseline; it has nothing to differ from.
+2026-10-06 15:47:20  Baseline has fewer than 4 frames, so no control image was saved.
+2026-10-06 15:47:20  Absolute: REFUSED: reciprocity could not be measured (no reciprocal pairs); absolute solve failed
+2026-10-06 15:47:20  Finished. Run saved to scans\runs\20261006-154627-disc-05-intact
+2026-10-06 15:47:20    Frames captured: 0
+2026-10-06 15:47:20    Reciprocity: no reciprocal pairs captured
+2026-10-06 15:47:20    Noise floor: needs at least 2 frames
+2026-10-06 15:47:20  Indexed in scans\index.csv
+2026-10-06 15:49:48  Connecting to COM7...
+2026-10-06 15:49:48  Configuring instrument...
+2026-10-06 15:49:48  Recalibration ladder: 8 attempts, up to ~252 min
+
+------------------------------------------------------------------------
+2026-10-06 15:49:48  Run 20261006-154948-disc-10-intact
+2026-10-06 15:49:48  Conditions: medium=cut disc saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-06 15:49:48  Recording to scans\runs\20261006-154948-disc-10-intact
+2026-10-06 15:50:37  [warmup 1/5] 216/216 OK | I med 101.6 uA (49.1-193.1) | R med 0.0232 kohm | dV med 568 LSB
+2026-10-06 15:51:26  [warmup 2/5] 216/216 OK | I med 102.2 uA (50.0-195.6) | R med 0.0239 kohm | dV med 578 LSB
+2026-10-06 15:52:15  [warmup 3/5] 216/216 OK | I med 102.2 uA (50.4-196.3) | R med 0.0238 kohm | dV med 583 LSB
+2026-10-06 15:53:04  [warmup 4/5] 216/216 OK | I med 102.5 uA (50.8-197.1) | R med 0.0239 kohm | dV med 579 LSB
+2026-10-06 15:53:53  [warmup 5/5] 216/216 OK | I med 102.6 uA (50.8-197.8) | R med 0.0238 kohm | dV med 586 LSB
+2026-10-06 15:54:42  [frame 1] 216/216 OK | I med 102.8 uA (51.2-197.8) | R med 0.0235 kohm | dV med 582 LSB
+2026-10-06 15:55:32  [frame 2] 216/216 OK | I med 102.6 uA (51.1-198.2) | R med 0.0232 kohm | dV med 584 LSB
+2026-10-06 15:56:21  [frame 3] 216/216 OK | I med 102.6 uA (51.4-197.8) | R med 0.0235 kohm | dV med 585 LSB
+2026-10-06 15:57:10  [frame 4] 216/216 OK | I med 102.5 uA (51.6-197.7) | R med 0.0236 kohm | dV med 586 LSB
+2026-10-06 15:57:59  [frame 5] 216/216 OK | I med 102.4 uA (51.6-197.9) | R med 0.0234 kohm | dV med 586 LSB
+2026-10-06 15:58:48  [frame 6] 216/216 OK | I med 102.5 uA (51.6-197.7) | R med 0.0244 kohm | dV med 590 LSB
+2026-10-06 15:59:37  [frame 7] 216/216 OK | I med 102.2 uA (51.4-197.7) | R med 0.0255 kohm | dV med 597 LSB
+2026-10-06 16:00:26  [frame 8] 216/216 OK | I med 102.6 uA (51.4-198.0) | R med 0.0276 kohm | dV med 589 LSB
+2026-10-06 16:01:15  [frame 9] 216/216 OK | I med 102.4 uA (51.5-197.5) | R med 0.0285 kohm | dV med 593 LSB
+2026-10-06 16:02:04  [frame 10] 216/216 OK | I med 102.2 uA (52.0-197.1) | R med 0.0277 kohm | dV med 590 LSB
+2026-10-06 16:02:04  No reconstruction: This run is the session baseline; it has nothing to differ from.
+2026-10-06 16:02:06  Baseline control image saved to scans\runs\20261006-154948-disc-10-intact\control.png
+2026-10-06 16:02:18  Absolute: REFUSED: model misfit 46.3% > 15%
+2026-10-06 16:02:18  Absolute: REFUSED: model misfit 46.3% > 15%  |  sigma0 1.52 mS  |  peak +2.91e+03 at 325 deg  |  misfit 46.3%  |  significance 3.2x
+2026-10-06 16:02:18  Recalibrating: attempt 2/8 settle=10ms samples=8 warmup=5 frames=10 dac=620 (~4 min)
+
+------------------------------------------------------------------------
+2026-10-06 16:02:18  Run 20261006-160218-disc-10-intact
+2026-10-06 16:02:18  Conditions: medium=cut disc saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-06 16:02:18  Recording to scans\runs\20261006-160218-disc-10-intact
+2026-10-06 16:02:32  [warmup 1/5] 216/216 OK | I med 107.0 uA (53.5-203.7) | R med 0.0288 kohm | dV med 627 LSB
+2026-10-06 16:02:46  [warmup 2/5] 216/216 OK | I med 106.9 uA (53.6-202.9) | R med 0.0297 kohm | dV med 618 LSB
+2026-10-06 16:02:59  [warmup 3/5] 216/216 OK | I med 106.5 uA (53.1-202.9) | R med 0.0303 kohm | dV med 630 LSB
+2026-10-06 16:03:13  [warmup 4/5] 216/216 OK | I med 106.5 uA (52.8-202.4) | R med 0.0294 kohm | dV med 620 LSB
+2026-10-06 16:03:27  [warmup 5/5] 216/216 OK | I med 106.5 uA (53.5-202.2) | R med 0.0284 kohm | dV med 610 LSB
+2026-10-06 16:03:40  [frame 1] 216/216 OK | I med 106.2 uA (53.0-201.7) | R med 0.0295 kohm | dV med 613 LSB
+2026-10-06 16:03:54  [frame 2] 216/216 OK | I med 106.1 uA (53.5-201.3) | R med 0.0300 kohm | dV med 604 LSB
+2026-10-06 16:04:07  [frame 3] 216/216 OK | I med 106.1 uA (53.3-200.8) | R med 0.0281 kohm | dV med 624 LSB
+2026-10-06 16:04:21  [frame 4] 216/216 OK | I med 106.1 uA (53.0-200.8) | R med 0.0290 kohm | dV med 613 LSB
+2026-10-06 16:04:35  [frame 5] 216/216 OK | I med 106.1 uA (53.6-200.8) | R med 0.0294 kohm | dV med 609 LSB
+2026-10-06 16:04:48  [frame 6] 216/216 OK | I med 106.1 uA (52.0-200.3) | R med 0.0291 kohm | dV med 611 LSB
+2026-10-06 16:05:02  [frame 7] 216/216 OK | I med 105.7 uA (53.1-200.1) | R med 0.0295 kohm | dV med 607 LSB
+2026-10-06 16:05:15  [frame 8] 216/216 OK | I med 106.1 uA (53.3-200.8) | R med 0.0297 kohm | dV med 611 LSB
+2026-10-06 16:05:29  [frame 9] 216/216 OK | I med 105.8 uA (52.5-200.0) | R med 0.0287 kohm | dV med 610 LSB
+2026-10-06 16:05:43  [frame 10] 216/216 OK | I med 105.7 uA (52.3-200.0) | R med 0.0301 kohm | dV med 618 LSB
+2026-10-06 16:05:43  No reconstruction: This run is the session baseline; it has nothing to differ from.
+2026-10-06 16:05:44  Baseline control image saved to scans\runs\20261006-160218-disc-10-intact\control.png
+2026-10-06 16:05:52  Absolute: REFUSED: model misfit 46.4% > 15%
+2026-10-06 16:05:58  Absolute: REFUSED: model misfit 46.4% > 15%  |  sigma0 1.51 mS  |  peak +1.68e+03 at 325 deg  |  misfit 46.4%  |  significance 67.0x
+2026-10-06 16:05:58  Recalibrating: attempt 3/8 settle=30ms samples=16 warmup=5 frames=10 dac=620 (~9 min)
+
+------------------------------------------------------------------------
+2026-10-06 16:05:58  Run 20261006-160558-disc-10-intact
+2026-10-06 16:05:58  Conditions: medium=cut disc saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-06 16:05:58  Recording to scans\runs\20261006-160558-disc-10-intact
+2026-10-06 16:06:26  [warmup 1/5] 216/216 OK | I med 98.9 uA (52.5-192.0) | R med 0.0307 kohm | dV med 594 LSB
+2026-10-06 16:06:55  [warmup 2/5] 216/216 OK | I med 99.2 uA (51.8-192.1) | R med 0.0300 kohm | dV med 594 LSB
+2026-10-06 16:07:23  [warmup 3/5] 216/216 OK | I med 99.1 uA (52.2-192.4) | R med 0.0313 kohm | dV med 596 LSB
+2026-10-06 16:07:51  [warmup 4/5] 216/216 OK | I med 99.4 uA (51.8-192.6) | R med 0.0316 kohm | dV med 596 LSB
+2026-10-06 16:08:20  [warmup 5/5] 216/216 OK | I med 99.4 uA (51.5-192.6) | R med 0.0308 kohm | dV med 595 LSB
+2026-10-06 16:08:26  Stopping after the frame in flight...
+2026-10-06 16:08:48  [frame 1] 216/216 OK | I med 99.5 uA (52.4-192.6) | R med 0.0306 kohm | dV med 591 LSB
+2026-10-06 16:08:48  Cancelled after 1 frame(s); the run is kept.
+2026-10-06 16:08:48  No reconstruction: This run is the session baseline; it has nothing to differ from.
+2026-10-06 16:08:48  Baseline has fewer than 4 frames, so no control image was saved.
+2026-10-06 16:08:51  Absolute: REFUSED: median reciprocity 15.0% > 15%; too few frames for a split-half noise image (need 4)
+2026-10-06 16:08:52  Absolute: REFUSED: median reciprocity 15.0% > 15%; too few frames for a split-half noise image (need 4)  |  sigma0 1.46 mS  |  peak +1.46e+03 at 325 deg  |  misfit 46.2%  |  significance n/a
+2026-10-06 16:08:52  Recalibration stopped: 3 attempts in a row flagged electrode contacts (latest E1). No capture setting repairs a contact -- reseat and dry, then rescan.
+2026-10-06 16:08:52  This run is now the session baseline (20261006-160558-disc-10-intact).
+2026-10-06 16:08:52  Finished. Run saved to scans\runs\20261006-160558-disc-10-intact
+2026-10-06 16:08:52    Frames captured: 1
+2026-10-06 16:08:52    Reciprocity: median 15.0%  max 95.0%  sign flips 3/54
+2026-10-06 16:08:52    Check electrode contact: E1 35% (all pairs median 15%)
+2026-10-06 16:08:52    Noise floor: needs at least 2 frames
+2026-10-06 16:08:52  Indexed in scans\index.csv
+2026-10-06 16:10:37  Baseline cleared; the next run will become the new baseline.
+2026-10-06 16:10:53  Connecting to COM7...
+2026-10-06 16:10:53  Configuring instrument...
+2026-10-06 16:10:53  Recalibration ladder: 8 attempts, up to ~252 min
+
+------------------------------------------------------------------------
+2026-10-06 16:10:53  Run 20261006-161053-disc-08-hole-near-10
+2026-10-06 16:10:53  Conditions: medium=cut disc saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-06 16:10:53  Recording to scans\runs\20261006-161053-disc-08-hole-near-10
+2026-10-06 16:11:42  [warmup 1/5] 180/216 OK | I med 294.2 uA (2.8-446.8) | R med 0.0185 kohm | dV med 558 LSB | flags I_LOWx36
+2026-10-06 16:12:31  [warmup 2/5] 180/216 OK | I med 295.2 uA (3.0-450.4) | R med 0.0180 kohm | dV med 561 LSB | flags I_LOWx36
+2026-10-06 16:13:20  [warmup 3/5] 180/216 OK | I med 295.5 uA (2.5-452.4) | R med 0.0178 kohm | dV med 572 LSB | flags I_LOWx36
+2026-10-06 16:14:09  [warmup 4/5] 180/216 OK | I med 295.4 uA (3.2-454.5) | R med 0.0183 kohm | dV med 572 LSB | flags I_LOWx36
+2026-10-06 16:14:58  [warmup 5/5] 180/216 OK | I med 295.5 uA (3.0-454.5) | R med 0.0174 kohm | dV med 577 LSB | flags I_LOWx36
+2026-10-06 16:15:47  [frame 1] 180/216 OK | I med 295.8 uA (3.6-455.9) | R med 0.0177 kohm | dV med 576 LSB | flags I_LOWx36
+2026-10-06 16:16:36  [frame 2] 180/216 OK | I med 296.7 uA (2.5-457.0) | R med 0.0174 kohm | dV med 616 LSB | flags I_LOWx36
+2026-10-06 16:17:25  [frame 3] 180/216 OK | I med 297.6 uA (3.4-457.6) | R med 0.0171 kohm | dV med 578 LSB | flags I_LOWx36
+2026-10-06 16:18:14  [frame 4] 180/216 OK | I med 297.3 uA (3.0-457.5) | R med 0.0176 kohm | dV med 586 LSB | flags I_LOWx36
+2026-10-06 16:19:03  [frame 5] 194/216 OK | I med 304.9 uA (3.2-458.3) | R med 0.0211 kohm | dV med 615 LSB | flags I_LOWx22
+2026-10-06 16:19:05  Stopping after the frame in flight...
+2026-10-06 16:19:52  [frame 6] 180/216 OK | I med 298.4 uA (3.0-458.6) | R med 0.0182 kohm | dV med 569 LSB | flags I_LOWx36
+2026-10-06 16:19:52  Cancelled after 6 frame(s); the run is kept.
+2026-10-06 16:19:52  No reconstruction: This run is the session baseline; it has nothing to differ from.
+2026-10-06 16:19:56  Baseline control image saved to scans\runs\20261006-161053-disc-08-hole-near-10\control.png
+2026-10-06 16:20:07  Absolute: REFUSED: median reciprocity 24.0% > 15%; model misfit 71.7% > 15%
+2026-10-06 16:20:07  Absolute: REFUSED: median reciprocity 24.0% > 15%; model misfit 71.7% > 15%  |  sigma0 2.68 mS  |  peak +1.51e+05 at 239 deg  |  misfit 71.7%  |  significance 13.9x
+2026-10-06 16:20:07  This run is now the session baseline (20261006-161053-disc-08-hole-near-10).
+2026-10-06 16:20:07  Finished. Run saved to scans\runs\20261006-161053-disc-08-hole-near-10
+2026-10-06 16:20:07    Frames captured: 6
+2026-10-06 16:20:07    Reciprocity: median 24.0%  max 98.9%  sign flips 3/42
+2026-10-06 16:20:07    Check electrode contact: E9 84% (all pairs median 24%)
+2026-10-06 16:20:07    Noise floor: median pair sd 0.00039 kohm (2.03%)  max 0.22247 kohm over 90 pairs
+2026-10-06 16:20:07  Indexed in scans\index.csv
+2026-10-06 16:20:49  Connecting to COM7...
+2026-10-06 16:20:49  Configuring instrument...
+2026-10-06 16:20:49  Recalibration ladder: 8 attempts, up to ~252 min
+
+------------------------------------------------------------------------
+2026-10-06 16:20:50  Run 20261006-162049-disc-08-hole-near-10
+2026-10-06 16:20:50  Conditions: medium=cut disc saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-06 16:20:50  Recording to scans\runs\20261006-162049-disc-08-hole-near-10
+2026-10-06 16:21:39  [warmup 1/5] 216/216 OK | I med 312.7 uA (143.2-519.5) | R med 0.0216 kohm | dV med 579 LSB
+2026-10-06 16:22:28  [warmup 2/5] 216/216 OK | I med 313.6 uA (143.8-518.1) | R med 0.0219 kohm | dV med 579 LSB
+2026-10-06 16:23:17  [warmup 3/5] 216/216 OK | I med 313.8 uA (143.8-517.7) | R med 0.0219 kohm | dV med 579 LSB
+2026-10-06 16:24:06  [warmup 4/5] 216/216 OK | I med 314.4 uA (144.1-517.2) | R med 0.0218 kohm | dV med 577 LSB
+2026-10-06 16:24:55  [warmup 5/5] 216/216 OK | I med 314.6 uA (144.2-517.0) | R med 0.0218 kohm | dV med 579 LSB
+2026-10-06 16:25:44  [frame 1] 216/216 OK | I med 314.9 uA (144.4-516.8) | R med 0.0215 kohm | dV med 582 LSB
+2026-10-06 16:26:33  [frame 2] 216/216 OK | I med 315.3 uA (144.9-516.6) | R med 0.0217 kohm | dV med 583 LSB
+2026-10-06 16:27:22  [frame 3] 216/216 OK | I med 315.7 uA (144.8-516.6) | R med 0.0216 kohm | dV med 583 LSB
+2026-10-06 16:28:11  [frame 4] 216/216 OK | I med 315.9 uA (145.3-516.8) | R med 0.0221 kohm | dV med 584 LSB
+2026-10-06 16:29:00  [frame 5] 216/216 OK | I med 316.2 uA (145.0-516.3) | R med 0.0223 kohm | dV med 584 LSB
+2026-10-06 16:29:49  [frame 6] 216/216 OK | I med 316.8 uA (145.1-516.5) | R med 0.0218 kohm | dV med 587 LSB
+2026-10-06 16:30:38  [frame 7] 216/216 OK | I med 316.8 uA (145.3-516.9) | R med 0.0215 kohm | dV med 588 LSB
+2026-10-06 16:31:27  [frame 8] 216/216 OK | I med 317.1 uA (145.3-516.8) | R med 0.0222 kohm | dV med 583 LSB
+2026-10-06 16:32:16  [frame 9] 216/216 OK | I med 316.7 uA (148.1-516.6) | R med 0.0212 kohm | dV med 617 LSB
+2026-10-06 16:33:05  [frame 10] 216/216 OK | I med 316.4 uA (161.7-516.4) | R med 0.0203 kohm | dV med 618 LSB
+2026-10-06 16:33:05  No reconstruction: Reciprocity check failed, so no image was made (baseline: median reciprocity error 24.0% exceeds 15%; this run: median reciprocity error 19.8% exceeds 15%). Frames are saved. Fix reciprocity first, or tick the override to image anyway.
+2026-10-06 16:33:18  Absolute: REFUSED: median reciprocity 19.8% > 15%; model misfit 56.2% > 15%
+2026-10-06 16:33:19  Absolute: REFUSED: median reciprocity 19.8% > 15%; model misfit 56.2% > 15%  |  sigma0 2.26 mS  |  peak +7.33e+03 at 81 deg  |  misfit 56.2%  |  significance 4.3x
+2026-10-06 16:33:19  Recalibrating: attempt 2/8 settle=10ms samples=8 warmup=5 frames=10 dac=620 (~4 min)
+
+------------------------------------------------------------------------
+2026-10-06 16:33:19  Run 20261006-163319-disc-08-hole-near-10
+2026-10-06 16:33:19  Conditions: medium=cut disc saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-06 16:33:19  Recording to scans\runs\20261006-163319-disc-08-hole-near-10
+2026-10-06 16:33:32  [warmup 1/5] 216/216 OK | I med 326.5 uA (173.2-530.5) | R med 0.0199 kohm | dV med 660 LSB
+2026-10-06 16:33:46  [warmup 2/5] 216/216 OK | I med 326.3 uA (174.3-530.0) | R med 0.0198 kohm | dV med 660 LSB
+2026-10-06 16:33:59  [warmup 3/5] 216/216 OK | I med 326.5 uA (174.6-529.4) | R med 0.0187 kohm | dV med 656 LSB
+2026-10-06 16:34:13  [warmup 4/5] 216/216 OK | I med 325.9 uA (175.9-529.9) | R med 0.0188 kohm | dV med 665 LSB
+2026-10-06 16:34:27  [warmup 5/5] 216/216 OK | I med 325.9 uA (175.4-530.4) | R med 0.0179 kohm | dV med 657 LSB
+2026-10-06 16:34:40  [frame 1] 216/216 OK | I med 326.5 uA (176.2-529.7) | R med 0.0179 kohm | dV med 660 LSB
+2026-10-06 16:34:54  [frame 2] 216/216 OK | I med 326.3 uA (175.2-530.0) | R med 0.0186 kohm | dV med 663 LSB
+2026-10-06 16:35:07  [frame 3] 216/216 OK | I med 325.9 uA (175.2-529.9) | R med 0.0179 kohm | dV med 658 LSB
+2026-10-06 16:35:21  [frame 4] 216/216 OK | I med 326.3 uA (176.5-528.9) | R med 0.0186 kohm | dV med 667 LSB
+2026-10-06 16:35:35  [frame 5] 216/216 OK | I med 326.7 uA (175.2-529.6) | R med 0.0183 kohm | dV med 660 LSB
+2026-10-06 16:35:48  [frame 6] 216/216 OK | I med 326.3 uA (174.4-530.0) | R med 0.0187 kohm | dV med 665 LSB
+2026-10-06 16:36:02  [frame 7] 216/216 OK | I med 326.5 uA (174.9-529.2) | R med 0.0178 kohm | dV med 657 LSB
+2026-10-06 16:36:16  [frame 8] 216/216 OK | I med 326.1 uA (175.2-529.1) | R med 0.0184 kohm | dV med 664 LSB
+2026-10-06 16:36:29  [frame 9] 216/216 OK | I med 326.5 uA (176.0-528.4) | R med 0.0189 kohm | dV med 663 LSB
+2026-10-06 16:36:43  [frame 10] 216/216 OK | I med 327.0 uA (175.4-530.0) | R med 0.0190 kohm | dV med 659 LSB
+2026-10-06 16:36:43  No reconstruction: Reciprocity check failed, so no image was made (baseline: median reciprocity error 24.0% exceeds 15%; this run: median reciprocity error 26.1% exceeds 15%). Frames are saved. Fix reciprocity first, or tick the override to image anyway.
+2026-10-06 16:36:50  Absolute: REFUSED: median reciprocity 26.1% > 15%; model misfit 44.0% > 15%; significance 0.00 < 2.0
+2026-10-06 16:36:50  Absolute: REFUSED: median reciprocity 26.1% > 15%; model misfit 44.0% > 15%; significance 0.00 < 2.0  |  sigma0 2.34 mS  |  peak +2.26e+03 at 68 deg  |  misfit 44.0%  |  significance 0.0x
+2026-10-06 16:36:51  Recalibrating: attempt 3/8 settle=30ms samples=16 warmup=5 frames=10 dac=620 (~9 min)
+
+------------------------------------------------------------------------
+2026-10-06 16:36:51  Run 20261006-163651-disc-08-hole-near-10
+2026-10-06 16:36:51  Conditions: medium=cut disc saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-06 16:36:51  Recording to scans\runs\20261006-163651-disc-08-hole-near-10
+2026-10-06 16:37:19  [warmup 1/5] 216/216 OK | I med 317.6 uA (164.5-519.5) | R med 0.0204 kohm | dV med 633 LSB
+2026-10-06 16:37:47  [warmup 2/5] 216/216 OK | I med 318.2 uA (166.5-520.1) | R med 0.0202 kohm | dV med 639 LSB
+2026-10-06 16:38:16  [warmup 3/5] 216/216 OK | I med 318.1 uA (166.2-519.4) | R med 0.0206 kohm | dV med 636 LSB
+2026-10-06 16:38:44  [warmup 4/5] 216/216 OK | I med 317.9 uA (166.1-519.7) | R med 0.0203 kohm | dV med 633 LSB
+2026-10-06 16:39:12  [warmup 5/5] 216/216 OK | I med 318.8 uA (166.1-519.4) | R med 0.0201 kohm | dV med 644 LSB
+2026-10-06 16:39:41  [frame 1] 216/216 OK | I med 318.7 uA (166.9-519.7) | R med 0.0200 kohm | dV med 637 LSB
+2026-10-06 16:40:09  [frame 2] 216/216 OK | I med 318.6 uA (166.1-519.5) | R med 0.0201 kohm | dV med 638 LSB
+2026-10-06 16:40:37  [frame 3] 216/216 OK | I med 318.8 uA (167.1-520.5) | R med 0.0195 kohm | dV med 635 LSB
+2026-10-06 16:41:06  [frame 4] 216/216 OK | I med 319.0 uA (166.1-520.1) | R med 0.0195 kohm | dV med 640 LSB
+2026-10-06 16:41:34  [frame 5] 216/216 OK | I med 318.8 uA (166.5-517.5) | R med 0.0194 kohm | dV med 637 LSB
+2026-10-06 16:42:02  [frame 6] 216/216 OK | I med 318.6 uA (166.9-517.4) | R med 0.0198 kohm | dV med 636 LSB
+2026-10-06 16:42:31  [frame 7] 216/216 OK | I med 318.8 uA (166.8-518.2) | R med 0.0200 kohm | dV med 639 LSB
+2026-10-06 16:42:59  [frame 8] 216/216 OK | I med 319.2 uA (166.6-517.7) | R med 0.0197 kohm | dV med 632 LSB
+2026-10-06 16:43:27  [frame 9] 216/216 OK | I med 319.2 uA (166.5-518.1) | R med 0.0198 kohm | dV med 639 LSB
+2026-10-06 16:43:55  [frame 10] 216/216 OK | I med 318.8 uA (167.2-517.8) | R med 0.0196 kohm | dV med 642 LSB
+2026-10-06 16:43:55  No reconstruction: Reciprocity check failed, so no image was made (baseline: median reciprocity error 24.0% exceeds 15%; this run: median reciprocity error 19.3% exceeds 15%). Frames are saved. Fix reciprocity first, or tick the override to image anyway.
+2026-10-06 16:43:58  Absolute: REFUSED: median reciprocity 19.3% > 15%; model misfit 78.5% > 15%
+2026-10-06 16:43:59  Absolute: REFUSED: median reciprocity 19.3% > 15%; model misfit 78.5% > 15%  |  sigma0 2.35 mS  |  peak +7.26e+17 at 359 deg  |  misfit 78.5%  |  significance 3.8x
+2026-10-06 16:43:59  Recalibrating: attempt 4/8 settle=50ms samples=32 warmup=10 frames=10 dac=620 (~23 min)
+
+------------------------------------------------------------------------
+2026-10-06 16:43:59  Run 20261006-164359-disc-08-hole-near-10
+2026-10-06 16:43:59  Conditions: medium=cut disc saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-06 16:43:59  Recording to scans\runs\20261006-164359-disc-08-hole-near-10
+2026-10-06 16:44:03  Stopping after the frame in flight...
+2026-10-06 16:44:52  [warmup 1/10] 216/216 OK | I med 312.3 uA (162.0-512.0) | R med 0.0194 kohm | dV med 614 LSB
+2026-10-06 16:44:52  Cancelled after 0 frame(s); the run is kept.
+2026-10-06 16:44:52  No reconstruction: No frames were captured.
+2026-10-06 16:44:52  Absolute: REFUSED: reciprocity could not be measured (no reciprocal pairs); absolute solve failed
+2026-10-06 16:44:52  Finished. Run saved to scans\runs\20261006-164359-disc-08-hole-near-10
+2026-10-06 16:44:52    Frames captured: 0
+2026-10-06 16:44:52    Reciprocity: no reciprocal pairs captured
+2026-10-06 16:44:52    Noise floor: needs at least 2 frames
+2026-10-06 16:44:52  Indexed in scans\index.csv
+2026-10-06 16:46:22  Start refused: the session baseline is from disc-08, this run is disc-03. Clear the baseline before scanning a different specimen.
+2026-10-06 16:46:28  Baseline cleared; the next run will become the new baseline.
+2026-10-06 16:46:31  Connecting to COM7...
+2026-10-06 16:46:31  Configuring instrument...
+2026-10-06 16:46:31  Recalibration ladder: 8 attempts, up to ~252 min
+
+------------------------------------------------------------------------
+2026-10-06 16:46:31  Run 20261006-164631-disc-03-intact
+2026-10-06 16:46:31  Conditions: medium=cut disc saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-06 16:46:31  Recording to scans\runs\20261006-164631-disc-03-intact
+2026-10-06 16:47:20  [warmup 1/5] 216/216 OK | I med 430.1 uA (201.9-792.4) | R med 0.0192 kohm | dV med 339 LSB
+2026-10-06 16:48:09  [warmup 2/5] 216/216 OK | I med 418.9 uA (209.8-790.4) | R med 0.0198 kohm | dV med 338 LSB
+2026-10-06 16:48:58  [warmup 3/5] 216/216 OK | I med 420.2 uA (212.0-790.1) | R med 0.0186 kohm | dV med 337 LSB
+2026-10-06 16:49:47  [warmup 4/5] 216/216 OK | I med 420.5 uA (212.2-788.4) | R med 0.0200 kohm | dV med 336 LSB
+2026-10-06 16:50:36  [warmup 5/5] 216/216 OK | I med 421.5 uA (213.5-788.8) | R med 0.0197 kohm | dV med 334 LSB
+2026-10-06 16:51:26  [frame 1] 216/216 OK | I med 421.9 uA (214.7-787.8) | R med 0.0189 kohm | dV med 343 LSB
+2026-10-06 16:52:15  [frame 2] 216/216 OK | I med 422.2 uA (215.3-787.4) | R med 0.0198 kohm | dV med 333 LSB
+2026-10-06 16:53:04  [frame 3] 216/216 OK | I med 422.9 uA (215.8-787.3) | R med 0.0194 kohm | dV med 338 LSB
+2026-10-06 16:53:53  [frame 4] 216/216 OK | I med 423.3 uA (216.6-787.0) | R med 0.0193 kohm | dV med 337 LSB
+2026-10-06 16:54:42  [frame 5] 216/216 OK | I med 424.3 uA (218.0-786.1) | R med 0.0186 kohm | dV med 345 LSB
+2026-10-06 16:55:31  [frame 6] 216/216 OK | I med 424.4 uA (217.4-786.0) | R med 0.0195 kohm | dV med 340 LSB
+2026-10-06 16:56:20  [frame 7] 216/216 OK | I med 424.7 uA (216.9-785.6) | R med 0.0192 kohm | dV med 337 LSB
+2026-10-06 16:57:09  [frame 8] 216/216 OK | I med 425.2 uA (217.9-785.5) | R med 0.0188 kohm | dV med 341 LSB
+2026-10-06 16:57:58  [frame 9] 216/216 OK | I med 424.8 uA (217.5-785.9) | R med 0.0188 kohm | dV med 343 LSB
+2026-10-06 16:58:47  [frame 10] 216/216 OK | I med 426.4 uA (219.0-785.8) | R med 0.0191 kohm | dV med 340 LSB
+2026-10-06 16:58:47  No reconstruction: This run is the session baseline; it has nothing to differ from.
+2026-10-06 16:58:48  Baseline control image saved to scans\runs\20261006-164631-disc-03-intact\control.png
+2026-10-06 16:58:59  Absolute: REFUSED: median reciprocity 23.4% > 15%; model misfit 67.2% > 15%; significance 1.16 < 2.0
+2026-10-06 16:58:59  Absolute: REFUSED: median reciprocity 23.4% > 15%; model misfit 67.2% > 15%; significance 1.16 < 2.0  |  sigma0 3.32 mS  |  peak +3.43e+04 at 290 deg  |  misfit 67.2%  |  significance 1.2x
+2026-10-06 16:58:59  Recalibrating: attempt 2/8 settle=10ms samples=8 warmup=5 frames=10 dac=620 (~4 min)
+
+------------------------------------------------------------------------
+2026-10-06 16:58:59  Run 20261006-165859-disc-03-intact
+2026-10-06 16:58:59  Conditions: medium=cut disc saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-06 16:58:59  Recording to scans\runs\20261006-165859-disc-03-intact
+2026-10-06 16:59:13  [warmup 1/5] 216/216 OK | I med 460.8 uA (233.2-826.6) | R med 0.0186 kohm | dV med 366 LSB
+2026-10-06 16:59:27  [warmup 2/5] 216/216 OK | I med 461.4 uA (236.2-826.9) | R med 0.0177 kohm | dV med 372 LSB
+2026-10-06 16:59:40  [warmup 3/5] 216/216 OK | I med 462.1 uA (236.8-826.7) | R med 0.0181 kohm | dV med 368 LSB
+2026-10-06 16:59:54  [warmup 4/5] 216/216 OK | I med 461.6 uA (234.6-825.0) | R med 0.0184 kohm | dV med 367 LSB
+2026-10-06 17:00:08  [warmup 5/5] 216/216 OK | I med 461.3 uA (237.0-824.5) | R med 0.0183 kohm | dV med 370 LSB
+2026-10-06 17:00:21  [frame 1] 216/216 OK | I med 461.4 uA (238.4-825.1) | R med 0.0188 kohm | dV med 366 LSB
+2026-10-06 17:00:35  [frame 2] 216/216 OK | I med 461.3 uA (237.6-824.0) | R med 0.0186 kohm | dV med 368 LSB
+2026-10-06 17:00:48  [frame 3] 216/216 OK | I med 460.9 uA (235.4-825.3) | R med 0.0190 kohm | dV med 366 LSB
+2026-10-06 17:01:02  [frame 4] 216/216 OK | I med 461.5 uA (238.3-825.1) | R med 0.0190 kohm | dV med 368 LSB
+2026-10-06 17:01:12  Stopping after the frame in flight...
+2026-10-06 17:01:16  [frame 5] 216/216 OK | I med 462.3 uA (240.0-824.2) | R med 0.0182 kohm | dV med 373 LSB
+2026-10-06 17:01:16  Cancelled after 5 frame(s); the run is kept.
+2026-10-06 17:01:16  No reconstruction: This run is the session baseline; it has nothing to differ from.
+2026-10-06 17:01:17  Baseline control image saved to scans\runs\20261006-165859-disc-03-intact\control.png
+2026-10-06 17:01:27  Absolute: REFUSED: median reciprocity 22.0% > 15%; model misfit 66.2% > 15%
+2026-10-06 17:01:28  Absolute: REFUSED: median reciprocity 22.0% > 15%; model misfit 66.2% > 15%  |  sigma0 3.36 mS  |  peak +4.54e+04 at 290 deg  |  misfit 66.2%  |  significance 5.0x
+2026-10-06 17:01:28  This run is now the session baseline (20261006-165859-disc-03-intact).
+2026-10-06 17:01:28  Finished. Run saved to scans\runs\20261006-165859-disc-03-intact
+2026-10-06 17:01:28    Frames captured: 5
+2026-10-06 17:01:28    Reciprocity: median 22.0%  max 94.3%  sign flips 4/54
+2026-10-06 17:01:28    Noise floor: median pair sd 0.00036 kohm (2.25%)  max 0.00232 kohm over 108 pairs
+2026-10-06 17:01:28  Indexed in scans\index.csv
+
+------------------------------------------------------------------------
+2026-10-06 17:01:30  Session ended
+
+------------------------------------------------------------------------
+2026-10-06 17:01:40  Session started (hardware)
+2026-10-06 17:01:40  Scans folder: D:\Here\zxc\thesis_ert\scans
+2026-10-06 17:01:40  159 scan(s) already recorded here.
+2026-10-06 17:01:40  Ready. Settings are saved on exit.
+2026-10-06 17:03:47  Connecting to COM7...
+2026-10-06 17:03:47  Configuring instrument...
+
+------------------------------------------------------------------------
+2026-10-06 17:03:48  Run 20261006-170347-disc-04-intact
+2026-10-06 17:03:48  Conditions: medium=cut disc saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-06 17:03:48  Recording to scans\runs\20261006-170347-disc-04-intact
+2026-10-06 17:04:37  [warmup 1/5] 216/216 OK | I med 375.9 uA (135.1-506.2) | R med 0.0134 kohm | dV med 266 LSB
+2026-10-06 17:05:26  [warmup 2/5] 216/216 OK | I med 377.5 uA (140.3-509.9) | R med 0.0128 kohm | dV med 262 LSB
+2026-10-06 17:06:15  [warmup 3/5] 216/216 OK | I med 378.9 uA (142.5-510.4) | R med 0.0127 kohm | dV med 262 LSB
+2026-10-06 17:07:04  [warmup 4/5] 216/216 OK | I med 379.3 uA (144.5-511.7) | R med 0.0132 kohm | dV med 258 LSB
+2026-10-06 17:07:53  [warmup 5/5] 216/216 OK | I med 378.9 uA (146.0-512.6) | R med 0.0125 kohm | dV med 259 LSB
+2026-10-06 17:08:44  [frame 1] 216/216 OK | I med 379.4 uA (146.4-513.2) | R med 0.0125 kohm | dV med 261 LSB
+2026-10-06 17:09:33  [frame 2] 216/216 OK | I med 380.5 uA (146.9-514.5) | R med 0.0131 kohm | dV med 257 LSB
+2026-10-06 17:10:22  [frame 3] 216/216 OK | I med 381.1 uA (147.0-514.4) | R med 0.0129 kohm | dV med 260 LSB
+2026-10-06 17:11:11  [frame 4] 216/216 OK | I med 381.6 uA (147.5-514.5) | R med 0.0129 kohm | dV med 255 LSB
+2026-10-06 17:12:00  [frame 5] 216/216 OK | I med 382.0 uA (148.2-514.5) | R med 0.0129 kohm | dV med 261 LSB
+2026-10-06 17:12:49  [frame 6] 216/216 OK | I med 380.3 uA (147.4-514.5) | R med 0.0127 kohm | dV med 259 LSB
+2026-10-06 17:13:38  [frame 7] 216/216 OK | I med 379.8 uA (147.3-513.9) | R med 0.0127 kohm | dV med 258 LSB
+2026-10-06 17:14:27  [frame 8] 216/216 OK | I med 380.2 uA (147.1-513.7) | R med 0.0132 kohm | dV med 261 LSB
+2026-10-06 17:15:16  [frame 9] 216/216 OK | I med 379.8 uA (147.2-513.0) | R med 0.0128 kohm | dV med 258 LSB
+2026-10-06 17:16:05  [frame 10] 216/216 OK | I med 379.6 uA (146.2-511.5) | R med 0.0129 kohm | dV med 258 LSB
+2026-10-06 17:16:19  No reconstruction: This run is the session baseline; it has nothing to differ from.
+2026-10-06 17:16:20  Baseline control image saved to scans\runs\20261006-170347-disc-04-intact\control.png
+2026-10-06 17:16:23  Absolute: REFUSED: median reciprocity 28.8% > 15%; model misfit 82.3% > 15%; significance 1.12 < 2.0
+2026-10-06 17:16:24  Absolute: REFUSED: median reciprocity 28.8% > 15%; model misfit 82.3% > 15%; significance 1.12 < 2.0  |  sigma0 5.98 mS  |  peak +592 at 177 deg  |  misfit 82.3%  |  significance 1.1x
+2026-10-06 17:16:24  This run is now the session baseline (20261006-170347-disc-04-intact).
+2026-10-06 17:16:24  Finished. Run saved to scans\runs\20261006-170347-disc-04-intact
+2026-10-06 17:16:24    Frames captured: 10
+2026-10-06 17:16:24    Reciprocity: median 28.8%  max 99.9%  sign flips 5/54
+2026-10-06 17:16:24    Check electrode contact: E2 67%, E1 65% (all pairs median 29%)
+2026-10-06 17:16:24    Noise floor: median pair sd 0.00052 kohm (3.48%)  max 0.00505 kohm over 108 pairs
+2026-10-06 17:16:24  Indexed in scans\index.csv
+2026-10-06 17:17:17  Baseline cleared; the next run will become the new baseline.
+2026-10-06 17:18:52  Connecting to COM7...
+2026-10-06 17:18:52  Configuring instrument...
+2026-10-06 17:18:52  Recalibration ladder: 8 attempts, up to ~252 min
+
+------------------------------------------------------------------------
+2026-10-06 17:18:52  Run 20261006-171852-disc-04-intact
+2026-10-06 17:18:52  Conditions: medium=cut disc saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-06 17:18:52  Recording to scans\runs\20261006-171852-disc-04-intact
+2026-10-06 17:19:41  [warmup 1/5] 180/216 OK | I med 367.4 uA (0.0-512.4) | R med 0.0268 kohm | dV med 1190 LSB | flags I_LOWx36
+2026-10-06 17:20:30  [warmup 2/5] 180/216 OK | I med 376.2 uA (0.0-512.0) | R med 0.0267 kohm | dV med 1267 LSB | flags I_LOWx36
+2026-10-06 17:21:19  [warmup 3/5] 180/216 OK | I med 367.9 uA (0.0-511.3) | R med 0.0267 kohm | dV med 1193 LSB | flags I_LOWx36
+2026-10-06 17:22:08  [warmup 4/5] 187/216 OK | I med 358.9 uA (0.0-510.9) | R med 0.0246 kohm | dV med 1196 LSB | flags I_LOWx29
+2026-10-06 17:22:57  [warmup 5/5] 216/216 OK | I med 371.9 uA (195.3-511.5) | R med 0.0225 kohm | dV med 1123 LSB
+2026-10-06 17:23:46  [frame 1] 213/216 OK | I med 378.4 uA (0.4-511.5) | R med 0.0225 kohm | dV med 1113 LSB | flags I_LOWx3
+2026-10-06 17:24:35  [frame 2] 216/216 OK | I med 379.5 uA (195.2-510.7) | R med 0.0225 kohm | dV med 1125 LSB
+2026-10-06 17:25:24  [frame 3] 216/216 OK | I med 378.8 uA (194.6-511.0) | R med 0.0228 kohm | dV med 1121 LSB
+2026-10-06 17:26:13  [frame 4] 216/216 OK | I med 380.3 uA (194.4-509.7) | R med 0.0225 kohm | dV med 1121 LSB
+2026-10-06 17:27:02  [frame 5] 216/216 OK | I med 379.2 uA (194.0-509.2) | R med 0.0221 kohm | dV med 1123 LSB
+2026-10-06 17:27:51  [frame 6] 216/216 OK | I med 379.2 uA (193.8-509.4) | R med 0.0220 kohm | dV med 1122 LSB
+2026-10-06 17:28:40  [frame 7] 216/216 OK | I med 379.2 uA (193.8-510.2) | R med 0.0225 kohm | dV med 1134 LSB
+2026-10-06 17:29:29  [frame 8] 216/216 OK | I med 379.5 uA (193.7-510.1) | R med 0.0228 kohm | dV med 1122 LSB
+2026-10-06 17:30:19  [frame 9] 216/216 OK | I med 379.0 uA (193.8-510.9) | R med 0.0226 kohm | dV med 1121 LSB
+2026-10-06 17:31:08  [frame 10] 216/216 OK | I med 379.5 uA (193.7-511.3) | R med 0.0222 kohm | dV med 1126 LSB
+2026-10-06 17:31:08  No reconstruction: This run is the session baseline; it has nothing to differ from.
+2026-10-06 17:31:09  Baseline control image saved to scans\runs\20261006-171852-disc-04-intact\control.png
+2026-10-06 17:31:22  Absolute: REFUSED: model misfit 77.4% > 15%; significance 0.87 < 2.0
+2026-10-06 17:31:23  Absolute: REFUSED: model misfit 77.4% > 15%; significance 0.87 < 2.0  |  sigma0 5.73 mS  |  peak +567 at 131 deg  |  misfit 77.4%  |  significance 0.9x
+2026-10-06 17:31:23  Recalibrating: attempt 2/8 settle=10ms samples=8 warmup=5 frames=10 dac=620 (~4 min)
+
+------------------------------------------------------------------------
+2026-10-06 17:31:23  Run 20261006-173123-disc-04-intact
+2026-10-06 17:31:23  Conditions: medium=cut disc saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-06 17:31:23  Recording to scans\runs\20261006-173123-disc-04-intact
+2026-10-06 17:31:36  [warmup 1/5] 216/216 OK | I med 419.4 uA (212.0-547.9) | R med 0.0204 kohm | dV med 1208 LSB
+2026-10-06 17:31:50  [warmup 2/5] 216/216 OK | I med 418.6 uA (210.8-547.4) | R med 0.0202 kohm | dV med 1208 LSB
+2026-10-06 17:32:04  [warmup 3/5] 216/216 OK | I med 418.6 uA (212.0-547.6) | R med 0.0197 kohm | dV med 1212 LSB
+2026-10-06 17:32:17  [warmup 4/5] 216/216 OK | I med 418.4 uA (211.6-547.6) | R med 0.0202 kohm | dV med 1206 LSB
+2026-10-06 17:32:31  [warmup 5/5] 216/216 OK | I med 418.6 uA (212.4-547.6) | R med 0.0197 kohm | dV med 1208 LSB
+2026-10-06 17:32:44  [frame 1] 216/216 OK | I med 417.8 uA (210.8-546.8) | R med 0.0201 kohm | dV med 1205 LSB
+2026-10-06 17:32:54  Stopping after the frame in flight...
+2026-10-06 17:32:58  [frame 2] 216/216 OK | I med 418.3 uA (211.2-547.1) | R med 0.0202 kohm | dV med 1208 LSB
+2026-10-06 17:32:58  Cancelled after 2 frame(s); the run is kept.
+2026-10-06 17:32:58  No reconstruction: This run is the session baseline; it has nothing to differ from.
+2026-10-06 17:32:58  Baseline has fewer than 4 frames, so no control image was saved.
+2026-10-06 17:33:00  Absolute: REFUSED: too few frames for a split-half noise image (need 4)
+2026-10-06 17:33:01  Absolute: REFUSED: too few frames for a split-half noise image (need 4)  |  sigma0 5.14 mS  |  peak +508 at 111 deg  |  misfit 77.6%  |  significance n/a
+2026-10-06 17:33:01  This run is now the session baseline (20261006-173123-disc-04-intact).
+2026-10-06 17:33:01  Finished. Run saved to scans\runs\20261006-173123-disc-04-intact
+2026-10-06 17:33:01    Frames captured: 2
+2026-10-06 17:33:01    Reciprocity: median 7.6%  max 95.1%  sign flips 2/54
+2026-10-06 17:33:01    Noise floor: median pair sd 0.00015 kohm (0.73%)  max 0.00293 kohm over 108 pairs
+2026-10-06 17:33:01  Indexed in scans\index.csv
+2026-10-06 17:36:04  Baseline cleared; the next run will become the new baseline.
+2026-10-06 17:36:18  Connecting to COM7...
+2026-10-06 17:36:18  Configuring instrument...
+2026-10-06 17:36:18  Recalibration ladder: 8 attempts, up to ~252 min
+
+------------------------------------------------------------------------
+2026-10-06 17:36:18  Run 20261006-173618-disc-06-intact
+2026-10-06 17:36:18  Conditions: medium=cut disc saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-06 17:36:18  Recording to scans\runs\20261006-173618-disc-06-intact
+2026-10-06 17:37:07  [warmup 1/5] 216/216 OK | I med 540.6 uA (245.7-622.1) | R med 0.0068 kohm | dV med 459 LSB
+2026-10-06 17:37:56  [warmup 2/5] 216/216 OK | I med 543.6 uA (252.6-626.3) | R med 0.0067 kohm | dV med 458 LSB
+2026-10-06 17:38:45  [warmup 3/5] 216/216 OK | I med 548.8 uA (258.2-635.1) | R med 0.0066 kohm | dV med 462 LSB
+2026-10-06 17:39:34  [warmup 4/5] 216/216 OK | I med 557.2 uA (266.3-645.3) | R med 0.0067 kohm | dV med 460 LSB
+2026-10-06 17:40:23  [warmup 5/5] 216/216 OK | I med 577.2 uA (278.8-678.4) | R med 0.0065 kohm | dV med 485 LSB
+2026-10-06 17:41:12  [frame 1] 216/216 OK | I med 592.3 uA (408.3-1163.3) | R med 0.0061 kohm | dV med 691 LSB
+2026-10-06 17:42:01  [frame 2] 216/216 OK | I med 549.0 uA (269.3-667.5) | R med 0.0069 kohm | dV med 483 LSB
+2026-10-06 17:42:50  [frame 3] 216/216 OK | I med 549.4 uA (265.0-658.6) | R med 0.0068 kohm | dV med 476 LSB
+2026-10-06 17:43:39  [frame 4] 216/216 OK | I med 549.3 uA (269.8-664.5) | R med 0.0071 kohm | dV med 478 LSB
+2026-10-06 17:44:28  [frame 5] 216/216 OK | I med 548.2 uA (266.5-665.5) | R med 0.0069 kohm | dV med 478 LSB
+2026-10-06 17:45:17  [frame 6] 216/216 OK | I med 547.4 uA (266.4-666.1) | R med 0.0069 kohm | dV med 476 LSB
+2026-10-06 17:46:06  [frame 7] 216/216 OK | I med 549.0 uA (266.5-666.1) | R med 0.0070 kohm | dV med 478 LSB
+2026-10-06 17:46:55  [frame 8] 216/216 OK | I med 550.6 uA (267.3-669.0) | R med 0.0066 kohm | dV med 477 LSB
+2026-10-06 17:47:44  [frame 9] 216/216 OK | I med 555.4 uA (273.0-671.6) | R med 0.0066 kohm | dV med 477 LSB
+2026-10-06 17:48:33  [frame 10] 216/216 OK | I med 558.6 uA (277.2-675.6) | R med 0.0066 kohm | dV med 481 LSB
+2026-10-06 17:48:34  No reconstruction: This run is the session baseline; it has nothing to differ from.
+2026-10-06 17:48:35  Baseline control image saved to scans\runs\20261006-173618-disc-06-intact\control.png
+2026-10-06 17:48:42  Absolute: REFUSED: median reciprocity 16.8% > 15%; model misfit 53.7% > 15%; significance 0.96 < 2.0
+2026-10-06 17:48:42  Absolute: REFUSED: median reciprocity 16.8% > 15%; model misfit 53.7% > 15%; significance 0.96 < 2.0  |  sigma0 4.59 mS  |  peak +454 at 139 deg  |  misfit 53.7%  |  significance 1.0x
+2026-10-06 17:48:42  Recalibrating: attempt 2/8 settle=10ms samples=8 warmup=5 frames=10 dac=620 (~4 min)
+
+------------------------------------------------------------------------
+2026-10-06 17:48:42  Run 20261006-174842-disc-06-intact
+2026-10-06 17:48:42  Conditions: medium=cut disc saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-06 17:48:42  Recording to scans\runs\20261006-174842-disc-06-intact
+2026-10-06 17:48:56  [warmup 1/5] 216/216 OK | I med 582.5 uA (301.8-706.6) | R med 0.0065 kohm | dV med 499 LSB
+2026-10-06 17:49:09  [warmup 2/5] 216/216 OK | I med 584.3 uA (304.0-704.8) | R med 0.0066 kohm | dV med 502 LSB
+2026-10-06 17:49:23  [warmup 3/5] 216/216 OK | I med 585.5 uA (305.6-705.3) | R med 0.0065 kohm | dV med 501 LSB
+2026-10-06 17:49:37  [warmup 4/5] 216/216 OK | I med 586.4 uA (306.0-709.0) | R med 0.0064 kohm | dV med 498 LSB
+2026-10-06 17:49:50  [warmup 5/5] 216/216 OK | I med 586.4 uA (306.3-709.1) | R med 0.0066 kohm | dV med 503 LSB
+2026-10-06 17:50:04  [frame 1] 216/216 OK | I med 587.5 uA (307.1-709.0) | R med 0.0066 kohm | dV med 507 LSB
+2026-10-06 17:50:17  [frame 2] 216/216 OK | I med 589.2 uA (307.9-708.8) | R med 0.0065 kohm | dV med 507 LSB
+2026-10-06 17:50:31  [frame 3] 216/216 OK | I med 589.4 uA (310.3-708.0) | R med 0.0065 kohm | dV med 507 LSB
+2026-10-06 17:50:45  [frame 4] 216/216 OK | I med 589.7 uA (309.9-710.5) | R med 0.0066 kohm | dV med 505 LSB
+2026-10-06 17:50:58  [frame 5] 216/216 OK | I med 588.5 uA (309.9-708.8) | R med 0.0065 kohm | dV med 504 LSB
+2026-10-06 17:51:12  [frame 6] 216/216 OK | I med 588.4 uA (309.0-708.8) | R med 0.0065 kohm | dV med 506 LSB
+2026-10-06 17:51:26  [frame 7] 216/216 OK | I med 588.3 uA (309.3-708.6) | R med 0.0066 kohm | dV med 505 LSB
+2026-10-06 17:51:39  [frame 8] 216/216 OK | I med 588.5 uA (310.4-708.2) | R med 0.0065 kohm | dV med 505 LSB
+2026-10-06 17:51:53  [frame 9] 216/216 OK | I med 588.1 uA (310.1-709.0) | R med 0.0065 kohm | dV med 505 LSB
+2026-10-06 17:52:06  [frame 10] 216/216 OK | I med 589.4 uA (309.3-710.4) | R med 0.0064 kohm | dV med 500 LSB
+2026-10-06 17:52:06  No reconstruction: This run is the session baseline; it has nothing to differ from.
+2026-10-06 17:52:07  Baseline control image saved to scans\runs\20261006-174842-disc-06-intact\control.png
+2026-10-06 17:52:12  Absolute: REFUSED: median reciprocity 15.6% > 15%; model misfit 50.9% > 15%
+2026-10-06 17:52:13  Absolute: REFUSED: median reciprocity 15.6% > 15%; model misfit 50.9% > 15%  |  sigma0 4.77 mS  |  peak +472 at 140 deg  |  misfit 50.9%  |  significance 4.1x
+2026-10-06 17:52:13  Recalibrating: attempt 3/8 settle=30ms samples=16 warmup=5 frames=10 dac=620 (~9 min)
+
+------------------------------------------------------------------------
+2026-10-06 17:52:13  Run 20261006-175213-disc-06-intact
+2026-10-06 17:52:13  Conditions: medium=cut disc saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-06 17:52:13  Recording to scans\runs\20261006-175213-disc-06-intact
+2026-10-06 17:52:41  [warmup 1/5] 216/216 OK | I med 570.6 uA (295.5-687.6) | R med 0.0066 kohm | dV med 498 LSB
+2026-10-06 17:53:09  [warmup 2/5] 216/216 OK | I med 573.1 uA (296.1-688.6) | R med 0.0065 kohm | dV med 489 LSB
+2026-10-06 17:53:38  [warmup 3/5] 216/216 OK | I med 572.9 uA (301.4-692.6) | R med 0.0064 kohm | dV med 489 LSB
+2026-10-06 17:54:06  [warmup 4/5] 216/216 OK | I med 574.7 uA (303.8-692.6) | R med 0.0064 kohm | dV med 491 LSB
+2026-10-06 17:54:34  [warmup 5/5] 216/216 OK | I med 575.0 uA (304.4-694.5) | R med 0.0064 kohm | dV med 493 LSB
+2026-10-06 17:55:02  [frame 1] 216/216 OK | I med 576.5 uA (302.3-692.8) | R med 0.0064 kohm | dV med 496 LSB
+2026-10-06 17:55:31  [frame 2] 216/216 OK | I med 581.8 uA (307.5-696.7) | R med 0.0066 kohm | dV med 497 LSB
+2026-10-06 17:55:59  [frame 3] 216/216 OK | I med 582.4 uA (311.8-700.9) | R med 0.0066 kohm | dV med 501 LSB
+2026-10-06 17:56:27  [frame 4] 216/216 OK | I med 580.4 uA (311.7-700.3) | R med 0.0066 kohm | dV med 493 LSB
+2026-10-06 17:56:56  [frame 5] 216/216 OK | I med 578.4 uA (309.1-697.8) | R med 0.0065 kohm | dV med 490 LSB
+2026-10-06 17:57:24  [frame 6] 216/216 OK | I med 577.4 uA (308.1-695.5) | R med 0.0065 kohm | dV med 495 LSB
+2026-10-06 17:57:52  [frame 7] 216/216 OK | I med 575.8 uA (306.4-695.3) | R med 0.0064 kohm | dV med 495 LSB
+2026-10-06 17:58:21  [frame 8] 216/216 OK | I med 575.9 uA (301.9-695.4) | R med 0.0064 kohm | dV med 495 LSB
+2026-10-06 17:58:49  [frame 9] 216/216 OK | I med 573.2 uA (303.1-695.9) | R med 0.0066 kohm | dV med 489 LSB
+2026-10-06 17:59:17  [frame 10] 216/216 OK | I med 569.9 uA (296.9-692.9) | R med 0.0065 kohm | dV med 492 LSB
+2026-10-06 17:59:17  No reconstruction: This run is the session baseline; it has nothing to differ from.
+2026-10-06 17:59:18  Baseline control image saved to scans\runs\20261006-175213-disc-06-intact\control.png
+2026-10-06 17:59:23  Absolute: REFUSED: median reciprocity 15.9% > 15%; model misfit 57.0% > 15%; significance 1.36 < 2.0
+2026-10-06 17:59:24  Absolute: REFUSED: median reciprocity 15.9% > 15%; model misfit 57.0% > 15%; significance 1.36 < 2.0  |  sigma0 4.75 mS  |  peak +470 at 145 deg  |  misfit 57.0%  |  significance 1.4x
+2026-10-06 17:59:24  Recalibration stopped: 3 attempts in a row flagged electrode contacts (latest E2). No capture setting repairs this -- reseat, blot the faces dry, then rescan.
+2026-10-06 17:59:24  This run is now the session baseline (20261006-175213-disc-06-intact).
+2026-10-06 17:59:24  Finished. Run saved to scans\runs\20261006-175213-disc-06-intact
+2026-10-06 17:59:24    Frames captured: 10
+2026-10-06 17:59:24    Reciprocity: median 15.9%  max 99.8%  sign flips 3/54
+2026-10-06 17:59:24    Check electrode contact: E2 49% (all pairs median 16%)
+2026-10-06 17:59:24    Noise floor: median pair sd 0.00012 kohm (1.87%)  max 0.00622 kohm over 108 pairs
+2026-10-06 17:59:24  Indexed in scans\index.csv
+2026-10-06 17:59:26  Baseline cleared; the next run will become the new baseline.
+2026-10-06 18:01:12  Connecting to COM7...
+2026-10-06 18:01:12  Configuring instrument...
+2026-10-06 18:01:12  Recalibration ladder: 8 attempts, up to ~252 min
+
+------------------------------------------------------------------------
+2026-10-06 18:01:12  Run 20261006-180112-disc-07-intact
+2026-10-06 18:01:12  Conditions: medium=cut disc saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-06 18:01:12  Recording to scans\runs\20261006-180112-disc-07-intact
+2026-10-06 18:02:01  [warmup 1/5] 216/216 OK | I med 395.2 uA (127.4-686.4) | R med 0.0219 kohm | dV med 174 LSB
+2026-10-06 18:02:50  [warmup 2/5] 216/216 OK | I med 390.1 uA (149.3-685.6) | R med 0.0199 kohm | dV med 174 LSB
+2026-10-06 18:03:39  [warmup 3/5] 216/216 OK | I med 385.5 uA (153.4-679.0) | R med 0.0200 kohm | dV med 170 LSB
+2026-10-06 18:04:28  [warmup 4/5] 216/216 OK | I med 378.6 uA (147.4-674.3) | R med 0.0198 kohm | dV med 163 LSB
+2026-10-06 18:05:17  [warmup 5/5] 216/216 OK | I med 370.1 uA (144.8-671.1) | R med 0.0186 kohm | dV med 167 LSB
+2026-10-06 18:06:06  [frame 1] 216/216 OK | I med 371.3 uA (141.3-671.4) | R med 0.0170 kohm | dV med 161 LSB
+2026-10-06 18:06:55  [frame 2] 216/216 OK | I med 372.7 uA (143.5-670.7) | R med 0.0155 kohm | dV med 159 LSB
+2026-10-06 18:07:45  [frame 3] 216/216 OK | I med 375.9 uA (143.8-672.7) | R med 0.0152 kohm | dV med 162 LSB
+2026-10-06 18:08:34  [frame 4] 216/216 OK | I med 376.8 uA (145.2-673.5) | R med 0.0150 kohm | dV med 161 LSB
+2026-10-06 18:09:23  [frame 5] 216/216 OK | I med 374.1 uA (145.3-670.6) | R med 0.0157 kohm | dV med 157 LSB
+2026-10-06 18:10:12  [frame 6] 216/216 OK | I med 372.7 uA (143.4-666.8) | R med 0.0143 kohm | dV med 159 LSB
+2026-10-06 18:11:01  [frame 7] 216/216 OK | I med 359.8 uA (140.0-656.4) | R med 0.0144 kohm | dV med 158 LSB
+2026-10-06 18:11:50  [frame 8] 216/216 OK | I med 357.8 uA (130.0-657.4) | R med 0.0140 kohm | dV med 158 LSB
+2026-10-06 18:12:39  [frame 9] 216/216 OK | I med 357.5 uA (128.4-657.6) | R med 0.0142 kohm | dV med 160 LSB
+2026-10-06 18:13:28  [frame 10] 216/216 OK | I med 359.9 uA (130.2-658.6) | R med 0.0133 kohm | dV med 159 LSB
+2026-10-06 18:13:28  No reconstruction: This run is the session baseline; it has nothing to differ from.
+2026-10-06 18:13:29  Baseline control image saved to scans\runs\20261006-180112-disc-07-intact\control.png
+2026-10-06 18:13:31  Absolute: REFUSED: median reciprocity 44.4% > 15%; model misfit 76.2% > 15%; significance 0.66 < 2.0
+2026-10-06 18:13:32  Absolute: REFUSED: median reciprocity 44.4% > 15%; model misfit 76.2% > 15%; significance 0.66 < 2.0  |  sigma0 3.12 mS  |  peak +184 at 120 deg  |  misfit 76.2%  |  significance 0.7x
+2026-10-06 18:13:32  Recalibrating: attempt 2/8 settle=10ms samples=8 warmup=5 frames=10 dac=620 (~4 min)
+
+------------------------------------------------------------------------
+2026-10-06 18:13:32  Run 20261006-181332-disc-07-intact
+2026-10-06 18:13:32  Conditions: medium=cut disc saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-06 18:13:32  Recording to scans\runs\20261006-181332-disc-07-intact
+2026-10-06 18:13:45  [warmup 1/5] 216/216 OK | I med 416.2 uA (136.9-698.7) | R med 0.0093 kohm | dV med 187 LSB
+2026-10-06 18:13:47  Stopping after the frame in flight...
+2026-10-06 18:13:59  [warmup 2/5] 216/216 OK | I med 415.2 uA (142.0-697.5) | R med 0.0093 kohm | dV med 179 LSB
+2026-10-06 18:13:59  Cancelled after 0 frame(s); the run is kept.
+2026-10-06 18:13:59  No reconstruction: This run is the session baseline; it has nothing to differ from.
+2026-10-06 18:13:59  Baseline has fewer than 4 frames, so no control image was saved.
+2026-10-06 18:13:59  Absolute: REFUSED: reciprocity could not be measured (no reciprocal pairs); absolute solve failed
+2026-10-06 18:13:59  Finished. Run saved to scans\runs\20261006-181332-disc-07-intact
+2026-10-06 18:13:59    Frames captured: 0
+2026-10-06 18:13:59    Reciprocity: no reciprocal pairs captured
+2026-10-06 18:13:59    Noise floor: needs at least 2 frames
+2026-10-06 18:13:59  Indexed in scans\index.csv
+2026-10-06 18:15:47  Connecting to COM7...
+2026-10-06 18:15:47  Configuring instrument...
+2026-10-06 18:15:47  Recalibration ladder: 8 attempts, up to ~252 min
+
+------------------------------------------------------------------------
+2026-10-06 18:15:47  Run 20261006-181547-disc-09-intact
+2026-10-06 18:15:47  Conditions: medium=cut disc saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-06 18:15:47  Recording to scans\runs\20261006-181547-disc-09-intact
+2026-10-06 18:16:36  [warmup 1/5] 216/216 OK | I med 204.4 uA (116.5-257.4) | R med 0.0089 kohm | dV med 165 LSB
+2026-10-06 18:17:25  [warmup 2/5] 216/216 OK | I med 209.4 uA (118.7-264.9) | R med 0.0076 kohm | dV med 165 LSB
+2026-10-06 18:18:14  [warmup 3/5] 216/216 OK | I med 212.5 uA (121.4-270.2) | R med 0.0078 kohm | dV med 165 LSB
+2026-10-06 18:19:03  [warmup 4/5] 216/216 OK | I med 212.5 uA (121.7-271.4) | R med 0.0086 kohm | dV med 170 LSB
+2026-10-06 18:19:52  [warmup 5/5] 216/216 OK | I med 214.4 uA (120.9-270.9) | R med 0.0083 kohm | dV med 162 LSB
+2026-10-06 18:20:41  [frame 1] 216/216 OK | I med 215.4 uA (121.8-271.7) | R med 0.0084 kohm | dV med 169 LSB
+2026-10-06 18:21:30  [frame 2] 216/216 OK | I med 214.4 uA (122.3-271.9) | R med 0.0085 kohm | dV med 166 LSB
+2026-10-06 18:22:19  [frame 3] 216/216 OK | I med 214.3 uA (120.2-271.0) | R med 0.0083 kohm | dV med 165 LSB
+2026-10-06 18:23:08  [frame 4] 216/216 OK | I med 214.3 uA (120.7-270.2) | R med 0.0089 kohm | dV med 164 LSB
+2026-10-06 18:23:58  [frame 5] 216/216 OK | I med 215.3 uA (119.3-270.6) | R med 0.0087 kohm | dV med 163 LSB
+2026-10-06 18:24:47  [frame 6] 216/216 OK | I med 215.9 uA (121.0-272.8) | R med 0.0083 kohm | dV med 167 LSB
+2026-10-06 18:25:36  [frame 7] 216/216 OK | I med 216.8 uA (120.7-272.5) | R med 0.0082 kohm | dV med 165 LSB
+2026-10-06 18:26:25  [frame 8] 216/216 OK | I med 216.7 uA (120.3-273.1) | R med 0.0081 kohm | dV med 166 LSB
+2026-10-06 18:27:14  [frame 9] 216/216 OK | I med 216.3 uA (120.4-273.0) | R med 0.0079 kohm | dV med 167 LSB
+2026-10-06 18:28:03  [frame 10] 216/216 OK | I med 216.3 uA (120.0-272.8) | R med 0.0078 kohm | dV med 162 LSB
+2026-10-06 18:28:03  No reconstruction: This run is the session baseline; it has nothing to differ from.
+2026-10-06 18:28:04  Baseline control image saved to scans\runs\20261006-181547-disc-09-intact\control.png
+2026-10-06 18:28:23  Absolute: REFUSED: median reciprocity 43.9% > 15%; model misfit 65.0% > 15%
+2026-10-06 18:28:24  Absolute: REFUSED: median reciprocity 43.9% > 15%; model misfit 65.0% > 15%  |  sigma0 2.85 mS  |  peak +282 at 134 deg  |  misfit 65.0%  |  significance 3.4x
+2026-10-06 18:28:24  Recalibrating: attempt 2/8 settle=10ms samples=8 warmup=5 frames=10 dac=620 (~4 min)
+
+------------------------------------------------------------------------
+2026-10-06 18:28:24  Run 20261006-182824-disc-09-intact
+2026-10-06 18:28:24  Conditions: medium=cut disc saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-06 18:28:24  Recording to scans\runs\20261006-182824-disc-09-intact
+2026-10-06 18:28:38  [warmup 1/5] 216/216 OK | I med 279.8 uA (168.2-353.4) | R med 0.0070 kohm | dV med 225 LSB
+2026-10-06 18:28:51  [warmup 2/5] 216/216 OK | I med 279.1 uA (169.2-351.6) | R med 0.0069 kohm | dV med 221 LSB
+2026-10-06 18:29:05  [warmup 3/5] 216/216 OK | I med 278.3 uA (169.2-351.8) | R med 0.0064 kohm | dV med 226 LSB
+2026-10-06 18:29:18  [warmup 4/5] 216/216 OK | I med 277.9 uA (168.5-353.0) | R med 0.0065 kohm | dV med 218 LSB
+2026-10-06 18:29:32  [warmup 5/5] 216/216 OK | I med 277.3 uA (170.0-351.8) | R med 0.0066 kohm | dV med 221 LSB
+2026-10-06 18:29:48  [frame 1] 216/216 OK | I med 277.9 uA (170.1-353.4) | R med 0.0063 kohm | dV med 213 LSB
+2026-10-06 18:30:02  [frame 2] 216/216 OK | I med 277.1 uA (169.5-351.0) | R med 0.0065 kohm | dV med 216 LSB
+2026-10-06 18:30:15  [frame 3] 216/216 OK | I med 276.8 uA (169.7-352.2) | R med 0.0063 kohm | dV med 217 LSB
+2026-10-06 18:30:29  [frame 4] 216/216 OK | I med 277.0 uA (168.5-352.7) | R med 0.0064 kohm | dV med 216 LSB
+2026-10-06 18:30:43  [frame 5] 216/216 OK | I med 276.7 uA (169.5-353.0) | R med 0.0069 kohm | dV med 215 LSB
+2026-10-06 18:30:56  [frame 6] 216/216 OK | I med 276.2 uA (168.1-352.1) | R med 0.0065 kohm | dV med 217 LSB
+2026-10-06 18:31:10  [frame 7] 216/216 OK | I med 276.3 uA (167.1-351.1) | R med 0.0061 kohm | dV med 213 LSB
+2026-10-06 18:31:23  [frame 8] 216/216 OK | I med 275.6 uA (167.3-350.5) | R med 0.0066 kohm | dV med 215 LSB
+2026-10-06 18:31:37  [frame 9] 216/216 OK | I med 275.6 uA (167.7-352.2) | R med 0.0063 kohm | dV med 220 LSB
+2026-10-06 18:31:51  [frame 10] 216/216 OK | I med 275.3 uA (167.9-350.8) | R med 0.0061 kohm | dV med 216 LSB
+2026-10-06 18:31:51  No reconstruction: This run is the session baseline; it has nothing to differ from.
+2026-10-06 18:31:52  Baseline control image saved to scans\runs\20261006-182824-disc-09-intact\control.png
+2026-10-06 18:31:57  Absolute: REFUSED: median reciprocity 36.2% > 15%; model misfit 68.4% > 15%; significance 1.58 < 2.0
+2026-10-06 18:31:57  Absolute: REFUSED: median reciprocity 36.2% > 15%; model misfit 68.4% > 15%; significance 1.58 < 2.0  |  sigma0 4.35 mS  |  peak +431 at 134 deg  |  misfit 68.4%  |  significance 1.6x
+2026-10-06 18:31:57  Recalibrating: attempt 3/8 settle=30ms samples=16 warmup=5 frames=10 dac=620 (~9 min)
+
+------------------------------------------------------------------------
+2026-10-06 18:31:57  Run 20261006-183157-disc-09-intact
+2026-10-06 18:31:57  Conditions: medium=cut disc saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-06 18:31:57  Recording to scans\runs\20261006-183157-disc-09-intact
+2026-10-06 18:32:26  [warmup 1/5] 216/216 OK | I med 216.2 uA (130.3-278.6) | R med 0.0081 kohm | dV med 178 LSB
+2026-10-06 18:32:54  [warmup 2/5] 216/216 OK | I med 217.1 uA (131.8-280.7) | R med 0.0080 kohm | dV med 180 LSB
+2026-10-06 18:33:22  [warmup 3/5] 216/216 OK | I med 217.7 uA (130.6-279.6) | R med 0.0078 kohm | dV med 180 LSB
+2026-10-06 18:33:51  [warmup 4/5] 216/216 OK | I med 217.8 uA (130.8-280.1) | R med 0.0077 kohm | dV med 179 LSB
+
+------------------------------------------------------------------------
+2026-10-06 18:34:02  Session ended
+
+------------------------------------------------------------------------
+2026-10-07 14:59:24  Session started (hardware)
+2026-10-07 14:59:24  Scans folder: C:\Users\Vidad\Documents\THESIS-PALAYAIN\scans
+2026-10-07 14:59:24  199 scan(s) already recorded here.
+2026-10-07 14:59:24  Ready. Settings are saved on exit.
+
+------------------------------------------------------------------------
+2026-10-07 14:59:34  Session ended
