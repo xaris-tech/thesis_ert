@@ -101,6 +101,8 @@ one costs a re-derivation.
 | [0045](0045-the-run-label-is-editable.md) | The run label is editable, pre-filled from specimen and target | Accepted |
 | [0046](0046-load-a-recorded-run-as-the-baseline.md) | Load a recorded run as the baseline, remembered as the default; cross-specimen images stamped | Accepted |
 | [0047](0047-saline-ssim-series-fresh-baseline-per-target-group.md) | Saline SSIM series: fresh self-checked baseline per target group; angle error is the headline metric | Accepted |
+| [0057](0057-absolute-peaks-may-image-contacts-not-defects.md) | An absolute PASS is not a defect location while contacts are uneven; peaks sat on the worst electrodes | Proposed |
+| [0056](0056-correct-run-conditions-in-extra-never-overwrite.md) | Correct recorded conditions with a dated key in `extra`; original fields stay as written | Accepted |
 | [0055](0055-measure-the-lobe-not-a-window.md) | Lobe connected-component centroid, no angular window; window choice was worth 12.3 deg | Accepted |
 | [0054](0054-the-centroid-angle-estimator-has-a-measured-bias.md) | Centroid window validated against injected offsets; -0.45 deg bias documented, not corrected in code | Accepted |
 | [0053](0053-ncc-and-dice-are-the-primary-scores.md) | NCC primary, Dice secondary, SSIM demoted to a diagnostic; each with its empty-tank control | Accepted |
