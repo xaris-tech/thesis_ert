@@ -1,13 +1,13 @@
-# ADR-0049: The tank geometry constants were wrong; the "radial collapse" was a units error
+# ADR-0052: The tank geometry constants were wrong; the "radial collapse" was a units error
 
 - **Status:** Accepted
 - **Date:** 2026-10-05
-- **Affects:** `tree_ert/ssim.py` geometry constants and the two divisions that used them; the ground-truth radius of every mask; `ssim/saline-tank-2026-10-02/` results and README. Supersedes the *conclusion* of [ADR-0046](0046-reconstruction-settings-cannot-be-validated-yet.md), which correctly diagnosed a disagreement and misidentified its cause.
-- **Related:** ADR-0045, ADR-0046, ADR-0047, ADR-0048
+- **Affects:** `tree_ert/ssim.py` geometry constants and the two divisions that used them; the ground-truth radius of every mask; `ssim/saline-tank-2026-10-02/` results and README. Supersedes the *conclusion* of [ADR-0049](0049-reconstruction-settings-cannot-be-validated-yet.md), which correctly diagnosed a disagreement and misidentified its cause.
+- **Related:** ADR-0048, ADR-0049, ADR-0050, ADR-0051
 
 ## Context
 
-ADR-0046 recorded that the recorded 2026-10-02 series reconstructed blocks at
+ADR-0049 recorded that the recorded 2026-10-02 series reconstructed blocks at
 0.27–0.61 R when the series README placed them at 0.80 R, that the forward model did
 not reproduce the collapse, and that `jac_normalized=True` fixed the real data while
 making simulated accuracy worse. It froze the reconstruction settings and named
@@ -41,7 +41,7 @@ reconstruction.
 - `TANK_RADIUS_MM = 128.0`, new `ELECTRODE_INSET_MM = 30.0`,
   `ELECTRODE_RING_RADIUS_MM = 98.0`, and every length normalised by the electrode ring.
 - `NEAR_RADIUS_MM = 55.0`, i.e. 0.561 of the ring. **Approximate** — see Consequences.
-- `jac_normalized` stays `False`. ADR-0046 was right to freeze it and wrong about why.
+- `jac_normalized` stays `False`. ADR-0049 was right to freeze it and wrong about why.
 
 ## Rationale
 
@@ -74,7 +74,7 @@ Every run now clears its own control. The worst case moved from *negative* to 0.
 
 Alternatives rejected:
 
-- **`jac_normalized=True`.** ADR-0046 measured it as making simulated accuracy worse,
+- **`jac_normalized=True`.** ADR-0049 measured it as making simulated accuracy worse,
   and with the geometry corrected that remains true. Its apparent benefit was fitting
   a mask error. Rejected.
 - **A mesh with the electrodes inset from the boundary.** This is the geometry the
@@ -121,7 +121,7 @@ reconstruction essentially exactly where the mask says the block is. But it prod
 not understood — most likely the simulated template in that mesh has a different effective
 shape, so this is not a clean comparison.
 
-**Not adopted.** Choosing between them on this evidence would be a guess, and ADR-0046
+**Not adopted.** Choosing between them on this evidence would be a guess, and ADR-0049
 already established what happens when reconstruction settings are chosen on the basis of
 which one scores better. Kept as the top open question, alongside the block radius.
 

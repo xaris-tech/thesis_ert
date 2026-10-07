@@ -458,7 +458,7 @@ if __name__ == "__main__":
 
 
 class NamingProblemsTests(unittest.TestCase):
-    """Identity gaps are reported as warnings (ADR-0037, ADR-0041)."""
+    """Identity gaps are reported as warnings (ADR-0037, ADR-0044)."""
 
     def _conditions(self, medium="cut disc", specimen="disc-03"):
         return run_record.Conditions(medium=medium, specimen_id=specimen)
@@ -501,7 +501,7 @@ class NamingProblemsTests(unittest.TestCase):
             )
 
     def test_any_label_is_accepted(self):
-        # The label is free text (ADR-0042).
+        # The label is free text (ADR-0045).
         for label in ("coconut-620-dry-32-samples", "disc-03", "", "my test"):
             self.assertEqual(run_record.naming_problems(self._conditions(), label), [])
 

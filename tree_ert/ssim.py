@@ -1,4 +1,4 @@
-﻿"""SSIM of a difference image against a ground-truth block mask (ADR-0044, ADR-0045).
+﻿"""SSIM of a difference image against a ground-truth block mask (ADR-0047, ADR-0048).
 
 Offline and solver-agnostic: everything here works on a recorded run's
 reconstruction and the target text the operator typed, so a whole series can be
@@ -7,7 +7,7 @@ scored with no board attached.
 Three numbers per run, deliberately reported together:
 
 - ``ssim_raw``: SSIM against the sharp block footprint. The JAC solver pulls
-  targets toward the centre and blurs them (ADR-0044), so a correct detection
+  targets toward the centre and blurs them (ADR-0047), so a correct detection
   still scores low here. This number grades the solver as much as the
   instrument.
 - ``ssim_blurred``: SSIM against the footprint convolved with a Gaussian of
@@ -15,7 +15,7 @@ Three numbers per run, deliberately reported together:
   this system has?"
 - ``angle_error_deg``: per block, the strongest resistive pixel inside the
   block's Â±45Â° wedge, compared with the true angle. This is the headline
-  (ADR-0044).
+  (ADR-0047).
 
 The tank geometry comes from the mesh's own electrode nodes (``el_pos``), not
 from an assumed ``180 - 30k`` convention, so a change in PyEIT's electrode
@@ -33,8 +33,8 @@ from scipy import ndimage
 
 TANK_RADIUS_MM = 128.0
 """Bucket inner radius, measured 2026-10-05. The old value here was 160.0 mm, which
-was wrong by 25% and is the origin of most of the trouble recorded in ADR-0046 and
-ADR-0049."""
+was wrong by 25% and is the origin of most of the trouble recorded in ADR-0049 and
+ADR-0052."""
 
 ELECTRODE_INSET_MM = 30.0
 """How far the nails are driven in from the bucket wall, measured 2026-10-05 as
@@ -53,20 +53,20 @@ NEAR_RADIUS_MM = 55.0
 **Approximate.** The series README previously recorded 128 mm, i.e. 0.80 of a 160 mm
 tank -- which put the block level with the bucket wall and cannot have been measured.
 Inverting the reconstruction puts it at 0.51-0.56 of the electrode ring, i.e.50-55 mm;
-the operator independently recalled "0.56 or something" (ADR-0049). This is the
+the operator independently recalled "0.56 or something" (ADR-0052). This is the
 number a tape measure should replace. If it is wrong, every mask radius is wrong
 with it."""
 
 BLOCK_FOOTPRINT_MM = (23.0, 22.0)
 """Wooden block footprint, tangential x radial, standing upright. Normalised against
 ELECTRODE_RING_RADIUS_MM, not the bucket: dividing by TANK_RADIUS_MM made the mask
-1.31x too small on every axis (ADR-0049)."""
+1.31x too small on every axis (ADR-0052)."""
 
 GRID = 64
 """Raster side in pixels across the unit disc; 2/64 R = 5 mm per pixel at R = 160 mm."""
 
 PSF_SIGMA = 0.2
-"""Blur applied to the mask for ``ssim_blurred``, in units of tank radius (ADR-0045)."""
+"""Blur applied to the mask for ``ssim_blurred``, in units of tank radius (ADR-0048)."""
 
 SSIM_SIGMA_PX = 1.5
 """Gaussian SSIM window, the Wang et al. (2004) default."""
@@ -124,7 +124,7 @@ class BlockScore:
     solver produces are diffuse, so the strongest pixel is often a rim artefact
     rather than the block: on the 2026-10-02 series the single-pixel estimator
     called E6 18.2 deg off where the lobe centroid puts it 3.7 deg off, and it read
-    20 of 24 placements within 10 deg against the centroid's 24 of 24 (ADR-0048).
+    20 of 24 placements within 10 deg against the centroid's 24 of 24 (ADR-0051).
     The centroid is confined to this block's own wedge, so a two-block run does not
     have its lobes merged before measuring.
 
@@ -146,7 +146,7 @@ class SsimScore:
     punishes a dim-but-correct blob, and it saturates once both images are mostly
     background; NCC is scale-invariant and needs no threshold. On the 2026-10-02
     saline series it separated 17 of 19 runs from their own empty-tank controls
-    against 16 of 19 for SSIM (ADR-0047).
+    against 16 of 19 for SSIM (ADR-0050).
 
     NCC is not SSIM and is not a similarity index in that sense. It measures linear
     agreement of the intensity pattern and nothing more. A blob in entirely the
@@ -366,7 +366,7 @@ LOBE_THRESHOLD = 0.5
 Half of peak, the same natural cut as ``DICE_THRESHOLD``. The estimator is stable across
 0.5-0.6 (a placement moves about 1-2 deg), but it is *not* stable below that: at 0.3 a
 two-block run's two lobes merge into one component and the centroid lands 60-170 deg
-off. Do not lower it (ADR-0052).
+off. Do not lower it (ADR-0055).
 """
 
 
@@ -380,7 +380,7 @@ def _lobe_centroid(
     Threshold at ``LOBE_THRESHOLD`` of the peak, keep the connected component the peak
     falls in, and take that component's centroid. This has no angular window at all,
     which matters because the window choice was worth up to 12.3 deg on a single
-    placement (ADR-0052): a window centred on the true angle clips an off-centre lobe,
+    placement (ADR-0055): a window centred on the true angle clips an off-centre lobe,
     a wider one drags in neighbouring structure, and there was no defensible way to
     choose between them.
 
@@ -435,7 +435,7 @@ def score_blocks(values_grid: np.ndarray, blocks: Sequence[Block], n: int = GRID
         is_centre = block.label == "centre"
         # Lobe centroid with no angular window: the connected component the peak falls
         # in, thresholded at half its peak. The wedge is still used to *find* the peak,
-        # and as the fallback if that component is implausibly wide (ADR-0052).
+        # and as the fallback if that component is implausibly wide (ADR-0055).
         centroid = _lobe_centroid(resistive, region, region)
         centroid_angle, centroid_radius = centroid if centroid else (None, None)
         scores.append(
@@ -475,7 +475,7 @@ def score(
     against a simulated block separated 17 of 19 runs from their own empty-tank
     controls, and it is the recommended comparison. Against the sharp geometric mask
     the same runs score far lower, because the mask sits at the true 0.80 R while
-    the reconstruction peaks nearer the centre (ADR-0046). Whichever is passed, the
+    the reconstruction peaks nearer the centre (ADR-0049). Whichever is passed, the
     caller should also score the run's own empty-tank control the same way; these
     numbers mean nothing without it.
     """

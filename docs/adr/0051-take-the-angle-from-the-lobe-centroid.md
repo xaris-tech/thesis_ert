@@ -1,9 +1,9 @@
-﻿# ADR-0048: Take the reported angle from the lobe centroid, not the strongest pixel
+﻿# ADR-0051: Take the reported angle from the lobe centroid, not the strongest pixel
 
-- **Status:** Accepted; its angle figures corrected by [ADR-0051](0051-the-centroid-angle-estimator-has-a-measured-bias.md), which found the estimator under-reports by 0.45 deg
+- **Status:** Accepted; its angle figures corrected by [ADR-0054](0054-the-centroid-angle-estimator-has-a-measured-bias.md), which found the estimator under-reports by 0.45 deg
 - **Date:** 2026-10-05
 - **Affects:** `tree_ert/ssim.py` (`score_blocks`, `BlockScore`, `SsimScore.max_abs_centroid_angle_error`), every reported `angle_error_deg`. Reconstruction is unchanged.
-- **Related:** ADR-0044, ADR-0045, ADR-0046, ADR-0047; `ssim/saline-tank-2026-10-02/`
+- **Related:** ADR-0047, ADR-0048, ADR-0049, ADR-0050; `ssim/saline-tank-2026-10-02/`
 
 ## Context
 
@@ -71,10 +71,10 @@ because the two disagreeing is itself informative.
   less sensitive, not immune — `tests/test_ssim.py` asserts the ratio rather than a
   tight bound, and the docstring records the limitation.
 - `centroid_radius` reads ~0.50 against a block at 0.80, so **the inward radial bias is
-  confirmed, not resolved.** Changing the angle estimator does not move it. ADR-0046
+  confirmed, not resolved.** Changing the angle estimator does not move it. ADR-0049
   still stands and the radius axis of every existing reconstruction remains untrustworthy.
 - `ssim_eval.py` does not emit the centroid columns yet, so `ssim_results.csv` is still
-  stale. Same deliberate deferral as ADR-0047: hand-editing a generated file would be
+  stale. Same deliberate deferral as ADR-0050: hand-editing a generated file would be
   undone on the next run.
 
 ## Verification

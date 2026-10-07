@@ -1,13 +1,13 @@
-﻿# ADR-0051: The centroid angle estimator has a measured −0.45° bias; the centroid window was validated
+﻿# ADR-0054: The centroid angle estimator has a measured −0.45° bias; the centroid window was validated
 
-- **Status:** Accepted; its window choice superseded by [ADR-0052](0052-measure-the-lobe-not-a-window.md), which found the window was worth up to 12.3 deg on a placement
+- **Status:** Accepted; its window choice superseded by [ADR-0055](0055-measure-the-lobe-not-a-window.md), which found the window was worth up to 12.3 deg on a placement
 - **Date:** 2026-10-05
-- **Affects:** how `centroid_angle_error_deg` in `tree_ert/ssim.py` may be quoted, and every angle figure in `ssim/saline-tank-2026-10-02/`. Refines [ADR-0048](0048-take-the-angle-from-the-lobe-centroid.md).
-- **Related:** ADR-0048, ADR-0049, ADR-0050
+- **Affects:** how `centroid_angle_error_deg` in `tree_ert/ssim.py` may be quoted, and every angle figure in `ssim/saline-tank-2026-10-02/`. Refines [ADR-0051](0051-take-the-angle-from-the-lobe-centroid.md).
+- **Related:** ADR-0051, ADR-0052, ADR-0053
 
 ## Context
 
-ADR-0048 replaced the single-pixel angle estimator with a lobe centroid and reported
+ADR-0051 replaced the single-pixel angle estimator with a lobe centroid and reported
 "median 3.0°, 24 of 24 within 10°, worst 9.9°". That was checked here for the first time
 against a *known* answer, which no previous angle claim in this project had been.
 
@@ -68,7 +68,7 @@ than correct it in code**.
   electrode ring). It has not been checked at other radii or against a pair of blocks.
 - Two of the three candidate windows are recorded with their numbers so they are not
   silently retried.
-- The series README and ADR-0048 quoted the pre-validation figures. ADR-0048 is left
+- The series README and ADR-0051 quoted the pre-validation figures. ADR-0051 is left
   standing as the decision to use a centroid; its numbers are corrected here and in the
   README.
 

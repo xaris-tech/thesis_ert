@@ -1,9 +1,9 @@
-# ADR-0042: The run label is editable, pre-filled from specimen and target
+# ADR-0045: The run label is editable, pre-filled from specimen and target
 
 - **Status:** Accepted
 - **Date:** 2026-10-01
 - **Affects:** `MainWindow` label field and `start_capture`, `run_record.naming_problems`
-- **Related:** Supersedes [ADR-0040](0040-generate-the-run-label-from-specimen-and-target.md) (read-only label); follows [ADR-0041](0041-naming-gaps-warn-instead-of-refusing.md)
+- **Related:** Supersedes [ADR-0040](0040-generate-the-run-label-from-specimen-and-target.md) (read-only label); follows [ADR-0044](0044-naming-gaps-warn-instead-of-refusing.md)
 
 ## Context
 

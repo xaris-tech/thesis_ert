@@ -1,23 +1,23 @@
-# ADR-0050: NCC and Dice are the primary scores for difference images, SSIM is demoted to a diagnostic
+# ADR-0053: NCC and Dice are the primary scores for difference images, SSIM is demoted to a diagnostic
 
 - **Status:** Accepted
 - **Date:** 2026-10-05
-- **Affects:** how reconstruction quality is reported for difference imaging; `ssim/saline-tank-2026-10-02/README.md`. Supersedes the reporting half of [ADR-0045](0045-ssim-scoring-against-block-masks.md).
-- **Related:** ADR-0045, ADR-0047, ADR-0048, ADR-0049
+- **Affects:** how reconstruction quality is reported for difference imaging; `ssim/saline-tank-2026-10-02/README.md`. Supersedes the reporting half of [ADR-0048](0048-ssim-scoring-against-block-masks.md).
+- **Related:** ADR-0048, ADR-0050, ADR-0051, ADR-0052
 
 ## Context
 
 The question this settles: for **difference** imaging on this instrument, is it
 defensible to report NCC and Dice instead of SSIM?
 
-SSIM was the original choice (ADR-0045) and it has a specific defect here that is not a
+SSIM was the original choice (ADR-0048) and it has a specific defect here that is not a
 matter of taste. SSIM's luminance term compares *absolute* brightness. The lobe this
 solver produces is routinely dimmer than the template it is scored against, and SSIM
 counts that dimness as a structural mismatch — it is measuring an amplitude error as
 though it were a shape error. That is why SSIM needed two corrections before it produced
 a usable number at all: first the whole-disc mean had to be restricted to a dilated
 mask neighbourhood (an empty tank was scoring 0.904–0.957 and every run was scoring
-*below* it), and then the geometry constants had to be fixed (ADR-0049).
+*below* it), and then the geometry constants had to be fixed (ADR-0052).
 
 After both fixes, on the 19-run series, each run scored against its own empty-tank
 control:
@@ -66,7 +66,7 @@ its own.
   next to 0.38 as though they were comparable would be wrong in both directions.
 - **Rejected: dropping SSIM entirely.** Three metrics cost one table column each and
   have different blind spots. Reporting one and calling it *the* quality measure repeats
-  the mistake ADR-0045 made.
+  the mistake ADR-0048 made.
 
 ## Consequences
 
@@ -83,7 +83,7 @@ its own.
 - A reader who asks "what does an empty tank score?" gets an answer on the same line as
   every detection. That is the whole reason this ADR exists.
 - `ssim_eval.py` does not emit NCC or Dice yet, so `ssim_results.csv` does not carry
-  them. Deferred rather than hand-patching a generated file (ADR-0047).
+  them. Deferred rather than hand-patching a generated file (ADR-0050).
 
 ## Verification
 

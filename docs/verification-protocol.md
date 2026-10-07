@@ -12,7 +12,7 @@ nothing but noise. Score the detection and the control identically and report th
 
 This is not ceremony. Before the region fix, an empty tank scored **0.90–0.96** on SSIM
 while every real run scored 0.28–0.59 — a validation protocol without a null would have
-declared the device working (ADR-0045 → ADR-0047).
+declared the device working (ADR-0048 → ADR-0050).
 
 ## The three metrics, and what each may claim
 
@@ -60,7 +60,7 @@ Image scores are blind to these. They are the majority of the checks.
 |---|---|
 | I2C scan: MCP4725 and ADS1115 present | sensors present |
 | Shunt reads 97.9 Ω, matching the firmware constant | every resistance is scaled by this |
-| Drive current in **all 12 excitation pairs** | `reconstruct_difference` applies **one scalar** to the whole measurement vector and cannot correct a per-pair error; unequal drive biases reconstruction toward the tank centre (ADR-0046) |
+| Drive current in **all 12 excitation pairs** | `reconstruct_difference` applies **one scalar** to the whole measurement vector and cannot correct a per-pair error; unequal drive biases reconstruction toward the tank centre (ADR-0049) |
 | Mux continuity C0–C11 | a dead channel reads as a healthy region |
 | Reciprocity per run | catches sensor and wiring faults. Found a real V− wiring fault (ADR-0031) |
 
@@ -102,7 +102,7 @@ means that baseline already contained structure near E7 — contamination or dri
 ## Known gaps
 
 - The electrode inset is unmodelled. The mesh puts electrodes on the domain boundary; the
-  hardware has them ~30 mm inside a 128 mm bucket, which is 23% of the radius (ADR-0049).
+  hardware has them ~30 mm inside a 128 mm bucket, which is 23% of the radius (ADR-0052).
 - `NEAR_RADIUS_MM = 55.0` is inverted from the data, not measured. **One tape measure
   would close it**, and every mask radius depends on it.
 - Depth sensitivity is untested.

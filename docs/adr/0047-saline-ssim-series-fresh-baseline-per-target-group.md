@@ -1,9 +1,9 @@
-# ADR-0044: Saline SSIM series uses a fresh, self-checked baseline per target group, and angle error is the headline metric
+# ADR-0047: Saline SSIM series uses a fresh, self-checked baseline per target group, and angle error is the headline metric
 
 - **Status:** Accepted
 - **Date:** 2026-10-02
 - **Affects:** saline-tank capture methodology, `ssim/` evaluation, thesis localisation claims
-- **Related:** ADR-0023, ADR-0025, ADR-0026, ADR-0027, ADR-0043
+- **Related:** ADR-0023, ADR-0025, ADR-0026, ADR-0027, ADR-0046
 
 ## Context
 

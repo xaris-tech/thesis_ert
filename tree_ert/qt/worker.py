@@ -32,7 +32,7 @@ class SessionBaseline:
     """The run every later capture in this session is differenced against.
 
     Frames from a run captured in this session are held in memory rather than
-    re-read from disk. A baseline loaded from an earlier run (ADR-0043) is
+    re-read from disk. A baseline loaded from an earlier run (ADR-0046) is
     rebuilt from that run's ``frames.csv`` by :func:`baseline_from_run`.
     """
 
@@ -48,11 +48,11 @@ class SessionBaseline:
 
 
 DEFAULT_BASELINE_FILENAME = "default_baseline.txt"
-"""Holds the run id of the baseline loaded at startup (ADR-0043)."""
+"""Holds the run id of the baseline loaded at startup (ADR-0046)."""
 
 
 def baseline_from_run(run_dir: Path) -> SessionBaseline:
-    """Rebuild a session baseline from a recorded run (ADR-0043).
+    """Rebuild a session baseline from a recorded run (ADR-0046).
 
     Settings come from the run's own ``conditions.json``, so the settings gate
     in :func:`reconstruction.reconstruct` still refuses a run taken under
@@ -91,7 +91,7 @@ def write_default_baseline(log_dir: Path, run_id: str | None) -> None:
 
 
 def cross_specimen_note(baseline: SessionBaseline, specimen_id: str) -> str:
-    """Stamp for an image whose baseline is a different specimen (ADR-0043).
+    """Stamp for an image whose baseline is a different specimen (ADR-0046).
 
     Empty when both IDs are recorded and equal. An unrecorded ID on either side
     is stamped too: identity that cannot be checked is not assumed.

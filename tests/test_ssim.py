@@ -1,4 +1,4 @@
-﻿"""SSIM scoring against block masks (ADR-0045), on synthetic images; no board, no recorded runs."""
+﻿"""SSIM scoring against block masks (ADR-0048), on synthetic images; no board, no recorded runs."""
 
 from __future__ import annotations
 
@@ -88,7 +88,7 @@ class SsimTests(unittest.TestCase):
 
 
 class NccTests(unittest.TestCase):
-    """NCC is reported alongside SSIM, not instead of it (ADR-0047)."""
+    """NCC is reported alongside SSIM, not instead of it (ADR-0050)."""
 
     def setUp(self) -> None:
         self.mesh = mesh()
@@ -155,7 +155,7 @@ class NccTests(unittest.TestCase):
 
 
 class CentroidAngleTests(unittest.TestCase):
-    """The lobe centroid is the better angle estimator (ADR-0048).
+    """The lobe centroid is the better angle estimator (ADR-0051).
 
     The single strongest pixel is unreliable on the diffuse lobes this solver
     produces: on the 2026-10-02 series it put E6 18.2 deg off where the centroid

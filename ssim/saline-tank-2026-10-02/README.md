@@ -2,7 +2,7 @@
 
 Purpose: measure how well the instrument localises a known target in a saline
 tank, scored by SSIM (structural similarity) between each reconstruction and a
-ground-truth mask of where the block actually was. Method: [ADR-0044](../../docs/adr/0044-saline-ssim-series-fresh-baseline-per-target-group.md).
+ground-truth mask of where the block actually was. Method: [ADR-0047](../../docs/adr/0047-saline-ssim-series-fresh-baseline-per-target-group.md).
 
 ## Layout
 
@@ -32,7 +32,7 @@ capture series (ADR-0025); if the two ever disagree, `scans/` wins.
 | Settings | adjacent, high range, DAC 400, settle 30 ms, 16 samples, 10 warmup, 5 frames |
 | Not recorded | saline g/L, fill depth, water temperature, grounding |
 
-**Corrected 2026-10-05 (ADR-0049).** This table previously said the tank radius was
+**Corrected 2026-10-05 (ADR-0052).** This table previously said the tank radius was
 160 mm and the block sat 128 mm from the centre, i.e. 0.80 of that tank — level with
 the bucket wall, which is not a placement anyone can make by accident. Measured: the
 bucket is 128 mm and the nails sit 30 mm inside it. The block is at ≈55 mm, about
@@ -133,12 +133,12 @@ superseded by the E2+E8 redo `181205`.
 Both blocks of every pair appear as separate blobs. The pairs score lower SSIM
 than single blocks, because two blobs pulled toward the centre miss two masks.
 
-### SSIM summary (ADR-0045) — and why the SSIM numbers must not be quoted
+### SSIM summary (ADR-0048) — and why the SSIM numbers must not be quoted
 
-19 scored runs. **After the region fix** (ADR-0046; the mean now runs over a dilated
+19 scored runs. **After the region fix** (ADR-0049; the mean now runs over a dilated
 neighbourhood of the mask instead of the whole disc), re-measured against each run's
 own empty-tank control, comparing against a simulated block of the recorded
-23 × 22 mm footprint pushed through the same solver (ADR-0047):
+23 × 22 mm footprint pushed through the same solver (ADR-0050):
 
 | metric | min | max | mean | empty tank | beats its control |
 |---|---|---|---|---|---|
@@ -148,7 +148,7 @@ own empty-tank control, comparing against a simulated block of the recorded
 | Dice | 0.000 | 1.000 | 0.588 | 0.085 | 15 / 19 |
 | SSIM | −0.061 | 0.272 | 0.130 | 0.023 | 16 / 19 |
 
-**NCC is the recommended score** (ADR-0047). It is scale-invariant, so it does not
+**NCC is the recommended score** (ADR-0050). It is scale-invariant, so it does not
 punish the dim-but-correct lobe that sinks SSIM, and it is position-sensitive, so a
 blob in the wrong place scores near zero. It is not SSIM and is not "SSIM-like" — it
 measures linear agreement of the intensity pattern, and two blobs of different size
@@ -161,7 +161,7 @@ drift electrode), and the pairs `174738` and `175516`, both marginal.
 **The published values in `ssim_results.csv` are stale** — 0.284–0.591, mean 0.438,
 from before the region fix, and SSIM-only. `ssim_eval.py` does not yet emit the NCC and
 Dice columns, so that CSV needs the tool changed before it can be regenerated
-(ADR-0047).
+(ADR-0050).
 
 **Even after the fix, the SSIM column must not be quoted as published.** Before it,
 `tree_ert/ssim.py` averaged SSIM over the whole disc while the block mask is
@@ -171,7 +171,7 @@ scored 0.904–0.957 and **all 19 runs scored below it**. A mean of 0.438 theref
 not mean "moderate structural agreement".
 
 That defect is fixed. **And the second apparent defect — a radius mismatch — was also a
-units error, not a reconstruction failure (ADR-0049).** `TANK_RADIUS_MM` was 160 mm
+units error, not a reconstruction failure (ADR-0052).** `TANK_RADIUS_MM` was 160 mm
 when the bucket is 128 mm, and every normalised length was divided by the bucket radius
 where the mesh normalises to the 98 mm electrode ring, making every mask radius and the
 block's half-widths 1.31× too large. With that corrected:
@@ -184,7 +184,7 @@ block's half-widths 1.31× too large. With that corrected:
 
 Every run now clears its own empty-tank control; the worst case moved from negative to
 0.461. **NCC is the primary score and Dice the readable secondary; SSIM is retained as a
-diagnostic for lobe amplitude** (ADR-0050). On identical inputs SSIM's mean is 0.155
+diagnostic for lobe amplitude** (ADR-0053). On identical inputs SSIM's mean is 0.155
 against Dice's 0.929, because SSIM treats a dim-but-correct lobe as a structural
 mismatch — an amplitude error scored as a shape error, which is the wrong question for
 a difference image.
@@ -199,14 +199,14 @@ independent evidence for localisation is the angle error against the photographs
 `ssim_results.csv` is **wrong**, not merely stale — it was scored against masks at the
 wrong radius and size, and must be regenerated.
 
-The angle result (ADR-0052): n = 24 angled block placements, **median 3.07 deg, mean
+The angle result (ADR-0055): n = 24 angled block placements, **median 3.07 deg, mean
 3.71 deg, max 11.87 deg, 18 of 24 within 5 deg and 23 of 24 within 10 deg**. The lobe
 centroid is thresholded, not windowed: the angular window it replaced was worth up to
 12.3 deg on a single placement, and the earlier "24 of 24 within 10 deg" was an
 artefact of that choice. The one placement outside 10 deg is run 165444 at E2, 11.9 deg
 - the drift-affected run. See photos/README.md for why that run is suspect.
 
-NCC 0.72 mean against a 0.03 control, with 19 of 19 runs clearing it (ADR-0050).
+NCC 0.72 mean against a 0.03 control, with 19 of 19 runs clearing it (ADR-0053).
 
 Full table: `ssim_results.csv` (**needs regenerating**). Images beside their masks:
 `ssim_contact_sheet.png` (**also stale** — same masks).
@@ -217,7 +217,7 @@ the UI's peak angle quoted in the single-block table above.
 ### Known limitation: radius
 
 This section described a defect that did not exist. Corrected 2026-10-05; the original
-text is in the git history and in ADR-0049.
+text is in the git history and in ADR-0052.
 
 **There is no radial collapse.** Once `TANK_RADIUS_MM` was corrected to the measured
 128 mm and lengths were normalised against the 98 mm electrode ring, the forward model

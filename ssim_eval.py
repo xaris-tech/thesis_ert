@@ -1,4 +1,4 @@
-"""Score a saline-tank series by SSIM against block masks (ADR-0044, ADR-0045).
+"""Score a saline-tank series by SSIM against block masks (ADR-0047, ADR-0048).
 
 Offline: reads recorded runs, no board needed.
 

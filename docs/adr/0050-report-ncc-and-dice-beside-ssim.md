@@ -1,13 +1,13 @@
-# ADR-0047: Report NCC and Dice beside SSIM rather than replacing it
+# ADR-0050: Report NCC and Dice beside SSIM rather than replacing it
 
 - **Status:** Accepted
 - **Date:** 2026-10-05
 - **Affects:** `tree_ert/ssim.py` (`score`, `SsimScore`, new `ncc` and `dice`), any series scored offline. Does **not** change how reconstructions are produced.
-- **Related:** ADR-0045, ADR-0046; `ssim/saline-tank-2026-10-02/`
+- **Related:** ADR-0048, ADR-0049; `ssim/saline-tank-2026-10-02/`
 
 ## Context
 
-ADR-0046 left a specific problem: the reconstruction peaks at 0.27–0.61 R against a
+ADR-0049 left a specific problem: the reconstruction peaks at 0.27–0.61 R against a
 block at 0.80 R, so the recovered image does not resemble a sharp footprint, and every
 image-similarity score against that footprint comes out low. SSIM made this worse than
 necessary, for a reason that has nothing to do with the reconstruction.
@@ -17,7 +17,7 @@ dimmer than the mask it is compared against, and SSIM counts that dimness as a
 structural mismatch. Separately, SSIM saturates: averaged over a region that is mostly
 background, both images approach zero everywhere the mask is not, and the score stops
 responding to the target at all. That failure was severe enough to rank all 19 runs of
-the 2026-10-02 series below an empty tank before ADR-0046's region fix.
+the 2026-10-02 series below an empty tank before ADR-0049's region fix.
 
 Three alternatives were measured on that series against each run's own empty-tank
 control, using a simulated block as the reference image:
@@ -49,7 +49,7 @@ best of the candidates for this instrument:
   precisely the artefact that makes SSIM uninformative here.
 - *Position-sensitive.* A blob in entirely the wrong place scores near zero. This is
   the property the registered-crop variant destroyed: it scored 0.97 for detections
-  **and 0.94 for the empty tank** (see ADR-0046's ruled-out table), because removing
+  **and 0.94 for the empty tank** (see ADR-0049's ruled-out table), because removing
   position is what removed its meaning.
 - *No threshold and no tuning.* Dice needs one, and its discrimination is the weakest
   of the three at 15 of 19.
@@ -81,7 +81,7 @@ the −0.011 beside it.
   `ssim_raw` is unaffected.
 - The scores in `ssim_results.csv` are still stale, because `ssim_eval.py` writes the
   SSIM columns only and has not been changed to emit `ncc`/`dice`. The CSV is a
-  generated artifact (ADR-0046) and adding hand-written columns to it would be
+  generated artifact (ADR-0049) and adding hand-written columns to it would be
   destroyed on the next run, so this is deliberately left as a follow-up rather than
   patched by hand.
 - NCC's high score for the centre run (0.873) reflects that a centred blob has no

@@ -1,4 +1,4 @@
-# ADR-0041: Naming gaps warn instead of refusing a scan
+# ADR-0044: Naming gaps warn instead of refusing a scan
 
 - **Status:** Accepted
 - **Date:** 2026-10-01

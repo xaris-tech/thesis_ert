@@ -1,13 +1,13 @@
-# ADR-0045: SSIM is scored on the resistive lobe against block masks, with a 0.2 R blur and per-block wedge search
+# ADR-0048: SSIM is scored on the resistive lobe against block masks, with a 0.2 R blur and per-block wedge search
 
 - **Status:** Accepted
 - **Date:** 2026-10-02
 - **Affects:** `tree_ert/ssim.py`, `ssim_eval.py`, thesis localisation and SSIM claims
-- **Related:** ADR-0026, ADR-0027, ADR-0044
+- **Related:** ADR-0026, ADR-0027, ADR-0047
 
 ## Context
 
-ADR-0044 committed the saline series to three numbers per run: raw SSIM, SSIM
+ADR-0047 committed the saline series to three numbers per run: raw SSIM, SSIM
 against a blurred mask, and angle error. That leaves judgement calls: how to
 turn the per-element image and the operator's target text into two comparable
 rasters, what blur to use, and where to look for each block's peak.

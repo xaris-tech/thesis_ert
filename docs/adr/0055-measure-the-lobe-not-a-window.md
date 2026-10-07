@@ -1,13 +1,13 @@
-# ADR-0052: Measure the lobe itself, not a window around it
+# ADR-0055: Measure the lobe itself, not a window around it
 
 - **Status:** Accepted
 - **Date:** 2026-10-05
-- **Affects:** `tree_ert/ssim.py` (`_lobe_centroid`, `LOBE_THRESHOLD`, `score_blocks`), every reported `centroid_angle_error_deg`, and the angle figures in `ssim/saline-tank-2026-10-02/`. Supersedes the window choice in [ADR-0051](0051-the-centroid-angle-estimator-has-a-measured-bias.md).
-- **Related:** ADR-0048, ADR-0049, ADR-0051
+- **Affects:** `tree_ert/ssim.py` (`_lobe_centroid`, `LOBE_THRESHOLD`, `score_blocks`), every reported `centroid_angle_error_deg`, and the angle figures in `ssim/saline-tank-2026-10-02/`. Supersedes the window choice in [ADR-0054](0054-the-centroid-angle-estimator-has-a-measured-bias.md).
+- **Related:** ADR-0051, ADR-0052, ADR-0054
 
 ## Context
 
-ADR-0051 chose between angular windows and kept ±45°, documenting a −0.45° bias. The
+ADR-0054 chose between angular windows and kept ±45°, documenting a −0.45° bias. The
 operator then asked whether the numbers were accurate, having seen a ~14° deviation
 somewhere earlier in the session.
 

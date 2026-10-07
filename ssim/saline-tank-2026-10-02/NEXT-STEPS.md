@@ -92,10 +92,10 @@ Use the same settings, and take a fresh baseline before each group.
   metric; all 19 runs score 0.28–0.59, i.e. below empty. The metric averages
   over the whole disc while the mask is ~1 % of it. See the SSIM summary in
   `README.md`. This needs a fix in `tree_ert/ssim.py` and an ADR superseding
-  ADR-0045 before any SSIM number goes in the text.
+  ADR-0048 before any SSIM number goes in the text.
 - State the radial pull toward the centre (blocks at 0.8 R appear at about
-  0.27–0.61 R) as a limitation of the one-step JAC reconstruction (ADR-0044,
-  ADR-0045), and state that the 0.8 R ground truth is itself assumed — no photo
+  0.27–0.61 R) as a limitation of the one-step JAC reconstruction (ADR-0047,
+  ADR-0048), and state that the 0.8 R ground truth is itself assumed — no photo
   has a ruler in frame.
 - The wedge search has no radial bound, so a centre-collapsed artefact could be
   reported as a clean localisation. The angle result is trustworthy because the

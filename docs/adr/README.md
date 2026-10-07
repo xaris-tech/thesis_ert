@@ -90,19 +90,19 @@ one costs a re-derivation.
 | [0034](0034-living-tree-images-illustrate-the-cut-trunk-pilot-proves.md) | Living-tree images illustrate; the cut-trunk pilot proves (supersedes ADR-0028 premise) | Accepted |
 | [0035](0035-intact-disc-survey-measures-between-specimen-spread.md) | The intact-disc survey measures between-specimen spread before any cross-specimen claim | Accepted |
 | [0036](0036-specimen-presets-carry-their-provenance.md) | Specimen presets (belt / saline / coconut) carry the run their numbers came from | Accepted |
-| [0037](0037-refuse-a-scan-without-a-named-specimen.md) | Refuse to start a scan without a named specimen, and refuse a cross-specimen baseline | Accepted; label rule superseded by [0040](0040-generate-the-run-label-from-specimen-and-target.md); refusal superseded by [0041](0041-naming-gaps-warn-instead-of-refusing.md) |
+| [0037](0037-refuse-a-scan-without-a-named-specimen.md) | Refuse to start a scan without a named specimen, and refuse a cross-specimen baseline | Accepted; label rule superseded by [0040](0040-generate-the-run-label-from-specimen-and-target.md); refusal superseded by [0044](0044-naming-gaps-warn-instead-of-refusing.md) |
 | [0038](0038-survey-distances-on-normalised-vectors.md) | Survey spreads are RMS distances between mean-magnitude-normalised vectors | Accepted |
 | [0039](0039-coconut-preset-dac-620-32-samples.md) | The coconut preset is adjacent / high / DAC 620 / 30 ms / 32 samples, validated | Accepted |
-| [0040](0040-generate-the-run-label-from-specimen-and-target.md) | Generate the run label from specimen and target instead of typing it | Superseded by [0042](0042-the-run-label-is-editable.md) |
-| [0041](0041-naming-gaps-warn-instead-of-refusing.md) | Naming gaps warn instead of refusing a scan; the label stays generated | Accepted |
-| [0042](0042-the-run-label-is-editable.md) | The run label is editable, pre-filled from specimen and target | Accepted |
-| [0043](0043-load-a-recorded-run-as-the-baseline.md) | Load a recorded run as the baseline, remembered as the default; cross-specimen images stamped | Accepted |
-| [0044](0044-saline-ssim-series-fresh-baseline-per-target-group.md) | Saline SSIM series: fresh self-checked baseline per target group; angle error is the headline metric | Accepted |
-| [0052](0052-measure-the-lobe-not-a-window.md) | Lobe connected-component centroid, no angular window; window choice was worth 12.3 deg | Accepted |
-| [0051](0051-the-centroid-angle-estimator-has-a-measured-bias.md) | Centroid window validated against injected offsets; -0.45 deg bias documented, not corrected in code | Accepted |
-| [0050](0050-ncc-and-dice-are-the-primary-scores.md) | NCC primary, Dice secondary, SSIM demoted to a diagnostic; each with its empty-tank control | Accepted |
-| [0049](0049-the-tank-geometry-constants-were-wrong.md) | Tank is 128mm with electrodes 30mm in; the radial collapse was a units error | Accepted |
-| [0048](0048-take-the-angle-from-the-lobe-centroid.md) | Angle from the wedge-restricted lobe centroid; 24/24 within 10 deg, max 9.9 | Accepted |
-| [0047](0047-report-ncc-and-dice-beside-ssim.md) | NCC and Dice reported beside SSIM; NCC separated 17/19 from empty-tank controls | Accepted |
-| [0046](0046-reconstruction-settings-cannot-be-validated-yet.md) | Reconstruction settings frozen: the recorded series and the forward model disagree on radius | Accepted |
-| [0045](0045-ssim-scoring-against-block-masks.md) | SSIM scored on the resistive lobe against block masks; 0.2 R blur; per-block ±45° wedge for angle error | Accepted |
+| [0040](0040-generate-the-run-label-from-specimen-and-target.md) | Generate the run label from specimen and target instead of typing it | Superseded by [0045](0045-the-run-label-is-editable.md) |
+| [0044](0044-naming-gaps-warn-instead-of-refusing.md) | Naming gaps warn instead of refusing a scan; the label stays generated | Accepted |
+| [0045](0045-the-run-label-is-editable.md) | The run label is editable, pre-filled from specimen and target | Accepted |
+| [0046](0046-load-a-recorded-run-as-the-baseline.md) | Load a recorded run as the baseline, remembered as the default; cross-specimen images stamped | Accepted |
+| [0047](0047-saline-ssim-series-fresh-baseline-per-target-group.md) | Saline SSIM series: fresh self-checked baseline per target group; angle error is the headline metric | Accepted |
+| [0055](0055-measure-the-lobe-not-a-window.md) | Lobe connected-component centroid, no angular window; window choice was worth 12.3 deg | Accepted |
+| [0054](0054-the-centroid-angle-estimator-has-a-measured-bias.md) | Centroid window validated against injected offsets; -0.45 deg bias documented, not corrected in code | Accepted |
+| [0053](0053-ncc-and-dice-are-the-primary-scores.md) | NCC primary, Dice secondary, SSIM demoted to a diagnostic; each with its empty-tank control | Accepted |
+| [0052](0052-the-tank-geometry-constants-were-wrong.md) | Tank is 128mm with electrodes 30mm in; the radial collapse was a units error | Accepted |
+| [0051](0051-take-the-angle-from-the-lobe-centroid.md) | Angle from the wedge-restricted lobe centroid; 24/24 within 10 deg, max 9.9 | Accepted |
+| [0050](0050-report-ncc-and-dice-beside-ssim.md) | NCC and Dice reported beside SSIM; NCC separated 17/19 from empty-tank controls | Accepted |
+| [0049](0049-reconstruction-settings-cannot-be-validated-yet.md) | Reconstruction settings frozen: the recorded series and the forward model disagree on radius | Accepted |
+| [0048](0048-ssim-scoring-against-block-masks.md) | SSIM scored on the resistive lobe against block masks; 0.2 R blur; per-block ±45° wedge for angle error | Accepted |
