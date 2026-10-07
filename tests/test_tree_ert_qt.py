@@ -783,7 +783,7 @@ class ReconstructionFlowTests(QtTestCase):
 
 
 class LoadedBaselineTests(ReconstructionFlowTests):
-    """A recorded run reused as the baseline (ADR-0043)."""
+    """A recorded run reused as the baseline (ADR-0046)."""
 
     def recorded_baseline_run(self, specimen="disc-04", **settings) -> Path:
         request = CaptureRequest(
@@ -1149,7 +1149,7 @@ if __name__ == "__main__":
 
 
 class StartGateTests(QtTestCase):
-    """Naming gaps warn before a scan but never refuse it (ADR-0041)."""
+    """Naming gaps warn before a scan but never refuse it (ADR-0044)."""
 
     def setUp(self):
         super().setUp()

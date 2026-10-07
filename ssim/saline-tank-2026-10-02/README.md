@@ -2,7 +2,7 @@
 
 Purpose: measure how well the instrument localises a known target in a saline
 tank, scored by SSIM (structural similarity) between each reconstruction and a
-ground-truth mask of where the block actually was. Method: [ADR-0044](../../docs/adr/0044-saline-ssim-series-fresh-baseline-per-target-group.md).
+ground-truth mask of where the block actually was. Method: [ADR-0047](../../docs/adr/0047-saline-ssim-series-fresh-baseline-per-target-group.md).
 
 ## Layout
 
@@ -122,7 +122,7 @@ superseded by the E2+E8 redo `181205`.
 Both blocks of every pair appear as separate blobs. The pairs score lower SSIM
 than single blocks, because two blobs pulled toward the centre miss two masks.
 
-### SSIM summary (ADR-0045)
+### SSIM summary (ADR-0048)
 
 19 scored runs. Raw SSIM: mean 0.438, range 0.28–0.59. Blurred SSIM: mean
 0.458. Angle error: |error| ≤ 12° on 22 of 24 angled block placements (the centre run has no angle); the exceptions
@@ -139,7 +139,7 @@ Peaks come out at about 0.35–0.5 R although the blocks were at about 0.8 R. A
 one-step JAC reconstruction with regularisation pulls targets toward the centre
 and blurs them. The angle is reliable; the radius is not. Raw SSIM against a
 sharp, correctly placed mask will therefore score low even for a correct
-detection. ADR-0044 sets out how this will be reported.
+detection. ADR-0047 sets out how this will be reported.
 
 ### Record amendments
 

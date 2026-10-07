@@ -123,7 +123,7 @@ class ConditionsPanel(QGroupBox):
 
         # No default on purpose: a pre-filled "saline tank" was recorded against
         # every disc and belt run of 2026-09-29 (ADR-0037). The blank first item
-        # is warned about by run_record.naming_problems (ADR-0041).
+        # is warned about by run_record.naming_problems (ADR-0044).
         self.medium = QComboBox()
         self.medium.addItem("")
         self.medium.addItems(run_record.KNOWN_MEDIA)
@@ -457,7 +457,7 @@ class MainWindow(QMainWindow):
         self._run_path: Path | None = None
         self._expected_frames = 0
         self._baseline: SessionBaseline | None = None
-        """First run of the session, or a run loaded from disk (ADR-0043).
+        """First run of the session, or a run loaded from disk (ADR-0046).
         Every later run differences against it."""
 
         self.setStyleSheet(theme.stylesheet())
@@ -466,7 +466,7 @@ class MainWindow(QMainWindow):
         self.settings_panel.demo.setChecked(demo)
         self.conditions_panel = ConditionsPanel()
 
-        # Pre-filled from specimen and target, but editable (ADR-0042). Once the
+        # Pre-filled from specimen and target, but editable (ADR-0045). Once the
         # operator types in it, it stops following the conditions; clearing it
         # hands it back to the generator.
         self.label = QLineEdit()
@@ -504,7 +504,7 @@ class MainWindow(QMainWindow):
         self.load_baseline_button.setObjectName("Subtle")
         self.load_baseline_button.setToolTip(
             "Use an existing recorded run as the baseline. It is remembered and "
-            "loaded again at the next start until cleared (ADR-0043)."
+            "loaded again at the next start until cleared (ADR-0046)."
         )
         self.load_baseline_button.clicked.connect(self.choose_baseline)
         self.baseline_label = QLabel("Next run becomes the session baseline.")
@@ -733,7 +733,7 @@ class MainWindow(QMainWindow):
         if naming:
             self._log("Naming warnings: " + "; ".join(naming))
         if problems:
-            # A warning, never a block (ADR-0041, superseding ADR-0037's refusal):
+            # A warning, never a block (ADR-0044, superseding ADR-0037's refusal):
             # a capture already worth taking must not be refused over metadata,
             # and the gaps are recorded in the run.
             answer = QMessageBox.question(
@@ -799,7 +799,7 @@ class MainWindow(QMainWindow):
         self._label_typed = True
 
     def start_problems(self, conditions: Conditions, label: str) -> list[str]:
-        """Naming and baseline-identity warnings shown before a start (ADR-0041)."""
+        """Naming and baseline-identity warnings shown before a start (ADR-0044)."""
         problems = run_record.naming_problems(conditions, label)
         if self._baseline is not None:
             mismatch = run_record.baseline_specimen_problem(

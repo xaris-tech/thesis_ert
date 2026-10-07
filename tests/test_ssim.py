@@ -1,4 +1,4 @@
-"""SSIM scoring against block masks (ADR-0045), on synthetic images; no board, no recorded runs."""
+"""SSIM scoring against block masks (ADR-0048), on synthetic images; no board, no recorded runs."""
 
 from __future__ import annotations
 

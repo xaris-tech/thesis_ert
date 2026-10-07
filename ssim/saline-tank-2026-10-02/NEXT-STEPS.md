@@ -50,5 +50,5 @@ Use the same settings, and take a fresh baseline before each group.
   every target detected.
 - Quote raw and blurred SSIM next to it, and state the radial pull toward the
   centre (blocks at 0.8 R appear at about 0.35–0.6 R) as a limitation of the
-  one-step JAC reconstruction (ADR-0044, ADR-0045).
+  one-step JAC reconstruction (ADR-0047, ADR-0048).
 - Only compare SSIM values within this series.

@@ -1,4 +1,4 @@
-# ADR-0043: Load a recorded run as the baseline, remembered as the default
+# ADR-0046: Load a recorded run as the baseline, remembered as the default
 
 - **Status:** Accepted
 - **Date:** 2026-10-01
@@ -7,7 +7,7 @@
   ("Load baseline from run..." button, startup load), `<scans root>/default_baseline.txt`,
   every reconstruction made against a baseline from another specimen
 - **Related:** ADR-0026 (session-baseline model), ADR-0027 (split-half significance),
-  ADR-0035/0038 (intact-disc survey), ADR-0037/0041 (cross-specimen baseline warns)
+  ADR-0035/0038 (intact-disc survey), ADR-0037/0044 (cross-specimen baseline warns)
 
 ## Context
 
@@ -43,7 +43,7 @@ the log. The stamp also applies when either specimen ID is unrecorded.
   different pattern, DAC, current range, settle or sample count. Loading a baseline does
   not weaken comparability.
 - **A cross-specimen image is stamped, not refused.** Refusing it would block the very
-  experiment being run. ADR-0041 already turned the cross-specimen start check into a
+  experiment being run. ADR-0044 already turned the cross-specimen start check into a
   warning. The stamp keeps that warning on the image itself, where a reader of the PNG will
   see it.
 - **A file holds the default instead of a `UiSettings` field.** A baseline is a choice about

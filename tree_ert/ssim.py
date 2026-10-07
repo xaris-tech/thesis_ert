@@ -1,4 +1,4 @@
-"""SSIM of a difference image against a ground-truth block mask (ADR-0044, ADR-0045).
+"""SSIM of a difference image against a ground-truth block mask (ADR-0047, ADR-0048).
 
 Offline and solver-agnostic: everything here works on a recorded run's
 reconstruction and the target text the operator typed, so a whole series can be
@@ -7,7 +7,7 @@ scored with no board attached.
 Three numbers per run, deliberately reported together:
 
 - ``ssim_raw``: SSIM against the sharp block footprint. The JAC solver pulls
-  targets toward the centre and blurs them (ADR-0044), so a correct detection
+  targets toward the centre and blurs them (ADR-0047), so a correct detection
   still scores low here. This number grades the solver as much as the
   instrument.
 - ``ssim_blurred``: SSIM against the footprint convolved with a Gaussian of
@@ -15,7 +15,7 @@ Three numbers per run, deliberately reported together:
   this system has?"
 - ``angle_error_deg``: per block, the strongest resistive pixel inside the
   block's ±45° wedge, compared with the true angle. This is the headline
-  (ADR-0044).
+  (ADR-0047).
 
 The tank geometry comes from the mesh's own electrode nodes (``el_pos``), not
 from an assumed ``180 - 30k`` convention, so a change in PyEIT's electrode
@@ -42,7 +42,7 @@ GRID = 64
 """Raster side in pixels across the unit disc; 2/64 R = 5 mm per pixel at R = 160 mm."""
 
 PSF_SIGMA = 0.2
-"""Blur applied to the mask for ``ssim_blurred``, in units of tank radius (ADR-0045)."""
+"""Blur applied to the mask for ``ssim_blurred``, in units of tank radius (ADR-0048)."""
 
 SSIM_SIGMA_PX = 1.5
 """Gaussian SSIM window, the Wang et al. (2004) default."""
