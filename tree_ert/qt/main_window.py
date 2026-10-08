@@ -522,10 +522,11 @@ class MainWindow(QMainWindow):
         self.recalibrate.setToolTip(
             "Every run is also solved absolutely and gated on reciprocity, model "
             "misfit and significance (ADR-0041). Ticked, a refused run is "
-            "re-acquired down a varied ramp (settle 10-200 ms; samples, warmup, "
-            "frames and DAC varied too, ADR-0042) until one passes. It stops early "
-            "after 3 attempts in a row flag an electrode contact. Each attempt is "
-            "its own recorded run; the log gives the time estimate."
+            "re-acquired with settings chosen from the earlier attempts: more "
+            "averaging when noisy, settle 10-50 ms, then a lower DAC (ADR-0060), "
+            "up to 6 attempts. It stops early after 3 attempts in a row flag an "
+            "electrode contact, or reciprocity stays above 18 % (ADR-0043). Each "
+            "attempt is its own recorded run."
         )
 
         self.setCentralWidget(self._build_layout())

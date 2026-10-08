@@ -95,13 +95,16 @@ one costs a re-derivation.
 | [0039](0039-coconut-preset-dac-620-32-samples.md) | The coconut preset is adjacent / high / DAC 620 / 30 ms / 32 samples, validated | Accepted |
 | [0040](0040-generate-the-run-label-from-specimen-and-target.md) | Generate the run label from specimen and target instead of typing it | Superseded by [0045](0045-the-run-label-is-editable.md) |
 | [0041](0041-gated-absolute-reconstruction-with-continuous-recalibration.md) | Gate absolute reconstruction on reciprocity, misfit and significance; re-acquire until it passes | Accepted |
-| [0042](0042-regularised-absolute-solve-and-varied-recalibration-ramp.md) | Regularise the absolute solve; recalibrate down a varied ramp that stops on contact faults | Accepted |
+| [0042](0042-regularised-absolute-solve-and-varied-recalibration-ramp.md) | Regularise the absolute solve; recalibrate down a varied ramp that stops on contact faults | Accepted; ramp superseded by [0060](0060-adaptive-recalibration-from-measured-results.md) |
 | [0043](0043-stall-stop-and-conductivity-bound.md) | Stop recalibration on a reciprocity stall; bound element conductivity to sigma0 ×/÷ 100 | Accepted |
 | [0044](0044-naming-gaps-warn-instead-of-refusing.md) | Naming gaps warn instead of refusing a scan; the label stays generated | Accepted |
 | [0045](0045-the-run-label-is-editable.md) | The run label is editable, pre-filled from specimen and target | Accepted |
 | [0046](0046-load-a-recorded-run-as-the-baseline.md) | Load a recorded run as the baseline, remembered as the default; cross-specimen images stamped | Accepted |
 | [0047](0047-saline-ssim-series-fresh-baseline-per-target-group.md) | Saline SSIM series: fresh self-checked baseline per target group; angle error is the headline metric | Accepted |
 | [0057](0057-absolute-peaks-may-image-contacts-not-defects.md) | An absolute PASS is not a defect location while contacts are uneven; peaks sat on the worst electrodes | Proposed |
+| [0058](0058-validity-criteria-for-a-hole-claim.md) | A hole claim needs reciprocity ≤15 %, noise ≤3 % in both runs, an untouched repeat <2 and significance ≥3 | Proposed |
+| [0059](0059-standing-tree-readiness-and-protocol.md) | Standing trees wait on a disc rotation test; fixed electrode, scan and ground-truth protocol | Proposed |
+| [0060](0060-adaptive-recalibration-from-measured-results.md) | Recalibration picks each attempt from earlier results; settle 10-50 ms, max 6 attempts | Accepted |
 | [0056](0056-correct-run-conditions-in-extra-never-overwrite.md) | Correct recorded conditions with a dated key in `extra`; original fields stay as written | Accepted |
 | [0055](0055-measure-the-lobe-not-a-window.md) | Lobe connected-component centroid, no angular window; window choice was worth 12.3 deg | Accepted |
 | [0054](0054-the-centroid-angle-estimator-has-a-measured-bias.md) | Centroid window validated against injected offsets; -0.45 deg bias documented, not corrected in code | Accepted |

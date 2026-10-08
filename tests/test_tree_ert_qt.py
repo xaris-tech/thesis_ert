@@ -409,7 +409,7 @@ class CaptureWorkerTests(QtTestCase):
             frames=overrides.pop("frames", 3),
             warmup_frames=overrides.pop("warmup_frames", 2),
             recalibrate=overrides.pop("recalibrate", False),
-            recalibrate_rounds=overrides.pop("recalibrate_rounds", 2),
+            recalibrate_max_attempts=overrides.pop("recalibrate_max_attempts", 6),
         )
         return CaptureWorker(DemoAcquisition(), request, self.log_dir)
 
@@ -430,31 +430,31 @@ class CaptureWorkerTests(QtTestCase):
         self.assertTrue(row["absolute_gate"])
         self.assertTrue(row["absolute_misfit_percent"])
 
-    def test_recalibration_reacquires_down_the_ladder_until_exhausted(self):
+    def test_recalibration_adapts_until_attempts_exhausted(self):
         from unittest import mock
 
         from tree_ert import absolute
 
         worker = self.make_worker(
-            frames=4, warmup_frames=0, recalibrate=True, recalibrate_rounds=1
+            frames=4, warmup_frames=0, recalibrate=True, recalibrate_max_attempts=3
         )
         settings = worker._request.settings
-        ladder = 1 + len(
-            [s for s in absolute.recalibration_ladder(settings) if s != settings]
-        )
         attempts = []
         worker.attempt_started.connect(lambda n, s: attempts.append((n, s)))
-        # Shorten the ramp's warmup/frames so the demo runs fast; the order and
-        # count of attempts is what is under test.
+        messages = []
+        worker.progress.connect(messages.append)
         with mock.patch.object(absolute, "contact_fault", return_value=()),                 mock.patch.object(absolute, "stop_reason", return_value=None):
             events = self.collect(worker)
         self.assertEqual(events["failed"], [])
-        self.assertEqual([n for n, _ in attempts], list(range(1, ladder + 1)))
+        self.assertEqual([n for n, _ in attempts], [1, 2, 3])
         self.assertEqual(attempts[0][1], settings)
-        settles = [s.settle_ms for _, s in attempts[1:]]
-        self.assertEqual(settles, sorted(settles))
-        self.assertEqual(len(run_record.list_runs(self.log_dir)), ladder)
+        seen = [(s.settle_ms, s.samples, s.frames, s.dac) for _, s in attempts]
+        self.assertEqual(len(set(seen)), 3)
+        for _, step in attempts[1:]:
+            self.assertLessEqual(step.settle_ms, max(absolute.WOOD_SETTLE_MS))
+        self.assertEqual(len(run_record.list_runs(self.log_dir)), 3)
         self.assertEqual(len(events["finished"]), 1)
+        self.assertTrue(any("exhausted after 3" in m for m in messages))
 
     def test_recalibration_stops_on_repeated_contact_faults(self):
         from unittest import mock

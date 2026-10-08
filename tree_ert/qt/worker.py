@@ -128,9 +128,9 @@ class CaptureRequest:
     is then stamped OVERRIDDEN in its figure, text file and index row."""
     recalibrate: bool = False
     """Continuous recalibration (ADR-0041): when the absolute image is refused,
-    re-acquire down the drift-tuning ladder until one passes. Each attempt is
-    its own recorded run."""
-    recalibrate_rounds: int = 1
+    re-acquire with settings chosen from the earlier attempts (ADR-0060) until
+    one passes. Each attempt is its own recorded run."""
+    recalibrate_max_attempts: int = absolute.ADAPTIVE_MAX_ATTEMPTS
 
 
 class CaptureWorker(QObject):
@@ -220,26 +220,29 @@ class CaptureWorker(QObject):
             self.progress.emit("Configuring instrument...")
             self._acquisition.configure(settings)
 
+            # The operator's settings first; with recalibration on, each later
+            # attempt is chosen from the earlier results (ADR-0060).
+            max_attempts = (
+                self._request.recalibrate_max_attempts if self._request.recalibrate else 1
+            )
             if self._request.recalibrate:
-                # The operator's settings first, then the varied ramp (ADR-0042).
-                ramp = [
-                    step for step in absolute.recalibration_ladder(settings)
-                    if step != settings
-                ]
-                ladder = [settings] + ramp * self._request.recalibrate_rounds
-                total = sum(absolute.estimated_minutes(step) for step in ladder)
                 self.progress.emit(
-                    f"Recalibration ladder: {len(ladder)} attempts, up to ~{total:.0f} min"
+                    f"Adaptive recalibration: up to {max_attempts} attempts, "
+                    f"settle {min(absolute.WOOD_SETTLE_MS)}-{max(absolute.WOOD_SETTLE_MS)} ms"
                 )
-            else:
-                ladder = [settings]
             history: list = []
+            tried: list = []
 
-            for number, attempt_settings in enumerate(ladder, start=1):
+            number = 0
+            while True:
+                attempt_settings = absolute.next_settings(settings, tried)
+                if attempt_settings is None or number >= max_attempts:
+                    break
+                number += 1
                 first = number == 1
                 if not first:
                     self.progress.emit(
-                        f"Recalibrating: attempt {number}/{len(ladder)} "
+                        f"Recalibrating: attempt {number}/{max_attempts} "
                         f"settle={attempt_settings.settle_ms}ms "
                         f"samples={attempt_settings.samples} "
                         f"warmup={attempt_settings.warmup_frames} "
@@ -282,6 +285,11 @@ class CaptureWorker(QObject):
                 passed = (
                     self._last_absolute is not None and self._last_absolute.report.passed
                 )
+                tried.append((
+                    attempt_settings,
+                    self._last_absolute.report if self._last_absolute is not None
+                    else absolute.GateReport(None, None, None, ("absolute solve unavailable",)),
+                ))
                 if not passed and self._last_absolute is not None:
                     history.append(
                         (self._last_absolute.report, absolute.contact_fault(frames))
@@ -293,7 +301,10 @@ class CaptureWorker(QObject):
                             "repairs this -- reseat, blot the faces dry, then rescan."
                         )
                         break
-                if self._cancel.is_set() or passed or number == len(ladder):
+                exhausted = (
+                    number >= max_attempts or absolute.next_settings(settings, tried) is None
+                )
+                if self._cancel.is_set() or passed or exhausted:
                     if self._request.recalibrate and not passed and not self._cancel.is_set():
                         self.progress.emit(
                             f"Recalibration exhausted after {number} attempts; "

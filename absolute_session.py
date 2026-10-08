@@ -3,9 +3,10 @@
 Each specimen in the plan is mounted in turn. For each one the instrument is
 configured from the Coconut preset, warmed up, and a run is recorded; the run is
 solved absolutely and gated on reciprocity, model misfit and significance
-(ADR-0041). A refused run is re-acquired with the next drift-tuning profile
-(settle 10-200 ms with samples, warmup, frames and DAC varied, ADR-0042) until one passes or the ladder is
-exhausted ``--rounds`` times. Every attempt is a recorded run in ``scans/``.
+(ADR-0041). A refused run is re-acquired with settings chosen from the earlier
+attempts (more averaging when noisy, settle 10-50 ms, then a lower DAC, ADR-0060)
+until one passes, a stop rule fires (ADR-0043) or ``--max-attempts`` is reached.
+Every attempt is a recorded run in ``scans/``.
 
     .venv\\Scripts\\python.exe absolute_session.py --plan plans/coconut-discs-2026-10-06.csv --port COM3
     .venv\\Scripts\\python.exe absolute_session.py --plan plans/coconut-discs-2026-10-06.csv --demo --yes
@@ -68,7 +69,10 @@ def main(argv: list[str] | None = None) -> int:
     hardware.add_argument("--port")
     hardware.add_argument("--demo", action="store_true", help="synthetic frames, no hardware")
     parser.add_argument("--scans-root", type=Path, default=Path("scans"))
-    parser.add_argument("--rounds", type=int, default=1, help="times to cycle the recalibration ramp")
+    parser.add_argument(
+        "--max-attempts", type=int, default=absolute.ADAPTIVE_MAX_ATTEMPTS,
+        help="acquisitions per specimen before giving up (ADR-0060)",
+    )
     parser.add_argument("--only", nargs="*", help="specimen IDs to run (default all)")
     parser.add_argument("--thickness-mm", type=float, help="disc thickness, for S/m")
     parser.add_argument("--electrode-map", default="")
@@ -81,9 +85,6 @@ def main(argv: list[str] | None = None) -> int:
         plan = [row for row in plan if row["specimen_id"] in set(args.only)]
     acquisition = DemoAcquisition() if args.demo else SerialAcquisition()
     settings = base_settings("DEMO" if args.demo else args.port).validate()
-    candidates = [settings] + [
-        step for step in absolute.recalibration_ladder(settings) if step != settings
-    ]
 
     session_log = run_record.SessionLog(args.scans_root)
     session_log.banner(f"absolute session: {args.plan} ({len(plan)} specimens)")
@@ -167,7 +168,7 @@ def main(argv: list[str] | None = None) -> int:
                 recorder.close()
 
             attempts, passed = absolute.acquire_until_pass(
-                capture, candidates, rounds=args.rounds, on_attempt=on_attempt
+                capture, settings, on_attempt=on_attempt, max_attempts=args.max_attempts
             )
             if passed is None:
                 say(f"{specimen}: no attempt passed after {len(attempts)} acquisitions -- check contacts")

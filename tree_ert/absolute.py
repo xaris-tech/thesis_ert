@@ -15,8 +15,9 @@ gates matter more here than for a difference image:
   structure in the real image (its departure from the homogeneous fit) must be
   at least ``SIGNIFICANCE_GATE`` times its peak (the ADR-0027 rule).
 
-A refused run is not an error: ``acquire_until_pass`` re-acquires with the next
-drift-tuning profile (continuous recalibration).
+A refused run is not an error: ``acquire_until_pass`` re-acquires with settings
+chosen by ``next_settings`` from the earlier attempts (adaptive recalibration,
+ADR-0060).
 
 Units. Transfer resistance arrives in kohm = V/mA, so a fitted conductivity is
 in mS per unit of thickness on the 2-D unit-disc mesh -- a sheet conductance.
@@ -65,50 +66,76 @@ SAMPLES_CEILING = 32
 """Firmware ``n`` command clamps sample averaging to 1..32. A ladder step above
 this would be silently clamped and recorded with the wrong value."""
 
-SETTLE_RAMP_MS = (10, 30, 50, 75, 100, 150, 200)
-SAMPLES_RAMP = (8, 16, 32, 16, 32, 32, 32)
-WARMUP_RAMP = (5, 5, 10, 15, 20, 25, 30)
-FRAMES_RAMP = (10, 10, 10, 12, 12, 16, 16)
-DAC_STEPS = (1.0, 1.0, 1.0, 0.95, 0.9, 0.85, 0.8)
-"""Fraction of the starting DAC code per step. Lower current eases electrode
-polarisation and pulls the worst pair back from its rated maximum; sigma0 is
-current-normalised, so absolute values stay comparable across steps."""
+WOOD_SETTLE_MS = (10, 20, 30, 40, 50)
+"""Settle values recalibration may try (ADR-0060). On disc-01 with unchanged
+contacts, 2026-10-07: 10 ms 7.3 %, 30 ms 6.5 %, 100 ms 13.9 % reciprocity --
+longer dwell polarises the screws, so the old ramp to 200 ms moved the wrong way."""
+
+NOISE_LIMIT_PERCENT = 3.0
+"""Median frame-to-frame pair spread above which the next attempt averages more
+before it changes settle (ADR-0058, ADR-0060). Every run that imaged well in the
+saline tank sat near 1 %."""
+
+FRAMES_CEILING = 16
+DAC_BACKOFF = 0.9
+"""One lower-current attempt from the best settle: eases polarisation."""
+
+ADAPTIVE_MAX_ATTEMPTS = 6
+"""A frame takes about a minute; six attempts is about two hours at most."""
 
 MS_PER_SAMPLE = 8.3
 """Measured on 2026-10-06: 64 s per 216-record frame at settle 30 / samples 32."""
 
 
-def recalibration_ladder(settings: UiSettings) -> list[UiSettings]:
-    """Recalibration profiles, varied in every capture parameter (ADR-0042).
+def _attempt_key(settings: UiSettings) -> tuple:
+    return (settings.settle_ms, settings.samples, settings.frames, settings.dac)
 
-    Settle ramps 10 -> 200 ms; samples, warmup, frames and DAC vary alongside so
-    that consecutive attempts do not repeat the same noise mechanism. Pattern,
+
+def next_settings(
+    start: UiSettings, tried: Sequence[tuple[UiSettings, "GateReport"]]
+) -> UiSettings | None:
+    """The next recalibration attempt, chosen from what the earlier ones measured.
+
+    ``tried`` is (settings, gate report) per finished attempt, oldest first.
+    From the attempt with the lowest median reciprocity so far: if its noise is
+    above ``NOISE_LIMIT_PERCENT``, average more at the same settle; otherwise try
+    the nearest untried settle in ``WOOD_SETTLE_MS``; then one lower-DAC attempt.
+    Returns None when nothing untried is left or the cap is reached. Pattern,
     current range and electrode mapping never change -- those change what is
-    measured, not how well.
+    measured, not how well (ADR-0060).
     """
     from dataclasses import replace
 
-    ladder: list[UiSettings] = []
-    seen: set[tuple] = set()
-    for settle, samples, warmup, frames, dac_frac in zip(
-        SETTLE_RAMP_MS, SAMPLES_RAMP, WARMUP_RAMP, FRAMES_RAMP, DAC_STEPS
-    ):
-        dac = min(int(round(settings.dac * dac_frac)), settings.max_dac_code())
-        key = (settle, min(samples, SAMPLES_CEILING), warmup, frames, dac)
-        if key in seen:
-            continue
-        seen.add(key)
-        ladder.append(
-            replace(
-                settings,
-                settle_ms=settle,
-                samples=min(samples, SAMPLES_CEILING),
-                warmup_frames=warmup,
-                frames=frames,
-                dac=dac,
-            ).validate()
-        )
-    return ladder
+    if not tried:
+        return start
+    if len(tried) >= ADAPTIVE_MAX_ATTEMPTS:
+        return None
+
+    def recip(item):
+        value = item[1].reciprocity_percent
+        return float("inf") if value is None else value
+
+    best, report = min(tried, key=recip)
+    seen = {_attempt_key(s) for s, _ in tried}
+    candidates: list[UiSettings] = []
+
+    if report.noise_relative_percent is not None and report.noise_relative_percent > NOISE_LIMIT_PERCENT:
+        candidates.append(replace(
+            best,
+            samples=SAMPLES_CEILING,
+            frames=min(FRAMES_CEILING, best.frames + 4),
+            warmup_frames=best.warmup_frames + 5,
+        ))
+    for settle in sorted(WOOD_SETTLE_MS, key=lambda s: (abs(s - best.settle_ms), s)):
+        candidates.append(replace(best, settle_ms=settle))
+    candidates.append(replace(
+        best, dac=min(int(round(best.dac * DAC_BACKOFF)), best.max_dac_code())
+    ))
+
+    for candidate in candidates:
+        if _attempt_key(candidate) not in seen:
+            return candidate.validate()
+    return None
 
 
 def estimated_minutes(settings: UiSettings, records: int = 216) -> float:
@@ -364,33 +391,36 @@ class Attempt:
 
 def acquire_until_pass(
     capture: Callable[[UiSettings], list],
-    candidates: Sequence[UiSettings],
-    rounds: int = 1,
+    start: UiSettings,
     on_attempt: Callable[[int, Attempt], None] | None = None,
+    max_attempts: int = ADAPTIVE_MAX_ATTEMPTS,
 ) -> tuple[list[Attempt], Attempt | None]:
-    """Continuous recalibration: re-acquire with the next profile until the gates pass.
+    """Continuous recalibration: re-acquire until the gates pass (ADR-0060).
 
     ``capture(settings)`` configures the instrument, warms up and returns the
-    recorded frames. Profiles are tried in order, cycling ``rounds`` times; the
-    first passing attempt ends the loop. Returns every attempt and the passing one.
+    recorded frames. ``start`` runs first; each later attempt is chosen by
+    ``next_settings`` from the earlier results. The first passing attempt ends
+    the loop. Returns every attempt and the passing one.
     """
     attempts: list[Attempt] = []
-    number = 0
     history: list[tuple[GateReport, tuple]] = []
-    for _ in range(rounds):
-        for candidate in candidates:
-            number += 1
-            frames = capture(candidate)
-            result, noise, report = evaluate(frames, candidate)
-            attempt = Attempt(candidate, frames, result, noise, report)
-            attempts.append(attempt)
-            if on_attempt is not None:
-                on_attempt(number, attempt)
-            if report.passed:
-                return attempts, attempt
-            history.append((report, contact_fault(frames)))
-            if stop_reason(history):
-                return attempts, None
+    tried: list[tuple[UiSettings, GateReport]] = []
+    while len(attempts) < max_attempts:
+        candidate = next_settings(start, tried)
+        if candidate is None:
+            break
+        frames = capture(candidate)
+        result, noise, report = evaluate(frames, candidate)
+        attempt = Attempt(candidate, frames, result, noise, report)
+        attempts.append(attempt)
+        tried.append((candidate, report))
+        if on_attempt is not None:
+            on_attempt(len(attempts), attempt)
+        if report.passed:
+            return attempts, attempt
+        history.append((report, contact_fault(frames)))
+        if stop_reason(history):
+            return attempts, None
     return attempts, None
 
 

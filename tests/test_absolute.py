@@ -58,26 +58,81 @@ class SolveAbsoluteTests(unittest.TestCase):
             absolute.solve_absolute(np.full_like(v, np.nan), protocol)
 
 
-class RecalibrationLadderTests(unittest.TestCase):
-    def _coconut(self):
-        from tree_ert.settings import UiSettings, preset_by_name
+def _coconut(**changes):
+    from dataclasses import replace
 
-        return preset_by_name("Coconut").apply_to(UiSettings(port="X"))
+    from tree_ert.settings import UiSettings, preset_by_name
 
-    def test_settle_ramps_and_every_parameter_varies(self):
-        ladder = absolute.recalibration_ladder(self._coconut())
-        self.assertEqual([s.settle_ms for s in ladder], [10, 30, 50, 75, 100, 150, 200])
-        for field in ("samples", "warmup_frames", "frames", "dac"):
-            self.assertGreater(len({getattr(s, field) for s in ladder}), 1, field)
+    return replace(preset_by_name("Coconut").apply_to(UiSettings(port="X")), **changes)
+
+
+def _report(recip, noise=1.0, passed=False):
+    return absolute.GateReport(recip, noise, None, () if passed else ("x",))
+
+
+class NextSettingsTests(unittest.TestCase):
+    """ADR-0060: the next attempt is chosen from what the previous ones measured."""
+
+    def test_first_attempt_is_the_operators_settings(self):
+        start = _coconut()
+        self.assertEqual(absolute.next_settings(start, []), start)
+
+    def test_noisy_run_averages_more_at_the_same_settle(self):
+        start = _coconut(samples=16, frames=10)
+        step = absolute.next_settings(start, [(start, _report(12.0, noise=7.9))])
+        self.assertEqual(step.settle_ms, start.settle_ms)
+        self.assertEqual(step.samples, absolute.SAMPLES_CEILING)
+        self.assertGreater(step.frames, start.frames)
+
+    def test_quiet_reciprocity_failure_moves_settle_within_the_wood_range(self):
+        start = _coconut(settle_ms=30)
+        step = absolute.next_settings(start, [(start, _report(21.7))])
+        self.assertNotEqual(step.settle_ms, 30)
+        self.assertIn(step.settle_ms, absolute.WOOD_SETTLE_MS)
+
+    def test_climbs_from_the_best_attempt_not_the_latest(self):
+        # disc-01, 2026-10-07: 30 ms 6.5 % beat 10 ms 7.3 % and 100 ms 13.9 %.
+        start = _coconut(settle_ms=30)
+        tried = [
+            (start, _report(16.0)),
+            (_coconut(settle_ms=20), _report(25.0)),
+        ]
+        step = absolute.next_settings(start, tried)
+        self.assertEqual(step.settle_ms, 40)
+
+    def test_settle_never_leaves_the_wood_range(self):
+        start = _coconut(settle_ms=100)
+        tried = [(start, _report(13.9))]
+        for _ in range(absolute.ADAPTIVE_MAX_ATTEMPTS):
+            step = absolute.next_settings(start, tried)
+            if step is None:
+                break
+            self.assertLessEqual(step.settle_ms, max(absolute.WOOD_SETTLE_MS))
+            tried.append((step, _report(20.0)))
+
+    def test_never_repeats_and_stops_at_the_cap(self):
+        start = _coconut()
+        tried = []
+        while (step := absolute.next_settings(start, tried)) is not None:
+            self.assertNotIn(step, [s for s, _ in tried])
+            tried.append((step, _report(20.0)))
+        self.assertLessEqual(len(tried), absolute.ADAPTIVE_MAX_ATTEMPTS)
 
     def test_never_exceeds_firmware_or_range_ceilings(self):
-        base_settings = self._coconut()
-        for step in absolute.recalibration_ladder(base_settings):
+        start = _coconut(samples=32, frames=16)
+        tried = []
+        while (step := absolute.next_settings(start, tried)) is not None:
             self.assertLessEqual(step.samples, absolute.SAMPLES_CEILING)
-            self.assertLessEqual(step.dac, base_settings.max_dac_code())
-            self.assertGreaterEqual(step.frames, 4)
-            self.assertEqual(step.pattern, base_settings.pattern)
-            self.assertEqual(step.current_range, base_settings.current_range)
+            self.assertLessEqual(step.dac, start.max_dac_code())
+            self.assertLessEqual(step.frames, absolute.FRAMES_CEILING)
+            self.assertEqual(step.pattern, start.pattern)
+            self.assertEqual(step.current_range, start.current_range)
+            tried.append((step, _report(20.0, noise=8.0)))
+
+
+class RecalibrationTimingTests(unittest.TestCase):
+    def _coconut(self):
+        return _coconut()
 
     def test_time_estimate_matches_measured_preset(self):
         # 2026-10-06: 64 s per frame at settle 30 / samples 32.
@@ -129,37 +184,39 @@ class AcquireUntilPassTests(unittest.TestCase):
     def _report(self, passed):
         return absolute.GateReport(None, None, None, () if passed else ("bad",))
 
-    def test_stops_at_first_pass_and_cycles_rounds(self):
+    def test_stops_at_first_pass(self):
         verdicts = iter([False, False, True])
         original = absolute.evaluate
         absolute.evaluate = lambda frames, s: (None, None, self._report(next(verdicts)))
         try:
             seen = []
             attempts, passed = absolute.acquire_until_pass(
-                lambda s: [], ["a", "b"], rounds=2, on_attempt=lambda n, a: seen.append(n)
+                lambda s: [], _coconut(), on_attempt=lambda n, a: seen.append(n)
             )
         finally:
             absolute.evaluate = original
         self.assertEqual(seen, [1, 2, 3])
-        self.assertEqual(passed.settings, "a")
-        self.assertEqual(len(attempts), 3)
+        self.assertEqual(passed.settings, attempts[2].settings)
+        self.assertEqual(attempts[0].settings, _coconut())
 
     def test_stops_after_repeated_contact_faults(self):
         original, original_fault = absolute.evaluate, absolute.contact_fault
         absolute.evaluate = lambda frames, s: (None, None, self._report(False))
         absolute.contact_fault = lambda frames: ((1, 50.0),)
         try:
-            attempts, passed = absolute.acquire_until_pass(lambda s: [], list("abcdef"))
+            attempts, passed = absolute.acquire_until_pass(lambda s: [], _coconut())
         finally:
             absolute.evaluate, absolute.contact_fault = original, original_fault
         self.assertIsNone(passed)
         self.assertEqual(len(attempts), absolute.CONTACT_FAULT_STREAK)
 
-    def test_returns_none_when_ladder_exhausted(self):
+    def test_returns_none_when_attempts_exhausted(self):
         original = absolute.evaluate
         absolute.evaluate = lambda frames, s: (None, None, self._report(False))
         try:
-            attempts, passed = absolute.acquire_until_pass(lambda s: [], ["a", "b"], rounds=2)
+            attempts, passed = absolute.acquire_until_pass(
+                lambda s: [], _coconut(), max_attempts=4
+            )
         finally:
             absolute.evaluate = original
         self.assertIsNone(passed)
