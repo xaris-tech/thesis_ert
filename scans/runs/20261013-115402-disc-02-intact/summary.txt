@@ -1,0 +1,4 @@
+Frames captured: 0
+Reciprocity: no reciprocal pairs captured
+Noise floor: needs at least 2 frames
+absolute: REFUSED: reciprocity could not be measured (no reciprocal pairs); absolute solve failed
