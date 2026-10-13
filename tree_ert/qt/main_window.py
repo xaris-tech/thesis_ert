@@ -940,7 +940,7 @@ class MainWindow(QMainWindow):
         sig = f"{report.significance:.1f}x" if report.significance is not None else "n/a"
         message = (
             f"sigma0 {result.sigma0:.3g} mS  |  peak {result.peak_value:+.3g} at "
-            f"{result.peak_angle_deg:.0f} deg  |  misfit {result.residual_percent:.1f}%"
+            f"{result.peak_angle_deg:.0f} deg  |  {result.trough_text()}  |  misfit {result.residual_percent:.1f}%"
             f"  |  significance {sig}"
         )
         if report.passed:

@@ -667,6 +667,8 @@ INDEX_COLUMNS = [
     "absolute_sigma0_ms",
     "absolute_misfit_percent",
     "absolute_gate",
+    "absolute_trough_angle_deg",
+    "absolute_trough_electrodes",
 ]
 
 

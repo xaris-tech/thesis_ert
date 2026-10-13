@@ -163,6 +163,7 @@ def main(argv: list[str] | None = None) -> int:
                         absolute_sigma0_ms=result.sigma0 if result else None,
                         absolute_misfit_percent=result.residual_percent if result else None,
                         absolute_gate="pass" if report.passed else "; ".join(report.reasons),
+                        **absolute.trough_index_fields(result),
                     ),
                 )
                 recorder.close()

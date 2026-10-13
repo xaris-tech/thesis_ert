@@ -38,6 +38,26 @@ class SolveAbsoluteTests(unittest.TestCase):
         self.assertLess(min(angle, 360.0 - angle), 30.0)
         self.assertLess(result.residual_percent, absolute.MISFIT_GATE_PERCENT)
 
+    def test_strong_void_is_located_by_the_trough_not_the_peak(self):
+        # ADR-0061: a void lowers sigma0, so the largest |sigma - sigma0| is a
+        # positive overshoot beside the void. The trough is what finds it.
+        hole = np.radians(105.0)
+
+        def perm(c):
+            p = np.ones(len(c))
+            p[np.hypot(c[:, 0] - 0.6 * np.cos(hole), c[:, 1] - 0.6 * np.sin(hole)) < 0.25] = 0.05
+            return p
+
+        protocol, _, v = _synthetic(perm)
+        result = absolute.solve_absolute(v, protocol)
+        def error(angle):
+            return abs((angle - 105.0 + 180.0) % 360.0 - 180.0)
+
+        self.assertLess(result.trough_value, 0.0)
+        self.assertLess(error(result.trough_angle_deg), 20.0)
+        # The behaviour ADR-0061 exists for: the peak alone misplaces a void.
+        self.assertGreater(error(result.peak_angle_deg), 20.0)
+
     def test_sign_flip_is_detected_not_imaged(self):
         protocol, _, v = _synthetic(lambda c: np.full(len(c), 2.0))
         result = absolute.solve_absolute(-v, protocol)
@@ -56,6 +76,70 @@ class SolveAbsoluteTests(unittest.TestCase):
         protocol, _, v = _synthetic(lambda c: np.full(len(c), 2.0))
         with self.assertRaises(ValueError):
             absolute.solve_absolute(np.full_like(v, np.nan), protocol)
+
+
+class TroughLobeTests(unittest.TestCase):
+    """ADR-0062: the trough is a connected lobe, and says which electrodes it touches."""
+
+    # A strip of four triangles; node 0 and node 5 are electrodes.
+    #   0---2---4
+    #   | / | / |
+    #   1---3---5
+    NODES = np.array([[0, 1], [0, 0], [1, 1], [1, 0], [2, 1], [2, 0]], dtype=float)
+    ELEMENTS = np.array([[0, 1, 2], [1, 3, 2], [2, 3, 4], [3, 5, 4]])
+
+    def test_lobe_is_the_connected_region_around_the_minimum(self):
+        lobe = absolute.trough_lobe(
+            np.array([-1.0, -0.8, 0.0, -0.9]), self.ELEMENTS, self.NODES, np.array([0, 5])
+        )
+        # Element 3 is deep enough but not connected through element 2.
+        self.assertEqual(lobe.elements, (0, 1))
+        self.assertEqual(lobe.electrodes, (0,))
+
+    def test_interior_lobe_touches_no_electrode(self):
+        lobe = absolute.trough_lobe(
+            np.array([0.0, -1.0, -0.6, 0.0]), self.ELEMENTS, self.NODES, np.array([0, 5])
+        )
+        self.assertEqual(lobe.elements, (1, 2))
+        self.assertEqual(lobe.electrodes, ())
+
+    def test_no_negative_value_means_no_trough(self):
+        self.assertIsNone(
+            absolute.trough_lobe(np.zeros(4), self.ELEMENTS, self.NODES, np.array([0, 5]))
+        )
+
+
+class DisplayScaleTests(unittest.TestCase):
+    """ADR-0061: one spike must not flatten the rest of the image to grey."""
+
+    def test_log_ratio_and_clipped_scale(self):
+        sigma = np.full(100, 2.0)
+        sigma[:10] = 3.0   # a real 1.5x region
+        sigma[-1] = 74.0   # one 37x spike
+        image, noise, scale, clipped, _ = absolute.display_values(
+            sigma, 2.0, np.zeros(100)
+        )
+        np.testing.assert_allclose(image[:10], np.log10(1.5))
+        self.assertEqual(clipped, 1)
+        # The 1.5x region spans a visible share of the scale, not ~1 %.
+        self.assertGreater(np.log10(1.5) / scale, 0.5)
+        np.testing.assert_allclose(noise, 0.0)
+
+    def test_noise_is_first_order_log_of_the_split_half_difference(self):
+        sigma = np.full(10, 2.0)
+        _, noise, _, _, _ = absolute.display_values(sigma, 2.0, np.full(10, 0.02))
+        np.testing.assert_allclose(noise, 0.01 / np.log(10.0))
+
+    def test_huge_noise_saturates_its_panel_instead_of_flattening_the_image(self):
+        # ADR-0063, run 20261013-175019-disc2: noise at three contacts reached
+        # +-10 in log units and stretched the shared scale until the image was pale.
+        sigma = np.full(100, 2.0)
+        sigma[:10] = 3.0
+        noise = np.zeros(100)
+        noise[-5:] = 1e10
+        _, _, scale, _, noise_clipped = absolute.display_values(sigma, 2.0, noise)
+        self.assertAlmostEqual(scale, np.log10(1.5))
+        self.assertEqual(noise_clipped, 5)
 
 
 def _coconut(**changes):

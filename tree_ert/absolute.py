@@ -30,6 +30,7 @@ do not measure. That limitation is stated in ADR-0041 and on every figure.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from functools import cached_property
 from pathlib import Path
 from typing import Callable, Sequence
 
@@ -164,6 +165,67 @@ and sap all sit inside that range; outside it the value is a solver runaway, not
 a material (2026-10-06, disc-08 attempt 3 peaked at 7e17 x sigma0)."""
 
 
+TROUGH_LOBE_FRACTION = 0.5
+"""Elements at or below this fraction of the deepest log(sigma/sigma0), and
+edge-connected to it, form the trough lobe. Half of peak, as in ADR-0055."""
+
+
+@dataclass(frozen=True)
+class TroughLobe:
+    angle_deg: float
+    """Weighted centroid angle of the lobe, mesh convention (E1 at 180 deg)."""
+    radius: float
+    elements: tuple[int, ...]
+    electrodes: tuple[int, ...]
+    """0-based electrodes whose node lies on the lobe. Non-empty means the
+    trough cannot be told apart from a contact fault at that electrode."""
+
+
+def _edges(tri):
+    a, b, c = (int(n) for n in tri)
+    return ((min(a, b), max(a, b)), (min(b, c), max(b, c)), (min(a, c), max(a, c)))
+
+
+def trough_lobe(
+    values: np.ndarray, elements: np.ndarray, nodes: np.ndarray, electrode_nodes: np.ndarray
+) -> TroughLobe | None:
+    """The connected low-conductivity region around the deepest element (ADR-0062).
+
+    ``values`` are per-element log(sigma/sigma0). Elements are connected when
+    they share an edge. None when nothing is below sigma0.
+    """
+    values = np.asarray(values, dtype=float)
+    seed = int(np.argmin(values))
+    if values[seed] >= 0.0:
+        return None
+    deep = values <= TROUGH_LOBE_FRACTION * values[seed]
+    by_edge: dict[tuple[int, int], list[int]] = {}
+    for index, tri in enumerate(elements):
+        for edge in _edges(tri):
+            by_edge.setdefault(edge, []).append(index)
+    member, stack = {seed}, [seed]
+    while stack:
+        for edge in _edges(elements[stack.pop()]):
+            for other in by_edge[edge]:
+                if deep[other] and other not in member:
+                    member.add(other)
+                    stack.append(other)
+    lobe = np.array(sorted(member))
+    corners = np.asarray(nodes, dtype=float)[np.asarray(elements)[lobe]][:, :, :2]
+    centres = corners.mean(axis=1)
+    edge1, edge2 = corners[:, 1] - corners[:, 0], corners[:, 2] - corners[:, 0]
+    area = 0.5 * np.abs(edge1[:, 0] * edge2[:, 1] - edge1[:, 1] * edge2[:, 0])
+    weight = -values[lobe] * area
+    cx, cy = (weight[:, None] * centres).sum(axis=0) / weight.sum()
+    on_lobe = set(np.asarray(elements)[lobe].ravel().tolist())
+    return TroughLobe(
+        angle_deg=float(np.degrees(np.arctan2(cy, cx)) % 360.0),
+        radius=float(np.hypot(cx, cy)),
+        elements=tuple(int(i) for i in lobe),
+        electrodes=tuple(i for i, n in enumerate(electrode_nodes) if int(n) in on_lobe),
+    )
+
+
 @dataclass(frozen=True)
 class AbsoluteResult:
     sigma: np.ndarray
@@ -184,6 +246,9 @@ class AbsoluteResult:
     kept_pairs: int
     total_pairs: int
     centres: np.ndarray
+    nodes: np.ndarray
+    elements: np.ndarray
+    electrode_nodes: np.ndarray
 
     @property
     def structure(self) -> np.ndarray:
@@ -200,7 +265,38 @@ class AbsoluteResult:
 
     @property
     def peak_angle_deg(self) -> float:
-        x, y = self.centres[self.peak_index][:2]
+        return self._angle(self.peak_index)
+
+    @property
+    def trough_value(self) -> float:
+        """Most negative sigma - sigma0, mS. A void lowers sigma0, so its largest
+        |structure| is a positive overshoot beside it; the trough is what
+        locates a void or decay (ADR-0061)."""
+        return float(np.min(self.structure))
+
+    @cached_property
+    def trough(self) -> TroughLobe | None:
+        """The connected trough region and the electrodes it touches (ADR-0062)."""
+        return trough_lobe(
+            np.log(self.sigma / self.sigma0), self.elements, self.nodes, self.electrode_nodes
+        )
+
+    @property
+    def trough_angle_deg(self) -> float | None:
+        return self.trough.angle_deg if self.trough else None
+
+    def trough_text(self) -> str:
+        lobe = self.trough
+        if lobe is None:
+            return "no trough"
+        text = f"trough {self.trough_value:+.3g} mS, lobe at {lobe.angle_deg:.0f} deg"
+        if lobe.electrodes:
+            names = ",".join(f"E{i + 1}" for i in lobe.electrodes)
+            text += f" (touches {names}: may be contact)"
+        return text
+
+    def _angle(self, index: int) -> float:
+        x, y = self.centres[index][:2]
         return float(np.degrees(np.arctan2(y, x)) % 360.0)
 
 
@@ -287,6 +383,9 @@ def solve_absolute(
         kept_pairs=int(kept.sum()),
         total_pairs=int(vector.size),
         centres=np.mean(eit_mesh.node[eit_mesh.element], axis=1),
+        nodes=np.asarray(eit_mesh.node),
+        elements=np.asarray(eit_mesh.element),
+        electrode_nodes=np.asarray(eit_mesh.el_pos),
     )
 
 
@@ -458,6 +557,41 @@ def contact_fault(frames: Sequence[unified.UnifiedFrame]) -> tuple[tuple[int, fl
         return ()
 
 
+def trough_index_fields(result: AbsoluteResult | None) -> dict:
+    """index.csv columns for the trough lobe (ADR-0062)."""
+    lobe = result.trough if result is not None else None
+    return {
+        "absolute_trough_angle_deg": lobe.angle_deg if lobe else None,
+        "absolute_trough_electrodes": (
+            " ".join(f"E{i + 1}" for i in lobe.electrodes) if lobe else None
+        ),
+    }
+
+
+DISPLAY_PERCENTILE = 98.0
+"""Colour scale = this percentile of the image's |log10(sigma/sigma0)|, so a few
+contact spikes saturate instead of flattening the rest of the disc to grey
+(ADR-0061). The noise panel is drawn on the image's scale and saturates when it
+is larger (ADR-0063)."""
+
+
+def display_values(
+    sigma: np.ndarray, sigma0: float, noise: np.ndarray
+) -> tuple[np.ndarray, np.ndarray, float, int, int]:
+    """(image, noise, scale, image clipped, noise clipped) in log10(sigma/sigma0).
+
+    The split-half noise is a difference of conductances; it is converted to
+    log units to first order, noise / (sigma ln 10). Display only: the gates
+    and the saved arrays stay in mS.
+    """
+    image = np.log10(sigma / sigma0)
+    noise_log = np.asarray(noise) / (sigma * np.log(10.0))
+    scale = max(float(np.percentile(np.abs(image), DISPLAY_PERCENTILE)), 1e-6)
+    clipped = int(np.count_nonzero(np.abs(image) > scale))
+    noise_clipped = int(np.count_nonzero(np.abs(noise_log) > scale))
+    return image, noise_log, scale, clipped, noise_clipped
+
+
 def save_absolute(
     attempt: Attempt,
     image_path: Path,
@@ -465,7 +599,7 @@ def save_absolute(
     title: str,
     thickness_mm: float | None = None,
 ) -> None:
-    """Two panels on one scale: structure (sigma - sigma0) and the noise image."""
+    """Two panels on one clipped log scale: log10(sigma/sigma0) and the noise image (ADR-0061)."""
     import matplotlib
 
     matplotlib.use("Agg")
@@ -478,12 +612,14 @@ def save_absolute(
     eit_mesh, _ = base.create_solver(protocol)
     pts, tri = eit_mesh.node, eit_mesh.element
     noise = attempt.noise if attempt.noise is not None else np.zeros_like(result.sigma)
-    scale = max(float(np.max(np.abs(result.structure))), float(np.max(np.abs(noise))), 1e-12)
+    image, noise_log, scale, clipped, noise_clipped = display_values(
+        result.sigma, result.sigma0, noise
+    )
 
     figure, axes = plt.subplots(1, 2, figsize=(11, 5.2))
     for ax, values, name in (
-        (axes[0], result.structure, "sigma - sigma0 (image)"),
-        (axes[1], noise, "split-half noise (control)"),
+        (axes[0], image, "log10(sigma / sigma0) (image)"),
+        (axes[1], noise_log, "split-half noise (control)"),
     ):
         mappable = ax.tripcolor(
             pts[:, 0], pts[:, 1], tri, values, shading="flat",
@@ -494,7 +630,10 @@ def save_absolute(
         ax.axis("off")
         for index, x, y in base.electrode_label_positions(eit_mesh):
             ax.text(x, y, f"E{index + 1}", ha="center", va="center", fontsize=8)
-    figure.colorbar(mappable, ax=axes, shrink=0.8, label="sheet conductance, mS")
+    figure.colorbar(
+        mappable, ax=axes, shrink=0.8, extend="both",
+        label="log10(sigma / sigma0): red less, blue more conductive",
+    )
 
     report = attempt.report
     bulk = f"sigma0 = {result.sigma0:.4g} mS sheet"
@@ -505,8 +644,10 @@ def save_absolute(
     recip = f"{report.reciprocity_percent:.1f}%" if report.reciprocity_percent is not None else "n/a"
     figure.suptitle(
         f"{title}\n{bulk}  |  peak {result.peak_value:+.3g} mS at {result.peak_angle_deg:.0f} deg"
-        f"  |  significance {sig}  |  reciprocity {recip}  |  misfit {result.residual_percent:.1f}%"
-        f"\n{verdict}  |  circular point-electrode model (ADR-0041)",
+        f"  |  {result.trough_text()}"
+        f"\nsignificance {sig}  |  reciprocity {recip}  |  misfit {result.residual_percent:.1f}%"
+        f"\n{verdict}  |  colour clipped at {DISPLAY_PERCENTILE:.0f}th percentile"
+        f" ({clipped} image, {noise_clipped} noise elements saturated)  |  circular point-electrode model (ADR-0041)",
         fontsize=9,
     )
     image_path.parent.mkdir(parents=True, exist_ok=True)
@@ -522,6 +663,13 @@ def save_absolute(
         residual_percent=result.residual_percent,
         peak_value=result.peak_value,
         peak_angle_deg=result.peak_angle_deg,
+        trough_value=result.trough_value,
+        trough_angle_deg=(
+            result.trough_angle_deg if result.trough_angle_deg is not None else np.nan
+        ),
+        trough_electrodes=np.asarray(
+            result.trough.electrodes if result.trough else (), dtype=int
+        ),
         dropped_indexes=np.asarray(result.dropped_indexes, dtype=int),
         significance=report.significance if report.significance is not None else np.nan,
         reciprocity_percent=(

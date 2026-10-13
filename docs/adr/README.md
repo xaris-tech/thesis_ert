@@ -105,6 +105,9 @@ one costs a re-derivation.
 | [0058](0058-validity-criteria-for-a-hole-claim.md) | A hole claim needs reciprocity ≤15 %, noise ≤3 % in both runs, an untouched repeat <2 and significance ≥3 | Proposed |
 | [0059](0059-standing-tree-readiness-and-protocol.md) | Standing trees wait on a disc rotation test; fixed electrode, scan and ground-truth protocol | Proposed |
 | [0060](0060-adaptive-recalibration-from-measured-results.md) | Recalibration picks each attempt from earlier results; settle 10-50 ms, max 6 attempts | Accepted |
+| [0061](0061-absolute-display-log-scale-and-trough.md) | Absolute image on a clipped log10(sigma/sigma0) scale; report the trough beside the peak | Accepted |
+| [0062](0062-trough-is-a-connected-lobe-flagged-at-electrodes.md) | Trough = half-depth connected lobe centroid; flagged "may be contact" when it touches an electrode | Accepted |
+| [0063](0063-absolute-colour-scale-from-the-image-only.md) | Absolute colour scale from the image only; the noise panel saturates when larger | Accepted |
 | [0056](0056-correct-run-conditions-in-extra-never-overwrite.md) | Correct recorded conditions with a dated key in `extra`; original fields stay as written | Accepted |
 | [0055](0055-measure-the-lobe-not-a-window.md) | Lobe connected-component centroid, no angular window; window choice was worth 12.3 deg | Accepted |
 | [0054](0054-the-centroid-angle-estimator-has-a-measured-bias.md) | Centroid window validated against injected offsets; -0.45 deg bias documented, not corrected in code | Accepted |

@@ -594,6 +594,7 @@ class CaptureWorker(QObject):
             "absolute_sigma0_ms": result.sigma0 if result else None,
             "absolute_misfit_percent": result.residual_percent if result else None,
             "absolute_gate": "pass" if report.passed else "; ".join(report.reasons),
+            **absolute.trough_index_fields(result),
         }
 
     def _capture(self, recorder: run_record.RunRecorder, count: int) -> list:
