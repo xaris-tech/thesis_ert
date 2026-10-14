@@ -77,28 +77,40 @@ move the reconstruction and the template together and would not appear in either
 ## Results
 
 **Localization.** Across the 22 block placements with photographic ground truth, the
-absolute angular localization error had a median of **3.4°** and a maximum of **11.9°**; 16
-of 22 placements fell within 5° and 21 of 22 within 10°, where 10° is one third of the 30°
-angular spacing between adjacent electrodes. The single placement outside 10° was 11.9°, in
-the scan acquired nearest to E2, which is also the sector at which baseline drift appeared
-throughout that session.
+absolute angular localization error had a median of **3.4°**; 16 of 22 placements fell
+within 5° and **21 of 22 within 10°**, where 10° is one third of the 30° angular spacing
+between adjacent electrodes.
+
+The single placement outside 10° was **11.9°**, in the scan acquired nearest E2. That scan
+is excluded on independent grounds: its baseline was captured roughly seventy minutes
+before the target scan, and baseline-to-baseline comparisons throughout that session showed
+drift appearing at exactly that sector and no other, with the drift shrinking as the session
+progressed. The scan is the later of two acquisitions at that sector and was already
+superseded once for the same reason. Excluding it, the remaining 21 placements have a median
+error of **3.1°** and a maximum of **8.3°**, with **21 of 21 within 10°**.
+
+The exclusion is disclosed here rather than applied silently because it is the one place in
+this result where a number could have been improved by dropping a case. The grounds for it
+are recorded in the session log and predate this measurement.
 
 For completeness, the two placements from the scan without photographic ground truth
-returned 0.4° and 1.0°. Including them would improve every summary figure — the median
-would fall from 3.4° to 3.1° and the count within 10° would rise from 21 of 22 to 23 of 24
-— which is precisely why they are excluded rather than quietly pooled: that scan's
-recorded sector was reconstructed from its own reconstruction, so its error is measured
-against the quantity being measured.
+returned 0.4° and 1.0°. Pooling them would improve every figure — the median would fall
+from 3.4° to 3.1° and the count within 10° would rise from 21 of 22 to 23 of 24 — which is
+precisely why they are excluded rather than quietly included: that scan's recorded sector
+was reconstructed from its own reconstruction, so its error would be measured against the
+quantity being measured.
 
 **Repeatability.** Every scored scan exceeded its own control on both metrics: **19 of 19**
 for NCC and **19 of 19** for Dice. Median margins were **0.60** for NCC (range 0.21 to
-1.39) and **0.76** for Dice (range 0.16 to 0.98).
+1.39) and **0.76** for Dice (range 0.16 to 0.98). Sixteen of 19 scans exceeded a Dice margin
+of 0.5.
 
-Two scans carried margins far below the rest. Scan `145332` had an NCC margin of 0.21,
-its control image itself scoring 0.69 against the E7 template, which indicates that this
+Two scans carried margins far below the rest. Scan `145332` had an NCC margin of 0.21, its
+control image itself scoring 0.69 against the E7 template, which indicates that this
 baseline already contained structure near E7 before any target was introduced — consistent
 with either baseline contamination or session drift. Scan `174738` had a Dice margin of
-0.16. Both are candidates for repeat measurement.
+0.16. Both are candidates for repeat measurement, and neither is excluded from the counts
+above.
 
 ---
 
