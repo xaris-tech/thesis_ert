@@ -292,7 +292,12 @@ class CaptureWorker(QObject):
                 ))
                 if not passed and self._last_absolute is not None:
                     history.append(
-                        (self._last_absolute.report, absolute.contact_fault(frames))
+                        (
+                            self._last_absolute.report,
+                            absolute.contact_fault(
+                                frames, settings.absolute_exclude_electrodes
+                            ),
+                        )
                     )
                     reason = absolute.stop_reason(history)
                     if reason:
@@ -364,6 +369,8 @@ class CaptureWorker(QObject):
             attempt = absolute.Attempt(settings, list(frames), result, noise, report)
             self._last_absolute = attempt
             verdict = "PASS" if report.passed else "REFUSED: " + "; ".join(report.reasons)
+            if result is not None:
+                verdict += absolute.excluded_text(settings, result)
             self.progress.emit(f"Absolute: {verdict}")
             if result is None:
                 return verdict

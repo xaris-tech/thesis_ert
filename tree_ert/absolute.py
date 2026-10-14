@@ -389,9 +389,35 @@ def solve_absolute(
     )
 
 
+def exclude_electrodes(
+    frames: Sequence[unified.UnifiedFrame], electrodes: Sequence[int]
+) -> list[unified.UnifiedFrame]:
+    """Frames without any record that drives or senses on ``electrodes`` (1-based).
+
+    The removed pairs become NaN rows, which the solver already drops (ADR-0002),
+    so leaving an electrode out costs its measurements and nothing else (ADR-0064).
+    """
+    from dataclasses import replace
+
+    excluded = {int(e) - 1 for e in electrodes}
+    if not excluded:
+        return list(frames)
+    return [
+        replace(
+            frame,
+            records=[
+                record for record in frame.records
+                if not excluded & {*record.i_pair, *record.v_pair}
+            ],
+        )
+        for frame in frames
+    ]
+
+
 def reconstruct_absolute(
     frames: Sequence[unified.UnifiedFrame], settings: UiSettings
 ) -> AbsoluteResult:
+    frames = exclude_electrodes(frames, settings.absolute_exclude_electrodes)
     protocol, _ = unified.protocol_and_command(settings.pattern)
     return solve_absolute(average_frame_vectors(frames, protocol, settings), protocol)
 
@@ -471,6 +497,9 @@ def evaluate(
     frames: Sequence[unified.UnifiedFrame], settings: UiSettings
 ) -> tuple[AbsoluteResult | None, np.ndarray | None, GateReport]:
     result = noise = None
+    # Filtered once here so the reciprocity gate judges the same records the
+    # solve uses; reconstruct_absolute filtering again is a no-op.
+    frames = exclude_electrodes(frames, settings.absolute_exclude_electrodes)
     try:
         result = reconstruct_absolute(frames, settings)
         noise = split_half_noise(frames, settings)
@@ -517,7 +546,7 @@ def acquire_until_pass(
             on_attempt(len(attempts), attempt)
         if report.passed:
             return attempts, attempt
-        history.append((report, contact_fault(frames)))
+        history.append((report, contact_fault(frames, candidate.absolute_exclude_electrodes)))
         if stop_reason(history):
             return attempts, None
     return attempts, None
@@ -549,9 +578,16 @@ def stop_reason(history: Sequence[tuple[GateReport, tuple]]) -> str | None:
     return None
 
 
-def contact_fault(frames: Sequence[unified.UnifiedFrame]) -> tuple[tuple[int, float], ...]:
-    """Electrodes flagged as suspect contacts (ADR-0032); empty if none or unscorable."""
+def contact_fault(
+    frames: Sequence[unified.UnifiedFrame], excluded: Sequence[int] = ()
+) -> tuple[tuple[int, float], ...]:
+    """Electrodes flagged as suspect contacts (ADR-0032); empty if none or unscorable.
+
+    Electrodes already left out of the absolute solve (``excluded``, 1-based)
+    are not reported: a known-bad channel must not stop recalibration (ADR-0064).
+    """
     try:
+        frames = exclude_electrodes(frames, excluded)
         return capture_view.session_summary(frames).suspect_electrodes
     except Exception:  # noqa: BLE001 - a scoring failure is not a contact verdict
         return ()
@@ -590,6 +626,14 @@ def display_values(
     clipped = int(np.count_nonzero(np.abs(image) > scale))
     noise_clipped = int(np.count_nonzero(np.abs(noise_log) > scale))
     return image, noise_log, scale, clipped, noise_clipped
+
+
+def excluded_text(settings: UiSettings, result: AbsoluteResult) -> str:
+    """Caption fragment naming electrodes left out of the solve (ADR-0064), or ''."""
+    if not settings.absolute_exclude_electrodes:
+        return ""
+    names = " ".join(f"E{e}" for e in settings.absolute_exclude_electrodes)
+    return f"  |  EXCLUDED {names}: {result.kept_pairs}/{result.total_pairs} pairs"
 
 
 def save_absolute(

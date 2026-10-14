@@ -309,3 +309,30 @@ class AcquireUntilPassTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ExcludeElectrodesTests(unittest.TestCase):
+    """ADR-0064: a known-faulty channel is left out of the absolute solve."""
+
+    def _frame(self):
+        record = unified.MeasurementRecord
+        return unified.UnifiedFrame(
+            frame_id=1, pattern="adjacent", dac_code=400, settle_ms=30, sample_count=16,
+            records=[
+                record("FWD", (0, 1), (2, 3), 1.0, 100.0, "OK"),   # drives on E1/E2
+                record("FWD", (4, 5), (6, 7), 1.0, 100.0, "OK"),   # clear of E1/E2
+                record("FWD", (4, 5), (1, 2), 1.0, 100.0, "OK"),   # senses on E2
+            ],
+        )
+
+    def test_records_touching_an_excluded_electrode_are_removed(self):
+        (kept,) = absolute.exclude_electrodes([self._frame()], (1, 2))
+        self.assertEqual([r.i_pair for r in kept.records], [(4, 5)])
+        self.assertEqual(kept.records[0].v_pair, (6, 7))
+
+    def test_nothing_excluded_leaves_frames_untouched(self):
+        frame = self._frame()
+        self.assertEqual(absolute.exclude_electrodes([frame], ()), [frame])
+
+    def test_contact_fault_ignores_excluded_electrodes(self):
+        self.assertEqual(absolute.contact_fault([self._frame()], (1, 2, 3, 4, 5, 6)), ())

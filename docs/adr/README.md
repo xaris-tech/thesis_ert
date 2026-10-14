@@ -108,6 +108,7 @@ one costs a re-derivation.
 | [0061](0061-absolute-display-log-scale-and-trough.md) | Absolute image on a clipped log10(sigma/sigma0) scale; report the trough beside the peak | Accepted |
 | [0062](0062-trough-is-a-connected-lobe-flagged-at-electrodes.md) | Trough = half-depth connected lobe centroid; flagged "may be contact" when it touches an electrode | Accepted |
 | [0063](0063-absolute-colour-scale-from-the-image-only.md) | Absolute colour scale from the image only; the noise panel saturates when larger | Accepted |
+| [0064](0064-exclude-faulty-channels-from-the-absolute-solve.md) | Exclude a known-faulty board channel (E1/E2) from the absolute solve; saline misfit 59 % to 11 % | Accepted |
 | [0056](0056-correct-run-conditions-in-extra-never-overwrite.md) | Correct recorded conditions with a dated key in `extra`; original fields stay as written | Accepted |
 | [0055](0055-measure-the-lobe-not-a-window.md) | Lobe connected-component centroid, no angular window; window choice was worth 12.3 deg | Accepted |
 | [0054](0054-the-centroid-angle-estimator-has-a-measured-bias.md) | Centroid window validated against injected offsets; -0.45 deg bias documented, not corrected in code | Accepted |

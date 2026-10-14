@@ -323,6 +323,17 @@ class SettingsPanel(QGroupBox):
         self.frames.setRange(1, 500)
         self.frames.setValue(max(settings.frames, 1))
 
+        # Absolute solve only (ADR-0064): capture and difference imaging are
+        # unchanged, so this is not a preset field and does not mark Custom.
+        self.absolute_exclude = QLineEdit(
+            ", ".join(str(e) for e in settings.absolute_exclude_electrodes)
+        )
+        self.absolute_exclude.setPlaceholderText("none, e.g. 1, 2")
+        self.absolute_exclude.setToolTip(
+            "Electrodes whose measurements the absolute image leaves out. For a "
+            "known-faulty board channel only: the image loses detail near them."
+        )
+
         layout.addRow("Port", port_row)
         layout.addRow("", self.demo)
         layout.addRow("Preset", self.preset)
@@ -334,6 +345,7 @@ class SettingsPanel(QGroupBox):
         layout.addRow("Samples", self.samples)
         layout.addRow("Warmup frames", self.warmup)
         layout.addRow("Capture frames", self.frames)
+        layout.addRow("Absolute: exclude", self.absolute_exclude)
         _tidy_form(layout)
 
         self._apply_dac_ceiling(self.current_range.currentText())
@@ -435,7 +447,18 @@ class SettingsPanel(QGroupBox):
             samples=self.samples.value(),
             warmup_frames=self.warmup.value(),
             frames=self.frames.value(),
+            absolute_exclude_electrodes=parse_electrode_list(self.absolute_exclude.text()),
         )
+
+
+def parse_electrode_list(text: str) -> tuple[int, ...]:
+    """'1, 2' or 'E1 E2' -> (1, 2). Unreadable parts are ignored, duplicates kept once."""
+    found: list[int] = []
+    for part in text.replace(";", ",").replace(" ", ",").split(","):
+        digits = part.strip().upper().removeprefix("E")
+        if digits.isdigit() and 1 <= int(digits) <= 12 and int(digits) not in found:
+            found.append(int(digits))
+    return tuple(found)
 
 
 class MainWindow(QMainWindow):

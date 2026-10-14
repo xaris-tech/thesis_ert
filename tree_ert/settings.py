@@ -90,6 +90,12 @@ class UiSettings:
     # every measured current, and therefore every transfer resistance, by a
     # constant the data itself gives no sign of. None means "not measured yet".
     expected_shunt_ohms: float | None = None
+    # Electrodes (1-based, as wired) whose measurements the absolute solve
+    # leaves out: every record that drives or senses on one of them. For a
+    # board channel known to be faulty, not for routine use -- the image loses
+    # resolution near the excluded electrodes (ADR-0064). Difference imaging
+    # and the capture itself are unaffected.
+    absolute_exclude_electrodes: tuple[int, ...] = ()
 
     @classmethod
     def default(cls) -> "UiSettings":
@@ -142,6 +148,11 @@ class UiSettings:
             raise ValueError("self_test_frames must be at least 2")
         if self.expected_shunt_ohms is not None and self.expected_shunt_ohms <= 0:
             raise ValueError("expected_shunt_ohms must be positive")
+        excluded = self.absolute_exclude_electrodes
+        if len(set(excluded)) != len(excluded) or any(not 1 <= e <= 12 for e in excluded):
+            raise ValueError("absolute_exclude_electrodes must be distinct electrodes 1-12")
+        if len(excluded) > 6:
+            raise ValueError("absolute_exclude_electrodes may name at most 6 electrodes")
         return self
 
 
@@ -167,6 +178,8 @@ def settings_from_dict(data: dict, default: UiSettings | None = None) -> UiSetti
             continue
         if name == "log_dir":
             updates[name] = Path(value)
+        elif name == "absolute_exclude_electrodes" and isinstance(value, list):
+            updates[name] = tuple(value)
         else:
             updates[name] = value
     try:
