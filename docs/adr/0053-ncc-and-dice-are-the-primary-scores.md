@@ -78,8 +78,9 @@ its own.
   not absolute localisation.** The template inherits the reconstruction's own behaviour,
   so a systematic bias in the pipeline would move both together and cancel. This is a
   property of validating a pipeline against itself, and it is why the *independent*
-  evidence — angle error against photographs, median 3.4°, max 9.9° — is the localisation
-  claim, and NCC is the reproducibility figure beside it.
+  evidence — the angular localization error against photographs, median 3.4°, max 11.9°
+  (ADR-0055) — is the localisation claim, and NCC is the reproducibility figure beside
+  it.
 - A reader who asks "what does an empty tank score?" gets an answer on the same line as
   every detection. That is the whole reason this ADR exists.
 - `ssim_eval.py` does not emit NCC or Dice yet, so `ssim_results.csv` does not carry

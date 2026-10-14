@@ -199,17 +199,28 @@ independent evidence for localisation is the angle error against the photographs
 `ssim_results.csv` is **wrong**, not merely stale — it was scored against masks at the
 wrong radius and size, and must be regenerated.
 
-The angle result (ADR-0055): n = 24 angled block placements, **median 3.07 deg, mean
-3.71 deg, max 11.87 deg, 18 of 24 within 5 deg and 23 of 24 within 10 deg**. The lobe
-centroid is thresholded, not windowed: the angular window it replaced was worth up to
-12.3 deg on a single placement, and the earlier "24 of 24 within 10 deg" was an
-artefact of that choice. The one placement outside 10 deg is run 165444 at E2, 11.9 deg
-- the drift-affected run. See photos/README.md for why that run is suspect.
+The angle result (ADR-0055), **all 24 block placements**: median 3.07 deg, mean 3.71,
+max 11.87 deg, 18 of 24 within 5 deg and 23 of 24 within 10 deg. The lobe centroid is
+thresholded, not windowed: the angular window it replaced was worth up to 12.3 deg on a
+single placement, and the earlier "24 of 24 within 10 deg" was an artefact of that choice.
+The one placement outside 10 deg is run 165444 at E2, 11.9 deg - the drift-affected run.
+See `photos/README.md` for why that run is suspect.
+
+**Two aggregations, both correct, and the difference is the exclusion.** The figure above
+counts every placement. The thesis text (`docs/thesis-fidelity-metrics.md`) reports the 22
+placements that have photographic ground truth — median 3.4 deg, 21 of 22 within 10 deg —
+because one scan's recorded sector was reconstructed from its own reconstruction and cannot
+be scored against itself. Both numbers appear; neither is the whole story.
 
 NCC 0.72 mean against a 0.03 control, with 19 of 19 runs clearing it (ADR-0053).
 
-Full table: `ssim_results.csv` (**needs regenerating**). Images beside their masks:
-`ssim_contact_sheet.png` (**also stale** — same masks).
+Full table: `ssim_results.csv`, regenerated. It carries the centroid and single-pixel
+angles, both angle-estimator spreads, and NCC and Dice **with their own empty-tank
+controls and margins** per run. Images beside their masks: `ssim_contact_sheet.png`.
+
+`photos/SSIM-REFERENCE.csv` and `photos/PHOTO-INDEX.csv` were written against the
+pre-fix whole-disc SSIM and no longer describe any metric the tool computes. Treat them as
+historical; `ssim_results.csv` supersedes both.
 
 Angle errors come from the pixel-grid wedge search. They differ by a few degrees from
 the UI's peak angle quoted in the single-block table above.
