@@ -1,0 +1,4 @@
+Frames captured: 10
+Reciprocity: median 4.8%  max 66.8%  sign flips 1/54
+Noise floor: median pair sd 0.00011 kohm (0.96%)  max 0.00102 kohm over 108 pairs
+absolute: PASS

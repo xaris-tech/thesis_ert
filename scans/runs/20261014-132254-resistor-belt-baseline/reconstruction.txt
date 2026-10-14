@@ -1,0 +1,8 @@
+CROSS-SPECIMEN BASELINE (unrecorded -> unrecorded) - shows specimen difference, not only defects
+peak -4.743e-03 at 211 deg (x=-0.73, y=-0.43)
+colour scale +/-4.743e-03  (auto-scaled to this image)
+pairs 108/108 kept  [ok]
+measurement noise floor 0.00002 kohm - a change below this is not a detection
+control peak +1.057e-02
+significance 0.45x the noise image
+baseline run: 20261014-130127-resistor-belt-baseline
