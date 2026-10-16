@@ -10369,3 +10369,59 @@
 ------------------------------------------------------------------------
 2026-10-14 21:01:03  Run 20261014-210102-disc-05-adjacent-dac620-st30-n32
 2026-10-14 21:06:59  [1/1] adjacent dac620  st30  n32  I med 551 uA | REFUSED: model misfit 56.8% > 15% | s0 7.04 peak 120 deg | 8.9 min | 20261014-210102-disc-05-adjacent-dac620-st30-n32
+
+------------------------------------------------------------------------
+2026-10-16 10:53:47  Run 20261016-105347-disc-02-matrix-adjacent-dac400-st10-n16
+2026-10-16 11:04:00  [1/12] adjacent dac400  st10  n16  I med 528 uA | REFUSED: model misfit 36.2% > 15% | s0 6.40 peak 120 deg | 11.6 min | 20261016-105347-disc-02-matrix-adjacent-dac400-st10-n16
+
+------------------------------------------------------------------------
+2026-10-16 11:06:33  Run 20261016-110633-disc-02-matrix-adjacent-dac400-st10-n32
+2026-10-16 11:14:31  [2/12] adjacent dac400  st10  n32  I med 523 uA | REFUSED: median reciprocity 21.2% > 15%; model misfit 64.5% > 15% | s0 8.17 peak 112 deg | 10.5 min | 20261016-110633-disc-02-matrix-adjacent-dac400-st10-n32
+
+------------------------------------------------------------------------
+2026-10-16 11:16:53  Run 20261016-111653-disc-02-matrix-adjacent-dac400-st30-n16
+2026-10-16 11:21:46  [3/12] adjacent dac400  st30  n16  I med 476 uA | REFUSED: median reciprocity 20.8% > 15%; model misfit 47.7% > 15% | s0 6.60 peak 112 deg | 7.3 min | 20261016-111653-disc-02-matrix-adjacent-dac400-st30-n16
+
+------------------------------------------------------------------------
+2026-10-16 11:25:51  Run 20261016-112551-disc-02-matrix-adjacent-dac400-st30-n32
+2026-10-16 11:34:13  [4/12] adjacent dac400  st30  n32  I med 474 uA | REFUSED: median reciprocity 23.2% > 15%; model misfit 63.4% > 15% | s0 7.69 peak 112 deg | 12.4 min | 20261016-112551-disc-02-matrix-adjacent-dac400-st30-n32
+
+------------------------------------------------------------------------
+2026-10-16 11:36:56  Run 20261016-113656-disc-02-matrix-adjacent-dac400-st50-n16
+2026-10-16 11:42:34  [5/12] adjacent dac400  st50  n16  I med 438 uA | REFUSED: median reciprocity 23.4% > 15%; model misfit 47.5% > 15% | s0 6.21 peak 112 deg | 8.4 min | 20261016-113656-disc-02-matrix-adjacent-dac400-st50-n16
+
+------------------------------------------------------------------------
+2026-10-16 11:47:01  Run 20261016-114701-disc-02-matrix-adjacent-dac400-st50-n32
+2026-10-16 11:56:12  [6/12] adjacent dac400  st50  n32  I med 440 uA | REFUSED: median reciprocity 27.6% > 15%; model misfit 61.1% > 15% | s0 6.92 peak 112 deg | 13.6 min | 20261016-114701-disc-02-matrix-adjacent-dac400-st50-n32
+
+------------------------------------------------------------------------
+2026-10-16 11:58:12  Run 20261016-115811-disc-02-matrix-adjacent-dac620-st10-n16
+2026-10-16 12:02:40  [7/12] adjacent dac620  st10  n16  I med 749 uA | REFUSED: median reciprocity 19.8% > 15%; model misfit 34.4% > 15% | s0 6.46 peak 114 deg | 6.5 min | 20261016-115811-disc-02-matrix-adjacent-dac620-st10-n16
+
+------------------------------------------------------------------------
+2026-10-16 12:06:24  Run 20261016-120624-disc-02-matrix-adjacent-dac620-st10-n32
+2026-10-16 12:14:03  [8/12] adjacent dac620  st10  n32  I med 750 uA | REFUSED: median reciprocity 21.8% > 15%; model misfit 45.6% > 15% | s0 7.25 peak 112 deg | 11.4 min | 20261016-120624-disc-02-matrix-adjacent-dac620-st10-n32
+
+------------------------------------------------------------------------
+2026-10-16 12:16:25  Run 20261016-121624-disc-02-matrix-adjacent-dac620-st30-n16
+2026-10-16 12:21:29  [9/12] adjacent dac620  st30  n16  I med 688 uA | REFUSED: median reciprocity 19.0% > 15%; model misfit 38.5% > 15% | s0 6.41 peak 114 deg | 7.4 min | 20261016-121624-disc-02-matrix-adjacent-dac620-st30-n16
+
+------------------------------------------------------------------------
+2026-10-16 12:25:36  Run 20261016-122534-disc-02-matrix-adjacent-dac620-st30-n32
+2026-10-16 12:33:55  [10/12] adjacent dac620  st30  n32  I med 696 uA | REFUSED: median reciprocity 20.0% > 15%; model misfit 48.9% > 15%; significance 1.23 < 2.0 | s0 7.29 peak 154 deg | 12.4 min | 20261016-122534-disc-02-matrix-adjacent-dac620-st30-n32
+
+------------------------------------------------------------------------
+2026-10-16 12:36:38  Run 20261016-123638-disc-02-matrix-adjacent-dac620-st50-n16
+2026-10-16 12:42:20  [11/12] adjacent dac620  st50  n16  I med 644 uA | REFUSED: model misfit 37.5% > 15% | s0 6.25 peak 154 deg | 8.4 min | 20261016-123638-disc-02-matrix-adjacent-dac620-st50-n16
+
+------------------------------------------------------------------------
+2026-10-16 12:46:46  Run 20261016-124646-disc-02-matrix-adjacent-dac620-st50-n32
+2026-10-16 12:56:20  [12/12] adjacent dac620  st50  n32  I med 657 uA | REFUSED: median reciprocity 24.0% > 15%; model misfit 48.9% > 15% | s0 7.08 peak 157 deg | 14.0 min | 20261016-124646-disc-02-matrix-adjacent-dac620-st50-n32
+
+------------------------------------------------------------------------
+2026-10-16 13:00:38  Run 20261016-130037-disc-02-matrix-adjacent-dac620-st10-n32
+2026-10-16 13:08:24  [1/2] adjacent dac620  st10  n32  I med 752 uA | REFUSED: median reciprocity 18.9% > 15%; model misfit 48.1% > 15% | s0 7.56 peak 154 deg | 11.5 min | 20261016-130037-disc-02-matrix-adjacent-dac620-st10-n32
+
+------------------------------------------------------------------------
+2026-10-16 13:12:08  Run 20261016-131208-disc-02-matrix-adjacent-dac620-st10-n32
+2026-10-16 13:19:54  [2/2] adjacent dac620  st10  n32  I med 750 uA | REFUSED: median reciprocity 18.4% > 15%; model misfit 49.0% > 15% | s0 7.64 peak 154 deg | 11.5 min | 20261016-131208-disc-02-matrix-adjacent-dac620-st10-n32

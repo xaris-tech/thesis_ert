@@ -667,7 +667,7 @@ def save_absolute(
     ):
         mappable = ax.tripcolor(
             pts[:, 0], pts[:, 1], tri, values, shading="flat",
-            cmap="RdBu", vmin=-scale, vmax=scale,
+            cmap="coolwarm", vmin=-scale, vmax=scale,
         )
         ax.set_title(name)
         ax.set_aspect("equal")
@@ -676,7 +676,7 @@ def save_absolute(
             ax.text(x, y, f"E{index + 1}", ha="center", va="center", fontsize=8)
     figure.colorbar(
         mappable, ax=axes, shrink=0.8, extend="both",
-        label="log10(sigma / sigma0): red less, blue more conductive",
+        label="log10(sigma / sigma0): blue less, red more conductive",
     )
 
     report = attempt.report
