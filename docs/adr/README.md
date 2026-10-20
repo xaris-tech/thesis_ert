@@ -111,6 +111,7 @@ one costs a re-derivation.
 | [0064](0064-exclude-faulty-channels-from-the-absolute-solve.md) | Exclude a known-faulty board channel (E1/E2) from the absolute solve; saline misfit 59 % to 11 % | Accepted |
 | [0065](0065-absolute-colour-matches-difference-images.md) | Absolute images use the difference-image colours: blue less, red more conductive | Accepted |
 | [0066](0066-accept-residual-e10-e12-board-leak.md) | Accept the residual ~10 µA E10–E12 board leak; open-circuit check every session; no specimens under ~300 µA | Accepted |
+| [0067](0067-proceed-to-disc-06-with-e1-e2-excluded.md) | Proceed to disc-06 drilled defect (E5–E7) with E1/E2 excluded; E1–E3 sector declared blind | Accepted |
 | [0056](0056-correct-run-conditions-in-extra-never-overwrite.md) | Correct recorded conditions with a dated key in `extra`; original fields stay as written | Accepted |
 | [0055](0055-measure-the-lobe-not-a-window.md) | Lobe connected-component centroid, no angular window; window choice was worth 12.3 deg | Accepted |
 | [0054](0054-the-centroid-angle-estimator-has-a-measured-bias.md) | Centroid window validated against injected offsets; -0.45 deg bias documented, not corrected in code | Accepted |
