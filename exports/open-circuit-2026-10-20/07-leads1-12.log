@@ -1,0 +1,6 @@
+round1 dac620 frame1 med     0.3 uA  max    12.5  nonOK 198 | E0:0 E1:0 E2:0 E3:0 E4:1 E5:0 E6:0 E7:0 E8:0 E9:6 E10:9 E11:3
+round1 dac620 frame2 med     0.3 uA  max    12.3  nonOK 198 | E0:0 E1:0 E2:0 E3:1 E4:1 E5:0 E6:0 E7:0 E8:0 E9:6 E10:8 E11:2
+round1 dac620 frame3 med     0.3 uA  max    12.4  nonOK 198 | E0:0 E1:0 E2:0 E3:1 E4:1 E5:0 E6:0 E7:0 E8:0 E9:6 E10:8 E11:2
+round1 dac100 frame1 med     0.2 uA  max     4.1  nonOK 216 | E0:0 E1:0 E2:0 E3:0 E4:0 E5:0 E6:0 E7:0 E8:0 E9:2 E10:3 E11:1
+round1 dac100 frame2 med     0.2 uA  max     3.9  nonOK 216 | E0:0 E1:0 E2:0 E3:0 E4:0 E5:0 E6:0 E7:0 E8:0 E9:2 E10:3 E11:1
+round1 dac100 frame3 med     0.2 uA  max     3.8  nonOK 216 | E0:0 E1:0 E2:0 E3:0 E4:0 E5:0 E6:0 E7:0 E8:0 E9:2 E10:3 E11:1
