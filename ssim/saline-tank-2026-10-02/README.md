@@ -1,4 +1,4 @@
-# SSIM series — saline tank, 2026-10-02
+﻿# SSIM series — saline tank, 2026-10-02
 
 Purpose: measure how well the instrument localises a known target in a saline
 tank, scored by SSIM (structural similarity) between each reconstruction and a
@@ -11,7 +11,8 @@ ssim/saline-tank-2026-10-02/
     README.md        this file: what was done and what was found
     NEXT-STEPS.md    what still has to be done
     manifest.csv     one row per run: role, target, expected vs reconstructed angle
-    photos/          top-down photographs, one per target run (see photos/README.md)
+    photos/          top-down photographs, one per target run, named <run_id>.jpg
+                     (photos/README.md, PHOTO-INDEX.csv, SSIM-REFERENCE.csv)
     runs/            copies of the run directories from scans/runs/ (originals stay there)
 ```
 
@@ -22,13 +23,21 @@ capture series (ADR-0025); if the two ever disagree, `scans/` wins.
 
 | Item | Value |
 |---|---|
-| Tank | circular, radius ≈ 160 mm, 12 electrodes |
+| Tank | circular bucket, inner radius 128 mm, 12 electrodes |
+| Electrode ring | radius 98 mm — the nails are driven ~30 mm into the bucket wall |
 | Electrode map | E1 = marked nail, clockwise viewed from above |
 | Image angle of Ek | 180° − 30°·(k−1): E1 180°, E4 90°, E7 0°, E10 270° |
 | Target | wooden block, 23 × 22 mm footprint, 51 mm tall, standing upright |
-| Position | "near Ek" = block centre ≈ 128 mm from tank centre, on the line to Ek |
+| Position | "near Ek" = block centre ≈ 55 mm from tank centre (0.56 of the electrode ring), on the line to Ek |
 | Settings | adjacent, high range, DAC 400, settle 30 ms, 16 samples, 10 warmup, 5 frames |
 | Not recorded | saline g/L, fill depth, water temperature, grounding |
+
+**Corrected 2026-10-05 (ADR-0052).** This table previously said the tank radius was
+160 mm and the block sat 128 mm from the centre, i.e. 0.80 of that tank — level with
+the bucket wall, which is not a placement anyone can make by accident. Measured: the
+bucket is 128 mm and the nails sit 30 mm inside it. The block is at ≈55 mm, about
+0.56 of the electrode ring. **The block radius is a reconstruction from the data, not
+a tape measurement, and is the largest remaining uncertainty in this series.**
 
 ## What happened
 
@@ -112,8 +121,10 @@ before the E2 pair; none was taken, and the E2+E8 redo came 66 minutes after it.
 
 † Typed as "e3 e10". The plan for that slot was E3+E9, and the image fits
 E9 (−4°), not E10 (+26°). I relabelled the run to the plan, so the ground truth
-is inferred partly from the result. **This is unconfirmed until the photo is
-checked.** If the photo shows E10, relabel the run and re-score it.
+is inferred partly from the result. **This is unconfirmed: no photograph of this
+setup was taken** (see `photos/README.md`). The single-block photos `3.jpg`,
+`9.jpg` and `10.jpg` — now `20261002-153824`, `-140411` and `-141259` — are from
+two to three hours earlier and are not ground truth for it.
 
 Excluded: `173123`. Its target text was left over from the previous run
 ("e1 e7"), and its blobs (about 163° and 296°) match no planned pair. It was
@@ -122,25 +133,127 @@ superseded by the E2+E8 redo `181205`.
 Both blocks of every pair appear as separate blobs. The pairs score lower SSIM
 than single blocks, because two blobs pulled toward the centre miss two masks.
 
-### SSIM summary (ADR-0048)
+### SSIM summary (ADR-0048) — and why the SSIM numbers must not be quoted
 
-19 scored runs. Raw SSIM: mean 0.438, range 0.28–0.59. Blurred SSIM: mean
-0.458. Angle error: |error| ≤ 12° on 22 of 24 angled block placements (the centre run has no angle); the exceptions
-are E6 (+18°, single) and E6 in its pair (+15°). Both E6 placements read high,
-which is worth checking against the photos. Full table:
-`ssim_results.csv`. Images beside their masks: `ssim_contact_sheet.png`.
+19 scored runs. **After the region fix** (ADR-0049; the mean now runs over a dilated
+neighbourhood of the mask instead of the whole disc), re-measured against each run's
+own empty-tank control, comparing against a simulated block of the recorded
+23 × 22 mm footprint pushed through the same solver (ADR-0050):
 
-Angle errors here come from the pixel-grid wedge search. They differ by a few
-degrees from the UI's peak angle quoted in the single-block table above.
+| metric | min | max | mean | empty tank | beats its control |
+|---|---|---|---|---|---|
+| significance | 5.80 | 35.49 | 14.94 | 1.0 by definition | — |
+| angle error (deg) | 0.96 | 18.18 | 5.81 | — | — |
+| **NCC** | −0.155 | 0.873 | **0.569** | −0.011 | **17 / 19** |
+| Dice | 0.000 | 1.000 | 0.588 | 0.085 | 15 / 19 |
+| SSIM | −0.061 | 0.272 | 0.130 | 0.023 | 16 / 19 |
+
+**NCC is the recommended score** (ADR-0050). It is scale-invariant, so it does not
+punish the dim-but-correct lobe that sinks SSIM, and it is position-sensitive, so a
+blob in the wrong place scores near zero. It is not SSIM and is not "SSIM-like" — it
+measures linear agreement of the intensity pattern, and two blobs of different size
+sharing a bright centre correlate highly. The empty-tank column is part of the result,
+not decoration.
+
+The three runs that fail to beat their own control: E2 (`165444`, the documented
+drift electrode), and the pairs `174738` and `175516`, both marginal.
+
+**The published values in `ssim_results.csv` are stale** — 0.284–0.591, mean 0.438,
+from before the region fix, and SSIM-only. `ssim_eval.py` does not yet emit the NCC and
+Dice columns, so that CSV needs the tool changed before it can be regenerated
+(ADR-0050).
+
+**Even after the fix, the SSIM column must not be quoted as published.** Before it,
+`tree_ert/ssim.py` averaged SSIM over the whole disc while the block mask is
+16–42 px of a 3228 px disc. In the remaining 99 % both rasters sit near zero, so the
+luminance term carried the ratio to ≈1 whatever the image contained — an empty tank
+scored 0.904–0.957 and **all 19 runs scored below it**. A mean of 0.438 therefore did
+not mean "moderate structural agreement".
+
+That defect is fixed. **And the second apparent defect — a radius mismatch — was also a
+units error, not a reconstruction failure (ADR-0052).** `TANK_RADIUS_MM` was 160 mm
+when the bucket is 128 mm, and every normalised length was divided by the bucket radius
+where the mesh normalises to the 98 mm electrode ring, making every mask radius and the
+block's half-widths 1.31× too large. With that corrected:
+
+| metric | before | after | empty tank | beats control |
+|---|---|---|---|---|
+| NCC | 0.569 mean, −0.155 min | **0.721 mean, 0.461 min** | 0.031 | **19 / 19** |
+| Dice | 0.588 mean | **0.929 mean** | 0.204 | **19 / 19** |
+| SSIM | 0.130 mean | 0.155 mean | −0.004 | 19 / 19 |
+
+Every run now clears its own empty-tank control; the worst case moved from negative to
+0.461. **NCC is the primary score and Dice the readable secondary; SSIM is retained as a
+diagnostic for lobe amplitude** (ADR-0053). On identical inputs SSIM's mean is 0.155
+against Dice's 0.929, because SSIM treats a dim-but-correct lobe as a structural
+mismatch — an amplitude error scored as a shape error, which is the wrong question for
+a difference image.
+
+Two cautions that must travel with these numbers. **NCC is not SSIM and is not
+"SSIM-like"** — it measures linear agreement of an intensity pattern, and two blobs of
+different size sharing a bright centre correlate highly. And because the template is
+generated by the same solver, NCC and Dice measure *reproducibility*, not absolute
+localisation: a systematic pipeline bias would move both together and cancel. The
+independent evidence for localisation is the angle error against the photographs.
+
+`ssim_results.csv` is **wrong**, not merely stale — it was scored against masks at the
+wrong radius and size, and must be regenerated.
+
+The angle result (ADR-0055), **all 24 block placements**: median 3.07 deg, mean 3.71,
+max 11.87 deg, 18 of 24 within 5 deg and 23 of 24 within 10 deg. The lobe centroid is
+thresholded, not windowed: the angular window it replaced was worth up to 12.3 deg on a
+single placement, and the earlier "24 of 24 within 10 deg" was an artefact of that choice.
+The one placement outside 10 deg is run 165444 at E2, 11.9 deg - the drift-affected run.
+See `photos/README.md` for why that run is suspect.
+
+**Two aggregations, both correct, and the difference is the exclusion.** The figure above
+counts every placement. The thesis text (`docs/thesis-fidelity-metrics.md`) reports the 22
+placements that have photographic ground truth — median 3.4 deg, 21 of 22 within 10 deg —
+because one scan's recorded sector was reconstructed from its own reconstruction and cannot
+be scored against itself. Both numbers appear; neither is the whole story.
+
+NCC 0.72 mean against a 0.03 control, with 19 of 19 runs clearing it (ADR-0053).
+
+Full table: `ssim_results.csv`, regenerated. It carries the centroid and single-pixel
+angles, both angle-estimator spreads, and NCC and Dice **with their own empty-tank
+controls and margins** per run. Images beside their masks: `ssim_contact_sheet.png`.
+
+`photos/SSIM-REFERENCE.csv` and `photos/PHOTO-INDEX.csv` were written against the
+pre-fix whole-disc SSIM and no longer describe any metric the tool computes. Treat them as
+historical; `ssim_results.csv` supersedes both.
+
+Angle errors come from the pixel-grid wedge search. They differ by a few degrees from
+the UI's peak angle quoted in the single-block table above.
 
 ### Known limitation: radius
 
-Peaks come out at about 0.35–0.5 R although the blocks were at about 0.8 R. A
-one-step JAC reconstruction with regularisation pulls targets toward the centre
-and blurs them. The angle is reliable; the radius is not. Raw SSIM against a
-sharp, correctly placed mask will therefore score low even for a correct
-detection. ADR-0047 sets out how this will be reported.
+This section described a defect that did not exist. Corrected 2026-10-05; the original
+text is in the git history and in ADR-0052.
 
+**There is no radial collapse.** Once `TANK_RADIUS_MM` was corrected to the measured
+128 mm and lengths were normalised against the 98 mm electrode ring, the forward model
+reproduces the recorded series without any tuning:
+
+| block placed at (fraction of the electrode ring) | recovered centroid |
+|---|---|
+| 0.40 | 0.390 |
+| 0.50 | 0.472 |
+| 0.60 | 0.555 |
+| 0.70 | 0.673 |
+| 0.80 | 0.721 |
+
+Near-linear, no systematic inward bias. The series measured centroid of 0.483 inverts
+to a placed radius of 0.51, consistent with the block at about 0.56 of the ring.
+
+What replaces it as the open question: **the block radius is inferred, not measured.**
+0.56 of the ring comes from inverting the forward model against this data, corroborated
+only by recollection. One tape measurement - block centre to tank centre, in mm - would
+close it, and every mask radius in this series depends on it.
+
+Also still open: the electrode inset itself is unmodelled. The mesh places electrodes on
+the domain boundary; the hardware has them 30 mm further in, which is 23% of the radius.
+Correcting it made agreement worse rather than better on the first attempt, so it was not
+adopted - but it is a genuine model/hardware mismatch, not an approximation.
 ### Record amendments
 
 Some target fields were blank or truncated at capture. They were filled in

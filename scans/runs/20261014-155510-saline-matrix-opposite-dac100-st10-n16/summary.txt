@@ -1,0 +1,4 @@
+Frames captured: 10
+Reciprocity: no reciprocal pairs captured
+Noise floor: median pair sd 0.00068 kohm (0.97%)  max 0.01813 kohm over 96 pairs
+absolute: REFUSED: reciprocity could not be measured (no reciprocal pairs)  |  EXCLUDED E1 E2: 44/96 pairs

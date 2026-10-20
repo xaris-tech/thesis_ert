@@ -1,4 +1,4 @@
-# Architecture Decision Records
+﻿# Architecture Decision Records
 
 Every non-obvious decision in this project gets a record here — firmware, host tooling,
 measurement methodology, and thesis-facing claims alike.
@@ -95,12 +95,29 @@ one costs a re-derivation.
 | [0039](0039-coconut-preset-dac-620-32-samples.md) | The coconut preset is adjacent / high / DAC 620 / 30 ms / 32 samples, validated | Accepted |
 | [0040](0040-generate-the-run-label-from-specimen-and-target.md) | Generate the run label from specimen and target instead of typing it | Superseded by [0045](0045-the-run-label-is-editable.md) |
 | [0041](0041-gated-absolute-reconstruction-with-continuous-recalibration.md) | Gate absolute reconstruction on reciprocity, misfit and significance; re-acquire until it passes | Accepted |
-| [0042](0042-regularised-absolute-solve-and-varied-recalibration-ramp.md) | Regularise the absolute solve; recalibrate down a varied ramp that stops on contact faults | Accepted |
+| [0042](0042-regularised-absolute-solve-and-varied-recalibration-ramp.md) | Regularise the absolute solve; recalibrate down a varied ramp that stops on contact faults | Accepted; ramp superseded by [0060](0060-adaptive-recalibration-from-measured-results.md) |
 | [0043](0043-stall-stop-and-conductivity-bound.md) | Stop recalibration on a reciprocity stall; bound element conductivity to sigma0 ×/÷ 100 | Accepted |
 | [0044](0044-naming-gaps-warn-instead-of-refusing.md) | Naming gaps warn instead of refusing a scan; the label stays generated | Accepted |
 | [0045](0045-the-run-label-is-editable.md) | The run label is editable, pre-filled from specimen and target | Accepted |
 | [0046](0046-load-a-recorded-run-as-the-baseline.md) | Load a recorded run as the baseline, remembered as the default; cross-specimen images stamped | Accepted |
 | [0047](0047-saline-ssim-series-fresh-baseline-per-target-group.md) | Saline SSIM series: fresh self-checked baseline per target group; angle error is the headline metric | Accepted |
+| [0057](0057-absolute-peaks-may-image-contacts-not-defects.md) | An absolute PASS is not a defect location while contacts are uneven; peaks sat on the worst electrodes | Proposed |
+| [0058](0058-validity-criteria-for-a-hole-claim.md) | A hole claim needs reciprocity ≤15 %, noise ≤3 % in both runs, an untouched repeat <2 and significance ≥3 | Proposed |
+| [0059](0059-standing-tree-readiness-and-protocol.md) | Standing trees wait on a disc rotation test; fixed electrode, scan and ground-truth protocol | Proposed |
+| [0060](0060-adaptive-recalibration-from-measured-results.md) | Recalibration picks each attempt from earlier results; settle 10-50 ms, max 6 attempts | Accepted |
+| [0061](0061-absolute-display-log-scale-and-trough.md) | Absolute image on a clipped log10(sigma/sigma0) scale; report the trough beside the peak | Accepted |
+| [0062](0062-trough-is-a-connected-lobe-flagged-at-electrodes.md) | Trough = half-depth connected lobe centroid; flagged "may be contact" when it touches an electrode | Accepted |
+| [0063](0063-absolute-colour-scale-from-the-image-only.md) | Absolute colour scale from the image only; the noise panel saturates when larger | Accepted |
+| [0064](0064-exclude-faulty-channels-from-the-absolute-solve.md) | Exclude a known-faulty board channel (E1/E2) from the absolute solve; saline misfit 59 % to 11 % | Accepted |
+| [0065](0065-absolute-colour-matches-difference-images.md) | Absolute images use the difference-image colours: blue less, red more conductive | Accepted |
+| [0056](0056-correct-run-conditions-in-extra-never-overwrite.md) | Correct recorded conditions with a dated key in `extra`; original fields stay as written | Accepted |
+| [0055](0055-measure-the-lobe-not-a-window.md) | Lobe connected-component centroid, no angular window; window choice was worth 12.3 deg | Accepted |
+| [0054](0054-the-centroid-angle-estimator-has-a-measured-bias.md) | Centroid window validated against injected offsets; -0.45 deg bias documented, not corrected in code | Accepted |
+| [0053](0053-ncc-and-dice-are-the-primary-scores.md) | NCC primary, Dice secondary, SSIM demoted to a diagnostic; each with its empty-tank control | Accepted |
+| [0052](0052-the-tank-geometry-constants-were-wrong.md) | Tank is 128mm with electrodes 30mm in; the radial collapse was a units error | Accepted |
+| [0051](0051-take-the-angle-from-the-lobe-centroid.md) | Angle from the wedge-restricted lobe centroid; 24/24 within 10 deg, max 9.9 | Accepted |
+| [0050](0050-report-ncc-and-dice-beside-ssim.md) | NCC and Dice reported beside SSIM; NCC separated 17/19 from empty-tank controls | Accepted |
+| [0049](0049-reconstruction-settings-cannot-be-validated-yet.md) | Reconstruction settings frozen: the recorded series and the forward model disagree on radius | Accepted |
 | [0048](0048-ssim-scoring-against-block-masks.md) | SSIM scored on the resistive lobe against block masks; 0.2 R blur; per-block ±45° wedge for angle error | Accepted |
 
-**Renumbering, 2026-10-07.** ADR-0044 to ADR-0048 were first written on branch `new` as 0041 to 0045. `main` had meanwhile accepted different ADRs under 0041 to 0043 (absolute reconstruction), so the `new` ADRs were renumbered when the branches were merged. Their content did not change. Commit messages from before the merge cite the old numbers; to translate, add 3 (old 0041 → 0044, ..., old 0045 → 0048).
+**Renumbering, 2026-10-07.** ADR-0044 to ADR-0048 were first written on branch `new` as 0041 to 0045. `main` had meanwhile accepted different ADRs under 0041 to 0043 (absolute reconstruction), so the `new` ADRs were renumbered when the branches were merged. Their content did not change. Commit messages from before the merge cite the old numbers; to translate, add 3 (old 0041 → 0044, ..., old 0045 → 0048). ADR-0049 to ADR-0055 were written on branch `ssim` as 0046 to 0052 and renumbered by the same +3 when `main` was merged into it; ssim commit messages before that merge cite the old numbers.

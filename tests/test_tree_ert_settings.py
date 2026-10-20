@@ -141,3 +141,19 @@ class SpecimenPresetTests(unittest.TestCase):
             with self.subTest(preset.name):
                 preset.apply_to(UiSettings(port="COM1")).validate()
 
+
+
+class AbsoluteExcludeElectrodesTests(unittest.TestCase):
+    def test_default_excludes_nothing(self):
+        self.assertEqual(UiSettings().absolute_exclude_electrodes, ())
+
+    def test_out_of_range_or_duplicate_rejected(self):
+        from dataclasses import replace
+        for bad in ((0,), (13,), (1, 1), (1, 2, 3, 4, 5, 6, 7)):
+            with self.assertRaises(ValueError):
+                replace(UiSettings(), absolute_exclude_electrodes=bad).validate()
+
+    def test_json_list_restores_as_tuple(self):
+        from tree_ert.settings import settings_from_dict
+        restored = settings_from_dict({"absolute_exclude_electrodes": [1, 2]})
+        self.assertEqual(restored.absolute_exclude_electrodes, (1, 2))

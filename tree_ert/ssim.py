@@ -31,12 +31,36 @@ from typing import Sequence
 import numpy as np
 from scipy import ndimage
 
-TANK_RADIUS_MM = 160.0
-NEAR_RADIUS_MM = 128.0
-"""'Near Ek' in the 2026-10-02 series: block centre this far from the tank centre."""
+TANK_RADIUS_MM = 128.0
+"""Bucket inner radius, measured 2026-10-05. The old value here was 160.0 mm, which
+was wrong by 25% and is the origin of most of the trouble recorded in ADR-0049 and
+ADR-0052."""
+
+ELECTRODE_INSET_MM = 30.0
+"""How far the nails are driven in from the bucket wall, measured 2026-10-05 as
+"at least 30 mm". Point-type electrodes therefore sit on a ring noticeably inside
+the domain, not on its boundary."""
+
+ELECTRODE_RING_RADIUS_MM = TANK_RADIUS_MM - ELECTRODE_INSET_MM
+"""Radius of the electrode ring, 98 mm. This -- not the bucket radius -- is the
+length unit every normalised radius in this module is expressed against, because
+PyEIT's mesh puts the electrodes at radius 1.0. Dividing a length by TANK_RADIUS_MM
+was wrong by a factor of 128/98 = 1.31 throughout."""
+
+NEAR_RADIUS_MM = 55.0
+"""'Near Ek' in the 2026-10-02 series: block centre this far from the tank centre.
+
+**Approximate.** The series README previously recorded 128 mm, i.e. 0.80 of a 160 mm
+tank -- which put the block level with the bucket wall and cannot have been measured.
+Inverting the reconstruction puts it at 0.51-0.56 of the electrode ring, i.e.50-55 mm;
+the operator independently recalled "0.56 or something" (ADR-0052). This is the
+number a tape measure should replace. If it is wrong, every mask radius is wrong
+with it."""
 
 BLOCK_FOOTPRINT_MM = (23.0, 22.0)
-"""Wooden block footprint, tangential x radial, standing upright."""
+"""Wooden block footprint, tangential x radial, standing upright. Normalised against
+ELECTRODE_RING_RADIUS_MM, not the bucket: dividing by TANK_RADIUS_MM made the mask
+1.31x too small on every axis (ADR-0052)."""
 
 GRID = 64
 """Raster side in pixels across the unit disc; 2/64 R = 5 mm per pixel at R = 160 mm."""
@@ -49,6 +73,20 @@ SSIM_SIGMA_PX = 1.5
 
 WEDGE_DEG = 45.0
 CENTRE_SEARCH_R = 0.4
+
+REGION_DILATE_PX = 2
+"""How far the block mask is dilated to form the region ``ssim`` averages over.
+
+The mean must not be taken over the whole disc. The mask is 16-42 px of a
+3228 px disc, so across the remaining ~99% both rasters sit near zero and the
+luminance term carries SSIM to ~0.95 for *any* image whatsoever, an empty tank
+included. On the 2026-10-02 saline series that put all 19 runs (0.28-0.59)
+below an empty tank (0.90-0.96), which made the number unusable.
+
+Two pixels puts the mask at ~36% of the region, enough that structure inside
+the mask has to agree for the score to rise, while leaving room for the solver's
+own blur so a detection is not punished for being diffuse.
+"""
 
 
 @dataclass(frozen=True)
@@ -77,6 +115,23 @@ class BlockScore:
     true_radius: float
     peak_radius: float
     peak_value: float
+    centroid_angle_deg: float | None = None
+    centroid_radius: float | None = None
+    centroid_angle_error_deg: float | None = None
+    """Wedge-restricted centroid of the resistive lobe.
+
+    Preferred over ``angle_error_deg``, which reads a single pixel. The lobes this
+    solver produces are diffuse, so the strongest pixel is often a rim artefact
+    rather than the block: on the 2026-10-02 series the single-pixel estimator
+    called E6 18.2 deg off where the lobe centroid puts it 3.7 deg off, and it read
+    20 of 24 placements within 10 deg against the centroid's 24 of 24 (ADR-0051).
+    The centroid is confined to this block's own wedge, so a two-block run does not
+    have its lobes merged before measuring.
+
+    It is intensity-weighted, so a very bright compact artefact still drags it -- in
+    a synthetic case a spike six times the lobe's amplitude and35 deg away pulls the
+    centroid 7.6 deg off. It is far less sensitive than a single pixel, not immune.
+    """
 
 
 @dataclass
@@ -84,10 +139,41 @@ class SsimScore:
     ssim_raw: float
     ssim_blurred: float
     blocks: list[BlockScore] = field(default_factory=list)
+    ncc: float | None = None
+    """Normalised cross-correlation against the template. See ``ncc``.
+
+    Reported alongside SSIM, not instead of it. SSIM carries a luminance term that
+    punishes a dim-but-correct blob, and it saturates once both images are mostly
+    background; NCC is scale-invariant and needs no threshold. On the 2026-10-02
+    saline series it separated 17 of 19 runs from their own empty-tank controls
+    against 16 of 19 for SSIM (ADR-0050).
+
+    NCC is not SSIM and is not a similarity index in that sense. It measures linear
+    agreement of the intensity pattern and nothing more. A blob in entirely the
+    wrong place scores near zero, which is the point, and the reason the empty-tank
+    control has to be scored alongside it.
+    """
+
+    dice: float | None = None
+    """Overlap of the thresholded resistive lobes. See ``dice``.
+
+    Readable as "how much of the claimed block is where the block is", but it
+    depends on ``dice_threshold``, which makes it the weakest of the three.
+    """
 
     @property
     def max_abs_angle_error(self) -> float | None:
         errors = [abs(b.angle_error_deg) for b in self.blocks if b.angle_error_deg is not None]
+        return max(errors) if errors else None
+
+    @property
+    def max_abs_centroid_angle_error(self) -> float | None:
+        """Same, from the lobe centroid. See ``BlockScore.centroid_angle_error_deg``."""
+        errors = [
+            abs(b.centroid_angle_error_deg)
+            for b in self.blocks
+            if b.centroid_angle_error_deg is not None
+        ]
         return max(errors) if errors else None
 
 
@@ -126,7 +212,7 @@ def electrode_unit_vectors(eit_mesh) -> list[tuple[float, float]]:
     return vectors
 
 
-def blocks_for(labels: Sequence[str], eit_mesh, near_radius: float = NEAR_RADIUS_MM / TANK_RADIUS_MM) -> list[Block]:
+def blocks_for(labels: Sequence[str], eit_mesh, near_radius: float = NEAR_RADIUS_MM / ELECTRODE_RING_RADIUS_MM) -> list[Block]:
     vectors = electrode_unit_vectors(eit_mesh)
     blocks = []
     for label in labels:
@@ -162,8 +248,8 @@ def rasterise(values: np.ndarray, eit_mesh, n: int = GRID) -> np.ndarray:
 def block_mask(blocks: Sequence[Block], n: int = GRID) -> np.ndarray:
     """Binary footprint of every block, oriented with its radial side toward the centre."""
     xx, yy, inside = grid_coordinates(n)
-    half_t = BLOCK_FOOTPRINT_MM[0] / 2.0 / TANK_RADIUS_MM
-    half_r = BLOCK_FOOTPRINT_MM[1] / 2.0 / TANK_RADIUS_MM
+    half_t = BLOCK_FOOTPRINT_MM[0] / 2.0 / ELECTRODE_RING_RADIUS_MM
+    half_r = BLOCK_FOOTPRINT_MM[1] / 2.0 / ELECTRODE_RING_RADIUS_MM
     mask = np.zeros(xx.shape)
     for block in blocks:
         if block.radius > 0:
@@ -186,6 +272,18 @@ def blur(mask: np.ndarray, sigma: float = PSF_SIGMA, n: int = GRID) -> np.ndarra
     return out / peak if peak > 0 else out
 
 
+def score_region(mask: np.ndarray, n: int = GRID) -> np.ndarray:
+    """Region the ``ssim`` mean is taken over: the mask, dilated.
+
+    Dilation is applied to the ground-truth mask alone and never to the image,
+    so the region cannot follow a blob that landed somewhere else. A region
+    derived from the image would let a detection in the wrong place enlarge the
+    very region that judges it.
+    """
+    _, _, inside = grid_coordinates(n)
+    return ndimage.binary_dilation(mask > 0, iterations=REGION_DILATE_PX) & inside
+
+
 def resistive_image(values_grid: np.ndarray) -> np.ndarray:
     """Wood is resistive: keep the negative lobe, flip it positive, scale to [0, 1].
 
@@ -196,6 +294,52 @@ def resistive_image(values_grid: np.ndarray) -> np.ndarray:
     image = np.clip(image, 0.0, None)
     peak = image.max()
     return image / peak if peak > 0 else image
+
+
+def ncc(a: np.ndarray, b: np.ndarray, region: np.ndarray) -> float:
+    """Normalised cross-correlation of two images over ``region``, in [-1, 1].
+
+    The Pearson correlation of the pixel values. Scale-invariant, so a correct but
+    dim blob is not punished for being dim, and position-sensitive, so a blob in the
+    wrong place scores near zero instead of high.
+
+    SSIM's luminance term is what makes it awkward here: the reconstructed lobe is
+    routinely dimmer than the mask it is compared against, and SSIM treats that as a
+    structural mismatch. NCC does not care about absolute level, only about whether
+    the bright parts coincide with the bright parts.
+
+    Returns 0.0 when either image is flat inside ``region`` -- there is no pattern to
+    agree or disagree with, and a divide-by-zero would otherwise produce a NaN that
+    silently propagates into a report.
+    """
+    x = np.asarray(a, dtype=float)[region]
+    y = np.asarray(b, dtype=float)[region]
+    if x.size < 2:
+        return 0.0
+    sx, sy = x.std(), y.std()
+    if sx < 1e-12 or sy < 1e-12:
+        return 0.0
+    return float(np.clip(((x - x.mean()) * (y - y.mean())).mean() / (sx * sy), -1.0, 1.0))
+
+
+DICE_THRESHOLD = 0.5
+"""Lobe level treated as "block present". Half of peak, on the [0, 1] image."""
+
+
+def dice(a: np.ndarray, b: np.ndarray, region: np.ndarray, threshold: float = DICE_THRESHOLD) -> float:
+    """Overlap of two thresholded lobes over ``region``, in [0, 1].
+
+    Dice = 2|A and B| / (|A| + |B|) on the pixels above ``threshold``. Readable as
+    "what fraction of the claimed block is actually where the block is", which is why
+    it is worth reporting even though the threshold is a judgement call and two
+    images that are both empty give 0.0 by definition.
+    """
+    a_hit = np.asarray(a, dtype=float)[region] > threshold
+    b_hit = np.asarray(b, dtype=float)[region] > threshold
+    total = int(a_hit.sum()) + int(b_hit.sum())
+    if total == 0:
+        return 0.0
+    return float(2 * np.logical_and(a_hit, b_hit).sum() / total)
 
 
 def ssim(a: np.ndarray, b: np.ndarray, region: np.ndarray, sigma_px: float = SSIM_SIGMA_PX, data_range: float = 1.0) -> float:
@@ -216,11 +360,68 @@ def _angle_diff(a: float, b: float) -> float:
     return ((a - b + 180.0) % 360.0) - 180.0
 
 
+LOBE_THRESHOLD = 0.5
+"""Lobe level, as a fraction of its own peak, that separates the lobe from background.
+
+Half of peak, the same natural cut as ``DICE_THRESHOLD``. The estimator is stable across
+0.5-0.6 (a placement moves about 1-2 deg), but it is *not* stable below that: at 0.3 a
+two-block run's two lobes merge into one component and the centroid lands 60-170 deg
+off. Do not lower it (ADR-0055).
+"""
+
+
+def _lobe_centroid(
+    image: np.ndarray,
+    wedge: np.ndarray,
+    fallback: np.ndarray,
+) -> tuple[float, float] | None:
+    """Angle and radius of the connected lobe containing the strongest pixel.
+
+    Threshold at ``LOBE_THRESHOLD`` of the peak, keep the connected component the peak
+    falls in, and take that component's centroid. This has no angular window at all,
+    which matters because the window choice was worth up to 12.3 deg on a single
+    placement (ADR-0055): a window centred on the true angle clips an off-centre lobe,
+    a wider one drags in neighbouring structure, and there was no defensible way to
+    choose between them.
+
+    ``fallback`` is the wedge-restricted centroid, used if the component turns out to be
+    implausibly wide â€” which is what happens when a low threshold merges two lobes.
+    """
+    local = np.where(wedge, image, -np.inf)
+    peak = np.unravel_index(int(np.argmax(local)), local.shape)
+    threshold = LOBE_THRESHOLD * float(image[peak])
+    labels, count = (None, 0) if threshold <= 0 else ndimage.label(image >= threshold)
+    component = 0 if labels is None else labels[peak]
+    if component:
+        member = labels == component
+        xx, yy, _ = grid_coordinates(image.shape[0])
+        peak_angle = float(np.degrees(np.arctan2(yy[peak], xx[peak])) % 360.0)
+        member_angle = float(np.degrees(np.arctan2(yy[member].mean(), xx[member].mean())) % 360.0)
+        if abs(_angle_diff(member_angle, peak_angle)) <= WEDGE_DEG:
+            return _centroid_over(image, member)
+    return _centroid_over(image, fallback)
+
+
+def _centroid_over(image: np.ndarray, region: np.ndarray) -> tuple[float, float] | None:
+    """Intensity-weighted angle and radius of ``image`` restricted to ``region``."""
+    weight = np.where(region, image, 0.0)
+    total = weight.sum()
+    if total <= 0:
+        return None
+    xx, yy, _ = grid_coordinates(image.shape[0])
+    cx = float((weight * xx).sum() / total)
+    cy = float((weight * yy).sum() / total)
+    if cx == 0.0 and cy == 0.0:
+        return None
+    return float(np.degrees(np.arctan2(cy, cx)) % 360.0), float(np.hypot(cx, cy))
+
+
 def score_blocks(values_grid: np.ndarray, blocks: Sequence[Block], n: int = GRID) -> list[BlockScore]:
     xx, yy, inside = grid_coordinates(n)
     image = np.nan_to_num(-values_grid, nan=-np.inf)
     radius = np.hypot(xx, yy)
     angle = np.degrees(np.arctan2(yy, xx)) % 360.0
+    resistive = np.clip(np.nan_to_num(-values_grid, nan=0.0), 0.0, None)
     scores = []
     for block in blocks:
         if block.label == "centre":
@@ -232,6 +433,11 @@ def score_blocks(values_grid: np.ndarray, blocks: Sequence[Block], n: int = GRID
         row, col = np.unravel_index(flat, local.shape)
         peak_angle = float(angle[row, col])
         is_centre = block.label == "centre"
+        # Lobe centroid with no angular window: the connected component the peak falls
+        # in, thresholded at half its peak. The wedge is still used to *find* the peak,
+        # and as the fallback if that component is implausibly wide (ADR-0055).
+        centroid = _lobe_centroid(resistive, region, region)
+        centroid_angle, centroid_radius = centroid if centroid else (None, None)
         scores.append(
             BlockScore(
                 label=block.label,
@@ -241,21 +447,50 @@ def score_blocks(values_grid: np.ndarray, blocks: Sequence[Block], n: int = GRID
                 true_radius=block.radius,
                 peak_radius=float(radius[row, col]),
                 peak_value=float(-local[row, col]),
+                centroid_angle_deg=centroid_angle,
+                centroid_radius=centroid_radius,
+                centroid_angle_error_deg=(
+                    None if is_centre or centroid_angle is None
+                    else _angle_diff(centroid_angle, block.angle_deg)
+                ),
             )
         )
     return scores
 
 
-def score(values: np.ndarray, eit_mesh, labels: Sequence[str], psf_sigma: float = PSF_SIGMA, n: int = GRID) -> SsimScore:
+def score(
+    values: np.ndarray,
+    eit_mesh,
+    labels: Sequence[str],
+    psf_sigma: float = PSF_SIGMA,
+    n: int = GRID,
+    template: np.ndarray | None = None,
+    template_label: str = "block mask",
+) -> SsimScore:
+    """Score one reconstructed image against the target it was meant to find.
+
+    ``template`` is an optional expected image -- typically a resistive block
+    simulated through the same solver -- to compare against instead of the
+    geometric ``template_label``. It matters: on the 2026-10-02 saline series, NCC
+    against a simulated block separated 17 of 19 runs from their own empty-tank
+    controls, and it is the recommended comparison. Against the sharp geometric mask
+    the same runs score far lower, because the mask sits at the true 0.80 R while
+    the reconstruction peaks nearer the centre (ADR-0049). Whichever is passed, the
+    caller should also score the run's own empty-tank control the same way; these
+    numbers mean nothing without it.
+    """
     if not labels:
         raise ValueError("no target in the run's description; nothing to build a mask from")
     blocks = blocks_for(labels, eit_mesh)
     grid = rasterise(values, eit_mesh, n)
-    _, _, inside = grid_coordinates(n)
     image = resistive_image(grid)
     mask = block_mask(blocks, n)
+    region = score_region(mask, n)
+    reference = mask if template is None else template
     return SsimScore(
-        ssim_raw=ssim(image, mask, inside),
-        ssim_blurred=ssim(image, blur(mask, psf_sigma, n), inside),
+        ssim_raw=ssim(image, mask, region),
+        ssim_blurred=ssim(image, blur(mask, psf_sigma, n), region),
         blocks=score_blocks(grid, blocks, n),
+        ncc=ncc(image, reference, region),
+        dice=dice(image, reference, region),
     )

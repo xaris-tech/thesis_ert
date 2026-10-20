@@ -15,8 +15,9 @@ gates matter more here than for a difference image:
   structure in the real image (its departure from the homogeneous fit) must be
   at least ``SIGNIFICANCE_GATE`` times its peak (the ADR-0027 rule).
 
-A refused run is not an error: ``acquire_until_pass`` re-acquires with the next
-drift-tuning profile (continuous recalibration).
+A refused run is not an error: ``acquire_until_pass`` re-acquires with settings
+chosen by ``next_settings`` from the earlier attempts (adaptive recalibration,
+ADR-0060).
 
 Units. Transfer resistance arrives in kohm = V/mA, so a fitted conductivity is
 in mS per unit of thickness on the 2-D unit-disc mesh -- a sheet conductance.
@@ -29,6 +30,7 @@ do not measure. That limitation is stated in ADR-0041 and on every figure.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from functools import cached_property
 from pathlib import Path
 from typing import Callable, Sequence
 
@@ -65,50 +67,76 @@ SAMPLES_CEILING = 32
 """Firmware ``n`` command clamps sample averaging to 1..32. A ladder step above
 this would be silently clamped and recorded with the wrong value."""
 
-SETTLE_RAMP_MS = (10, 30, 50, 75, 100, 150, 200)
-SAMPLES_RAMP = (8, 16, 32, 16, 32, 32, 32)
-WARMUP_RAMP = (5, 5, 10, 15, 20, 25, 30)
-FRAMES_RAMP = (10, 10, 10, 12, 12, 16, 16)
-DAC_STEPS = (1.0, 1.0, 1.0, 0.95, 0.9, 0.85, 0.8)
-"""Fraction of the starting DAC code per step. Lower current eases electrode
-polarisation and pulls the worst pair back from its rated maximum; sigma0 is
-current-normalised, so absolute values stay comparable across steps."""
+WOOD_SETTLE_MS = (10, 20, 30, 40, 50)
+"""Settle values recalibration may try (ADR-0060). On disc-01 with unchanged
+contacts, 2026-10-07: 10 ms 7.3 %, 30 ms 6.5 %, 100 ms 13.9 % reciprocity --
+longer dwell polarises the screws, so the old ramp to 200 ms moved the wrong way."""
+
+NOISE_LIMIT_PERCENT = 3.0
+"""Median frame-to-frame pair spread above which the next attempt averages more
+before it changes settle (ADR-0058, ADR-0060). Every run that imaged well in the
+saline tank sat near 1 %."""
+
+FRAMES_CEILING = 16
+DAC_BACKOFF = 0.9
+"""One lower-current attempt from the best settle: eases polarisation."""
+
+ADAPTIVE_MAX_ATTEMPTS = 6
+"""A frame takes about a minute; six attempts is about two hours at most."""
 
 MS_PER_SAMPLE = 8.3
 """Measured on 2026-10-06: 64 s per 216-record frame at settle 30 / samples 32."""
 
 
-def recalibration_ladder(settings: UiSettings) -> list[UiSettings]:
-    """Recalibration profiles, varied in every capture parameter (ADR-0042).
+def _attempt_key(settings: UiSettings) -> tuple:
+    return (settings.settle_ms, settings.samples, settings.frames, settings.dac)
 
-    Settle ramps 10 -> 200 ms; samples, warmup, frames and DAC vary alongside so
-    that consecutive attempts do not repeat the same noise mechanism. Pattern,
+
+def next_settings(
+    start: UiSettings, tried: Sequence[tuple[UiSettings, "GateReport"]]
+) -> UiSettings | None:
+    """The next recalibration attempt, chosen from what the earlier ones measured.
+
+    ``tried`` is (settings, gate report) per finished attempt, oldest first.
+    From the attempt with the lowest median reciprocity so far: if its noise is
+    above ``NOISE_LIMIT_PERCENT``, average more at the same settle; otherwise try
+    the nearest untried settle in ``WOOD_SETTLE_MS``; then one lower-DAC attempt.
+    Returns None when nothing untried is left or the cap is reached. Pattern,
     current range and electrode mapping never change -- those change what is
-    measured, not how well.
+    measured, not how well (ADR-0060).
     """
     from dataclasses import replace
 
-    ladder: list[UiSettings] = []
-    seen: set[tuple] = set()
-    for settle, samples, warmup, frames, dac_frac in zip(
-        SETTLE_RAMP_MS, SAMPLES_RAMP, WARMUP_RAMP, FRAMES_RAMP, DAC_STEPS
-    ):
-        dac = min(int(round(settings.dac * dac_frac)), settings.max_dac_code())
-        key = (settle, min(samples, SAMPLES_CEILING), warmup, frames, dac)
-        if key in seen:
-            continue
-        seen.add(key)
-        ladder.append(
-            replace(
-                settings,
-                settle_ms=settle,
-                samples=min(samples, SAMPLES_CEILING),
-                warmup_frames=warmup,
-                frames=frames,
-                dac=dac,
-            ).validate()
-        )
-    return ladder
+    if not tried:
+        return start
+    if len(tried) >= ADAPTIVE_MAX_ATTEMPTS:
+        return None
+
+    def recip(item):
+        value = item[1].reciprocity_percent
+        return float("inf") if value is None else value
+
+    best, report = min(tried, key=recip)
+    seen = {_attempt_key(s) for s, _ in tried}
+    candidates: list[UiSettings] = []
+
+    if report.noise_relative_percent is not None and report.noise_relative_percent > NOISE_LIMIT_PERCENT:
+        candidates.append(replace(
+            best,
+            samples=SAMPLES_CEILING,
+            frames=min(FRAMES_CEILING, best.frames + 4),
+            warmup_frames=best.warmup_frames + 5,
+        ))
+    for settle in sorted(WOOD_SETTLE_MS, key=lambda s: (abs(s - best.settle_ms), s)):
+        candidates.append(replace(best, settle_ms=settle))
+    candidates.append(replace(
+        best, dac=min(int(round(best.dac * DAC_BACKOFF)), best.max_dac_code())
+    ))
+
+    for candidate in candidates:
+        if _attempt_key(candidate) not in seen:
+            return candidate.validate()
+    return None
 
 
 def estimated_minutes(settings: UiSettings, records: int = 216) -> float:
@@ -137,6 +165,67 @@ and sap all sit inside that range; outside it the value is a solver runaway, not
 a material (2026-10-06, disc-08 attempt 3 peaked at 7e17 x sigma0)."""
 
 
+TROUGH_LOBE_FRACTION = 0.5
+"""Elements at or below this fraction of the deepest log(sigma/sigma0), and
+edge-connected to it, form the trough lobe. Half of peak, as in ADR-0055."""
+
+
+@dataclass(frozen=True)
+class TroughLobe:
+    angle_deg: float
+    """Weighted centroid angle of the lobe, mesh convention (E1 at 180 deg)."""
+    radius: float
+    elements: tuple[int, ...]
+    electrodes: tuple[int, ...]
+    """0-based electrodes whose node lies on the lobe. Non-empty means the
+    trough cannot be told apart from a contact fault at that electrode."""
+
+
+def _edges(tri):
+    a, b, c = (int(n) for n in tri)
+    return ((min(a, b), max(a, b)), (min(b, c), max(b, c)), (min(a, c), max(a, c)))
+
+
+def trough_lobe(
+    values: np.ndarray, elements: np.ndarray, nodes: np.ndarray, electrode_nodes: np.ndarray
+) -> TroughLobe | None:
+    """The connected low-conductivity region around the deepest element (ADR-0062).
+
+    ``values`` are per-element log(sigma/sigma0). Elements are connected when
+    they share an edge. None when nothing is below sigma0.
+    """
+    values = np.asarray(values, dtype=float)
+    seed = int(np.argmin(values))
+    if values[seed] >= 0.0:
+        return None
+    deep = values <= TROUGH_LOBE_FRACTION * values[seed]
+    by_edge: dict[tuple[int, int], list[int]] = {}
+    for index, tri in enumerate(elements):
+        for edge in _edges(tri):
+            by_edge.setdefault(edge, []).append(index)
+    member, stack = {seed}, [seed]
+    while stack:
+        for edge in _edges(elements[stack.pop()]):
+            for other in by_edge[edge]:
+                if deep[other] and other not in member:
+                    member.add(other)
+                    stack.append(other)
+    lobe = np.array(sorted(member))
+    corners = np.asarray(nodes, dtype=float)[np.asarray(elements)[lobe]][:, :, :2]
+    centres = corners.mean(axis=1)
+    edge1, edge2 = corners[:, 1] - corners[:, 0], corners[:, 2] - corners[:, 0]
+    area = 0.5 * np.abs(edge1[:, 0] * edge2[:, 1] - edge1[:, 1] * edge2[:, 0])
+    weight = -values[lobe] * area
+    cx, cy = (weight[:, None] * centres).sum(axis=0) / weight.sum()
+    on_lobe = set(np.asarray(elements)[lobe].ravel().tolist())
+    return TroughLobe(
+        angle_deg=float(np.degrees(np.arctan2(cy, cx)) % 360.0),
+        radius=float(np.hypot(cx, cy)),
+        elements=tuple(int(i) for i in lobe),
+        electrodes=tuple(i for i, n in enumerate(electrode_nodes) if int(n) in on_lobe),
+    )
+
+
 @dataclass(frozen=True)
 class AbsoluteResult:
     sigma: np.ndarray
@@ -157,6 +246,9 @@ class AbsoluteResult:
     kept_pairs: int
     total_pairs: int
     centres: np.ndarray
+    nodes: np.ndarray
+    elements: np.ndarray
+    electrode_nodes: np.ndarray
 
     @property
     def structure(self) -> np.ndarray:
@@ -173,7 +265,38 @@ class AbsoluteResult:
 
     @property
     def peak_angle_deg(self) -> float:
-        x, y = self.centres[self.peak_index][:2]
+        return self._angle(self.peak_index)
+
+    @property
+    def trough_value(self) -> float:
+        """Most negative sigma - sigma0, mS. A void lowers sigma0, so its largest
+        |structure| is a positive overshoot beside it; the trough is what
+        locates a void or decay (ADR-0061)."""
+        return float(np.min(self.structure))
+
+    @cached_property
+    def trough(self) -> TroughLobe | None:
+        """The connected trough region and the electrodes it touches (ADR-0062)."""
+        return trough_lobe(
+            np.log(self.sigma / self.sigma0), self.elements, self.nodes, self.electrode_nodes
+        )
+
+    @property
+    def trough_angle_deg(self) -> float | None:
+        return self.trough.angle_deg if self.trough else None
+
+    def trough_text(self) -> str:
+        lobe = self.trough
+        if lobe is None:
+            return "no trough"
+        text = f"trough {self.trough_value:+.3g} mS, lobe at {lobe.angle_deg:.0f} deg"
+        if lobe.electrodes:
+            names = ",".join(f"E{i + 1}" for i in lobe.electrodes)
+            text += f" (touches {names}: may be contact)"
+        return text
+
+    def _angle(self, index: int) -> float:
+        x, y = self.centres[index][:2]
         return float(np.degrees(np.arctan2(y, x)) % 360.0)
 
 
@@ -260,12 +383,41 @@ def solve_absolute(
         kept_pairs=int(kept.sum()),
         total_pairs=int(vector.size),
         centres=np.mean(eit_mesh.node[eit_mesh.element], axis=1),
+        nodes=np.asarray(eit_mesh.node),
+        elements=np.asarray(eit_mesh.element),
+        electrode_nodes=np.asarray(eit_mesh.el_pos),
     )
+
+
+def exclude_electrodes(
+    frames: Sequence[unified.UnifiedFrame], electrodes: Sequence[int]
+) -> list[unified.UnifiedFrame]:
+    """Frames without any record that drives or senses on ``electrodes`` (1-based).
+
+    The removed pairs become NaN rows, which the solver already drops (ADR-0002),
+    so leaving an electrode out costs its measurements and nothing else (ADR-0064).
+    """
+    from dataclasses import replace
+
+    excluded = {int(e) - 1 for e in electrodes}
+    if not excluded:
+        return list(frames)
+    return [
+        replace(
+            frame,
+            records=[
+                record for record in frame.records
+                if not excluded & {*record.i_pair, *record.v_pair}
+            ],
+        )
+        for frame in frames
+    ]
 
 
 def reconstruct_absolute(
     frames: Sequence[unified.UnifiedFrame], settings: UiSettings
 ) -> AbsoluteResult:
+    frames = exclude_electrodes(frames, settings.absolute_exclude_electrodes)
     protocol, _ = unified.protocol_and_command(settings.pattern)
     return solve_absolute(average_frame_vectors(frames, protocol, settings), protocol)
 
@@ -345,6 +497,9 @@ def evaluate(
     frames: Sequence[unified.UnifiedFrame], settings: UiSettings
 ) -> tuple[AbsoluteResult | None, np.ndarray | None, GateReport]:
     result = noise = None
+    # Filtered once here so the reciprocity gate judges the same records the
+    # solve uses; reconstruct_absolute filtering again is a no-op.
+    frames = exclude_electrodes(frames, settings.absolute_exclude_electrodes)
     try:
         result = reconstruct_absolute(frames, settings)
         noise = split_half_noise(frames, settings)
@@ -364,33 +519,36 @@ class Attempt:
 
 def acquire_until_pass(
     capture: Callable[[UiSettings], list],
-    candidates: Sequence[UiSettings],
-    rounds: int = 1,
+    start: UiSettings,
     on_attempt: Callable[[int, Attempt], None] | None = None,
+    max_attempts: int = ADAPTIVE_MAX_ATTEMPTS,
 ) -> tuple[list[Attempt], Attempt | None]:
-    """Continuous recalibration: re-acquire with the next profile until the gates pass.
+    """Continuous recalibration: re-acquire until the gates pass (ADR-0060).
 
     ``capture(settings)`` configures the instrument, warms up and returns the
-    recorded frames. Profiles are tried in order, cycling ``rounds`` times; the
-    first passing attempt ends the loop. Returns every attempt and the passing one.
+    recorded frames. ``start`` runs first; each later attempt is chosen by
+    ``next_settings`` from the earlier results. The first passing attempt ends
+    the loop. Returns every attempt and the passing one.
     """
     attempts: list[Attempt] = []
-    number = 0
     history: list[tuple[GateReport, tuple]] = []
-    for _ in range(rounds):
-        for candidate in candidates:
-            number += 1
-            frames = capture(candidate)
-            result, noise, report = evaluate(frames, candidate)
-            attempt = Attempt(candidate, frames, result, noise, report)
-            attempts.append(attempt)
-            if on_attempt is not None:
-                on_attempt(number, attempt)
-            if report.passed:
-                return attempts, attempt
-            history.append((report, contact_fault(frames)))
-            if stop_reason(history):
-                return attempts, None
+    tried: list[tuple[UiSettings, GateReport]] = []
+    while len(attempts) < max_attempts:
+        candidate = next_settings(start, tried)
+        if candidate is None:
+            break
+        frames = capture(candidate)
+        result, noise, report = evaluate(frames, candidate)
+        attempt = Attempt(candidate, frames, result, noise, report)
+        attempts.append(attempt)
+        tried.append((candidate, report))
+        if on_attempt is not None:
+            on_attempt(len(attempts), attempt)
+        if report.passed:
+            return attempts, attempt
+        history.append((report, contact_fault(frames, candidate.absolute_exclude_electrodes)))
+        if stop_reason(history):
+            return attempts, None
     return attempts, None
 
 
@@ -420,12 +578,62 @@ def stop_reason(history: Sequence[tuple[GateReport, tuple]]) -> str | None:
     return None
 
 
-def contact_fault(frames: Sequence[unified.UnifiedFrame]) -> tuple[tuple[int, float], ...]:
-    """Electrodes flagged as suspect contacts (ADR-0032); empty if none or unscorable."""
+def contact_fault(
+    frames: Sequence[unified.UnifiedFrame], excluded: Sequence[int] = ()
+) -> tuple[tuple[int, float], ...]:
+    """Electrodes flagged as suspect contacts (ADR-0032); empty if none or unscorable.
+
+    Electrodes already left out of the absolute solve (``excluded``, 1-based)
+    are not reported: a known-bad channel must not stop recalibration (ADR-0064).
+    """
     try:
+        frames = exclude_electrodes(frames, excluded)
         return capture_view.session_summary(frames).suspect_electrodes
     except Exception:  # noqa: BLE001 - a scoring failure is not a contact verdict
         return ()
+
+
+def trough_index_fields(result: AbsoluteResult | None) -> dict:
+    """index.csv columns for the trough lobe (ADR-0062)."""
+    lobe = result.trough if result is not None else None
+    return {
+        "absolute_trough_angle_deg": lobe.angle_deg if lobe else None,
+        "absolute_trough_electrodes": (
+            " ".join(f"E{i + 1}" for i in lobe.electrodes) if lobe else None
+        ),
+    }
+
+
+DISPLAY_PERCENTILE = 98.0
+"""Colour scale = this percentile of the image's |log10(sigma/sigma0)|, so a few
+contact spikes saturate instead of flattening the rest of the disc to grey
+(ADR-0061). The noise panel is drawn on the image's scale and saturates when it
+is larger (ADR-0063)."""
+
+
+def display_values(
+    sigma: np.ndarray, sigma0: float, noise: np.ndarray
+) -> tuple[np.ndarray, np.ndarray, float, int, int]:
+    """(image, noise, scale, image clipped, noise clipped) in log10(sigma/sigma0).
+
+    The split-half noise is a difference of conductances; it is converted to
+    log units to first order, noise / (sigma ln 10). Display only: the gates
+    and the saved arrays stay in mS.
+    """
+    image = np.log10(sigma / sigma0)
+    noise_log = np.asarray(noise) / (sigma * np.log(10.0))
+    scale = max(float(np.percentile(np.abs(image), DISPLAY_PERCENTILE)), 1e-6)
+    clipped = int(np.count_nonzero(np.abs(image) > scale))
+    noise_clipped = int(np.count_nonzero(np.abs(noise_log) > scale))
+    return image, noise_log, scale, clipped, noise_clipped
+
+
+def excluded_text(settings: UiSettings, result: AbsoluteResult) -> str:
+    """Caption fragment naming electrodes left out of the solve (ADR-0064), or ''."""
+    if not settings.absolute_exclude_electrodes:
+        return ""
+    names = " ".join(f"E{e}" for e in settings.absolute_exclude_electrodes)
+    return f"  |  EXCLUDED {names}: {result.kept_pairs}/{result.total_pairs} pairs"
 
 
 def save_absolute(
@@ -435,7 +643,7 @@ def save_absolute(
     title: str,
     thickness_mm: float | None = None,
 ) -> None:
-    """Two panels on one scale: structure (sigma - sigma0) and the noise image."""
+    """Two panels on one clipped log scale: log10(sigma/sigma0) and the noise image (ADR-0061)."""
     import matplotlib
 
     matplotlib.use("Agg")
@@ -448,23 +656,28 @@ def save_absolute(
     eit_mesh, _ = base.create_solver(protocol)
     pts, tri = eit_mesh.node, eit_mesh.element
     noise = attempt.noise if attempt.noise is not None else np.zeros_like(result.sigma)
-    scale = max(float(np.max(np.abs(result.structure))), float(np.max(np.abs(noise))), 1e-12)
+    image, noise_log, scale, clipped, noise_clipped = display_values(
+        result.sigma, result.sigma0, noise
+    )
 
     figure, axes = plt.subplots(1, 2, figsize=(11, 5.2))
     for ax, values, name in (
-        (axes[0], result.structure, "sigma - sigma0 (image)"),
-        (axes[1], noise, "split-half noise (control)"),
+        (axes[0], image, "log10(sigma / sigma0) (image)"),
+        (axes[1], noise_log, "split-half noise (control)"),
     ):
         mappable = ax.tripcolor(
             pts[:, 0], pts[:, 1], tri, values, shading="flat",
-            cmap="RdBu", vmin=-scale, vmax=scale,
+            cmap="coolwarm", vmin=-scale, vmax=scale,
         )
         ax.set_title(name)
         ax.set_aspect("equal")
         ax.axis("off")
         for index, x, y in base.electrode_label_positions(eit_mesh):
             ax.text(x, y, f"E{index + 1}", ha="center", va="center", fontsize=8)
-    figure.colorbar(mappable, ax=axes, shrink=0.8, label="sheet conductance, mS")
+    figure.colorbar(
+        mappable, ax=axes, shrink=0.8, extend="both",
+        label="log10(sigma / sigma0): blue less, red more conductive",
+    )
 
     report = attempt.report
     bulk = f"sigma0 = {result.sigma0:.4g} mS sheet"
@@ -475,8 +688,10 @@ def save_absolute(
     recip = f"{report.reciprocity_percent:.1f}%" if report.reciprocity_percent is not None else "n/a"
     figure.suptitle(
         f"{title}\n{bulk}  |  peak {result.peak_value:+.3g} mS at {result.peak_angle_deg:.0f} deg"
-        f"  |  significance {sig}  |  reciprocity {recip}  |  misfit {result.residual_percent:.1f}%"
-        f"\n{verdict}  |  circular point-electrode model (ADR-0041)",
+        f"  |  {result.trough_text()}"
+        f"\nsignificance {sig}  |  reciprocity {recip}  |  misfit {result.residual_percent:.1f}%"
+        f"\n{verdict}  |  colour clipped at {DISPLAY_PERCENTILE:.0f}th percentile"
+        f" ({clipped} image, {noise_clipped} noise elements saturated)  |  circular point-electrode model (ADR-0041)",
         fontsize=9,
     )
     image_path.parent.mkdir(parents=True, exist_ok=True)
@@ -492,6 +707,13 @@ def save_absolute(
         residual_percent=result.residual_percent,
         peak_value=result.peak_value,
         peak_angle_deg=result.peak_angle_deg,
+        trough_value=result.trough_value,
+        trough_angle_deg=(
+            result.trough_angle_deg if result.trough_angle_deg is not None else np.nan
+        ),
+        trough_electrodes=np.asarray(
+            result.trough.electrodes if result.trough else (), dtype=int
+        ),
         dropped_indexes=np.asarray(result.dropped_indexes, dtype=int),
         significance=report.significance if report.significance is not None else np.nan,
         reciprocity_percent=(

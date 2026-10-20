@@ -1,0 +1,7 @@
+peak -1.310e-01 at 263 deg (x=-0.12, y=-0.92)
+colour scale +/-1.310e-01  (auto-scaled to this image)
+pairs 108/108 kept  [ok]
+measurement noise floor 0.00010 kohm - a change below this is not a detection
+control peak -1.264e-02
+significance 10.37x the noise image
+baseline run: 20261007-221819-disc-01-holes-near-4-5-6-7

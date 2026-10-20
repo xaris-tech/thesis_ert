@@ -1,0 +1,9 @@
+RECIPROCITY OVERRIDDEN - NOT VALID DATA (baseline: median reciprocity error 21.7% exceeds 15%; this run: median reciprocity error 22.1% exceeds 15%)
+CROSS-SPECIMEN BASELINE (unrecorded -> unrecorded) - shows specimen difference, not only defects
+peak -1.558e-01 at 329 deg (x=+0.79, y=-0.47)
+colour scale +/-1.558e-01  (auto-scaled to this image)
+pairs 108/108 kept  [ok]
+measurement noise floor 0.00010 kohm - a change below this is not a detection
+control peak +6.818e-03
+significance 22.85x the noise image
+baseline run: 20261008-122526-cut-disc-intact-5

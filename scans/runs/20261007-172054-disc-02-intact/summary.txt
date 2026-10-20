@@ -1,0 +1,4 @@
+Frames captured: 3
+Reciprocity: median 24.6%  max 91.2%  sign flips 3/36
+Noise floor: median pair sd 0.00098 kohm (2.75%)  max 0.30241 kohm over 90 pairs
+absolute: REFUSED: median reciprocity 24.6% > 15%; too few frames for a split-half noise image (need 4)

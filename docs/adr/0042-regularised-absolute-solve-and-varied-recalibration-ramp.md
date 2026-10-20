@@ -1,6 +1,6 @@
 # ADR-0042: Regularise the absolute solve, and recalibrate down a varied ramp that stops on contact faults
 
-- **Status:** Accepted
+- **Status:** Accepted; ramp superseded by [ADR-0060](0060-adaptive-recalibration-from-measured-results.md) (solver and contact-fault stop stand)
 - **Date:** 2026-10-06
 - **Affects:** `tree_ert/absolute.py`, `tree_ert/qt/worker.py`, `absolute_session.py`
 - **Related:** ADR-0041 (amends its solver and ladder; its gates stand), ADR-0032, ADR-0039

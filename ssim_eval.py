@@ -16,6 +16,7 @@ series directory.
 from __future__ import annotations
 
 import argparse
+import dataclasses
 import csv
 import json
 import re
@@ -29,11 +30,20 @@ import phase3a_unified_reconstruct as unified
 from tree_ert import ssim
 from tree_ert.reconstruction import reconstruct, require_compatible
 from tree_ert.settings import UiSettings
+from verify_device import physics_template
 from tree_ert.survey import load_frames
 
 RESULT_COLUMNS = [
-    "run_id", "baseline_run", "target", "blocks", "ssim_raw", "ssim_blurred",
-    "max_abs_angle_error_deg", "angle_errors_deg", "peak_radius", "true_radius",
+    "run_id", "baseline_run", "target", "blocks",
+    # angular localization error: the centroid of the lobe, not the strongest pixel
+    "max_abs_centroid_error_deg", "centroid_errors_deg",
+    # per-run max of the single-pixel estimate, kept so the two can be compared
+    "max_abs_angle_error_deg", "angle_errors_deg", "angle_estimator_spread_deg",
+    # reproducibility against a template simulated through this solver, with the
+    # run's own empty-tank control beside every detection (ADR-0050, ADR-0053)
+    "ncc", "ncc_control", "ncc_margin",
+    "dice", "dice_control", "dice_margin",
+    "peak_radius", "true_radius", "photo_present",
 ]
 
 
@@ -75,11 +85,51 @@ def evaluate(run_dir: Path, baseline_dir: Path, psf_sigma: float):
     require_compatible(base_run["settings"], run["settings"])
     target = run["conditions"].get("target_description") or run["conditions"].get("tank_contents") or ""
     labels = ssim.parse_target(target)
-    settings = UiSettings(pattern=run["settings"]["pattern"])
+    settings = _recorded_settings(run["settings"])
     result = reconstruct(load_frames(baseline_dir), load_frames(run_dir), settings)
     protocol, _ = unified.protocol_and_command(settings.pattern)
-    eit_mesh, _ = base.create_solver(protocol)
-    return target, labels, ssim.score(result.values, eit_mesh, labels, psf_sigma), result, eit_mesh
+    eit_mesh, solver = base.create_solver(protocol)
+    blocks = ssim.blocks_for(labels, eit_mesh)
+    template = physics_template(blocks, eit_mesh, solver)
+    score = ssim.score(result.values, eit_mesh, labels, psf_sigma, template=template)
+    control = _control_score(run_dir, eit_mesh, labels, psf_sigma, template)
+    return target, labels, score, control, result, eit_mesh
+
+
+def _recorded_settings(recorded: dict) -> UiSettings:
+    """Rebuild the capture settings from the record, mapping included.
+
+    Building UiSettings from the pattern alone silently discards the electrode
+    mapping, and every radius and angle would then be computed against masks for a ring
+    that was not the one measured. Harmless for the 2026-10-02 series, which is all
+    offset 0 / not reversed, but wrong for any run that is not.
+    """
+    fields = {f.name for f in dataclasses.fields(UiSettings)}
+    return UiSettings(**{k: v for k, v in recorded.items() if k in fields})
+
+
+def _control_score(run_dir, eit_mesh, labels, psf_sigma, template):
+    """The run's own empty-tank control, scored exactly as the detection is."""
+    npz = run_dir / "reconstruction.npz"
+    if not npz.is_file():
+        return None
+    with np.load(npz, allow_pickle=True) as handle:
+        if "control_values" not in handle.files:
+            return None
+        control = handle["control_values"]
+    return ssim.score(control, eit_mesh, labels, psf_sigma, template=template)
+
+
+def angle_spread(score) -> float | None:
+    """How far the two angle estimators disagree, worst block.
+
+    A large gap means the strongest pixel is not the block -- the lobe centroid and the
+    argmax are measuring different things (ADR-0055).
+    """
+    gaps = [abs(abs(b.centroid_angle_error_deg) - abs(b.angle_error_deg))
+            for b in score.blocks
+            if b.centroid_angle_error_deg is not None and b.angle_error_deg is not None]
+    return max(gaps) if gaps else None
 
 
 def _fmt(value: float | None, digits: int = 3) -> str:
@@ -131,28 +181,42 @@ def main(argv: list[str] | None = None) -> int:
             print(f"{run_id}: no baseline named in reconstruction.txt, skipped", file=sys.stderr)
             continue
         try:
-            target, labels, score, result, eit_mesh = evaluate(
+            target, labels, score, control, result, eit_mesh = evaluate(
                 run_dir, find_run(baseline_id, args.series, args.scans_runs), args.psf_sigma
             )
         except Exception as error:  # one bad run must not lose the rest of the series
             print(f"{run_id}: {error}", file=sys.stderr)
             continue
         errors = [b.angle_error_deg for b in score.blocks if b.angle_error_deg is not None]
+        centroid_errors = [b.centroid_angle_error_deg for b in score.blocks
+                           if b.centroid_angle_error_deg is not None]
+        photo = "yes" if (args.series / "photos" / f"{run_id}.jpg").is_file() else ""
         rows.append({
             "run_id": run_id,
             "baseline_run": baseline_id,
             "target": target,
             "blocks": "+".join(labels),
-            "ssim_raw": _fmt(score.ssim_raw),
-            "ssim_blurred": _fmt(score.ssim_blurred),
+            "max_abs_centroid_error_deg": _fmt(score.max_abs_centroid_angle_error, 1),
+            "centroid_errors_deg": " ".join(f"{e:+.1f}" for e in centroid_errors),
             "max_abs_angle_error_deg": _fmt(score.max_abs_angle_error, 1),
             "angle_errors_deg": " ".join(f"{e:+.1f}" for e in errors),
-            "peak_radius": " ".join(f"{b.peak_radius:.2f}" for b in score.blocks),
+            "angle_estimator_spread_deg": _fmt(angle_spread(score), 1),
+            "ncc": _fmt(score.ncc),
+            "ncc_control": _fmt(control.ncc) if control else "",
+            "ncc_margin": _fmt(score.ncc - control.ncc) if control else "",
+            "dice": _fmt(score.dice),
+            "dice_control": _fmt(control.dice) if control else "",
+            "dice_margin": _fmt(score.dice - control.dice) if control else "",
+            "peak_radius": " ".join(f"{b.centroid_radius:.2f}" if b.centroid_radius is not None
+                                    else "" for b in score.blocks),
             "true_radius": " ".join(f"{b.true_radius:.2f}" for b in score.blocks),
+            "photo_present": photo,
         })
         entries.append((run_id, labels, score, result, eit_mesh))
-        print(f"{run_id}  {'+'.join(labels):<10} raw {score.ssim_raw:.3f}  blurred {score.ssim_blurred:.3f}  "
-              f"angle {rows[-1]['angle_errors_deg'] or '-'}")
+        print(f"{run_id}  {'+'.join(labels):<10} "
+              f"angLoc {rows[-1]['max_abs_centroid_error_deg'] or '-':>5}  "
+              f"NCC {score.ncc:.3f} (ctrl {_fmt(control.ncc) if control else '-'})  "
+              f"Dice {score.dice:.3f} (ctrl {_fmt(control.dice) if control else '-'})")
 
     out = args.series / "ssim_results.csv"
     with out.open("w", newline="", encoding="utf-8") as handle:
@@ -161,9 +225,21 @@ def main(argv: list[str] | None = None) -> int:
         writer.writerows(rows)
     contact_sheet(entries, args.series / "ssim_contact_sheet.png")
     if rows:
-        raw = np.array([float(r["ssim_raw"]) for r in rows])
-        blurred = np.array([float(r["ssim_blurred"]) for r in rows])
-        print(f"\n{len(rows)} runs  SSIM raw mean {raw.mean():.3f}  blurred mean {blurred.mean():.3f}")
+        ang = np.array([float(r["max_abs_centroid_error_deg"]) for r in rows if r["max_abs_centroid_error_deg"]])
+        ncc = np.array([float(r["ncc"]) for r in rows if r["ncc"]])
+        marg = np.array([float(r["ncc_margin"]) for r in rows if r["ncc_margin"]])
+        dmarg = np.array([float(r["dice_margin"]) for r in rows if r["dice_margin"]])
+        print(f"\n{len(rows)} runs")
+        if ang.size:
+            within = int((ang <= 10).sum())
+            print(f"  angular localization error   median {np.median(ang):.2f} deg, "
+                  f"max {ang.max():.2f} deg, within 10 deg {within}/{ang.size}")
+        if marg.size:
+            print(f"  NCC beats its empty tank     {int((marg > 0).sum())}/{marg.size}, "
+                  f"median margin {np.median(marg):.3f}")
+        if dmarg.size:
+            print(f"  Dice beats its empty tank    {int((dmarg > 0).sum())}/{dmarg.size}, "
+                  f"median margin {np.median(dmarg):.3f}")
     print(f"wrote {out}")
     return 0
 
