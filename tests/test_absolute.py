@@ -286,7 +286,7 @@ class AcquireUntilPassTests(unittest.TestCase):
     def test_stops_after_repeated_contact_faults(self):
         original, original_fault = absolute.evaluate, absolute.contact_fault
         absolute.evaluate = lambda frames, s: (None, None, self._report(False))
-        absolute.contact_fault = lambda frames: ((1, 50.0),)
+        absolute.contact_fault = lambda frames, excluded=(): ((1, 50.0),)
         try:
             attempts, passed = absolute.acquire_until_pass(lambda s: [], _coconut())
         finally:
