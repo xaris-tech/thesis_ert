@@ -1,0 +1,52 @@
+{
+  "run_id": "20261020-172458-disc-06-intact-excl12-e4fix-dac620-n32-allel-b1",
+  "label": "disc-06-intact-excl12-e4fix-dac620-n32-allel-b1",
+  "created_at": "2026-10-20T17:24:58",
+  "git_commit": "9023d53",
+  "conditions": {
+    "medium": "cut disc",
+    "saline_g_per_l": null,
+    "fill_depth_mm": null,
+    "water_temp_c": null,
+    "electrode_protrusion_mm": null,
+    "grounding": "unknown",
+    "tank_contents": "intact on the outside",
+    "target_description": "intact, before drilling (ADR-0067)",
+    "electrode_map": "E1 = marked nail, clockwise viewed from above",
+    "specimen_id": "disc-06",
+    "circumference_mm": null,
+    "thickness_mm": null,
+    "major_diameter_mm": null,
+    "minor_diameter_mm": null,
+    "operator": "",
+    "notes": "2026-10-20 intact baseline 1 after E4 screw retightened, before E5-E7 drill; DAC 620 32 samples (ADR-0039 preset) at operator request; Raspberry Pi 5 host; absolute solved with all electrodes; E1/E2 and E1/E2/E4 exclusions re-solved offline",
+    "extra": {}
+  },
+  "settings": {
+    "port": "/dev/ttyACM0",
+    "baud": 115200,
+    "pattern": "adjacent",
+    "current_range": "high",
+    "dac": 620,
+    "settle_ms": 10,
+    "samples": 32,
+    "warmup_frames": 10,
+    "target_warmup_frames": 5,
+    "baseline_frames": 10,
+    "frames": 20,
+    "diameter_cm": null,
+    "log_dir": "phase3a_logs",
+    "log_enabled": true,
+    "allow_unstable_baseline": false,
+    "lenient_quality": false,
+    "filter_pairs": true,
+    "electrode_offset": 0,
+    "electrode_reversed": false,
+    "self_test_frames": 3,
+    "expected_shunt_ohms": 97.9,
+    "absolute_exclude_electrodes": []
+  },
+  "incomplete": [
+    "grounding is not recorded (floating or grounded?)"
+  ]
+}
