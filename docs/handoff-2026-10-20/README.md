@@ -20,22 +20,31 @@ E1 = 180°, E10 = 270°, E8 = 330°.
 Blind or biased sectors: **E1–E3 (120–180°) blind** under the E1/E2 exclusion; **E10–E12
 (210–270°) slightly biased** by the leak. Usable: **E4–E9, about 300° through 90°**.
 
-## 2. The key change of plan: prove it with difference imaging
+## 2. Goal: the hole in both the difference and the absolute image
 
-The absolute gates (ADR-0041) need model misfit ≤15 %. A bad contact such as disc-06's E4 breaks
-the homogeneous-disc model, so the absolute image fails however many times you rescan.
+Both are required:
 
-**A same-specimen difference image does not need that.** If the disc is never remounted, the bad
-contact is identical before and after drilling and cancels in the difference. What the difference
-image needs is:
+- **Difference image** (after vs before, same disc, never remounted): the trough lands on the
+  hole. Bad contacts cancel here, because they are identical before and after.
+- **Absolute image** (after-drilling run alone): passes the ADR-0041 gates (misfit ≤15 %,
+  reciprocity ≤15 %, significance ≥2.0) **and** shows the trough on the hole. The before-drilling
+  absolute image must pass too, and show no trough in the drill sector.
 
-1. baselines that repeat. disc-06 already does: σ0 within 2.7 % over 7 runs, noise 0.37 %;
-2. contacts and moisture that don't change between before and after;
-3. a split-half significance ≥2.0 (ADR-0027) and a trough in the drilled sector.
+**disc-06's absolute image fails because of the E4 screw contact alone.** Re-solving the
+2026-10-20 runs:
 
-So **disc-06 can be drilled now**, provided the controls in §3 are run. The absolute image is
-reported alongside, but it is not the pass criterion for this test. That is a change in what
-counts as proof and needs an ADR (§6).
+| disc-06 run | E1/E2 excluded | E1/E2/E4 excluded | E1/E2/E7 excluded (control) |
+|---|---|---|---|
+| 163003, DAC 400 | 40.2 % | **2.4 %** | 42.4 % |
+| 170539, DAC 400, E4 retightened | 36.1 % | **2.5 %** | 38.0 % |
+| 171449, DAC 620 | 21.4 % | **2.1 %** | 24.2 % |
+| 172458, DAC 620, 32 samples | 21.7 % | **2.2 %** | 24.6 % |
+
+Dropping the healthy E7 changes nothing, so this is E4, not the loss of pairs. Excluding E4 as
+well leaves only 30/108 pairs and blinds 60–180°. Use that only as a fallback (§5). The real fix is
+a good E4 contact, which §3 step 1 does before anything else.
+
+Repeatability is already good: σ0 within 2.7 % over 7 runs, noise 0.37 %.
 
 ## 3. Protocol: disc-06, drill and difference
 
@@ -44,10 +53,18 @@ Settings: adjacent, DAC 400, settle 10 ms, 16 samples, E1/E2 excluded, 5 warm-up
 
 0. **Open-circuit check** with nothing attached (`exports/open-circuit-2026-10-20/open_circuit_check.py 1`).
    Go ahead only if the worst record is ≤20 µA and drives other than E10–E12 are ≤2 µA (ADR-0066).
-1. Mount disc-06 and attach the leads. **From here on, do not touch the screws, clips or leads
-   until the end.** Do not add or remove gel after this point.
-2. Wait 10 minutes for the contacts to settle.
-3. **Baselines B1, B2, B3.** They must agree on σ0 within 2 % and on current within 2 %.
+1. **Fix E4 first.** Retightening did not work on 2026-10-20. In order, stopping when it works:
+   a. remove the E4 screw, clean the hole and the screw (IPA, let it dry), refit it to the same
+      depth as the others, apply gel;
+   b. if E4 is still flagged: put a new screw in a fresh hole about 5 mm from the old one, at the
+      same radius, and update the electrode positions in the notes;
+   c. check with one short run (2 warm-up, 4 frames): E4's contact flag should be near the
+      all-pair median, and misfit ≤15 % with only E1/E2 excluded.
+2. Attach the leads. **From here on, do not touch the screws, clips or leads until the end.**
+   Do not add or remove gel after this point. Wait 10 minutes for the contacts to settle.
+3. **Baselines B1, B2, B3.** They must agree on σ0 within 2 % and on current within 2 %, and
+   **pass the absolute gates with no trough in the drill sector.** If they don't pass, do not
+   drill: go back to step 1.
 4. **Sham (the false-positive control).** Wait as long as drilling will take (say 15 minutes),
    handle the disc the way drilling will (press on it where you'll drill, without drilling), then
    take **S1**. Difference S1 against B3. **This image must be empty** (significance <2, no trough
@@ -65,12 +82,13 @@ Settings: adjacent, DAC 400, settle 10 ms, 16 samples, E1/E2 excluded, 5 warm-up
 7. **Optional hole 2** at **E8, about 330°**, same size, then D4–D6. A second hole that moves the
    trough is much stronger evidence than one.
 
-**Pass for the thesis claim:**
+**Pass for the thesis claim (all of these):**
 
-- D1–D3 each show a resistive (blue) trough whose centroid is within **±30°** of the drilled angle,
-  with significance **≥2.0**;
-- the three agree with each other within about 15°;
-- the sham S1 is empty.
+- **Difference:** D1–D3 against B3 each show a resistive (blue) trough whose centroid is within
+  **±30°** of the drilled angle, with significance **≥2.0**, agreeing within about 15°.
+- **Absolute:** B1–B3 pass with no trough in the drill sector; D1–D3 pass and their trough is
+  within ±30° of the drilled angle.
+- **Sham:** S1 against B3 is empty.
 
 Write down what failed if it fails: a trough in the wrong sector is a result too.
 
@@ -108,6 +126,9 @@ clean, refit, gel) only **before** step 1 of §3, never between before and after
   the disc (§4), and repeat on a fresh disc.
 - **No trough after drilling and an empty sham:** the hole is too small or not through. Enlarge it
   (keep the centre), rescan.
+- **E4 cannot be fixed (step 1 a–b both fail):** fall back to excluding E1, E2 and E4 for the
+  absolute solve (misfit about 2 % on 2026-10-20, but 30/108 pairs, 60–180° blind). The E6 hole
+  at 30° is still outside the blind sector. Report it as a weaker result and say why.
 - **Trough appears but at E4 (~75°):** the E4 contact changed. Note it, re-seat E4, and start a
   new baseline before drilling again.
 - **Next disc:** disc-02 or disc-03 after conditioning into the 2–6 mS window (§4). Avoid disc-04,
@@ -115,8 +136,8 @@ clean, refit, gel) only **before** step 1 of §3, never between before and after
 
 ## 6. Paperwork needed
 
-- **ADR:** same-specimen difference imaging with a sham control is the detection criterion for
-  disc holes; the absolute gates are reported but not required for it. Write it before drilling.
+- **ADR:** the detection criterion for disc holes: same-specimen difference **and** gated absolute
+  image, both on the hole, plus an empty sham. Write it before drilling.
 - **ADR:** the moisture-conditioning rule (2–6 mS window, sealed-bag equilibration, weigh and
   record).
 - Fill in `Conditions.notes` for every run: contact method, gel, weight, hole geometry.
