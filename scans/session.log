@@ -10837,3 +10837,133 @@
 ------------------------------------------------------------------------
 2026-10-20 15:27:22  Run 20261020-152722-saline-empty-termswap-adjacent-dac400-st10-n16
 2026-10-20 15:29:07  [1/1] adjacent dac400  st10  n16  I med 339 uA | REFUSED: model misfit 81.6% > 15%; significance 1.04 < 2.0 | s0 2.48 peak 24 deg | 2.5 min | 20261020-152722-saline-empty-termswap-adjacent-dac400-st10-n16
+
+------------------------------------------------------------------------
+2026-10-21 09:57:40  Session started (hardware)
+2026-10-21 09:57:40  Scans folder: D:\Here\asd\scans
+2026-10-21 09:57:40  513 scan(s) already recorded here.
+2026-10-21 09:57:40  Ready. Settings are saved on exit.
+2026-10-21 10:03:09  Naming warnings: medium must be one of: cut disc, standing tree, resistor belt, saline tank, dummy load (got 'unknown'); specimen ID is empty (e.g. disc-03, coconut-tree-1)
+2026-10-21 10:03:10  Connecting to COM7...
+2026-10-21 10:03:10  FAILED: SerialException: could not open port 'COM7': FileNotFoundError(2, 'The system cannot find the file specified.', None, 2)
+
+------------------------------------------------------------------------
+2026-10-21 10:03:13  Session ended
+
+------------------------------------------------------------------------
+2026-10-21 10:03:54  Session started (hardware)
+2026-10-21 10:03:54  Scans folder: D:\Here\asd\scans
+2026-10-21 10:03:54  513 scan(s) already recorded here.
+2026-10-21 10:03:54  Ready. Settings are saved on exit.
+2026-10-21 10:08:51  Connecting to COM7...
+2026-10-21 10:08:51  FAILED: SerialException: could not open port 'COM7': FileNotFoundError(2, 'The system cannot find the file specified.', None, 2)
+2026-10-21 10:09:06  Connecting to COM8...
+2026-10-21 10:09:06  Configuring instrument...
+
+------------------------------------------------------------------------
+2026-10-21 10:09:06  Run 20261021-100906-disc-01-abs
+2026-10-21 10:09:06  Conditions: medium=cut disc saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-21 10:09:06  Recording to scans\runs\20261021-100906-disc-01-abs
+2026-10-21 10:18:11  FAILED: SerialException: GetOverlappedResult failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-10-21 10:18:11  Partial run kept at scans\runs\20261021-100906-disc-01-abs
+2026-10-21 10:18:30  Connecting to COM8...
+2026-10-21 10:18:30  FAILED: SerialException: could not open port 'COM8': FileNotFoundError(2, 'The system cannot find the file specified.', None, 2)
+2026-10-21 10:18:30  Partial run kept at scans\runs\20261021-100906-disc-01-abs
+2026-10-21 10:18:45  Connecting to COM7...
+2026-10-21 10:18:45  Configuring instrument...
+
+------------------------------------------------------------------------
+2026-10-21 10:18:45  Run 20261021-101845-disc-01-abs
+2026-10-21 10:18:45  Conditions: medium=cut disc saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-21 10:18:45  Recording to scans\runs\20261021-101845-disc-01-abs
+2026-10-21 10:19:10  [warmup 1/5] 16/192 OK | I med 5.2 uA (0.1-12.0) | R med n/a | flags I_LOWx160 I_REVERSEDx16
+2026-10-21 10:19:35  [warmup 2/5] 17/192 OK | I med 5.1 uA (0.0-12.1) | R med n/a | flags I_LOWx161 I_REVERSEDx14
+2026-10-21 10:20:00  [warmup 3/5] 16/192 OK | I med 5.2 uA (0.1-11.9) | R med n/a | flags I_LOWx160 I_REVERSEDx16
+2026-10-21 10:20:25  [warmup 4/5] 16/192 OK | I med 5.2 uA (0.1-12.3) | R med n/a | flags I_LOWx160 I_REVERSEDx16
+2026-10-21 10:20:50  [warmup 5/5] 16/192 OK | I med 5.1 uA (0.1-11.7) | R med n/a | flags I_LOWx160 I_REVERSEDx16
+2026-10-21 10:21:16  [frame 1] 17/192 OK | I med 5.0 uA (0.0-12.0) | R med n/a | flags I_LOWx159 I_REVERSEDx16
+2026-10-21 10:21:41  [frame 2] 16/192 OK | I med 5.1 uA (0.0-11.7) | R med n/a | flags I_LOWx160 I_REVERSEDx16
+2026-10-21 10:22:06  [frame 3] 16/192 OK | I med 5.0 uA (0.2-11.6) | R med n/a | flags I_LOWx160 I_REVERSEDx16
+2026-10-21 10:22:31  [frame 4] 15/192 OK | I med 5.1 uA (0.0-12.1) | R med n/a | flags I_LOWx162 I_REVERSEDx15
+2026-10-21 10:22:48  FAILED: SerialException: ClearCommError failed (PermissionError(13, 'The device does not recognize the command.', None, 22))
+2026-10-21 10:22:48  Partial run kept at scans\runs\20261021-101845-disc-01-abs
+
+------------------------------------------------------------------------
+2026-10-21 10:22:52  Session ended
+
+------------------------------------------------------------------------
+2026-10-21 12:00:29  Session started (hardware)
+2026-10-21 12:00:29  Scans folder: D:\Here\asd\scans
+2026-10-21 12:00:29  515 scan(s) already recorded here.
+2026-10-21 12:00:29  Ready. Settings are saved on exit.
+2026-10-21 12:05:57  Naming warnings: medium must be one of: cut disc, standing tree, resistor belt, saline tank, dummy load (got 'unknown'); specimen ID is empty (e.g. disc-03, coconut-tree-1)
+2026-10-21 12:05:59  Connecting to COM8...
+2026-10-21 12:05:59  Configuring instrument...
+
+------------------------------------------------------------------------
+2026-10-21 12:06:00  Run 20261021-120559-run-baseline
+2026-10-21 12:06:00  Conditions: medium=unknown saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-21 12:06:00  Recording to scans\runs\20261021-120559-run-baseline
+2026-10-21 12:09:21  FAILED: SerialException: GetOverlappedResult failed (PermissionError(13, 'Access is denied.', None, 5))
+2026-10-21 12:09:21  Partial run kept at scans\runs\20261021-120559-run-baseline
+
+------------------------------------------------------------------------
+2026-10-21 12:09:30  Session ended
+
+------------------------------------------------------------------------
+2026-10-21 12:12:21  Run 20261021-121221-disc-02-intact-recheck-adjacent-dac620-st10-n32
+2026-10-21 12:17:33  [1/1] adjacent dac620  st10  n32  I med 694 uA | REFUSED: median reciprocity 76.7% > 15%; model misfit 91.0% > 15%; significance 0.59 < 2.0  |  EXCLUDED E1 E2: 56/108 pairs | s0 19.98 peak 341 deg | 7.7 min | 20261021-121221-disc-02-intact-recheck-adjacent-dac620-st10-n32
+
+------------------------------------------------------------------------
+2026-10-21 12:28:22  Run 20261021-122822-disc-02-intact-shortcheck-adjacent-dac620-st10-n32
+2026-10-21 12:31:26  [1/1] adjacent dac620  st10  n32  I med 703 uA | REFUSED: median reciprocity 69.2% > 15%; model misfit 86.8% > 15%; significance 0.99 < 2.0  |  EXCLUDED E1 E2: 56/108 pairs | s0 9.09 peak 340 deg | 4.6 min | 20261021-122822-disc-02-intact-shortcheck-adjacent-dac620-st10-n32
+
+------------------------------------------------------------------------
+2026-10-21 12:43:49  Run 20261021-124349-disc-02-intact-shortcheck2-adjacent-dac620-st10-n32
+2026-10-21 12:46:51  [1/1] adjacent dac620  st10  n32  I med 698 uA | REFUSED: median reciprocity 73.7% > 15%; model misfit 89.2% > 15%; significance 1.21 < 2.0  |  EXCLUDED E1 E2: 56/108 pairs | s0 10.55 peak 123 deg | 4.5 min | 20261021-124349-disc-02-intact-shortcheck2-adjacent-dac620-st10-n32
+
+------------------------------------------------------------------------
+2026-10-21 12:55:48  Run 20261021-125548-disc-02-intact-run-adjacent-dac620-st10-n32
+2026-10-21 13:05:10  [1/1] adjacent dac620  st10  n32  I med 704 uA | REFUSED: median reciprocity 62.1% > 15%; model misfit 90.7% > 15%; significance 0.96 < 2.0  |  EXCLUDED E1 E2: 56/108 pairs | s0 20.29 peak 335 deg | 13.1 min | 20261021-125548-disc-02-intact-run-adjacent-dac620-st10-n32
+
+------------------------------------------------------------------------
+2026-10-21 14:18:17  Run 20261021-141817-disc-02-intact-shortcheck3-adjacent-dac620-st10-n32
+2026-10-21 14:21:24  [1/1] adjacent dac620  st10  n32  I med 707 uA | PASS  |  EXCLUDED E1 E2: 56/108 pairs | s0 7.35 peak 214 deg | 4.6 min | 20261021-141817-disc-02-intact-shortcheck3-adjacent-dac620-st10-n32
+
+------------------------------------------------------------------------
+2026-10-21 14:26:19  Run 20261021-142619-disc-02-intact-baseline-adjacent-dac620-st10-n32
+
+------------------------------------------------------------------------
+2026-10-21 14:35:27  Run 20261021-143527-disc-02-intact-baseline-adjacent-dac620-st10-n32
+
+------------------------------------------------------------------------
+2026-10-21 14:44:29  Run 20261021-144429-disc-02-intact-baseline-adjacent-dac620-st10-n32
+2026-10-21 14:52:04  [1/1] adjacent dac620  st10  n32  I med 706 uA | PASS  |  EXCLUDED E1 E2: 56/108 pairs | s0 7.31 peak 214 deg | 11.3 min | 20261021-144429-disc-02-intact-baseline-adjacent-dac620-st10-n32
+
+------------------------------------------------------------------------
+2026-10-21 14:58:55  Run 20261021-145855-disc-05-holes-e12-e3-adjacent-dac620-st10-n32
+2026-10-21 15:06:28  [1/1] adjacent dac620  st10  n32  I med 698 uA | PASS  |  EXCLUDED E1 E2: 56/108 pairs | s0 8.40 peak 334 deg | 11.3 min | 20261021-145855-disc-05-holes-e12-e3-adjacent-dac620-st10-n32
+
+------------------------------------------------------------------------
+2026-10-21 15:12:51  Run 20261021-151251-disc-04-intact-adjacent-dac620-st10-n32
+2026-10-21 15:20:29  [1/1] adjacent dac620  st10  n32  I med 573 uA | REFUSED: median reciprocity 23.0% > 15%; model misfit 22.2% > 15%  |  EXCLUDED E1 E2: 56/108 pairs | s0 11.54 peak 30 deg | 11.4 min | 20261021-151251-disc-04-intact-adjacent-dac620-st10-n32
+
+------------------------------------------------------------------------
+2026-10-21 15:26:01  Run 20261021-152601-disc-04-intact-retry-adjacent-dac620-st10-n32
+2026-10-21 15:33:33  [1/1] adjacent dac620  st10  n32  I med 567 uA | REFUSED: median reciprocity 26.7% > 15%; model misfit 23.1% > 15%  |  EXCLUDED E1 E2: 56/108 pairs | s0 11.83 peak 29 deg | 11.3 min | 20261021-152601-disc-04-intact-retry-adjacent-dac620-st10-n32
+
+------------------------------------------------------------------------
+2026-10-21 15:52:33  Run 20261021-155233-disc-08-hole-e10-adjacent-dac620-st10-n32
+2026-10-21 16:00:08  [1/1] adjacent dac620  st10  n32  I med 483 uA | REFUSED: model misfit 29.6% > 15%  |  EXCLUDED E1 E2: 56/108 pairs | s0 2.26 peak 282 deg | 11.3 min | 20261021-155233-disc-08-hole-e10-adjacent-dac620-st10-n32
+
+------------------------------------------------------------------------
+2026-10-21 16:07:01  Run 20261021-160701-disc-08-hole-e10-e9tight-adjacent-dac620-st10-n32
+2026-10-21 16:10:06  [1/1] adjacent dac620  st10  n32  I med 481 uA | REFUSED: model misfit 34.4% > 15%  |  EXCLUDED E1 E2: 56/108 pairs | s0 2.33 peak 282 deg | 4.6 min | 20261021-160701-disc-08-hole-e10-e9tight-adjacent-dac620-st10-n32
+
+------------------------------------------------------------------------
+2026-10-21 16:29:17  Run 20261021-162917-disc-08-hole-e10-e9moved-adjacent-dac620-st10-n32
+2026-10-21 16:32:26  [1/1] adjacent dac620  st10  n32  I med 477 uA | REFUSED: model misfit 34.8% > 15%  |  EXCLUDED E1 E2: 56/108 pairs | s0 1.96 peak 13 deg | 4.6 min | 20261021-162917-disc-08-hole-e10-e9moved-adjacent-dac620-st10-n32
+
+------------------------------------------------------------------------
+2026-10-21 16:40:09  Run 20261021-164009-disc-08-hole-e10-retry-adjacent-dac620-st10-n32
+2026-10-21 16:43:18  [1/1] adjacent dac620  st10  n32  I med 480 uA | REFUSED: model misfit 32.8% > 15%  |  EXCLUDED E1 E2: 56/108 pairs | s0 1.96 peak 13 deg | 4.7 min | 20261021-164009-disc-08-hole-e10-retry-adjacent-dac620-st10-n32

@@ -1,5 +1,5 @@
 {
-  "port": "COM7",
+  "port": "COM8",
   "baud": 115200,
   "pattern": "opposite",
   "current_range": "high",
@@ -19,5 +19,6 @@
   "electrode_offset": 0,
   "electrode_reversed": false,
   "self_test_frames": 3,
-  "expected_shunt_ohms": null
+  "expected_shunt_ohms": null,
+  "absolute_exclude_electrodes": []
 }
