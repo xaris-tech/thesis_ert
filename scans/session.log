@@ -10837,3 +10837,21 @@
 ------------------------------------------------------------------------
 2026-10-20 15:27:22  Run 20261020-152722-saline-empty-termswap-adjacent-dac400-st10-n16
 2026-10-20 15:29:07  [1/1] adjacent dac400  st10  n16  I med 339 uA | REFUSED: model misfit 81.6% > 15%; significance 1.04 < 2.0 | s0 2.48 peak 24 deg | 2.5 min | 20261020-152722-saline-empty-termswap-adjacent-dac400-st10-n16
+
+------------------------------------------------------------------------
+2026-10-21 17:14:20  absolute session: /tmp/claude-1000/-home-rantiche-thesis-ert/934aa291-c6ee-469e-8c33-671126cfb384/scratchpad/disc08.csv (1 specimens)
+
+------------------------------------------------------------------------
+2026-10-21 17:14:20  specimen disc-08
+2026-10-21 17:26:46  disc-08 attempt 1: settle=30ms samples=32 warmup=5 frames=10 -> REFUSED: model misfit 40.9% > 15%
+2026-10-21 17:38:41  disc-08 attempt 2: settle=20ms samples=32 warmup=5 frames=10 -> REFUSED: model misfit 39.9% > 15%
+
+------------------------------------------------------------------------
+2026-10-21 17:42:51  absolute session: /tmp/claude-1000/-home-rantiche-thesis-ert/934aa291-c6ee-469e-8c33-671126cfb384/scratchpad/disc08.csv (1 specimens)
+
+------------------------------------------------------------------------
+2026-10-21 17:42:51  specimen disc-08
+2026-10-21 17:54:21  disc-08 attempt 1: settle=10ms samples=32 warmup=5 frames=10 -> REFUSED: model misfit 30.5% > 15%
+2026-10-21 17:54:22  disc-08: no attempt passed after 1 acquisitions -- check contacts
+2026-10-21 17:54:22  disc-08: FAILED
+2026-10-21 17:54:22  Survey manifest: exports/absolute-session-20261021-175422/survey-manifest.csv
