@@ -1,0 +1,5 @@
+Frames captured: 10
+Reciprocity: median 15.9%  max 97.8%  sign flips 1/54
+Check electrode contact: E10 51%, E8 34% (all pairs median 16%)
+Noise floor: median pair sd 0.00011 kohm (0.62%)  max 0.04246 kohm over 108 pairs
+absolute: REFUSED: model misfit 30.5% > 15%
