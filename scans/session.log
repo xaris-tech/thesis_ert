@@ -10855,3 +10855,39 @@
 2026-10-21 17:54:22  disc-08: no attempt passed after 1 acquisitions -- check contacts
 2026-10-21 17:54:22  disc-08: FAILED
 2026-10-21 17:54:22  Survey manifest: exports/absolute-session-20261021-175422/survey-manifest.csv
+
+------------------------------------------------------------------------
+2026-10-21 18:06:37  absolute session: /tmp/claude-1000/-home-rantiche-thesis-ert/934aa291-c6ee-469e-8c33-671126cfb384/scratchpad/disc08.csv (1 specimens)
+
+------------------------------------------------------------------------
+2026-10-21 18:06:37  specimen disc-08
+
+------------------------------------------------------------------------
+2026-10-21 18:07:38  absolute session: /tmp/claude-1000/-home-rantiche-thesis-ert/934aa291-c6ee-469e-8c33-671126cfb384/scratchpad/disc08.csv (1 specimens)
+
+------------------------------------------------------------------------
+2026-10-21 18:07:38  specimen disc-08
+2026-10-21 18:19:26  disc-08 attempt 1: settle=10ms samples=32 warmup=5 frames=10 -> REFUSED: median reciprocity 16.9% > 15%; model misfit 38.6% > 15%
+2026-10-21 18:19:27  disc-08: no attempt passed after 1 acquisitions -- check contacts
+2026-10-21 18:19:27  disc-08: FAILED
+2026-10-21 18:19:27  Survey manifest: exports/absolute-session-20261021-181927/survey-manifest.csv
+
+------------------------------------------------------------------------
+2026-10-21 18:21:50  absolute session: /tmp/claude-1000/-home-rantiche-thesis-ert/934aa291-c6ee-469e-8c33-671126cfb384/scratchpad/disc05.csv (1 specimens)
+
+------------------------------------------------------------------------
+2026-10-21 18:21:50  specimen disc-05
+2026-10-21 18:33:11  disc-05 attempt 1: settle=10ms samples=32 warmup=5 frames=10 -> REFUSED: median reciprocity 36.2% > 15%; model misfit 50.4% > 15%; significance 0.99 < 2.0
+2026-10-21 18:33:12  disc-05: no attempt passed after 1 acquisitions -- check contacts
+2026-10-21 18:33:12  disc-05: FAILED
+2026-10-21 18:33:12  Survey manifest: exports/absolute-session-20261021-183312/survey-manifest.csv
+
+------------------------------------------------------------------------
+2026-10-21 18:36:57  absolute session: /tmp/claude-1000/-home-rantiche-thesis-ert/934aa291-c6ee-469e-8c33-671126cfb384/scratchpad/disc05.csv (1 specimens)
+
+------------------------------------------------------------------------
+2026-10-21 18:36:57  specimen disc-05
+2026-10-21 18:48:23  disc-05 attempt 1: settle=10ms samples=32 warmup=5 frames=10 -> REFUSED: model misfit 66.4% > 15%
+2026-10-21 18:48:23  disc-05: no attempt passed after 1 acquisitions -- check contacts
+2026-10-21 18:48:23  disc-05: FAILED
+2026-10-21 18:48:23  Survey manifest: exports/absolute-session-20261021-184823/survey-manifest.csv
