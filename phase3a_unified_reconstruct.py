@@ -17,7 +17,7 @@ import serial
 import phase3a_reconstruct as base
 
 
-DEFAULT_PORT = "COM3"
+DEFAULT_PORT = base.DEFAULT_PORT
 DEFAULT_BAUD = 115200
 DEFAULT_LOG_DIR = Path("phase3a_logs")
 # Set from a measured null frame, not chosen nominally: with the current

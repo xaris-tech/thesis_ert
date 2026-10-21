@@ -4,6 +4,8 @@ import json
 from dataclasses import dataclass, fields, replace
 from pathlib import Path
 
+from phase3a_reconstruct import DEFAULT_PORT
+
 
 VALID_PATTERNS = ("adjacent", "opposite", "skip-1", "skip-2")
 # Current-range jumper. Rs is physical and the firmware cannot read it back, so
@@ -43,7 +45,7 @@ def parse_float_field(name: str, value: str, minimum: float | None = None) -> fl
 
 @dataclass(frozen=True)
 class UiSettings:
-    port: str = "COM3"
+    port: str = DEFAULT_PORT
     baud: int = 115200
     pattern: str = "adjacent"
     # Must match the Rs jumper actually fitted. Defaults to "high" because the

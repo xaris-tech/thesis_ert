@@ -1349,6 +1349,6 @@ class DebugApp(tk.Tk):
         self.events.put(("target_preview", reconstructions))
 
 
-def run_app(demo: bool = False, port: str = "COM3") -> None:
+def run_app(demo: bool = False, port: str = UiSettings.port) -> None:
     app = DebugApp(demo=demo, port=port)
     app.mainloop()

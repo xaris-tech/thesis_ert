@@ -1,3 +1,4 @@
+import sys
 import unittest
 from dataclasses import replace
 from pathlib import Path
@@ -9,7 +10,7 @@ from tree_ert.settings import UiSettings, parse_int_field, parse_float_field
 class TestUiSettings(unittest.TestCase):
     def test_defaults_are_safe_for_demo(self):
         settings = UiSettings.default()
-        self.assertEqual(settings.port, "COM3")
+        self.assertEqual(settings.port, "COM3" if sys.platform == "win32" else "/dev/ttyACM0")
         self.assertEqual(settings.baud, 115200)
         self.assertEqual(settings.pattern, "adjacent")
         self.assertEqual(settings.dac, 100)

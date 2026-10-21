@@ -8,9 +8,12 @@ PyEIT difference reconstruction with a 12-electrode adjacent-adjacent protocol.
 from __future__ import annotations
 
 import argparse
+import copy
 import csv
+import sys
 from dataclasses import dataclass
 from datetime import datetime
+from functools import lru_cache
 from pathlib import Path
 import time
 from typing import Iterable, Sequence
@@ -25,7 +28,8 @@ from pyeit.eit.jac import JAC
 
 
 N_ELECTRODES = 12
-DEFAULT_PORT = "COM3"
+# Native-USB ESP32-S3 name per OS; pass --port when the board enumerates elsewhere.
+DEFAULT_PORT = "COM3" if sys.platform == "win32" else "/dev/ttyACM0"
 DEFAULT_BAUD = 115200
 DEFAULT_LOG_DIR = Path("phase3a_logs")
 DEFAULT_MAX_LOG_FRAMES = 100
@@ -256,8 +260,15 @@ def read_one_frame(ser: serial.Serial) -> list[FrameRecord]:
             buffer.append(line)
 
 
+@lru_cache(maxsize=1)
+def _template_mesh() -> mesh.PyEITMesh:
+    # distmesh is deterministic for fixed n_el/h0 (ADR-0069), so building it once
+    # yields the same nodes and elements as rebuilding it on every call.
+    return mesh.create(n_el=N_ELECTRODES, h0=0.12)
+
+
 def create_solver(protocol: protocol_module.PyEITProtocol) -> tuple[mesh.PyEITMesh, JAC]:
-    eit_mesh = mesh.create(n_el=N_ELECTRODES, h0=0.12)
+    eit_mesh = copy.deepcopy(_template_mesh())
     solver = JAC(eit_mesh, protocol)
     solver.setup(p=0.45, lamb=0.01, method="kotre", jac_normalized=False)
     return eit_mesh, solver
