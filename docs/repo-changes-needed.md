@@ -164,3 +164,10 @@ reproducible from the description above.
 - `tests/test_absolute.py::test_stops_after_repeated_contact_faults` stubbed
   `contact_fault` with one argument after `new` changed it to take the excluded
   electrodes too. The stub now accepts both.
+
+## 7. Implemented on branch `rpi` (not on `new`)
+
+ADR-0069, kept off `new` until the Pi is in use: the FEM mesh is built once per process and
+copied per caller (distmesh is deterministic, so images are unchanged; ~1 s less per run on
+the desktop), and `DEFAULT_PORT` is `COM3` on Windows, `/dev/ttyACM0` elsewhere, imported by
+the other entry points (§1.1). Merge `rpi` when moving to the Pi.
