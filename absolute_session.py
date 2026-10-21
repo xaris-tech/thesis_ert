@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+from dataclasses import replace
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -77,6 +78,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--thickness-mm", type=float, help="disc thickness, for S/m")
     parser.add_argument("--electrode-map", default="")
     parser.add_argument("--operator", default="")
+    parser.add_argument("--settle-ms", type=int, help="first-attempt settle time (default: preset)")
+    parser.add_argument(
+        "--exclude-electrodes", type=int, nargs="*", default=[],
+        help="electrodes dropped from the absolute solve, e.g. 1 2",
+    )
+    parser.add_argument("--label-suffix", default="", help="appended to every run label, e.g. rpi")
     parser.add_argument("--yes", action="store_true", help="do not wait for Enter between discs")
     args = parser.parse_args(argv)
 
@@ -84,7 +91,10 @@ def main(argv: list[str] | None = None) -> int:
     if args.only:
         plan = [row for row in plan if row["specimen_id"] in set(args.only)]
     acquisition = DemoAcquisition() if args.demo else SerialAcquisition()
-    settings = base_settings("DEMO" if args.demo else args.port).validate()
+    settings = base_settings("DEMO" if args.demo else args.port)
+    if args.settle_ms is not None:
+        settings = replace(settings, settle_ms=args.settle_ms)
+    settings = replace(settings, absolute_exclude_electrodes=list(args.exclude_electrodes)).validate()
 
     session_log = run_record.SessionLog(args.scans_root)
     session_log.banner(f"absolute session: {args.plan} ({len(plan)} specimens)")
@@ -110,6 +120,8 @@ def main(argv: list[str] | None = None) -> int:
                 number = attempt_counter["n"]
                 conditions = make_conditions(row, args, number)
                 label = run_record.run_label(conditions)
+                if args.label_suffix:
+                    label = f"{label}-{args.label_suffix}"
                 problems = run_record.naming_problems(conditions, label)
                 if problems:
                     raise ValueError("; ".join(problems))
