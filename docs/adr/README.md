@@ -114,6 +114,7 @@ one costs a re-derivation.
 | [0067](0067-proceed-to-disc-06-with-e1-e2-excluded.md) | Proceed to disc-06 drilled defect (E5–E7) with E1/E2 excluded; E1–E3 sector declared blind | Accepted |
 | [0068](0068-disc-hole-detection-needs-difference-absolute-and-sham.md) | Disc hole detected only if difference, gated absolute and empty sham all agree | Accepted |
 | [0070](0070-solve-unexcluded-first-then-justify-each-exclusion.md) | Solve with no electrodes excluded first; every exclusion justified by a leave-one-out sweep | Accepted |
+| [0071](0071-saline-position-series-absolute-where-visible-difference-where-blind.md) | Saline position series: absolute where visible, difference against empty tank where blind (E1–E3) | Accepted |
 | [0056](0056-correct-run-conditions-in-extra-never-overwrite.md) | Correct recorded conditions with a dated key in `extra`; original fields stay as written | Accepted |
 | [0055](0055-measure-the-lobe-not-a-window.md) | Lobe connected-component centroid, no angular window; window choice was worth 12.3 deg | Accepted |
 | [0054](0054-the-centroid-angle-estimator-has-a-measured-bias.md) | Centroid window validated against injected offsets; -0.45 deg bias documented, not corrected in code | Accepted |
