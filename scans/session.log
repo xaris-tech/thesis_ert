@@ -10967,3 +10967,403 @@
 ------------------------------------------------------------------------
 2026-10-21 16:40:09  Run 20261021-164009-disc-08-hole-e10-retry-adjacent-dac620-st10-n32
 2026-10-21 16:43:18  [1/1] adjacent dac620  st10  n32  I med 480 uA | REFUSED: model misfit 32.8% > 15%  |  EXCLUDED E1 E2: 56/108 pairs | s0 1.96 peak 13 deg | 4.7 min | 20261021-164009-disc-08-hole-e10-retry-adjacent-dac620-st10-n32
+
+------------------------------------------------------------------------
+2026-10-22 11:38:22  position series: 1 positions x 3 runs
+
+------------------------------------------------------------------------
+2026-10-22 11:38:22  position empty-first (baseline)
+2026-10-22 11:48:48  [empty-first 1/3] 20261022-114021-saline-pos-empty-first (baseline) 
+  unexcluded: model misfit 83.6% > 15%; significance 1.38 < 2.0, misfit 83.61 %
+  leave-one-out misfit %: E1 32.1, E2 84.0, E3 83.2, E4 84.4, E5 84.2, E6 45.4, E7 44.7, E8 83.4, E9 86.0, E10 84.0, E11 83.8, E12 42.2
+  excluded: model misfit 25.5% > 15%, trough -3.01 mS, lobe at 19 deg (touches E6: may be contact)  |  EXCLUDED E1 E2: 56/108 pairs
+2026-10-22 11:57:06  [empty-first 2/3] 20261022-115048-saline-pos-empty-first (baseline) 
+  unexcluded: model misfit 84.3% > 15%, misfit 84.34 %
+  leave-one-out misfit %: E1 32.3, E2 84.0, E3 82.8, E4 83.0, E5 83.9, E6 46.0, E7 45.5, E8 85.4, E9 85.4, E10 83.7, E11 83.0, E12 43.5
+  excluded: model misfit 25.5% > 15%, trough -2.98 mS, lobe at 14 deg  |  EXCLUDED E1 E2: 56/108 pairs
+2026-10-22 12:04:48  [empty-first 3/3] 20261022-115906-saline-pos-empty-first (baseline) 
+  unexcluded: model misfit 83.6% > 15%, misfit 83.60 %
+  leave-one-out misfit %: E1 32.2, E2 84.0, E3 83.0, E4 84.3, E5 82.7, E6 46.0, E7 45.3, E8 84.9, E9 84.9, E10 83.5, E11 84.6, E12 43.7
+  excluded: model misfit 25.4% > 15%, trough -2.98 mS, lobe at 14 deg  |  EXCLUDED E1 E2: 56/108 pairs
+2026-10-22 12:04:48  Summary: exports\position-series-20261022-113822\summary.csv
+
+------------------------------------------------------------------------
+2026-10-22 12:12:17  position series: 1 positions x 3 runs
+
+------------------------------------------------------------------------
+2026-10-22 12:12:17  position e1 (difference)
+2026-10-22 12:20:32  [e1 1/3] 20261022-121417-saline-pos-e1 (difference) no (wrong place)
+  unexcluded: model misfit 83.0% > 15%, misfit 83.01 %
+  leave-one-out misfit %: E1 28.1, E2 85.8, E3 82.3, E4 83.6, E5 83.8, E6 44.6, E7 43.5, E8 82.1, E9 85.6, E10 83.7, E11 81.6, E12 40.2
+  excluded: model misfit 23.7% > 15%, trough -3.01 mS, lobe at 15 deg  |  EXCLUDED E1 E2: 56/108 pairs
+  difference vs 20261022-115906-saline-pos-empty-first: peak 31 deg, significance 4.37
+2026-10-22 12:27:55  [e1 2/3] 20261022-122232-saline-pos-e1 (difference) no (wrong place)
+  unexcluded: model misfit 81.2% > 15%; significance 1.10 < 2.0, misfit 81.21 %
+  leave-one-out misfit %: E1 28.3, E2 85.8, E3 82.2, E4 83.6, E5 84.4, E6 45.1, E7 44.1, E8 82.0, E9 85.7, E10 82.6, E11 81.6, E12 41.8
+  excluded: model misfit 23.7% > 15%, trough -3.01 mS, lobe at 15 deg  |  EXCLUDED E1 E2: 56/108 pairs
+  difference vs 20261022-115906-saline-pos-empty-first: peak 31 deg, significance 4.50
+2026-10-22 12:36:16  [e1 3/3] 20261022-122955-saline-pos-e1 (difference) no (wrong place)
+  unexcluded: model misfit 83.4% > 15%; significance 1.74 < 2.0, misfit 83.44 %
+  leave-one-out misfit %: E1 28.3, E2 85.8, E3 82.2, E4 83.6, E5 84.5, E6 45.5, E7 44.1, E8 82.0, E9 86.0, E10 81.8, E11 81.6, E12 42.0
+  excluded: model misfit 23.7% > 15%, trough -3 mS, lobe at 15 deg  |  EXCLUDED E1 E2: 56/108 pairs
+  difference vs 20261022-115906-saline-pos-empty-first: peak 31 deg, significance 4.60
+2026-10-22 12:36:16  Summary: exports\position-series-20261022-121217\summary.csv
+
+------------------------------------------------------------------------
+2026-10-22 13:22:42  position series: 1 positions x 3 runs
+
+------------------------------------------------------------------------
+2026-10-22 13:22:42  position empty-first (baseline)
+2026-10-22 13:31:22  [empty-first 1/3] 20261022-132441-saline-pos-empty-first (baseline) 
+  unexcluded: model misfit 54.2% > 15%, misfit 54.24 %
+  leave-one-out misfit %: E1 21.2, E2 12.3, E3 52.8, E4 53.8, E5 55.0, E6 56.6, E7 56.6, E8 55.3, E9 55.6, E10 57.0, E11 57.4, E12 55.9
+  excluded: pass, trough -1.07 mS, lobe at 333 deg (touches E8: may be contact)  |  EXCLUDED E1 E2: 56/108 pairs
+2026-10-22 13:40:26  [empty-first 2/3] 20261022-133322-saline-pos-empty-first (baseline) 
+  unexcluded: model misfit 53.8% > 15%, misfit 53.85 %
+  leave-one-out misfit %: E1 21.7, E2 12.3, E3 51.9, E4 53.3, E5 54.8, E6 56.4, E7 56.4, E8 55.1, E9 55.3, E10 56.7, E11 57.1, E12 55.2
+  excluded: pass, trough -1.12 mS, lobe at 333 deg (touches E8: may be contact)  |  EXCLUDED E1 E2: 56/108 pairs
+2026-10-22 13:48:52  [empty-first 3/3] 20261022-134226-saline-pos-empty-first (baseline) 
+  unexcluded: model misfit 35.6% > 15%; significance 0.38 < 2.0, misfit 35.63 %
+  leave-one-out misfit %: E1 14.6, E2 8.1, E3 33.2, E4 34.5, E5 37.5, E6 39.4, E7 39.8, E8 38.5, E9 38.2, E10 39.2, E11 38.6, E12 37.3
+  excluded: pass, trough -0.862 mS, lobe at 333 deg (touches E8: may be contact)  |  EXCLUDED E1 E2: 56/108 pairs
+2026-10-22 13:48:52  Summary: exports\position-series-20261022-132242\summary.csv
+
+------------------------------------------------------------------------
+2026-10-22 13:54:25  position series: 1 positions x 3 runs
+
+------------------------------------------------------------------------
+2026-10-22 13:54:25  position e1 (absolute)
+2026-10-22 14:02:55  [e1 1/3] 20261022-135625-saline-pos-e1 (absolute) no (refused)
+  unexcluded: model misfit 30.2% > 15%; significance 0.24 < 2.0, misfit 30.23 %
+  leave-one-out misfit %: E1 11.6, E2 6.7, E3 27.7, E4 27.8, E5 31.6, E6 32.4, E7 32.7, E8 31.4, E9 31.3, E10 33.1, E11 33.6, E12 33.0
+  excluded: significance 1.10 < 2.0, trough -1.89 mS, lobe at 183 deg (touches E1: may be contact)  |  EXCLUDED E2: 72/108 pairs
+  difference vs 20261022-134226-saline-pos-empty-first: resistive trough 179 deg (|peak| 179), significance 1.05
+2026-10-22 14:11:30  [e1 2/3] 20261022-140455-saline-pos-e1 (absolute) no (refused)
+  unexcluded: model misfit 18.5% > 15%; significance 0.27 < 2.0, misfit 18.46 %
+  leave-one-out misfit %: E1 8.0, E2 4.8, E3 14.1, E4 14.2, E5 19.7, E6 20.2, E7 20.6, E8 19.9, E9 20.0, E10 21.3, E11 21.2, E12 20.6
+  excluded: significance 1.60 < 2.0, trough -1.71 mS, lobe at 183 deg (touches E1: may be contact)  |  EXCLUDED E2: 72/108 pairs
+  difference vs 20261022-134226-saline-pos-empty-first: resistive trough 193 deg (|peak| 193), significance 0.89
+2026-10-22 14:26:40  [e1 3/3] 20261022-141330-saline-pos-e1 (absolute) yes
+  unexcluded: model misfit 39.4% > 15%, misfit 39.42 %
+  leave-one-out misfit %: E1 16.9, E2 8.3, E3 31.8, E4 33.6, E5 42.0, E6 42.8, E7 43.0, E8 41.9, E9 41.9, E10 43.6, E11 44.4, E12 42.3
+  excluded: pass, trough -2.18 mS, lobe at 183 deg (touches E1: may be contact)  |  EXCLUDED E2: 72/108 pairs
+  difference vs 20261022-134226-saline-pos-empty-first: resistive trough 179 deg (|peak| 179), significance 1.07
+2026-10-22 14:26:40  Summary: exports\position-series-20261022-135425\summary.csv
+
+------------------------------------------------------------------------
+2026-10-22 14:28:50  position series: 1 positions x 3 runs
+
+------------------------------------------------------------------------
+2026-10-22 14:28:50  position e2 (difference)
+2026-10-22 14:35:36  [e2 1/3] 20261022-143050-saline-pos-e2 (difference) no (below noise)
+  unexcluded: model misfit 46.2% > 15%, misfit 46.20 %
+  leave-one-out misfit %: E1 11.2, E2 10.5, E3 5.4, E4 5.6, E5 5.7, E6 5.3, E7 13.3, E8 13.2, E9 13.1, E10 13.2, E11 12.4, E12 12.0
+  excluded: pass, trough -1.59 mS, lobe at 184 deg (touches E1: may be contact)  |  EXCLUDED E2: 72/108 pairs
+  difference vs 20261022-134226-saline-pos-empty-first: resistive trough 166 deg (|peak| 166), significance 1.27
+2026-10-22 14:40:01  [e2 2/3] 20261022-143536-saline-pos-e2 (difference) no (below noise)
+  unexcluded: model misfit 46.7% > 15%; significance 1.87 < 2.0, misfit 46.70 %
+  leave-one-out misfit %: E1 10.4, E2 9.8, E3 5.3, E4 5.5, E5 5.6, E6 5.1, E7 12.4, E8 12.3, E9 12.1, E10 12.3, E11 11.5, E12 11.2
+  excluded: pass, trough -1.62 mS, lobe at 183 deg (touches E1: may be contact)  |  EXCLUDED E2: 72/108 pairs
+  difference vs 20261022-134226-saline-pos-empty-first: resistive trough 166 deg (|peak| 166), significance 1.38
+2026-10-22 14:45:17  [e2 3/3] 20261022-144001-saline-pos-e2 (difference) no (below noise)
+  unexcluded: model misfit 47.0% > 15%, misfit 46.95 %
+  leave-one-out misfit %: E1 10.9, E2 10.2, E3 5.3, E4 5.6, E5 5.6, E6 5.1, E7 12.9, E8 12.8, E9 12.7, E10 12.8, E11 12.0, E12 11.7
+  excluded: pass, trough -1.62 mS, lobe at 183 deg (touches E1: may be contact)  |  EXCLUDED E2: 72/108 pairs
+  difference vs 20261022-134226-saline-pos-empty-first: resistive trough 166 deg (|peak| 166), significance 1.38
+2026-10-22 14:45:17  Summary: exports\position-series-20261022-142850\summary.csv
+
+------------------------------------------------------------------------
+2026-10-22 14:51:32  position series: 1 positions x 3 runs
+
+------------------------------------------------------------------------
+2026-10-22 14:51:32  position e3 (absolute)
+2026-10-22 15:02:39  [e3 1/3] 20261022-145332-saline-pos-e3 (absolute) yes
+  unexcluded: model misfit 50.3% > 15%, misfit 50.33 %
+  leave-one-out misfit %: E1 20.9, E2 11.3, E3 47.9, E4 50.1, E5 52.6, E6 53.7, E7 53.2, E8 51.6, E9 51.5, E10 52.8, E11 52.9, E12 50.7
+  excluded: pass, trough -1.3 mS, lobe at 97 deg  |  EXCLUDED E2: 72/108 pairs
+  difference vs 20261022-134226-saline-pos-empty-first: resistive trough 137 deg (|peak| 137), significance 1.14
+2026-10-22 15:11:07  [e3 2/3] 20261022-150131-saline-pos-e3 (absolute) yes
+  unexcluded: model misfit 50.2% > 15%, misfit 50.23 %
+  leave-one-out misfit %: E1 21.0, E2 11.4, E3 47.8, E4 50.0, E5 52.5, E6 53.7, E7 53.2, E8 51.6, E9 51.5, E10 52.7, E11 52.8, E12 50.6
+  excluded: pass, trough -1.3 mS, lobe at 96 deg  |  EXCLUDED E2: 72/108 pairs
+  difference vs 20261022-134226-saline-pos-empty-first: resistive trough 137 deg (|peak| 137), significance 1.13
+2026-10-22 15:19:52  [e3 3/3] 20261022-150931-saline-pos-e3 (absolute) yes
+  unexcluded: model misfit 49.8% > 15%, misfit 49.83 %
+  leave-one-out misfit %: E1 21.3, E2 11.5, E3 47.4, E4 49.6, E5 52.1, E6 53.3, E7 52.8, E8 51.2, E9 51.1, E10 52.3, E11 52.4, E12 50.2
+  excluded: pass, trough -1.29 mS, lobe at 96 deg  |  EXCLUDED E2: 72/108 pairs
+  difference vs 20261022-134226-saline-pos-empty-first: resistive trough 137 deg (|peak| 137), significance 1.12
+2026-10-22 15:19:52  Summary: exports\position-series-20261022-145132\summary.csv
+
+------------------------------------------------------------------------
+2026-10-22 15:22:58  position series: 1 positions x 3 runs
+
+------------------------------------------------------------------------
+2026-10-22 15:22:58  position e4 (absolute)
+2026-10-22 15:33:44  [e4 1/3] 20261022-152458-saline-pos-e4 (absolute) yes
+  unexcluded: model misfit 50.5% > 15%, misfit 50.55 %
+  leave-one-out misfit %: E1 21.1, E2 11.5, E3 48.4, E4 50.9, E5 53.2, E6 54.2, E7 53.1, E8 51.7, E9 51.6, E10 52.8, E11 53.0, E12 51.2
+  excluded: pass, trough -1.7 mS, lobe at 78 deg (touches E4: may be contact)  |  EXCLUDED E2: 72/108 pairs
+  difference vs 20261022-134226-saline-pos-empty-first: resistive trough 111 deg (|peak| 111), significance 0.94
+2026-10-22 15:41:45  [e4 2/3] 20261022-153258-saline-pos-e4 (absolute) yes
+  unexcluded: model misfit 50.5% > 15%, misfit 50.46 %
+  leave-one-out misfit %: E1 21.2, E2 11.5, E3 48.3, E4 50.9, E5 53.2, E6 54.1, E7 53.0, E8 51.6, E9 51.5, E10 52.7, E11 52.9, E12 51.2
+  excluded: pass, trough -1.7 mS, lobe at 78 deg (touches E4: may be contact)  |  EXCLUDED E2: 72/108 pairs
+  difference vs 20261022-134226-saline-pos-empty-first: resistive trough 111 deg (|peak| 111), significance 0.94
+2026-10-22 15:49:40  [e4 3/3] 20261022-154057-saline-pos-e4 (absolute) yes
+  unexcluded: model misfit 50.5% > 15%, misfit 50.54 %
+  leave-one-out misfit %: E1 21.2, E2 11.5, E3 48.5, E4 51.0, E5 53.2, E6 54.1, E7 53.1, E8 51.6, E9 51.5, E10 52.7, E11 52.9, E12 51.2
+  excluded: pass, trough -1.7 mS, lobe at 78 deg (touches E4: may be contact)  |  EXCLUDED E2: 72/108 pairs
+  difference vs 20261022-134226-saline-pos-empty-first: resistive trough 111 deg (|peak| 111), significance 0.94
+2026-10-22 15:49:40  Summary: exports\position-series-20261022-152258\summary.csv
+
+------------------------------------------------------------------------
+2026-10-22 15:50:59  position series: 1 positions x 3 runs
+
+------------------------------------------------------------------------
+2026-10-22 15:50:59  position e5 (absolute)
+2026-10-22 16:01:47  [e5 1/3] 20261022-155259-saline-pos-e5 (absolute) yes
+  unexcluded: model misfit 47.5% > 15%, misfit 47.50 %
+  leave-one-out misfit %: E1 20.5, E2 10.6, E3 45.6, E4 48.6, E5 51.7, E6 52.6, E7 51.0, E8 48.6, E9 48.3, E10 49.4, E11 49.5, E12 48.2
+  excluded: pass, trough -1.94 mS, lobe at 53 deg  |  EXCLUDED E2: 72/108 pairs
+  difference vs 20261022-134226-saline-pos-empty-first: resistive trough 55 deg (|peak| 55), significance 0.81
+2026-10-22 16:09:41  [e5 2/3] 20261022-160059-saline-pos-e5 (absolute) yes
+  unexcluded: model misfit 47.2% > 15%, misfit 47.23 %
+  leave-one-out misfit %: E1 20.4, E2 10.5, E3 45.3, E4 48.3, E5 51.5, E6 52.4, E7 50.8, E8 48.4, E9 48.0, E10 49.2, E11 49.2, E12 48.0
+  excluded: pass, trough -1.93 mS, lobe at 53 deg  |  EXCLUDED E2: 72/108 pairs
+  difference vs 20261022-134226-saline-pos-empty-first: resistive trough 55 deg (|peak| 55), significance 0.81
+2026-10-22 16:17:37  [e5 3/3] 20261022-160858-saline-pos-e5 (absolute) no (refused)
+  unexcluded: model misfit 33.6% > 15%; significance 0.44 < 2.0, misfit 33.56 %
+  leave-one-out misfit %: E1 13.0, E2 7.3, E3 32.5, E4 35.0, E5 38.4, E6 39.0, E7 37.6, E8 35.0, E9 34.5, E10 35.6, E11 35.0, E12 34.4
+  excluded: significance 1.54 < 2.0, trough -1.65 mS, lobe at 51 deg  |  EXCLUDED E2: 72/108 pairs
+  difference vs 20261022-134226-saline-pos-empty-first: resistive trough 56 deg (|peak| 56), significance 1.09
+2026-10-22 16:17:37  Summary: exports\position-series-20261022-155059\summary.csv
+
+------------------------------------------------------------------------
+2026-10-22 16:19:15  position series: 1 positions x 3 runs
+
+------------------------------------------------------------------------
+2026-10-22 16:19:15  position e6 (absolute)
+2026-10-22 16:29:51  [e6 1/3] 20261022-162115-saline-pos-e6 (absolute) yes
+  unexcluded: model misfit 37.6% > 15%, misfit 37.57 %
+  leave-one-out misfit %: E1 16.6, E2 8.9, E3 32.9, E4 35.8, E5 42.1, E6 44.4, E7 43.4, E8 40.4, E9 39.5, E10 40.4, E11 40.1, E12 38.9
+  excluded: pass, trough -2.04 mS, lobe at 35 deg  |  EXCLUDED E2: 72/108 pairs
+  difference vs 20261022-134226-saline-pos-empty-first: resistive trough 28 deg (|peak| 28), significance 0.99
+2026-10-22 16:37:58  [e6 2/3] 20261022-162914-saline-pos-e6 (absolute) yes
+  unexcluded: model misfit 39.0% > 15%, misfit 38.96 %
+  leave-one-out misfit %: E1 17.6, E2 9.5, E3 34.8, E4 37.7, E5 43.3, E6 45.7, E7 44.6, E8 41.6, E9 40.8, E10 41.7, E11 41.4, E12 40.2
+  excluded: pass, trough -2.04 mS, lobe at 36 deg  |  EXCLUDED E2: 72/108 pairs
+  difference vs 20261022-134226-saline-pos-empty-first: resistive trough 28 deg (|peak| 28), significance 0.96
+2026-10-22 16:45:58  [e6 3/3] 20261022-163714-saline-pos-e6 (absolute) yes
+  unexcluded: model misfit 39.8% > 15%, misfit 39.83 %
+  leave-one-out misfit %: E1 18.3, E2 9.9, E3 35.9, E4 38.9, E5 43.9, E6 46.4, E7 45.4, E8 42.4, E9 41.6, E10 42.5, E11 42.2, E12 41.0
+  excluded: pass, trough -2.04 mS, lobe at 36 deg  |  EXCLUDED E2: 72/108 pairs
+  difference vs 20261022-134226-saline-pos-empty-first: resistive trough 28 deg (|peak| 28), significance 0.95
+2026-10-22 16:45:58  Summary: exports\position-series-20261022-161915\summary.csv
+
+------------------------------------------------------------------------
+2026-10-22 16:48:09  position series: 1 positions x 3 runs
+
+------------------------------------------------------------------------
+2026-10-22 16:48:09  position e7 (absolute)
+2026-10-22 16:58:53  [e7 1/3] 20261022-165009-saline-pos-e7 (absolute) yes
+  unexcluded: model misfit 41.5% > 15%, misfit 41.50 %
+  leave-one-out misfit %: E1 19.7, E2 10.8, E3 37.6, E4 39.9, E5 43.7, E6 46.4, E7 47.1, E8 45.2, E9 44.1, E10 44.7, E11 44.4, E12 42.9
+  excluded: pass, trough -1.83 mS, lobe at 4 deg  |  EXCLUDED E2: 72/108 pairs
+  difference vs 20261022-134226-saline-pos-empty-first: resistive trough 354 deg (|peak| 354), significance 0.87
+2026-10-22 17:06:56  [e7 2/3] 20261022-165809-saline-pos-e7 (absolute) yes
+  unexcluded: model misfit 41.6% > 15%, misfit 41.58 %
+  leave-one-out misfit %: E1 19.8, E2 10.8, E3 37.7, E4 40.0, E5 43.7, E6 46.4, E7 47.2, E8 45.3, E9 44.1, E10 44.8, E11 44.5, E12 43.0
+  excluded: pass, trough -1.83 mS, lobe at 4 deg  |  EXCLUDED E2: 72/108 pairs
+  difference vs 20261022-134226-saline-pos-empty-first: resistive trough 354 deg (|peak| 354), significance 0.87
+2026-10-22 17:14:54  [e7 3/3] 20261022-170608-saline-pos-e7 (absolute) yes
+  unexcluded: model misfit 41.6% > 15%, misfit 41.58 %
+  leave-one-out misfit %: E1 19.9, E2 10.9, E3 37.7, E4 40.0, E5 43.7, E6 46.4, E7 47.2, E8 45.3, E9 44.1, E10 44.8, E11 44.4, E12 43.0
+  excluded: pass, trough -1.82 mS, lobe at 4 deg  |  EXCLUDED E2: 72/108 pairs
+  difference vs 20261022-134226-saline-pos-empty-first: resistive trough 354 deg (|peak| 354), significance 0.87
+2026-10-22 17:14:54  Summary: exports\position-series-20261022-164809\summary.csv
+
+------------------------------------------------------------------------
+2026-10-22 17:17:35  position series: 1 positions x 3 runs
+
+------------------------------------------------------------------------
+2026-10-22 17:17:35  position e8 (absolute)
+2026-10-22 17:28:12  [e8 1/3] 20261022-171934-saline-pos-e8 (absolute) yes
+  unexcluded: model misfit 41.1% > 15%, misfit 41.06 %
+  leave-one-out misfit %: E1 19.4, E2 10.6, E3 37.2, E4 39.2, E5 42.1, E6 44.4, E7 46.5, E8 46.6, E9 45.6, E10 45.3, E11 44.0, E12 42.2
+  excluded: pass, trough -1.9 mS, lobe at 321 deg  |  EXCLUDED E2: 72/108 pairs
+  difference vs 20261022-134226-saline-pos-empty-first: resistive trough 323 deg (|peak| 323), significance 0.89
+2026-10-22 17:36:18  [e8 2/3] 20261022-172734-saline-pos-e8 (absolute) yes
+  unexcluded: model misfit 41.1% > 15%, misfit 41.11 %
+  leave-one-out misfit %: E1 19.3, E2 10.6, E3 37.3, E4 39.2, E5 42.1, E6 44.5, E7 46.6, E8 46.7, E9 45.6, E10 45.3, E11 44.0, E12 42.3
+  excluded: pass, trough -1.9 mS, lobe at 322 deg  |  EXCLUDED E2: 72/108 pairs
+  difference vs 20261022-134226-saline-pos-empty-first: resistive trough 323 deg (|peak| 323), significance 0.90
+2026-10-22 17:44:13  [e8 3/3] 20261022-173534-saline-pos-e8 (absolute) yes
+  unexcluded: model misfit 41.2% > 15%, misfit 41.15 %
+  leave-one-out misfit %: E1 19.4, E2 10.6, E3 37.1, E4 39.2, E5 42.2, E6 44.5, E7 46.7, E8 46.8, E9 45.8, E10 45.4, E11 44.2, E12 42.3
+  excluded: pass, trough -1.89 mS, lobe at 322 deg  |  EXCLUDED E2: 72/108 pairs
+  difference vs 20261022-134226-saline-pos-empty-first: resistive trough 323 deg (|peak| 323), significance 0.90
+2026-10-22 17:44:13  Summary: exports\position-series-20261022-171735\summary.csv
+
+------------------------------------------------------------------------
+2026-10-22 17:44:55  position series: 1 positions x 3 runs
+
+------------------------------------------------------------------------
+2026-10-22 17:44:55  position e9 (absolute)
+2026-10-22 17:55:36  [e9 1/3] 20261022-174654-saline-pos-e9 (absolute) yes
+  unexcluded: model misfit 41.0% > 15%, misfit 40.98 %
+  leave-one-out misfit %: E1 19.4, E2 10.4, E3 37.0, E4 39.0, E5 41.7, E6 43.6, E7 45.2, E8 45.6, E9 46.6, E10 46.8, E11 44.8, E12 42.4
+  excluded: pass, trough -1.81 mS, lobe at 299 deg  |  EXCLUDED E2: 72/108 pairs
+  difference vs 20261022-134226-saline-pos-empty-first: resistive trough 305 deg (|peak| 305), significance 0.90
+2026-10-22 18:03:41  [e9 2/3] 20261022-175455-saline-pos-e9 (absolute) yes
+  unexcluded: model misfit 41.0% > 15%, misfit 40.98 %
+  leave-one-out misfit %: E1 19.4, E2 10.4, E3 37.2, E4 39.1, E5 41.7, E6 43.6, E7 45.1, E8 45.5, E9 46.5, E10 46.7, E11 44.7, E12 42.4
+  excluded: pass, trough -1.81 mS, lobe at 299 deg  |  EXCLUDED E2: 72/108 pairs
+  difference vs 20261022-134226-saline-pos-empty-first: resistive trough 305 deg (|peak| 305), significance 0.90
+2026-10-22 18:11:36  [e9 3/3] 20261022-180255-saline-pos-e9 (absolute) yes
+  unexcluded: model misfit 40.9% > 15%, misfit 40.88 %
+  leave-one-out misfit %: E1 19.4, E2 10.4, E3 36.9, E4 38.9, E5 41.6, E6 43.5, E7 45.1, E8 45.5, E9 46.5, E10 46.7, E11 44.7, E12 42.3
+  excluded: pass, trough -1.8 mS, lobe at 298 deg  |  EXCLUDED E2: 72/108 pairs
+  difference vs 20261022-134226-saline-pos-empty-first: resistive trough 305 deg (|peak| 305), significance 0.90
+2026-10-22 18:11:36  Summary: exports\position-series-20261022-174455\summary.csv
+
+------------------------------------------------------------------------
+2026-10-22 18:14:16  position series: 1 positions x 3 runs
+
+------------------------------------------------------------------------
+2026-10-22 18:14:16  position e10 (absolute)
+2026-10-22 18:25:00  [e10 1/3] 20261022-181616-saline-pos-e10 (absolute) yes
+  unexcluded: model misfit 41.7% > 15%, misfit 41.66 %
+  leave-one-out misfit %: E1 20.3, E2 10.8, E3 37.8, E4 39.9, E5 42.4, E6 44.1, E7 44.9, E8 44.5, E9 46.0, E10 48.0, E11 46.9, E12 43.8
+  excluded: pass, trough -1.86 mS, lobe at 276 deg  |  EXCLUDED E2: 72/108 pairs
+  difference vs 20261022-134226-saline-pos-empty-first: resistive trough 276 deg (|peak| 276), significance 0.93
+2026-10-22 18:32:57  [e10 2/3] 20261022-182415-saline-pos-e10 (absolute) yes
+  unexcluded: model misfit 41.5% > 15%, misfit 41.46 %
+  leave-one-out misfit %: E1 20.1, E2 10.7, E3 37.6, E4 39.6, E5 42.2, E6 44.0, E7 44.7, E8 44.3, E9 45.8, E10 47.8, E11 46.7, E12 43.7
+  excluded: pass, trough -1.86 mS, lobe at 276 deg  |  EXCLUDED E2: 72/108 pairs
+  difference vs 20261022-134226-saline-pos-empty-first: resistive trough 276 deg (|peak| 276), significance 0.93
+2026-10-22 18:40:57  [e10 3/3] 20261022-183215-saline-pos-e10 (absolute) yes
+  unexcluded: model misfit 41.4% > 15%, misfit 41.38 %
+  leave-one-out misfit %: E1 20.3, E2 10.7, E3 37.3, E4 39.4, E5 42.2, E6 43.9, E7 44.7, E8 44.3, E9 45.8, E10 47.8, E11 46.7, E12 43.6
+  excluded: pass, trough -1.86 mS, lobe at 276 deg  |  EXCLUDED E2: 72/108 pairs
+  difference vs 20261022-134226-saline-pos-empty-first: resistive trough 276 deg (|peak| 276), significance 0.93
+2026-10-22 18:40:57  Summary: exports\position-series-20261022-181416\summary.csv
+
+------------------------------------------------------------------------
+2026-10-22 18:44:18  position series: 1 positions x 3 runs
+
+------------------------------------------------------------------------
+2026-10-22 18:44:18  position e11 (absolute)
+2026-10-22 18:55:02  [e11 1/3] 20261022-184618-saline-pos-e11 (absolute) yes
+  unexcluded: model misfit 42.0% > 15%, misfit 42.04 %
+  leave-one-out misfit %: E1 21.6, E2 11.2, E3 38.1, E4 40.2, E5 42.9, E6 44.4, E7 44.8, E8 43.6, E9 44.4, E10 47.2, E11 47.9, E12 45.6
+  excluded: pass, trough -1.62 mS, lobe at 241 deg  |  EXCLUDED E2: 72/108 pairs
+  difference vs 20261022-134226-saline-pos-empty-first: resistive trough 224 deg (|peak| 224), significance 0.94
+2026-10-22 19:03:01  [e11 2/3] 20261022-185417-saline-pos-e11 (absolute) yes
+  unexcluded: model misfit 41.8% > 15%, misfit 41.79 %
+  leave-one-out misfit %: E1 21.6, E2 11.1, E3 37.7, E4 39.8, E5 42.7, E6 44.2, E7 44.6, E8 43.4, E9 44.2, E10 46.9, E11 47.7, E12 45.4
+  excluded: pass, trough -1.61 mS, lobe at 241 deg  |  EXCLUDED E2: 72/108 pairs
+  difference vs 20261022-134226-saline-pos-empty-first: resistive trough 224 deg (|peak| 224), significance 0.94
+2026-10-22 19:11:00  [e11 3/3] 20261022-190217-saline-pos-e11 (absolute) yes
+  unexcluded: model misfit 41.9% > 15%, misfit 41.89 %
+  leave-one-out misfit %: E1 21.6, E2 11.1, E3 37.7, E4 39.9, E5 42.8, E6 44.3, E7 44.7, E8 43.5, E9 44.3, E10 47.0, E11 47.8, E12 45.5
+  excluded: pass, trough -1.61 mS, lobe at 241 deg  |  EXCLUDED E2: 72/108 pairs
+  difference vs 20261022-134226-saline-pos-empty-first: resistive trough 224 deg (|peak| 224), significance 0.94
+2026-10-22 19:11:00  Summary: exports\position-series-20261022-184418\summary.csv
+
+------------------------------------------------------------------------
+2026-10-22 19:13:44  position series: 1 positions x 3 runs
+
+------------------------------------------------------------------------
+2026-10-22 19:13:44  position e12 (absolute)
+2026-10-22 19:24:28  [e12 1/3] 20261022-191543-saline-pos-e12 (absolute) no (wrong place)
+  unexcluded: model misfit 42.2% > 15%, misfit 42.22 %
+  leave-one-out misfit %: E1 22.6, E2 11.4, E3 38.1, E4 40.2, E5 43.2, E6 44.6, E7 44.9, E8 43.6, E9 44.0, E10 46.2, E11 47.3, E12 45.9
+  excluded: pass, trough -1.45 mS, lobe at 333 deg (touches E8: may be contact)  |  EXCLUDED E2: 72/108 pairs
+  difference vs 20261022-134226-saline-pos-empty-first: resistive trough 196 deg (|peak| 196), significance 1.00
+2026-10-22 19:32:31  [e12 2/3] 20261022-192343-saline-pos-e12 (absolute) no (wrong place)
+  unexcluded: model misfit 41.9% > 15%, misfit 41.92 %
+  leave-one-out misfit %: E1 22.5, E2 11.4, E3 37.6, E4 39.8, E5 42.9, E6 44.4, E7 44.7, E8 43.4, E9 43.7, E10 45.9, E11 47.0, E12 45.6
+  excluded: pass, trough -1.45 mS, lobe at 333 deg (touches E8: may be contact)  |  EXCLUDED E2: 72/108 pairs
+  difference vs 20261022-134226-saline-pos-empty-first: resistive trough 196 deg (|peak| 196), significance 1.00
+2026-10-22 19:40:42  [e12 3/3] 20261022-193143-saline-pos-e12 (absolute) no (wrong place)
+  unexcluded: model misfit 42.1% > 15%, misfit 42.06 %
+  leave-one-out misfit %: E1 22.7, E2 11.3, E3 37.7, E4 39.9, E5 43.1, E6 44.5, E7 44.8, E8 43.5, E9 43.9, E10 46.1, E11 47.2, E12 45.7
+  excluded: pass, trough -1.45 mS, lobe at 333 deg (touches E8: may be contact)  |  EXCLUDED E2: 72/108 pairs
+  difference vs 20261022-134226-saline-pos-empty-first: resistive trough 196 deg (|peak| 196), significance 1.00
+2026-10-22 19:40:42  Summary: exports\position-series-20261022-191344\summary.csv
+
+------------------------------------------------------------------------
+2026-10-22 19:47:08  position series: 1 positions x 3 runs
+
+------------------------------------------------------------------------
+2026-10-22 19:47:08  position centre (absolute)
+2026-10-22 19:57:49  [centre 1/3] 20261022-194908-saline-pos-centre (absolute) 
+  unexcluded: model misfit 43.7% > 15%, misfit 43.67 %
+  leave-one-out misfit %: E1 23.0, E2 12.3, E3 39.9, E4 42.2, E5 45.4, E6 47.2, E7 47.4, E8 46.0, E9 46.2, E10 47.3, E11 47.2, E12 45.6
+  excluded: pass, trough -1.62 mS, lobe at 332 deg  |  EXCLUDED E2: 72/108 pairs
+  difference vs 20261022-134226-saline-pos-empty-first: resistive trough 147 deg (|peak| 147), significance 0.86
+2026-10-22 20:05:51  [centre 2/3] 20261022-195708-saline-pos-centre (absolute) 
+  unexcluded: model misfit 43.3% > 15%, misfit 43.27 %
+  leave-one-out misfit %: E1 22.7, E2 12.1, E3 39.4, E4 41.7, E5 45.1, E6 46.8, E7 47.0, E8 45.7, E9 45.8, E10 46.9, E11 46.8, E12 45.2
+  excluded: pass, trough -1.61 mS, lobe at 328 deg  |  EXCLUDED E2: 72/108 pairs
+  difference vs 20261022-134226-saline-pos-empty-first: resistive trough 177 deg (|peak| 177), significance 0.85
+2026-10-22 20:13:50  [centre 3/3] 20261022-200508-saline-pos-centre (absolute) 
+  unexcluded: model misfit 43.1% > 15%, misfit 43.11 %
+  leave-one-out misfit %: E1 22.5, E2 12.0, E3 39.2, E4 41.5, E5 44.9, E6 46.7, E7 46.9, E8 45.5, E9 45.6, E10 46.8, E11 46.6, E12 45.1
+  excluded: pass, trough -1.62 mS, lobe at 328 deg  |  EXCLUDED E2: 72/108 pairs
+  difference vs 20261022-134226-saline-pos-empty-first: resistive trough 177 deg (|peak| 177), significance 0.85
+2026-10-22 20:13:50  Summary: exports\position-series-20261022-194708\summary.csv
+
+------------------------------------------------------------------------
+2026-10-22 20:18:44  position series: 1 positions x 3 runs
+
+------------------------------------------------------------------------
+2026-10-22 20:18:44  position e1 (absolute)
+2026-10-22 20:29:27  [e1 1/3] 20261022-202044-saline-pos-e1 (absolute) yes
+  unexcluded: model misfit 40.9% > 15%, misfit 40.89 %
+  leave-one-out misfit %: E1 23.4, E2 12.0, E3 36.6, E4 38.6, E5 42.2, E6 43.5, E7 43.8, E8 42.4, E9 42.7, E10 44.3, E11 44.7, E12 43.2
+  excluded: pass, trough -1.95 mS, lobe at 183 deg (touches E1: may be contact)  |  EXCLUDED E2: 72/108 pairs
+  difference vs 20261022-134226-saline-pos-empty-first: resistive trough 178 deg (|peak| 178), significance 1.07
+2026-10-22 20:37:25  [e1 2/3] 20261022-202844-saline-pos-e1 (absolute) yes
+  unexcluded: model misfit 40.7% > 15%, misfit 40.66 %
+  leave-one-out misfit %: E1 23.1, E2 11.8, E3 36.3, E4 38.2, E5 42.0, E6 43.3, E7 43.6, E8 42.2, E9 42.5, E10 44.0, E11 44.5, E12 43.0
+  excluded: pass, trough -1.95 mS, lobe at 183 deg (touches E1: may be contact)  |  EXCLUDED E2: 72/108 pairs
+  difference vs 20261022-134226-saline-pos-empty-first: resistive trough 178 deg (|peak| 178), significance 1.06
+2026-10-22 20:45:27  [e1 3/3] 20261022-203644-saline-pos-e1 (absolute) yes
+  unexcluded: model misfit 40.7% > 15%, misfit 40.67 %
+  leave-one-out misfit %: E1 23.0, E2 11.8, E3 36.3, E4 38.2, E5 42.0, E6 43.3, E7 43.6, E8 42.2, E9 42.4, E10 44.0, E11 44.5, E12 43.0
+  excluded: pass, trough -1.94 mS, lobe at 183 deg (touches E1: may be contact)  |  EXCLUDED E2: 72/108 pairs
+  difference vs 20261022-134226-saline-pos-empty-first: resistive trough 178 deg (|peak| 178), significance 1.07
+2026-10-22 20:45:27  Summary: exports\position-series-20261022-201844\summary.csv
+
+------------------------------------------------------------------------
+2026-10-22 20:46:22  position series: 1 positions x 3 runs
+
+------------------------------------------------------------------------
+2026-10-22 20:46:22  position e2 (difference)
+2026-10-22 20:57:06  [e2 1/3] 20261022-204822-saline-pos-e2 (difference) no (below noise)
+  unexcluded: model misfit 41.7% > 15%, misfit 41.74 %
+  leave-one-out misfit %: E1 23.3, E2 12.1, E3 38.5, E4 40.6, E5 43.6, E6 44.8, E7 44.8, E8 43.3, E9 43.4, E10 44.6, E11 44.4, E12 43.0
+  excluded: pass, trough -1.48 mS, lobe at 183 deg (touches E1: may be contact)  |  EXCLUDED E2: 72/108 pairs
+  difference vs 20261022-134226-saline-pos-empty-first: resistive trough 149 deg (|peak| 149), significance 1.05
+2026-10-22 21:05:02  [e2 2/3] 20261022-205621-saline-pos-e2 (difference) no (below noise)
+  unexcluded: model misfit 41.6% > 15%, misfit 41.57 %
+  leave-one-out misfit %: E1 23.2, E2 12.0, E3 38.3, E4 40.4, E5 43.5, E6 61.2, E7 44.7, E8 43.2, E9 43.3, E10 44.5, E11 44.2, E12 42.9
+  excluded: pass, trough -1.48 mS, lobe at 183 deg (touches E1: may be contact)  |  EXCLUDED E2: 72/108 pairs
+  difference vs 20261022-134226-saline-pos-empty-first: resistive trough 149 deg (|peak| 149), significance 1.05
+2026-10-22 21:13:05  [e2 3/3] 20261022-210421-saline-pos-e2 (difference) no (below noise)
+  unexcluded: model misfit 41.6% > 15%, misfit 41.58 %
+  leave-one-out misfit %: E1 23.2, E2 12.0, E3 38.2, E4 40.4, E5 43.5, E6 44.6, E7 44.7, E8 43.2, E9 43.3, E10 44.5, E11 44.3, E12 42.9
+  excluded: pass, trough -1.48 mS, lobe at 183 deg (touches E1: may be contact)  |  EXCLUDED E2: 72/108 pairs
+  difference vs 20261022-134226-saline-pos-empty-first: resistive trough 149 deg (|peak| 149), significance 1.05
+2026-10-22 21:13:05  Summary: exports\position-series-20261022-204622\summary.csv
+
+------------------------------------------------------------------------
+2026-10-22 21:14:26  position series: 1 positions x 3 runs
+
+------------------------------------------------------------------------
+2026-10-22 21:14:26  position empty-last (baseline)
+2026-10-22 21:25:03  [empty-last 1/3] 20261022-211625-saline-pos-empty-last (baseline) 
+  unexcluded: model misfit 41.8% > 15%, misfit 41.79 %
+  leave-one-out misfit %: E1 21.5, E2 11.2, E3 38.3, E4 40.6, E5 43.6, E6 45.4, E7 45.6, E8 44.2, E9 44.4, E10 45.6, E11 45.5, E12 43.8
+  excluded: pass, trough -1.19 mS, lobe at 333 deg (touches E8: may be contact)  |  EXCLUDED E2: 72/108 pairs

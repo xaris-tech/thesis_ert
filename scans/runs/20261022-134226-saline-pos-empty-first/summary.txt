@@ -1,0 +1,7 @@
+Frames captured: 10
+Reciprocity: median 10.5%  max 80.6%  sign flips 1/54
+Check electrode contact: E2 67%, E1 61%, E3 36% (all pairs median 11%)
+Noise floor: median pair sd 0.00274 kohm (20.58%)  max 0.02974 kohm over 108 pairs
+unexcluded: model misfit 35.6% > 15%; significance 0.38 < 2.0, misfit 35.63 %
+leave-one-out misfit %: E1 14.6, E2 8.1, E3 33.2, E4 34.5, E5 37.5, E6 39.4, E7 39.8, E8 38.5, E9 38.2, E10 39.2, E11 38.6, E12 37.3
+excluded: pass, trough -0.862 mS, lobe at 333 deg (touches E8: may be contact)  |  EXCLUDED E1 E2: 56/108 pairs

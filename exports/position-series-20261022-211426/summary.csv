@@ -1,0 +1,2 @@
+position,repeat,run_id,headline,blind,unexcluded_gate,unexcluded_misfit_percent,sweep_best,sweep_best_misfit_percent,excluded,excluded_gate,excluded_misfit_percent,excluded_sigma0_ms,absolute_trough_deg,absolute_trough_error_deg,absolute_trough_electrodes,baseline_run_id,difference_trough_deg,difference_trough_error_deg,difference_significance,located
+empty-last,1,20261022-211625-saline-pos-empty-last,baseline,no,model misfit 41.8% > 15%,41.79,E2,11.23,E2,pass,11.23,3.14,333.49,,E8,,,,,
