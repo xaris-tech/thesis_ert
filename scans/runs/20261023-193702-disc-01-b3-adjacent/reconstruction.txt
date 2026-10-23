@@ -1,0 +1,2 @@
+baseline: 20261023-183947-disc-01-b2-adjacent
+target: before drilling (existing holes near E4-E7)

@@ -1,0 +1,4 @@
+position,repeat,run_id,headline,blind,unexcluded_gate,unexcluded_misfit_percent,sweep_best,sweep_best_misfit_percent,excluded,excluded_gate,excluded_misfit_percent,excluded_sigma0_ms,absolute_trough_deg,absolute_trough_error_deg,absolute_trough_electrodes,baseline_run_id,difference_trough_deg,difference_trough_error_deg,difference_significance,located
+empty-last,1,20261023-160205-saline-pos-empty-last,baseline,no,median reciprocity 15.8% > 15%; model misfit 67.1% > 15%,67.08,E2,12.83,E2,pass,12.83,4.68,331.94,,E8,,,,,
+empty-last,2,20261023-161004-saline-pos-empty-last,baseline,no,median reciprocity 15.4% > 15%; model misfit 67.0% > 15%,67.04,E2,13.10,E2,pass,13.10,4.69,331.95,,E8,,,,,
+empty-last,3,20261023-161804-saline-pos-empty-last,baseline,no,median reciprocity 15.4% > 15%; model misfit 67.1% > 15%,67.08,E2,13.21,E2,pass,13.21,4.70,331.96,,E8,,,,,

@@ -1,0 +1,8 @@
+Frames captured: 20
+Reciprocity: median 8.6%  max 88.1%  sign flips 2/54
+Check electrode contact: E2 73%, E1 51%, E3 33% (all pairs median 9%)
+Noise floor: median pair sd 0.00021 kohm (1.93%)  max 0.00659 kohm over 108 pairs
+unexcluded: model misfit 53.8% > 15%, misfit 53.82 %
+leave-one-out misfit %: E1 15.0, E2 8.5, E3 48.0, E4 50.8, E5 56.5, E6 56.9, E7 55.9, E8 56.4, E9 56.9, E10 58.0, E11 58.2, E12 54.6
+excluded: model misfit 53.8% > 15%, trough -3.54 mS, lobe at 198 deg (touches E1: may be contact)
+difference vs 20261023-123841-saline-pos-empty-first: resistive trough 96 deg (|peak| 96), significance 17.67
