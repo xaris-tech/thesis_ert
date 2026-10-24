@@ -1,0 +1,5 @@
+Frames captured: 32
+Reciprocity: no reciprocal pairs captured
+Noise floor: median pair sd 0.00033 kohm (0.37%)  max 0.00159 kohm over 96 pairs
+absolute (all electrodes): misfit 12.1%, pass, trough -2.12 mS, lobe at 271 deg (touches E10: may be contact)
+difference vs 20261023-194906-disc-01-b3-opposite: resistive trough 271 deg (target ~120), significance 93.57

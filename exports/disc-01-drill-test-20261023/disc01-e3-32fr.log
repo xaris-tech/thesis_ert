@@ -1,0 +1,6 @@
+[D2 adjacent] 20261024-131516-disc-01-d2-adjacent-32fr
+  absolute (all electrodes): misfit 33.4%, median reciprocity 16.6% > 15%; model misfit 33.4% > 15%, trough -1.51 mS, lobe at 271 deg (touches E10: may be contact)
+  difference vs 20261023-193702-disc-01-b3-adjacent: resistive trough 271 deg (target ~120), significance 14.36
+[D2 opposite] 20261024-134524-disc-01-d2-opposite-32fr
+  absolute (all electrodes): misfit 12.1%, pass, trough -2.12 mS, lobe at 271 deg (touches E10: may be contact)
+  difference vs 20261023-194906-disc-01-b3-opposite: resistive trough 271 deg (target ~120), significance 93.57

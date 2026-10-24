@@ -24,10 +24,14 @@ ap.add_argument("step")  # B1, S1, D1 ...
 ap.add_argument("--ref-adj")
 ap.add_argument("--ref-opp")
 ap.add_argument("--note", default="")
+ap.add_argument("--frames", type=int)
 args = ap.parse_args()
 
 root = Path(r"D:\Here\asd\scans")
-coconut = preset_by_name("Coconut").apply_to(UiSettings(port="COM7")).validate()
+coconut = preset_by_name("Coconut").apply_to(UiSettings(port="COM7"))
+if args.frames:
+    coconut = replace(coconut, frames=args.frames)
+coconut = coconut.validate()
 state = "intact" if args.step.startswith(("B", "S")) else "defect"
 target = {"B": "before drilling (existing holes near E4-E7)",
           "S": "sham: handled at drill site, not drilled",
@@ -40,13 +44,13 @@ try:
         s = replace(coconut, pattern=pattern).validate()
         cond = run_record.Conditions(
             medium="cut disc", specimen_id="disc-01", target_description=target,
-            notes=f"2026-10-23 disc-01 drill test step {args.step} ({pattern}); screws/leads untouched since B1. {args.note}".strip(),
+            notes=f"disc-01 drill test step {args.step} ({pattern}, {s.frames} frames). {args.note}".strip(),
             extra={"drill_test_step": args.step, "survey_state": state},
         )
         acq.configure(s)
         for _ in range(s.warmup_frames):
             acq.capture_frame()
-        rec = run_record.create_run(root, f"disc-01-{args.step.lower()}-{pattern}", conditions=cond,
+        rec = run_record.create_run(root, f"disc-01-{args.step.lower()}-{pattern}-{s.frames}fr", conditions=cond,
                                     settings=settings_to_dict(s))
         log.banner(f"Run {rec.run_id}")
         frames = []

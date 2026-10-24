@@ -11606,3 +11606,123 @@
 2026-10-23 19:56:37  [B3 opposite] 20261023-194906-disc-01-b3-opposite
   absolute (all electrodes): misfit 8.8%, pass, trough -2.34 mS, lobe at 271 deg (touches E10: may be contact)
   difference vs 20261023-185153-disc-01-b2-opposite: resistive trough 271 deg (target ~120), significance 6.45
+
+------------------------------------------------------------------------
+2026-10-24 09:32:39  Run 20261024-093238-disc-08-matrix-adjacent-dac400-st10-n16
+2026-10-24 09:36:47  [1/8] adjacent dac400  st10  n16  I med 163 uA | REFUSED: median reciprocity 15.2% > 15%; model misfit 75.4% > 15%; significance 1.47 < 2.0 | s0 1.29 peak 276 deg | 6.1 min | 20261024-093238-disc-08-matrix-adjacent-dac400-st10-n16
+
+------------------------------------------------------------------------
+2026-10-24 09:39:09  Run 20261024-093909-disc-08-matrix-adjacent-dac400-st30-n16
+2026-10-24 09:44:01  [2/8] adjacent dac400  st30  n16  I med 158 uA | REFUSED: model misfit 71.5% > 15%; significance 1.02 < 2.0 | s0 1.29 peak 276 deg | 7.2 min | 20261024-093909-disc-08-matrix-adjacent-dac400-st30-n16
+
+------------------------------------------------------------------------
+2026-10-24 09:46:01  Run 20261024-094601-disc-08-matrix-adjacent-dac620-st10-n16
+2026-10-24 09:50:21  [3/8] adjacent dac620  st10  n16  I med 230 uA | REFUSED: model misfit 62.5% > 15%; significance 1.76 < 2.0 | s0 1.53 peak 276 deg | 6.3 min | 20261024-094601-disc-08-matrix-adjacent-dac620-st10-n16
+
+------------------------------------------------------------------------
+2026-10-24 09:52:43  Run 20261024-095243-disc-08-matrix-adjacent-dac620-st30-n16
+2026-10-24 09:57:40  [4/8] adjacent dac620  st30  n16  I med 223 uA | REFUSED: model misfit 63.0% > 15%; significance 1.16 < 2.0 | s0 1.52 peak 276 deg | 7.3 min | 20261024-095243-disc-08-matrix-adjacent-dac620-st30-n16
+
+------------------------------------------------------------------------
+2026-10-24 09:59:27  Run 20261024-095927-disc-08-matrix-opposite-dac400-st10-n16
+2026-10-24 10:03:09  [5/8] opposite dac400  st10  n16  I med 138 uA | REFUSED: reciprocity could not be measured (no reciprocal pairs); model misfit 80.2% > 15% | s0 3.37 peak 294 deg | 5.5 min | 20261024-095927-disc-08-matrix-opposite-dac400-st10-n16
+
+------------------------------------------------------------------------
+2026-10-24 10:05:15  Run 20261024-100515-disc-08-matrix-opposite-dac400-st30-n16
+2026-10-24 10:09:31  [6/8] opposite dac400  st30  n16  I med 135 uA | REFUSED: reciprocity could not be measured (no reciprocal pairs); model misfit 81.0% > 15%; significance 1.22 < 2.0 | s0 3.40 peak 243 deg | 6.4 min | 20261024-100515-disc-08-matrix-opposite-dac400-st30-n16
+
+------------------------------------------------------------------------
+2026-10-24 10:11:17  Run 20261024-101117-disc-08-matrix-opposite-dac620-st10-n16
+2026-10-24 10:15:16  [7/8] opposite dac620  st10  n16  I med 197 uA | REFUSED: reciprocity could not be measured (no reciprocal pairs); model misfit 52.1% > 15% | s0 2.78 peak 294 deg | 5.8 min | 20261024-101117-disc-08-matrix-opposite-dac620-st10-n16
+
+------------------------------------------------------------------------
+2026-10-24 10:17:22  Run 20261024-101722-disc-08-matrix-opposite-dac620-st30-n16
+2026-10-24 10:21:58  [8/8] opposite dac620  st30  n16  I med 194 uA | REFUSED: reciprocity could not be measured (no reciprocal pairs); model misfit 51.6% > 15% | s0 2.74 peak 294 deg | 6.7 min | 20261024-101722-disc-08-matrix-opposite-dac620-st30-n16
+
+------------------------------------------------------------------------
+2026-10-24 10:45:01  Run 20261024-104501-disc-08-matrix-reclip-adjacent-dac400-st10-n16
+2026-10-24 10:49:08  [1/8] adjacent dac400  st10  n16  I med 158 uA | REFUSED: model misfit 38.4% > 15%; significance 1.43 < 2.0 | s0 1.03 peak 240 deg | 6.1 min | 20261024-104501-disc-08-matrix-reclip-adjacent-dac400-st10-n16
+
+------------------------------------------------------------------------
+2026-10-24 10:51:30  Run 20261024-105130-disc-08-matrix-reclip-adjacent-dac400-st30-n16
+2026-10-24 10:56:24  [2/8] adjacent dac400  st30  n16  I med 154 uA | REFUSED: model misfit 32.9% > 15%; significance 0.79 < 2.0 | s0 1.03 peak 244 deg | 7.3 min | 20261024-105130-disc-08-matrix-reclip-adjacent-dac400-st30-n16
+
+------------------------------------------------------------------------
+2026-10-24 10:58:24  Run 20261024-105824-disc-08-matrix-reclip-adjacent-dac620-st10-n16
+2026-10-24 11:02:42  [3/8] adjacent dac620  st10  n16  I med 223 uA | REFUSED: model misfit 25.1% > 15%; significance 1.88 < 2.0 | s0 1.14 peak 240 deg | 6.3 min | 20261024-105824-disc-08-matrix-reclip-adjacent-dac620-st10-n16
+
+------------------------------------------------------------------------
+2026-10-24 11:05:04  Run 20261024-110504-disc-08-matrix-reclip-adjacent-dac620-st30-n16
+2026-10-24 11:10:02  [4/8] adjacent dac620  st30  n16  I med 218 uA | REFUSED: model misfit 23.8% > 15% | s0 1.14 peak 240 deg | 7.3 min | 20261024-110504-disc-08-matrix-reclip-adjacent-dac620-st30-n16
+
+------------------------------------------------------------------------
+2026-10-24 11:11:57  Run 20261024-111148-disc-08-matrix-reclip-opposite-dac400-st10-n16
+2026-10-24 11:15:45  [5/8] opposite dac400  st10  n16  I med 139 uA | REFUSED: reciprocity could not be measured (no reciprocal pairs) | s0 1.95 peak 235 deg | 5.7 min | 20261024-111148-disc-08-matrix-reclip-opposite-dac400-st10-n16
+
+------------------------------------------------------------------------
+2026-10-24 11:17:51  Run 20261024-111751-disc-08-matrix-reclip-opposite-dac400-st30-n16
+2026-10-24 11:22:38  [6/8] opposite dac400  st30  n16  I med 136 uA | REFUSED: reciprocity could not be measured (no reciprocal pairs) | s0 1.92 peak 235 deg | 6.9 min | 20261024-111751-disc-08-matrix-reclip-opposite-dac400-st30-n16
+
+------------------------------------------------------------------------
+2026-10-24 11:24:25  Run 20261024-112425-disc-08-matrix-reclip-opposite-dac620-st10-n16
+2026-10-24 11:28:27  [7/8] opposite dac620  st10  n16  I med 199 uA | REFUSED: reciprocity could not be measured (no reciprocal pairs) | s0 2.01 peak 274 deg | 5.8 min | 20261024-112425-disc-08-matrix-reclip-opposite-dac620-st10-n16
+
+------------------------------------------------------------------------
+2026-10-24 11:30:33  Run 20261024-113033-disc-08-matrix-reclip-opposite-dac620-st30-n16
+2026-10-24 11:35:16  [8/8] opposite dac620  st30  n16  I med 196 uA | REFUSED: reciprocity could not be measured (no reciprocal pairs) | s0 1.99 peak 274 deg | 6.8 min | 20261024-113033-disc-08-matrix-reclip-opposite-dac620-st30-n16
+
+------------------------------------------------------------------------
+2026-10-24 11:56:44  Run 20261024-115644-disc-01-matrix-e3hole-adjacent-dac400-st10-n16
+2026-10-24 12:00:52  [1/8] adjacent dac400  st10  n16  I med 154 uA | REFUSED: median reciprocity 26.2% > 15%; model misfit 53.3% > 15% | s0 1.56 peak 227 deg | 6.1 min | 20261024-115644-disc-01-matrix-e3hole-adjacent-dac400-st10-n16
+
+------------------------------------------------------------------------
+2026-10-24 12:03:14  Run 20261024-120314-disc-01-matrix-e3hole-adjacent-dac400-st30-n16
+2026-10-24 12:08:08  [2/8] adjacent dac400  st30  n16  I med 153 uA | REFUSED: median reciprocity 23.4% > 15%; model misfit 48.9% > 15% | s0 1.56 peak 346 deg | 7.3 min | 20261024-120314-disc-01-matrix-e3hole-adjacent-dac400-st30-n16
+
+------------------------------------------------------------------------
+2026-10-24 12:10:08  Run 20261024-121008-disc-01-matrix-e3hole-adjacent-dac620-st10-n16
+2026-10-24 12:14:19  [3/8] adjacent dac620  st10  n16  I med 224 uA | REFUSED: median reciprocity 19.5% > 15%; model misfit 30.2% > 15% | s0 1.56 peak 227 deg | 6.2 min | 20261024-121008-disc-01-matrix-e3hole-adjacent-dac620-st10-n16
+
+------------------------------------------------------------------------
+2026-10-24 12:16:41  Run 20261024-121641-disc-01-matrix-e3hole-adjacent-dac620-st30-n16
+2026-10-24 12:22:02  [4/8] adjacent dac620  st30  n16  I med 222 uA | REFUSED: median reciprocity 15.6% > 15%; model misfit 31.3% > 15% | s0 1.55 peak 227 deg | 7.7 min | 20261024-121641-disc-01-matrix-e3hole-adjacent-dac620-st30-n16
+
+------------------------------------------------------------------------
+2026-10-24 12:23:49  Run 20261024-122349-disc-01-matrix-e3hole-opposite-dac400-st10-n16
+2026-10-24 12:27:30  [5/8] opposite dac400  st10  n16  I med 146 uA | REFUSED: reciprocity could not be measured (no reciprocal pairs); model misfit 21.5% > 15% | s0 2.15 peak 238 deg | 5.5 min | 20261024-122349-disc-01-matrix-e3hole-opposite-dac400-st10-n16
+
+------------------------------------------------------------------------
+2026-10-24 12:29:36  Run 20261024-122936-disc-01-matrix-e3hole-opposite-dac400-st30-n16
+2026-10-24 12:34:22  [6/8] opposite dac400  st30  n16  I med 145 uA | REFUSED: reciprocity could not be measured (no reciprocal pairs); model misfit 22.0% > 15% | s0 2.14 peak 238 deg | 6.9 min | 20261024-122936-disc-01-matrix-e3hole-opposite-dac400-st30-n16
+
+------------------------------------------------------------------------
+2026-10-24 12:36:09  Run 20261024-123609-disc-01-matrix-e3hole-opposite-dac620-st10-n16
+2026-10-24 12:40:01  [7/8] opposite dac620  st10  n16  I med 201 uA | REFUSED: reciprocity could not be measured (no reciprocal pairs) | s0 2.19 peak 227 deg | 5.7 min | 20261024-123609-disc-01-matrix-e3hole-opposite-dac620-st10-n16
+
+------------------------------------------------------------------------
+2026-10-24 12:42:07  Run 20261024-124207-disc-01-matrix-e3hole-opposite-dac620-st30-n16
+2026-10-24 12:46:37  [8/8] opposite dac620  st30  n16  I med 200 uA | REFUSED: reciprocity could not be measured (no reciprocal pairs) | s0 2.17 peak 227 deg | 6.6 min | 20261024-124207-disc-01-matrix-e3hole-opposite-dac620-st30-n16
+
+------------------------------------------------------------------------
+2026-10-24 12:50:44  Run 20261024-125044-disc-01-d1-adjacent-10fr
+2026-10-24 12:59:18  [D1 adjacent] 20261024-125044-disc-01-d1-adjacent-10fr
+  absolute (all electrodes): misfit 33.1%, median reciprocity 16.1% > 15%; model misfit 33.1% > 15%, trough -1.52 mS, lobe at 271 deg (touches E10: may be contact)
+  difference vs 20261023-193702-disc-01-b3-adjacent: resistive trough 271 deg (target ~120), significance 14.58
+
+------------------------------------------------------------------------
+2026-10-24 13:02:56  Run 20261024-130256-disc-01-d1-opposite-10fr
+2026-10-24 13:10:30  [D1 opposite] 20261024-130256-disc-01-d1-opposite-10fr
+  absolute (all electrodes): misfit 12.0%, pass, trough -2.13 mS, lobe at 271 deg (touches E10: may be contact)
+  difference vs 20261023-194906-disc-01-b3-opposite: resistive trough 271 deg (target ~120), significance 88.29
+
+------------------------------------------------------------------------
+2026-10-24 13:15:16  Run 20261024-131516-disc-01-d2-adjacent-32fr
+2026-10-24 13:41:46  [D2 adjacent] 20261024-131516-disc-01-d2-adjacent-32fr
+  absolute (all electrodes): misfit 33.4%, median reciprocity 16.6% > 15%; model misfit 33.4% > 15%, trough -1.51 mS, lobe at 271 deg (touches E10: may be contact)
+  difference vs 20261023-193702-disc-01-b3-adjacent: resistive trough 271 deg (target ~120), significance 14.36
+
+------------------------------------------------------------------------
+2026-10-24 13:45:26  Run 20261024-134524-disc-01-d2-opposite-32fr
+2026-10-24 14:09:07  [D2 opposite] 20261024-134524-disc-01-d2-opposite-32fr
+  absolute (all electrodes): misfit 12.1%, pass, trough -2.12 mS, lobe at 271 deg (touches E10: may be contact)
+  difference vs 20261023-194906-disc-01-b3-opposite: resistive trough 271 deg (target ~120), significance 93.57
