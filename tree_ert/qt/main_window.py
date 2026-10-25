@@ -16,7 +16,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from PyQt6.QtCore import Qt, QThread
+from PyQt6.QtCore import Qt, QThread, pyqtSignal
 from PyQt6.QtWidgets import (
     QCheckBox,
     QComboBox,
@@ -34,6 +34,8 @@ from PyQt6.QtWidgets import (
     QPlainTextEdit,
     QPushButton,
     QScrollArea,
+    QScroller,
+    QSizePolicy,
     QSpinBox,
     QSplitter,
     QTableWidget,
@@ -462,8 +464,19 @@ def parse_electrode_list(text: str) -> tuple[int, ...]:
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, log_dir: Path | None = None, demo: bool = False) -> None:
+    run_finished = pyqtSignal(str)
+    """Path of a run that completed and was recorded. Lets a host that embeds
+    this window (the erterface farm UI) pick the run up without reaching into
+    the worker."""
+
+    def __init__(
+        self, log_dir: Path | None = None, demo: bool = False, compact: bool = False
+    ) -> None:
         super().__init__()
+        self._compact = compact
+        """For an 800x480 screen, embedded under a host's own header: no title
+        header (the run status moves to the right column), Session and Log
+        become tabs, and the images drop their 320 px minimum height."""
         self.setWindowTitle("Tree ERT - capture session")
         self.resize(1180, 820)
 
@@ -636,6 +649,12 @@ class MainWindow(QMainWindow):
         scroll.setWidgetResizable(True)
         scroll.setFrameShape(QFrame.Shape.NoFrame)
         scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        if self._compact:
+            # Touchscreen: drag the column with a finger; the scrollbar alone
+            # is too thin to hit on a 7" display.
+            QScroller.grabGesture(
+                scroll.viewport(), QScroller.ScrollerGestureType.LeftMouseButtonGesture
+            )
         # Floor the pane at the width the forms actually need, measured rather
         # than guessed. A constant here was wrong twice: with horizontal
         # scrolling off, a pane narrower than its content silently clips the
@@ -747,6 +766,20 @@ class MainWindow(QMainWindow):
         layout = QVBoxLayout(right)
         layout.setContentsMargins(14, 10, 14, 14)
         layout.setSpacing(8)
+        if self._compact:
+            layout.setContentsMargins(8, 6, 8, 8)
+            # A label holding a pixmap otherwise reports the pixmap as its
+            # minimum size, and each re-render to the label's size grows the
+            # window past a 800x480 screen.
+            for label in (self.image_label, self.absolute_label):
+                label.setMinimumSize(0, 0)
+                label.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Ignored)
+            layout.addWidget(self.run_status)
+            layout.addWidget(self.frame_status)
+            layout.addWidget(self.tabs, stretch=1)
+            self.tabs.addTab(self.session_status, "Session")
+            self.tabs.addTab(self.log, "Log")
+            return right
         layout.addWidget(self._section("Latest frame"))
         layout.addWidget(self.frame_status)
         layout.addWidget(self.tabs, stretch=3)
@@ -757,6 +790,7 @@ class MainWindow(QMainWindow):
         return right
 
     def _build_layout(self) -> QWidget:
+        header = self._build_header()  # creates run_status, used by the right column
         splitter = QSplitter(Qt.Orientation.Horizontal)
         splitter.addWidget(self._build_left_column())
         splitter.addWidget(self._build_right_column())
@@ -769,7 +803,8 @@ class MainWindow(QMainWindow):
         layout = QVBoxLayout(root)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
-        layout.addWidget(self._build_header())
+        if not self._compact:
+            layout.addWidget(header)
         layout.addWidget(splitter, stretch=1)
         return root
 
@@ -1090,6 +1125,7 @@ class MainWindow(QMainWindow):
         self._set_run_status(f"Done  {len(self._frames)} frames", "ok")
         self.photo_button.setEnabled(True)
         self.open_button.setEnabled(True)
+        self.run_finished.emit(run_path)
 
     def _on_failed(self, message: str) -> None:
         self._log(f"FAILED: {message}")

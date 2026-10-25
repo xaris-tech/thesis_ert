@@ -112,6 +112,7 @@ one costs a re-derivation.
 | [0065](0065-absolute-colour-matches-difference-images.md) | Absolute images use the difference-image colours: blue less, red more conductive | Accepted |
 | [0066](0066-accept-residual-e10-e12-board-leak.md) | Accept the residual ~10 µA E10–E12 board leak; open-circuit check every session; no specimens under ~300 µA | Accepted |
 | [0067](0067-proceed-to-disc-06-with-e1-e2-excluded.md) | Proceed to disc-06 drilled defect (E5–E7) with E1/E2 excluded; E1–E3 sector declared blind | Accepted |
+| [0068](0068-embed-capture-session-as-farm-scan-screen.md) | Farm UI scan screen embeds the capture session (compact mode, `run_finished`); saved runs are UNCLASSIFIED, no ratio | Accepted |
 | [0069](0069-raspberry-pi-host-mesh-cache-and-port-default.md) | FEM mesh built once per process; serial port default chosen by OS | Accepted |
 | [0056](0056-correct-run-conditions-in-extra-never-overwrite.md) | Correct recorded conditions with a dated key in `extra`; original fields stay as written | Accepted |
 | [0055](0055-measure-the-lobe-not-a-window.md) | Lobe connected-component centroid, no angular window; window choice was worth 12.3 deg | Accepted |
