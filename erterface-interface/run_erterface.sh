@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Launch the ERTERFACE farm UI (with the embedded capture session) from the
-# desktop. Double-click this file, or the ERTerface launcher on the Desktop.
+# desktop, fullscreen. Double-click this file or the ERTerface Desktop launcher.
 # Uses the thesis repo's venv (../.venv); output goes to erterface.log here.
 set -euo pipefail
 
@@ -16,4 +16,4 @@ if [[ ! -x "$PYTHON" ]]; then
 fi
 
 cd "$HERE"
-exec "$PYTHON" app.py "$@" >>"$LOG" 2>&1
+exec "$PYTHON" app.py --fullscreen "$@" >>"$LOG" 2>&1

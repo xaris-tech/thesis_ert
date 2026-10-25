@@ -126,6 +126,42 @@ class CardApp(QMainWindow):
 
         self.stack.addWidget(self.index_page)
 
+        self._build_start_page()
+
+    def _build_start_page(self):
+        """Opening screen: the name and a Start button. The top bar stays
+        hidden until Start, so nothing else competes for attention."""
+        self.start_page = QWidget()
+        self.start_page.setObjectName("startPage")
+        layout = QVBoxLayout(self.start_page)
+        layout.addStretch(3)
+        title = QLabel("ERTERFACE")
+        title.setObjectName("startTitle")
+        title.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(title)
+        subtitle = QLabel("Coconut tree ERT field interface")
+        subtitle.setObjectName("startSubtitle")
+        subtitle.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layout.addWidget(subtitle)
+        layout.addSpacing(36)
+        self.btn_start = QPushButton("Start")
+        self.btn_start.setObjectName("startButton")
+        self.btn_start.setFixedSize(240, 72)
+        self.btn_start.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.btn_start.clicked.connect(self._leave_start_page)
+        layout.addWidget(self.btn_start, alignment=Qt.AlignmentFlag.AlignHCenter)
+        layout.addStretch(4)
+        self.stack.addWidget(self.start_page)
+        self.stack.setCurrentWidget(self.start_page)
+        self.top_bar_container.setVisible(False)
+
+    def _leave_start_page(self):
+        self.top_bar_container.setVisible(True)
+        self.stack.setCurrentWidget(self.index_page)
+        self.stack.removeWidget(self.start_page)
+        self.start_page.deleteLater()
+        self.start_page = None
+
     def _init_drive_mode(self):
         if "ERTERFACE_DRIVE_MODE" not in os.environ:
             os.environ["ERTERFACE_DRIVE_MODE"] = "local"
@@ -461,6 +497,16 @@ class CardApp(QMainWindow):
             )
 
         self.btn_theme.setText("Light" if self.is_dark_mode else "Dark")
+        if getattr(self, "start_page", None) is not None:
+            self.start_page.setStyleSheet(
+                f"QWidget#startPage {{ background-color: {bg}; }}"
+                f"QLabel#startTitle {{ font-size: 64px; font-weight: 900; color: {text}; "
+                f"letter-spacing: 6px; background: transparent; }}"
+                f"QLabel#startSubtitle {{ font-size: 18px; color: {sub}; background: transparent; }}"
+                f"QPushButton#startButton {{ font-size: 26px; font-weight: 800; color: #ffffff; "
+                f"background-color: {theme.STATUS_HEALTHY}; border: none; border-radius: 36px; }}"
+                f"QPushButton#startButton:pressed {{ background-color: #12602a; }}"
+            )
 
         self.nav_container.setStyleSheet(
             f"QFrame {{ background-color: {nav_bg}; border: none; }}"
