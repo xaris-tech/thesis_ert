@@ -11969,3 +11969,55 @@
 
 ------------------------------------------------------------------------
 2026-10-26 14:14:29  Session ended
+
+------------------------------------------------------------------------
+2026-10-26 14:32:48  Session started (hardware)
+2026-10-26 14:32:48  Scans folder: /home/rantiche/thesis_ert/scans
+2026-10-26 14:32:48  659 scan(s) already recorded here.
+2026-10-26 14:32:48  Ready. Settings are saved on exit.
+2026-10-26 14:34:59  Naming warnings: medium must be one of: cut disc, standing tree, resistor belt, saline tank, dummy load (got 'unknown'); specimen ID 'disc05' must be lowercase words joined by hyphens and end in a number (e.g. disc-03, coconut-tree-1)
+2026-10-26 14:36:54  Naming warnings: medium must be one of: cut disc, standing tree, resistor belt, saline tank, dummy load (got 'unknown'); specimen ID 'disc05' must be lowercase words joined by hyphens and end in a number (e.g. disc-03, coconut-tree-1)
+2026-10-26 14:37:14  Connecting to /dev/ttyACM0...
+2026-10-26 14:37:15  Configuring instrument...
+
+------------------------------------------------------------------------
+2026-10-26 14:37:15  Run 20261026-143715-disc05-holenear1and2
+2026-10-26 14:37:15  Conditions: medium=unknown saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-26 14:37:15  Recording to /home/rantiche/thesis_ert/scans/runs/20261026-143715-disc05-holenear1and2
+2026-10-26 14:37:55  [warmup 1/5] 192/192 OK | I med 538.6 uA (274.5-684.8) | R med 0.0191 kohm | dV med 2514 LSB
+2026-10-26 14:38:35  [warmup 2/5] 192/192 OK | I med 538.4 uA (277.8-680.5) | R med 0.0186 kohm | dV med 2512 LSB
+2026-10-26 14:39:15  [warmup 3/5] 192/192 OK | I med 538.9 uA (277.6-680.5) | R med 0.0186 kohm | dV med 2487 LSB
+2026-10-26 14:39:55  [warmup 4/5] 192/192 OK | I med 539.0 uA (277.1-681.1) | R med 0.0186 kohm | dV med 2481 LSB
+2026-10-26 14:40:34  [warmup 5/5] 192/192 OK | I med 539.3 uA (276.7-681.7) | R med 0.0189 kohm | dV med 2482 LSB
+2026-10-26 14:41:14  [frame 1] 192/192 OK | I med 538.8 uA (277.1-682.1) | R med 0.0188 kohm | dV med 2487 LSB
+2026-10-26 14:41:54  [frame 2] 192/192 OK | I med 539.1 uA (276.9-681.5) | R med 0.0189 kohm | dV med 2443 LSB
+2026-10-26 14:42:34  [frame 3] 192/192 OK | I med 539.4 uA (276.8-683.0) | R med 0.0190 kohm | dV med 2450 LSB
+2026-10-26 14:43:13  [frame 4] 192/192 OK | I med 539.7 uA (276.9-682.8) | R med 0.0192 kohm | dV med 2474 LSB
+2026-10-26 14:43:53  [frame 5] 192/192 OK | I med 538.6 uA (274.9-681.3) | R med 0.0191 kohm | dV med 2438 LSB
+2026-10-26 14:44:33  [frame 6] 192/192 OK | I med 538.3 uA (274.2-681.3) | R med 0.0192 kohm | dV med 2436 LSB
+2026-10-26 14:45:13  [frame 7] 192/192 OK | I med 538.3 uA (274.6-681.3) | R med 0.0192 kohm | dV med 2400 LSB
+2026-10-26 14:45:52  [frame 8] 192/192 OK | I med 538.5 uA (274.5-681.5) | R med 0.0192 kohm | dV med 2401 LSB
+2026-10-26 14:46:32  [frame 9] 192/192 OK | I med 538.0 uA (274.4-681.3) | R med 0.0191 kohm | dV med 2402 LSB
+2026-10-26 14:47:12  [frame 10] 192/192 OK | I med 537.8 uA (274.5-681.1) | R med 0.0191 kohm | dV med 2395 LSB
+2026-10-26 14:47:12  No reconstruction: This run is the session baseline; it has nothing to differ from.
+2026-10-26 14:47:13  Baseline control image saved to /home/rantiche/thesis_ert/scans/runs/20261026-143715-disc05-holenear1and2/control.png
+2026-10-26 14:47:22  Absolute: REFUSED: model misfit 77.7% > 15%; significance 1.01 < 2.0
+2026-10-26 14:47:22  Absolute: REFUSED: model misfit 77.7% > 15%; significance 1.01 < 2.0  |  sigma0 13.4 mS  |  peak +1.33e+03 at 294 deg  |  trough -13.3 mS, lobe at 300 deg (touches E9: may be contact)  |  misfit 77.7%  |  significance 1.0x
+2026-10-26 14:47:22  This run is now the session baseline (20261026-143715-disc05-holenear1and2).
+2026-10-26 14:47:22  Finished. Run saved to /home/rantiche/thesis_ert/scans/runs/20261026-143715-disc05-holenear1and2
+2026-10-26 14:47:22    Frames captured: 10
+2026-10-26 14:47:22    Reciprocity: no reciprocal pairs captured
+2026-10-26 14:47:22    Noise floor: median pair sd 0.00020 kohm (1.01%)  max 0.01582 kohm over 96 pairs
+2026-10-26 14:47:22  Indexed in /home/rantiche/thesis_ert/scans/index.csv
+
+------------------------------------------------------------------------
+2026-10-26 14:48:09  Session ended
+
+------------------------------------------------------------------------
+2026-10-26 15:00:49  Session started (hardware)
+2026-10-26 15:00:49  Scans folder: /home/rantiche/thesis_ert/scans
+2026-10-26 15:00:49  660 scan(s) already recorded here.
+2026-10-26 15:00:49  Ready. Settings are saved on exit.
+
+------------------------------------------------------------------------
+2026-10-26 15:01:20  Session ended
