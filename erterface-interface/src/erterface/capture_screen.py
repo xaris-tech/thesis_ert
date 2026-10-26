@@ -42,9 +42,14 @@ RUN_IMAGES = (
 )
 
 
-def _import_capture_window():
+def _thesis_importable():
+    """Make the thesis repo's packages (tree_ert, phase3a_*) importable."""
     if str(THESIS_ROOT) not in sys.path:
         sys.path.insert(0, str(THESIS_ROOT))
+
+
+def _import_capture_window():
+    _thesis_importable()
     from tree_ert.qt.main_window import MainWindow
     return MainWindow
 
@@ -68,18 +73,25 @@ def _serial_port_present():
 
 
 def specimen_id_for(tree):
-    """``T002`` → ``coconut-tree-2``, matching run_record.SPECIMEN_ID_PATTERN."""
-    digits = re.search(r"\d+", tree.tree_id or "")
-    return f"coconut-tree-{int(digits.group())}" if digits else ""
+    """The specimen ID a scan of this tree is recorded under
+    (run_record.SPECIMEN_ID_PATTERN): ``disc-01`` as is, ``T002`` →
+    ``coconut-tree-2``. A saline-tank position (``e1``, ``centre``) is not a
+    specimen, so it gets none."""
+    tree_id = (tree.tree_id or "").strip().lower()
+    if re.fullmatch(r"[a-z][a-z0-9]*(?:-[a-z0-9]+)*-[0-9]+", tree_id):
+        return tree_id
+    match = re.fullmatch(r"t-?0*([0-9]+)", tree_id)
+    return f"coconut-tree-{int(match.group(1))}" if match else ""
 
 
 def run_impedance_ratio(run_dir):
     """(p90/p10 impedance ratio, drive pattern) of a recorded run (ADR-0075),
     or (None, pattern) if it cannot be computed. Never raises: a ratio must not
     stop a scan being saved."""
-    from tree_ert import capture_view, survey  # importable once the session is
-
     try:
+        _thesis_importable()
+        from tree_ert import capture_view, survey
+
         frames = survey.load_frames(Path(run_dir))
         pattern = frames[0].pattern.lower() if frames else ""
         return capture_view.impedance_ratio(frames), pattern

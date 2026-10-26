@@ -80,16 +80,16 @@ class DriveClient:
     def _is_test_mode():
         return _is_test_mode()
 
-    def upload_measurement(self, plantation, zone, tree, measurement):
+    def upload_measurement(self, plantation, tree, measurement):
         """Upload one measurement. Returns True on success."""
         if self._is_off():
             return False
         if self._is_test_mode():
-            return self._upload_local(plantation, zone, tree, measurement)
-        return self._upload_drive(plantation, zone, tree, measurement)
+            return self._upload_local(plantation, tree, measurement)
+        return self._upload_drive(plantation, tree, measurement)
 
-    def _upload_local(self, p, z, t, m):
-        prefix = f"{p.plant_id}/{z.zone_id}/{t.tree_id}"
+    def _upload_local(self, p, t, m):
+        prefix = f"{p.plant_id}/{t.tree_id}"
         out_dir = os.path.join(paths.DRIVE_STAGING_DIR, prefix)
         os.makedirs(out_dir, exist_ok=True)
         ts_str = m.timestamp.toString("yyyyMMdd_HHmmss")
@@ -111,7 +111,7 @@ class DriveClient:
         with open(src, "rb") as fin, open(dst, "wb") as fout:
             fout.write(fin.read())
 
-    def _upload_drive(self, p, z, t, m):
+    def _upload_drive(self, p, t, m):
         try:
             from googleapiclient.http import MediaFileUpload
         except ImportError:
@@ -119,7 +119,7 @@ class DriveClient:
         self._ensure_service()
         if self._service is None:
             return False
-        prefix = f"{p.plant_id}/{z.zone_id}/{t.tree_id}"
+        prefix = f"{p.plant_id}/{t.tree_id}"
         parent_id = self._folder_id() or "root"
         folder_id = self._ensure_folder(prefix, parent_id)
         ts_str = m.timestamp.toString("yyyyMMdd_HHmmss")
@@ -195,14 +195,14 @@ def sync_unsynced(database, client=None, progress_cb=None, cancel_check=None):
     failed = 0
     skipped = 0
 
-    for p, z, t, m in iter_all_measurements(database):
+    for p, t, m in iter_all_measurements(database):
         if cancel_check is not None and cancel_check():
             break
         if getattr(m, "synced", False):
             skipped += 1
             continue
         try:
-            ok = client.upload_measurement(p, z, t, m)
+            ok = client.upload_measurement(p, t, m)
             if ok:
                 m.synced = True
                 uploaded += 1

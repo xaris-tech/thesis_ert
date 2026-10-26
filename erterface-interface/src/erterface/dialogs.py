@@ -1,4 +1,4 @@
-"""AddEntityDialog — Plantation / Zone / Tree add and edit.
+"""AddEntityDialog — Plantation / Tree add and edit.
 Measurement CRUD is intentionally absent (measurements are created by
 ScanView only — see SPEC.md).
 
@@ -20,7 +20,7 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from .models import Plantation, Tree, Zone
+from .models import Plantation, Tree
 from .widgets.keyboard import TouchLineEdit
 
 
@@ -172,12 +172,6 @@ class AddEntityDialog(QDialog):
             pid = self.current_data.plant_id if self.edit_mode else ""
             self._add_text("Name", "name", name, required=True)
             self._add_text("Plantation ID", "id", pid, required=True)
-        elif self.level_name == "Zone":
-            existing_ids = [z.zone_id for z in self.existing_items]
-            suggested = self._suggest_next_id("Z", existing_ids)
-            zid = self.current_data.zone_id if self.edit_mode else suggested
-            id_presets = self._id_presets("Z", existing_ids, 3)
-            self._add_text("Zone ID", "id", zid, required=True, presets=id_presets)
         elif self.level_name == "Tree":
             existing_ids = [t.tree_id for t in self.existing_items]
             suggested = self._suggest_next_id("T", existing_ids)
@@ -242,16 +236,6 @@ class AddEntityDialog(QDialog):
                 return False, f"Plantation ID '{pid}' already exists."
             return True, ""
 
-        if self.level_name == "Zone":
-            zid = self.inputs["id"].text().strip()
-            if not zid:
-                return False, "Zone ID is required."
-            if not ID_PATTERN.match(zid):
-                return False, "Zone ID must be 1-32 chars: letters, digits, _ or -."
-            if zid in self._existing_id_set("zone_id"):
-                return False, f"Zone ID '{zid}' already exists in this plantation."
-            return True, ""
-
         if self.level_name == "Tree":
             tid = self.inputs["id"].text().strip()
             if not tid:
@@ -259,7 +243,7 @@ class AddEntityDialog(QDialog):
             if not ID_PATTERN.match(tid):
                 return False, "Tree ID must be 1-32 chars: letters, digits, _ or -."
             if tid in self._existing_id_set("tree_id"):
-                return False, f"Tree ID '{tid}' already exists in this zone."
+                return False, f"Tree ID '{tid}' already exists in this plantation."
             return True, ""
 
         return False, f"Unknown level: {self.level_name}"
@@ -282,8 +266,6 @@ class AddEntityDialog(QDialog):
 def make_entity(level_name, data, parent_node=None):
     if level_name == "Plantation":
         return Plantation(data["name"], data["id"])
-    if level_name == "Zone":
-        return Zone(data["id"])
     if level_name == "Tree":
         return Tree(data["id"])
     return None

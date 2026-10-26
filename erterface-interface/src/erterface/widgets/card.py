@@ -15,10 +15,11 @@ keyed by object name; the grid is rebuilt on every navigation, sort and
 (debounced) search, so cards carry no stylesheet of their own.
 """
 
+import hashlib
 import os
 
 from PyQt6.QtCore import Qt, pyqtSignal
-from PyQt6.QtGui import QPixmap, QPixmapCache
+from PyQt6.QtGui import QImageReader, QPixmap, QPixmapCache
 from PyQt6.QtWidgets import (
     QFrame,
     QHBoxLayout,
@@ -31,11 +32,12 @@ from PyQt6.QtWidgets import (
 
 from .. import theme
 from ..models import Measurement
-from ..paths import resolve_data_file
+from ..paths import DATA_DIRECTORY, resolve_data_file
 
 CARD_W = 230
 CARD_H = 172
 THUMB = 84
+THUMB_DIR = os.path.join(DATA_DIRECTORY, "thumbs")
 
 
 def _thumbnail(path):
@@ -47,15 +49,32 @@ def _thumbnail(path):
         return None
     pix = QPixmapCache.find(key)
     if pix is None:
-        src = QPixmap(path)
-        if src.isNull():
+        # Second level: a small PNG kept under data/thumbs, so a big tree opens
+        # fast in every later session too, not only the current one.
+        disk = os.path.join(THUMB_DIR, hashlib.sha1(key.encode()).hexdigest() + ".png")
+        if os.path.exists(disk):
+            pix = QPixmap(disk)
+            if not pix.isNull():
+                QPixmapCache.insert(key, pix)
+                return pix
+        # QImageReader, not QPixmap(path): QPixmap's loader parks every
+        # full-size figure (several MB each) in the same 10 MB QPixmapCache,
+        # which evicted the thumbnails and re-decoded a 55-scan tree on every
+        # refresh (1.1 s). Decoding straight to thumbnail size caches nothing big.
+        reader = QImageReader(path)
+        size = reader.size()
+        if size.isValid():
+            reader.setScaledSize(size.scaled(THUMB, THUMB, Qt.AspectRatioMode.KeepAspectRatio))
+        image = reader.read()
+        if image.isNull():
             return None
-        pix = src.scaled(
-            THUMB, THUMB,
-            Qt.AspectRatioMode.KeepAspectRatio,
-            Qt.TransformationMode.SmoothTransformation,
-        )
+        pix = QPixmap.fromImage(image)
         QPixmapCache.insert(key, pix)
+        try:
+            os.makedirs(THUMB_DIR, exist_ok=True)
+            image.save(disk, "PNG")
+        except OSError:
+            pass  # a missing disk thumbnail only costs speed
     return pix
 
 
@@ -66,14 +85,16 @@ def _label(text, name):
     return lbl
 
 
+_SHORT_PATTERN = {"adjacent": "adj", "opposite": "opp"}
+"""Card text is ~110 px wide beside the thumbnail; the full name is on review."""
+
+
 def _count(n, word):
     return f"{n} {word}" + ("" if n == 1 else "s")
 
 
 def _summary(obj):
     """One line under a card title, so a tree's state is readable from the grid."""
-    if hasattr(obj, "zones"):
-        return _count(len(obj.zones), "zone")
     if hasattr(obj, "trees"):
         return _count(len(obj.trees), "tree")
     if hasattr(obj, "measurements"):
@@ -216,7 +237,7 @@ class CardWidget(QFrame):
         pill.setFixedHeight(24)
         text.addWidget(pill)
         text.addWidget(_label(
-            (f"Ratio {m.imp_ratio:.2f}" + (f" · {m.pattern}" if m.pattern else ""))
+            (f"Ratio {m.imp_ratio:.1f}" + (f" · {_SHORT_PATTERN.get(m.pattern, m.pattern)}" if m.pattern else ""))
             if m.imp_ratio is not None else "Capture run",
             "meta",
         ))

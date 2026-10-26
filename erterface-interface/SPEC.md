@@ -5,7 +5,9 @@
 > `ScanWorker`, `classify_from_max` and the live mode of `ScanView` are gone,
 > and `ScanView` is only the read-only review of a saved measurement. See
 > AGENTS.md for the current contract. Sections below mentioning `ScanWorker`
-> describe the earlier stub.
+> describe the earlier stub. The Zone level is gone too: the hierarchy is
+> Plantation > Tree > Measurement, and `import_scans.py` builds the data from
+> the recorded scans (see AGENTS.md).
 
 ## Diff vs. v1 (this revision)
 

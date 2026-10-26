@@ -10,6 +10,7 @@ import time
 
 from PyQt6.QtCore import QDateTime, QEvent, Qt, QTimer
 from PyQt6.QtWidgets import (
+    QLayout,
     QComboBox,
     QDialog,
     QFileDialog,
@@ -32,7 +33,7 @@ from .dialogs import AddEntityDialog, make_entity
 from .drive_setup import DriveSetupDialog
 from .drive_sync import DriveClient, sync_unsynced
 from .errors import status_toast
-from .models import Measurement, Plantation, Tree, Zone
+from .models import Measurement, Plantation, Tree
 from .capture_screen import CaptureScreen, create_session
 from .scan_view import ScanView
 from .widgets.card import CARD_W, CardWidget, card_stylesheet
@@ -41,8 +42,7 @@ from .widgets.keyboard import TouchLineEdit
 
 EMPTY_STATE = {
     "Plantation": "No plantations yet.\nTap + to add one.",
-    "Zone": "No zones in this plantation.\nTap + to add one.",
-    "Tree": "No trees in this zone.\nTap + to add one.",
+    "Tree": "No trees in this plantation.\nTap + to add one.",
     "Measurement": "No measurements yet.\nTap a tree's Scan button to capture one.",
 }
 
@@ -333,6 +333,10 @@ class CardApp(QMainWindow):
         self.card_layout.setContentsMargins(20, 8, 20, 16)
         self.card_layout.setSpacing(15)
         self.card_layout.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignHCenter)
+        # The container must be at least as tall as its rows; otherwise the
+        # scroll area squeezes it to the viewport and fixed-size cards overlap
+        # (a tree with 55 scans drew them stacked on each other).
+        self.card_layout.setSizeConstraint(QLayout.SizeConstraint.SetMinimumSize)
         self.scroll_area.setWidget(self.card_container)
         self.overlay_layout.addWidget(self.scroll_area, 0, 0)
 
@@ -540,8 +544,6 @@ class CardApp(QMainWindow):
             return self.database
         last = self.navigation_path[-1]
         if isinstance(last, Plantation):
-            return last.zones
-        if isinstance(last, Zone):
             return last.trees
         if isinstance(last, Tree):
             return last.measurements
@@ -551,8 +553,6 @@ class CardApp(QMainWindow):
         if target_object is not None:
             if isinstance(target_object, Plantation):
                 return "Plantation"
-            if isinstance(target_object, Zone):
-                return "Zone"
             if isinstance(target_object, Tree):
                 return "Tree"
             if isinstance(target_object, Measurement):
@@ -561,8 +561,6 @@ class CardApp(QMainWindow):
             return "Plantation"
         last = self.navigation_path[-1]
         if isinstance(last, Plantation):
-            return "Zone"
-        if isinstance(last, Zone):
             return "Tree"
         if isinstance(last, Tree):
             return "Measurement"
@@ -738,8 +736,6 @@ class CardApp(QMainWindow):
         last = self.navigation_path[-1]
         if isinstance(last, Plantation):
             text = last.name or last.plant_id
-        elif isinstance(last, Zone):
-            text = last.zone_id
         elif isinstance(last, Tree):
             text = last.tree_id
         else:
@@ -807,9 +803,7 @@ class CardApp(QMainWindow):
             if entity is None:
                 status_toast(self, f"Could not create {level}.", "error")
                 return
-            if isinstance(parent, Plantation) and isinstance(entity, Zone):
-                parent.zones.append(entity)
-            elif isinstance(parent, Zone) and isinstance(entity, Tree):
+            if isinstance(parent, Plantation) and isinstance(entity, Tree):
                 parent.trees.append(entity)
             elif level == "Plantation" and isinstance(entity, Plantation):
                 self.database.append(entity)
@@ -835,12 +829,9 @@ class CardApp(QMainWindow):
             if isinstance(obj, Plantation):
                 obj.name = data["name"]
                 obj.plant_id = data["id"]
-            elif isinstance(obj, Zone):
-                obj.zone_id = data["id"]
-                obj.name = f"Zone {data['id']}"
             elif isinstance(obj, Tree):
                 obj.tree_id = data["id"]
-                obj.name = f"Tree {data['id']}"
+                obj.name = data["id"]
             else:
                 status_toast(self, "Measurement edit not supported.", "warn")
                 return

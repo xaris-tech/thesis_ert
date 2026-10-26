@@ -9,7 +9,6 @@ from .models import iter_all_measurements
 CSV_COLUMNS = [
     "plantation_id",
     "plantation_name",
-    "zone_id",
     "tree_id",
     "measurement_timestamp",
     "imp_ratio",
@@ -29,11 +28,10 @@ def export_measurements_csv(database, output_path):
         with open(tmp, "w", newline="", encoding="utf-8") as f:
             writer = csv.DictWriter(f, fieldnames=CSV_COLUMNS)
             writer.writeheader()
-            for p, z, t, m in iter_all_measurements(database):
+            for p, t, m in iter_all_measurements(database):
                 writer.writerow({
                     "plantation_id": p.plant_id,
                     "plantation_name": p.name,
-                    "zone_id": z.zone_id,
                     "tree_id": t.tree_id,
                     "measurement_timestamp": m.timestamp.toString("yyyy-MM-dd HH:mm:ss"),
                     "imp_ratio": m.imp_ratio,

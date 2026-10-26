@@ -14,9 +14,10 @@ PyQt6 desktop frontend for an ERT (electrical resistivity tomography) device tha
 ## Repo layout
 
 - `app.py` — entrypoint
+- `import_scans.py` — rebuilds `plantation_data.json` from `<thesis root>/scans`: plantation **Saline** (trees = tank positions: empty, e1..e12, pairs e1-e7..e6-e12, centre; from the position-series labels and the SSIM/wood-at target text) and **Discs** (disc-01..). Backs up the old file to `data/`, pre-builds card thumbnails in `data/thumbs/`. `--dry-run` lists what it would import.
 - `src/erterface/` — the package
   - `app.py` — `CardApp(QMainWindow)` (main window, scan push/pop, export/sync triggers)
-  - `models.py` — `Plantation`, `Zone`, `Tree`, `Measurement`, `iter_all_measurements()`
+  - `models.py` — `Plantation`, `Tree`, `Measurement`, `iter_all_measurements()` (yields `(plantation, tree, measurement)`)
   - `paths.py` — runtime paths + classification constants
   - `theme.py` — colors, fonts, status pill helper
   - `capture_screen.py` — `CaptureScreen(QWidget)`: the scan screen. Embeds the thesis repo's capture session (`tree_ert.qt.main_window.MainWindow`, `compact=True`) under a farm header with Back / Save to tree
@@ -33,10 +34,10 @@ PyQt6 desktop frontend for an ERT (electrical resistivity tomography) device tha
 
 ## Domain model
 
-Hierarchy: `Plantation > Zone > Tree > Measurement`. `Measurement` is a leaf.
+Hierarchy: `Plantation > Tree > Measurement` (the Zone level was removed 2026-10-26; old files load with each zone's trees lifted into the plantation). `Measurement` is a leaf. A tree's name is its ID (`disc-01`, `e1`, `T003`).
 
 - Each class has `to_dict` / `from_dict` for JSON. Don't bypass when persisting.
-- IDs: `Plantation.plant_id`, `Zone.zone_id`, `Tree.tree_id`. `Measurement` has no id.
+- IDs: `Plantation.plant_id`, `Tree.tree_id`. `Measurement` has no id.
 - `Measurement` carries `imp_ratio`, `classification` (`HEALTHY` / `AT_RISK` / `UNHEALTHY`), `timestamp`, `data_path` (`.npy`), `image_path` (`.png`), `synced: bool` (Drive sync state).
 - Measurements saved from the capture session are `UNCLASSIFIED` with `imp_ratio = None`: the instrument produces images, not a health verdict. `data_path` is the run folder under `<thesis root>/scans/runs/`, `image_path` its `reconstruction.png` (else `absolute.png`). Older measurements may still carry HEALTHY / AT_RISK / UNHEALTHY and a `.npy`.
 - Drilldown: `CardApp.navigation_path` (list of model objects). `get_current_list()` derives the current view; `get_current_level_name()` derives the level to add.
@@ -68,7 +69,7 @@ Hierarchy: `Plantation > Zone > Tree > Measurement`. `Measurement` is a leaf.
 
 ## Data export (CSV)
 
-- `export.export_measurements_csv(database, path)` — one row per measurement. Columns: `plantation_id, plantation_name, zone_id, tree_id, measurement_timestamp, imp_ratio, classification, data_path, image_path, synced`.
+- `export.export_measurements_csv(database, path)` — one row per measurement. Columns: `plantation_id, plantation_name, tree_id, measurement_timestamp, imp_ratio, classification, data_path, image_path, synced, pattern`.
 - Manual trigger: top-bar "Export CSV" button → `QFileDialog.getSaveFileName` → write. Atomic via tmp + `os.replace`.
 - Auto trigger: `closeEvent` writes `./exports/plantation_export_<ts>.csv` if any measurement exists.
 
@@ -78,7 +79,7 @@ Hierarchy: `Plantation > Zone > Tree > Measurement`. `Measurement` is a leaf.
 - `DriveClient` uses OAuth 2.0 InstalledApp flow (`google-auth-oauthlib`). First run opens browser; refresh token stored at `~/.config/erterface/drive_credentials.json`.
 - Setup: drop OAuth Desktop client JSON at `~/.config/erterface/drive_client_secret.json`. Optional folder id in `~/.config/erterface/drive_config.json` (key: `folder_id`).
 - Scopes: `https://www.googleapis.com/auth/drive.file` (narrow — files the app creates).
-- Per measurement upload: `<plantation_id>/<zone_id>/<tree_id>/measurement_<ts>.{npy,png,json}`.
+- Per measurement upload: `<plantation_id>/<tree_id>/measurement_<ts>.{npy,png,json}`.
 - Sync state: `Measurement.synced` flipped to `True` on success; `save_data()` called.
 - Manual trigger: top-bar "Sync Drive" button. Auto trigger: `closeEvent` runs a sync pass (skipped if mode == `off`).
 - `sync_unsynced(database, client=None, progress_cb=None, cancel_check=None)` returns `(uploaded, failed, skipped)`.

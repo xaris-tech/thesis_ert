@@ -1,9 +1,9 @@
-"""Data model: Plantation > Zone > Tree > Measurement.
+"""Data model: Plantation > Tree > Measurement.
 
 Each class has to_dict / from_dict for JSON round-tripping. The persisted
-format is intentionally identical to the original based-3.py so existing
-plantation_data.json files load without migration (unknown keys from
-older files are ignored on load and dropped on the next save).
+format follows the original based-3.py; files that still have the removed
+Zone level load with each zone's trees lifted into the plantation, and
+unknown keys are dropped on the next save.
 """
 
 from PyQt6.QtCore import QDateTime, Qt
@@ -54,7 +54,7 @@ class Measurement:
 class Tree:
     def __init__(self, tree_id):
         self.tree_id = tree_id
-        self.name = f"Tree {tree_id}"
+        self.name = tree_id  # "disc-01", "e1", "T003": the label is the name
         self.measurements = []
 
     def to_dict(self):
@@ -70,49 +70,36 @@ class Tree:
         return tree
 
 
-class Zone:
-    def __init__(self, zone_id):
-        self.zone_id = zone_id
-        self.name = f"Zone {zone_id}"
-        self.trees = []
-
-    def to_dict(self):
-        return {
-            "zone_id": self.zone_id,
-            "trees": [t.to_dict() for t in self.trees],
-        }
-
-    @classmethod
-    def from_dict(cls, data):
-        zone = cls(data["zone_id"])
-        zone.trees = [Tree.from_dict(t) for t in data.get("trees", [])]
-        return zone
-
-
 class Plantation:
+    """Top level. Holds trees directly: the Zone level was removed (2026-10-26)."""
+
     def __init__(self, name, plant_id):
         self.name = name
         self.plant_id = plant_id
-        self.zones = []
+        self.trees = []
 
     def to_dict(self):
         return {
             "name": self.name,
             "plant_id": self.plant_id,
-            "zones": [z.to_dict() for z in self.zones],
+            "trees": [t.to_dict() for t in self.trees],
         }
 
     @classmethod
     def from_dict(cls, data):
         plantation = cls(data["name"], data["plant_id"])
-        plantation.zones = [Zone.from_dict(z) for z in data.get("zones", [])]
+        trees = list(data.get("trees", []))
+        # Files from before the Zone level was removed: lift each zone's trees
+        # up to the plantation, so nothing saved is lost.
+        for zone in data.get("zones", []):
+            trees.extend(zone.get("trees", []))
+        plantation.trees = [Tree.from_dict(t) for t in trees]
         return plantation
 
 
 def iter_all_measurements(database):
-    """Walk the whole tree, yielding (plantation, zone, tree, measurement) tuples."""
+    """Walk everything, yielding (plantation, tree, measurement) tuples."""
     for p in database:
-        for z in p.zones:
-            for t in z.trees:
-                for m in t.measurements:
-                    yield p, z, t, m
+        for t in p.trees:
+            for m in t.measurements:
+                yield p, t, m
