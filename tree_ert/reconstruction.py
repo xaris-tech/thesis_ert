@@ -358,6 +358,36 @@ def _magnitude_caption(result: ReconstructionResult) -> str:
     return "\n".join(lines)
 
 
+def view_path(image_path: Path) -> Path:
+    """Where the display copy of a run figure lives (ADR-0074)."""
+    image_path = Path(image_path)
+    return image_path.with_name(image_path.stem + "-image.png")
+
+
+def save_view(eit_mesh, values: np.ndarray, title: str, limit: float, image_path: Path) -> Path:
+    """Display copy of a run figure: the tomogram and its title, nothing else.
+
+    The screen shows this; the full figure beside it (noise control, colour
+    bar, caption) stays the record (ADR-0027). Same values, same colour limit,
+    so the two never disagree about what the image is (ADR-0074).
+    """
+    import matplotlib
+
+    matplotlib.use("Agg", force=False)
+    import matplotlib.pyplot as plt
+
+    figure, ax = plt.subplots(figsize=(5.6, 5.9))
+    unified._draw_reconstruction(ax, eit_mesh, values, title, limit)
+    ax.set_title(title, fontsize=13, pad=16)  # clear of the E-label above the disc
+    for label in ax.texts:
+        label.set_fontsize(10)
+    path = view_path(image_path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    figure.savefig(path, dpi=110, bbox_inches="tight")
+    plt.close(figure)
+    return path
+
+
 def save_reconstruction(
     result: ReconstructionResult,
     settings: UiSettings,
@@ -431,6 +461,7 @@ def save_reconstruction(
     image_path.parent.mkdir(parents=True, exist_ok=True)
     figure.savefig(image_path, dpi=150, bbox_inches="tight")
     plt.close(figure)
+    save_view(eit_mesh, result.values, title, limit, image_path)
 
     if data_path is None:
         return image_path, None

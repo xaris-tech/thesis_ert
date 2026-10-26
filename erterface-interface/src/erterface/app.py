@@ -34,7 +34,7 @@ from .drive_setup import DriveSetupDialog
 from .drive_sync import DriveClient, sync_unsynced
 from .errors import status_toast
 from .models import Measurement, Plantation, Tree, Zone
-from .capture_screen import CaptureScreen
+from .capture_screen import CaptureScreen, create_session
 from .scan_view import ScanView
 from .widgets.card import CARD_W, CardWidget, card_stylesheet
 from .widgets.keyboard import TouchLineEdit
@@ -65,6 +65,7 @@ class CardApp(QMainWindow):
         self.navigation_path = []
 
         self._scan_view = None
+        self._capture_session = None  # created on first Scan, lives until close
         self._toast_timer = None
         self._active_keyboard = None
 
@@ -887,7 +888,11 @@ class CardApp(QMainWindow):
     def open_scan_view(self, tree, measurement=None):
         """Scan a tree (CaptureScreen) or review one of its measurements (ScanView)."""
         if measurement is None:
-            screen = CaptureScreen(tree, is_dark_mode=self.is_dark_mode, parent=self)
+            if self._capture_session is None:
+                self._capture_session = create_session()
+            screen = CaptureScreen(
+                tree, self._capture_session, is_dark_mode=self.is_dark_mode, parent=self
+            )
         else:
             screen = ScanView(tree, measurement, is_dark_mode=self.is_dark_mode, parent=self)
         self._push_screen(screen)
@@ -1079,6 +1084,10 @@ class CardApp(QMainWindow):
 
     def closeEvent(self, event):
         self._drop_scan_view()
+        if self._capture_session is not None:
+            # Cancels a capture, saves instrument settings, ends the session log.
+            self._capture_session.close()
+            self._capture_session = None
         if self.timer.isActive():
             self.timer.stop()
         if hasattr(self, "_active_keyboard") and self._active_keyboard is not None:

@@ -133,6 +133,11 @@ class CaptureRequest:
     recalibrate_max_attempts: int = absolute.ADAPTIVE_MAX_ATTEMPTS
 
 
+MAX_FRAME_RETRIES = 2
+"""Corrupted frames re-requested before a run fails. More than this in a row is
+not line noise; the run stops so the cable or firmware is looked at."""
+
+
 class CaptureWorker(QObject):
     """Runs one capture session: connect, configure, warm up, capture, record.
 
@@ -344,6 +349,25 @@ class CaptureWorker(QObject):
 
     # -- internals -------------------------------------------------------
 
+    def _frame_with_retry(self):
+        """A frame from the board, re-requested if one arrives corrupted.
+
+        A frame is parsed only after its END line is read, so a parse error
+        leaves the stream at a frame boundary and the frame can simply be asked
+        for again; the corrupted one is never recorded. On 2026-10-26 one line
+        with dropped bytes ("V,,E4,V,48.480") failed a run two frames in.
+        """
+        for attempt in range(MAX_FRAME_RETRIES + 1):
+            try:
+                return self._acquisition.capture_frame()
+            except ValueError as exc:
+                if attempt == MAX_FRAME_RETRIES:
+                    raise
+                self.progress.emit(
+                    f"Corrupted frame discarded and re-requested "
+                    f"({attempt + 1}/{MAX_FRAME_RETRIES}): {exc}"
+                )
+
     def _checked_frame(self):
         """One frame, refused if the board is not running the requested pattern.
 
@@ -353,7 +377,7 @@ class CaptureWorker(QObject):
         opposite came back adjacent: the mode command was lost while the board
         was still booting after the port opened.
         """
-        frame = self._acquisition.capture_frame()
+        frame = self._frame_with_retry()
         expected = self._pattern
         if frame.pattern.lower() != expected.lower():
             raise RuntimeError(

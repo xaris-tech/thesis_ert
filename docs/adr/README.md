@@ -118,6 +118,7 @@ one costs a re-derivation.
 | [0071](0071-saline-position-series-absolute-where-visible-difference-where-blind.md) | Saline position series: absolute where visible, difference against empty tank where blind (E1–E3) | Accepted |
 | [0072](0072-embed-capture-session-as-farm-scan-screen.md) | Farm UI scan screen embeds the capture session (compact mode, `run_finished`); saved runs are UNCLASSIFIED, no ratio | Accepted |
 | [0073](0073-reciprocity-gate-only-where-the-pattern-measures-it.md) | Reciprocity gate only for patterns that measure reciprocal pairs (adjacent); opposite/skip image with a NOT MEASURABLE stamp; host waits for board and refuses wrong-pattern frames | Accepted |
+| [0074](0074-screen-shows-the-tomogram-alone-figure-stays-the-record.md) | Field screen shows a tomogram-only display copy (`*-image.png`); full two-panel figure stays the record; captions to the log | Accepted |
 | [0056](0056-correct-run-conditions-in-extra-never-overwrite.md) | Correct recorded conditions with a dated key in `extra`; original fields stay as written | Accepted |
 | [0055](0055-measure-the-lobe-not-a-window.md) | Lobe connected-component centroid, no angular window; window choice was worth 12.3 deg | Accepted |
 | [0054](0054-the-centroid-angle-estimator-has-a-measured-bias.md) | Centroid window validated against injected offsets; -0.45 deg bias documented, not corrected in code | Accepted |

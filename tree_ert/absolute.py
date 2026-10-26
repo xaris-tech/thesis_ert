@@ -44,6 +44,7 @@ from tree_ert.reconstruction import (
     RECIPROCITY_GATE_PERCENT,
     average_frame_vectors,
     pattern_has_reciprocals,
+    save_view,
 )
 from tree_ert.settings import UiSettings
 
@@ -703,6 +704,7 @@ def save_absolute(
     image_path.parent.mkdir(parents=True, exist_ok=True)
     figure.savefig(image_path, dpi=150, bbox_inches="tight")
     plt.close(figure)
+    save_view(eit_mesh, image, title, scale, image_path)
 
     np.savez_compressed(
         data_path,

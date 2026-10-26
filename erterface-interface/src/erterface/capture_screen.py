@@ -33,8 +33,12 @@ from .paths import CLASSIFICATION_UNCLASSIFIED, THESIS_ROOT
 SCANS_DIR = THESIS_ROOT / "scans"
 
 # Difference image first (what changed against the baseline), else the
-# run's absolute image. Both are written by the capture session itself.
-RUN_IMAGES = ("reconstruction.png", "absolute.png")
+# run's absolute image; the tomogram-only display copy of each where it
+# exists (ADR-0074), else the full figure (runs from before it).
+RUN_IMAGES = (
+    "reconstruction-image.png", "reconstruction.png",
+    "absolute-image.png", "absolute.png",
+)
 
 
 def _import_capture_window():
@@ -42,6 +46,15 @@ def _import_capture_window():
         sys.path.insert(0, str(THESIS_ROOT))
     from tree_ert.qt.main_window import MainWindow
     return MainWindow
+
+
+def create_session():
+    """The capture session (the thesis repo's MainWindow, compact). Owned by
+    CardApp for the app's lifetime and lent to each CaptureScreen."""
+    MainWindow = _import_capture_window()
+    session = MainWindow(log_dir=SCANS_DIR, demo=not _serial_port_present(), compact=True)
+    session.setWindowFlags(Qt.WindowType.Widget)
+    return session
 
 
 def _serial_port_present():
@@ -71,7 +84,7 @@ class CaptureScreen(QWidget):
     back_requested = pyqtSignal()
     measurement_created = pyqtSignal(object)
 
-    def __init__(self, tree, is_dark_mode=False, parent=None):
+    def __init__(self, tree, session, is_dark_mode=False, parent=None):
         super().__init__(parent)
         self.tree = tree
         self.measurement = None
@@ -140,20 +153,28 @@ class CaptureScreen(QWidget):
             btn.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         root.addWidget(top)
 
-        MainWindow = _import_capture_window()
-        self.session = MainWindow(
-            log_dir=SCANS_DIR, demo=not _serial_port_present(), compact=True
-        )
-        self.session.setWindowFlags(Qt.WindowType.Widget)
+        # The session is the app's (create_session), not this screen's: it
+        # outlives Back, so its baseline does too. One session per screen made
+        # every run after a Back the baseline of a new session, and nothing
+        # was ever differenced (2026-10-26).
+        self.session = session
         self.session.run_finished.connect(self._on_run_finished)
-        self.session.running_changed.connect(
-            lambda running: running and self._show_controls(False)
-        )
+        self.session.running_changed.connect(self._on_running_changed)
         self._controls_shown = True
+        self._show_controls(not self.session.stop_button.isEnabled())
+        # Name the specimen after the tree, unless the operator typed their own
+        # (e.g. disc-05): only replace blank or our own earlier pre-fill.
         panel = self.session.conditions_panel
-        if not panel.specimen_id.text().strip():
+        current = panel.specimen_id.text().strip()
+        if not current or current == self.session.property("farm_prefill"):
             panel.specimen_id.setText(specimen_id_for(tree))
+        self.session.setProperty("farm_prefill", specimen_id_for(tree))
         root.addWidget(self.session, stretch=1)
+        self.session.show()
+
+    def _on_running_changed(self, running):
+        if running:
+            self._show_controls(False)
 
     def _show_controls(self, shown):
         self._controls_shown = shown
@@ -182,5 +203,11 @@ class CaptureScreen(QWidget):
         self.back_requested.emit()
 
     def shutdown(self):
-        """Cancel any capture, save instrument settings, close the session log."""
-        self.session.close()
+        """Hand the session back to the app window. A capture still running is
+        stopped (cooperatively, after the current frame), as leaving always did."""
+        if self.session.stop_button.isEnabled():
+            self.session.stop_capture()
+        self.session.run_finished.disconnect(self._on_run_finished)
+        self.session.running_changed.disconnect(self._on_running_changed)
+        self.session.hide()
+        self.session.setParent(self.window())

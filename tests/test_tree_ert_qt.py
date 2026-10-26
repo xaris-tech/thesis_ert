@@ -605,6 +605,39 @@ class CaptureWorkerTests(QtTestCase):
         self.assertIn("running the adjacent pattern but opposite", events["failed"][0])
         self.assertEqual(run_record.read_index(self.log_dir)[0]["outcome"], "failed")
 
+    def flaky_worker(self, failures):
+        class FlakyBoard(DemoAcquisition):
+            left = failures
+
+            def capture_frame(self):
+                if FlakyBoard.left > 0:
+                    FlakyBoard.left -= 1
+                    raise ValueError("Malformed measurement record: M,P,FWD,V,,E4")
+                return super().capture_frame()
+
+        request = CaptureRequest(
+            settings=demo_settings(),
+            conditions=Conditions(medium="saline tank", grounding="floating"),
+            label="flaky",
+            frames=3,
+            warmup_frames=1,
+        )
+        worker = CaptureWorker(FlakyBoard(), request, self.log_dir)
+        progress = []
+        worker.progress.connect(progress.append)
+        return self.collect(worker), progress
+
+    def test_a_corrupted_frame_is_re_requested_not_fatal(self):
+        # 2026-10-26: one line with dropped bytes failed a run two frames in.
+        events, progress = self.flaky_worker(failures=1)
+        self.assertEqual(events["failed"], [])
+        self.assertEqual(len(events["frames"]), 3)
+        self.assertTrue(any("Corrupted frame discarded" in line for line in progress))
+
+    def test_persistent_corruption_still_fails_the_run(self):
+        events, _ = self.flaky_worker(failures=10)
+        self.assertEqual(len(events["failed"]), 1)
+
     def test_index_carries_the_headline_metrics(self):
         self.collect(self.make_worker(frames=3, warmup_frames=0))
         row = run_record.read_index(self.log_dir)[0]
@@ -799,6 +832,21 @@ class ReconstructionFlowTests(QtTestCase):
         self.assertEqual(len(events["images"]), 1)
         row = [r for r in run_record.read_index(self.log_dir) if "target" in r["run_id"]][0]
         self.assertEqual(row["reciprocity_gate"], "pass")
+
+    def test_every_image_gets_a_tomogram_only_display_copy(self):
+        # ADR-0074: the screen shows the tomogram and its title; the full
+        # figure stays beside it as the record.
+        from tree_ert.settings import settings_to_dict
+
+        baseline_events = self.capture(self.make_worker(label="baseline", frames=4))
+        baseline = SessionBaseline(
+            "baseline-run", baseline_events["frames"], settings_to_dict(demo_settings())
+        )
+        self.capture(self.make_worker(baseline=baseline, label="target", frames=4))
+        run = [r for r in run_record.list_runs(self.log_dir) if "target" in r.name][0]
+        for name in ("reconstruction.png", "reconstruction-image.png",
+                     "absolute.png", "absolute-image.png"):
+            self.assertTrue((run / name).is_file(), name)
 
     def test_opposite_images_without_a_reciprocity_gate(self):
         # Opposite drive has no reciprocal pairs, so the gate could never pass

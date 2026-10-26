@@ -90,7 +90,7 @@ LABEL_COLUMNS = (0, 2, 3, 4, 5)
 # which a claim is certainly unsupportable, not a threshold above which one is
 # established (ADR-0027).
 SIGNIFICANCE_THRESHOLD = 2.0
-from tree_ert.reconstruction import RECIPROCITY_GATE_PERCENT  # noqa: E402
+from tree_ert.reconstruction import RECIPROCITY_GATE_PERCENT, view_path  # noqa: E402
 
 
 def _tidy_form(layout: QFormLayout) -> None:
@@ -995,7 +995,7 @@ class MainWindow(QMainWindow):
                 message += f"  |  {ratio:.1f}x the noise image"
                 state = "ok"
         self.image_status.setText(message)
-        self.image_status.setVisible(True)
+        self.image_status.setVisible(not self._compact)  # compact: the log has it
         theme.apply_state(self.image_status, state)
         self._log(f"Reconstruction: {message}")
         self.tabs.setCurrentIndex(1)
@@ -1027,7 +1027,7 @@ class MainWindow(QMainWindow):
             message = "REFUSED: " + "; ".join(report.reasons) + "  |  " + message
             state = "bad"
         self.absolute_status.setText(message)
-        self.absolute_status.setVisible(True)
+        self.absolute_status.setVisible(not self._compact)  # compact: the log has it
         theme.apply_state(self.absolute_status, state)
         self._log(f"Absolute: {message}")
         if self._baseline is None or report.passed:
@@ -1035,7 +1035,7 @@ class MainWindow(QMainWindow):
 
     def _on_reconstruction_skipped(self, reason: str) -> None:
         self.image_status.setText(reason)
-        self.image_status.setVisible(True)
+        self.image_status.setVisible(not self._compact)  # compact: the log has it
         theme.apply_state(
             self.image_status,
             "bad" if "reciprocity" in reason.lower()
@@ -1054,6 +1054,10 @@ class MainWindow(QMainWindow):
         ):
             if path is None or label is None or not path.is_file():
                 continue
+            if self._compact and view_path(path).is_file():
+                # Small screen: the tomogram alone; the full figure stays on
+                # disk as the record and its caption is in the log (ADR-0074).
+                path = view_path(path)
             pixmap = QPixmap(str(path))
             if pixmap.isNull():
                 continue

@@ -10,6 +10,8 @@ Sized for the 800x480 7" Raspberry Pi display: under the 48 px top bar
 the view has 432 px of height, so chrome is kept compact.
 """
 
+import os
+
 import numpy as np
 
 from PyQt6.QtCore import Qt, pyqtSignal
@@ -131,10 +133,10 @@ class ScanView(QWidget):
         plot_layout.setContentsMargins(4, 4, 4, 4)
         plot_layout.addWidget(self._build_image())
 
-        # A capture run's image is a wide two-panel figure (image beside its
-        # noise control, ADR-0027): give it the full width and put the
-        # readouts in a strip above. A square .npy tomogram keeps the side rail.
-        wide = self._pixmap is not None
+        # A wide image (an older run's two-panel figure, ADR-0027) gets the full
+        # width with the readouts in a strip above; a square tomogram (the
+        # display copy, ADR-0074, or a .npy) keeps the side rail.
+        wide = self._pixmap is not None and self._pixmap.width() > 1.3 * self._pixmap.height()
         main = QVBoxLayout() if wide else QHBoxLayout()
         main.setSpacing(6 if wide else 8)
         rail = QHBoxLayout() if wide else QVBoxLayout()
@@ -202,6 +204,11 @@ class ScanView(QWidget):
 
         label = _FitImage()
         image_path = resolve_data_file(m.image_path)
+        if image_path:
+            # Prefer the tomogram-only display copy saved beside a run figure.
+            stem, _ = os.path.splitext(image_path)
+            if not stem.endswith("-image") and os.path.exists(stem + "-image.png"):
+                image_path = stem + "-image.png"
         pixmap = QPixmap(image_path) if image_path else None
         if pixmap is not None and not pixmap.isNull():
             self._pixmap = pixmap
