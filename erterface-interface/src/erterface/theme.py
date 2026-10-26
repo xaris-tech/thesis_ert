@@ -140,3 +140,22 @@ def label_font(point_size=None, weight=QFont.Weight.Medium):
     f = QFont(family, size)
     f.setWeight(weight)
     return f
+
+
+def make_touch_scrollable(viewport):
+    """Drag-to-scroll that does not eat taps: the press reaches the card at
+    once (Qt's default holds it back) and only an 8 mm drag scrolls, so a
+    slightly moving fingertip still taps. Same settings as the capture
+    session's tree_ert.qt.theme.make_touch_scrollable."""
+    from PyQt6.QtWidgets import QScroller, QScrollerProperties
+
+    QScroller.grabGesture(viewport, QScroller.ScrollerGestureType.LeftMouseButtonGesture)
+    scroller = QScroller.scroller(viewport)
+    props = scroller.scrollerProperties()
+    metric = QScrollerProperties.ScrollMetric
+    props.setScrollMetric(metric.MousePressEventDelay, 0.0)
+    props.setScrollMetric(metric.DragStartDistance, 0.008)
+    off = QScrollerProperties.OvershootPolicy.OvershootAlwaysOff
+    props.setScrollMetric(metric.HorizontalOvershootPolicy, off)
+    props.setScrollMetric(metric.VerticalOvershootPolicy, off)
+    scroller.setScrollerProperties(props)

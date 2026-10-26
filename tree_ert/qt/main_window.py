@@ -34,7 +34,6 @@ from PyQt6.QtWidgets import (
     QPlainTextEdit,
     QPushButton,
     QScrollArea,
-    QScroller,
     QSizePolicy,
     QSpinBox,
     QSplitter,
@@ -568,6 +567,8 @@ class MainWindow(QMainWindow):
         )
 
         self.setCentralWidget(self._build_layout())
+        if self._compact:
+            self._apply_touch_mode()
 
         self._session_log.banner(f"Session started ({'demo' if demo else 'hardware'})")
         existing = len(run_record.list_runs(self._log_dir))
@@ -654,9 +655,7 @@ class MainWindow(QMainWindow):
         if self._compact:
             # Touchscreen: drag the column with a finger; the scrollbar alone
             # is too thin to hit on a 7" display.
-            QScroller.grabGesture(
-                scroll.viewport(), QScroller.ScrollerGestureType.LeftMouseButtonGesture
-            )
+            theme.make_touch_scrollable(scroll.viewport())
         # Floor the pane at the width the forms actually need, measured rather
         # than guessed. A constant here was wrong twice: with horizontal
         # scrolling off, a pane narrower than its content silently clips the
@@ -675,6 +674,32 @@ class MainWindow(QMainWindow):
         scroll.setMinimumWidth(floor)
         self._controls = scroll
         return scroll
+
+    def _apply_touch_mode(self) -> None:
+        """Finger-sized controls for the embedded touchscreen view."""
+        from PyQt6.QtWidgets import QAbstractSpinBox
+
+        self.setStyleSheet(theme.stylesheet() + theme.TOUCH_STYLESHEET)
+        # The tab panes (table, log) may shrink to nothing: on a 480-600 px
+        # screen the on-screen keyboard needs the room while a field is typed.
+        policy = self.tabs.sizePolicy()
+        policy.setVerticalPolicy(QSizePolicy.Policy.Ignored)
+        self.tabs.setSizePolicy(policy)
+        for spin in self.findChildren(QAbstractSpinBox):
+            # 19x17 px arrows cannot be hit with a finger, and a wheel or drag
+            # over them changes a value by accident; numbers are typed instead.
+            spin.setButtonSymbols(QAbstractSpinBox.ButtonSymbols.NoButtons)
+            spin.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        # The column's width floor was measured with desktop fonts; the touch
+        # stylesheet makes every row wider, and with horizontal scrolling off a
+        # too-narrow column clips the fields at the divider. Measure again.
+        self._controls.widget().ensurePolished()
+        for child in self._controls.widget().findChildren(QWidget):
+            child.ensurePolished()
+        scrollbar = self._controls.verticalScrollBar().sizeHint().width()
+        self._controls.setMinimumWidth(
+            self._controls.widget().minimumSizeHint().width() + scrollbar + 4
+        )
 
     def set_controls_visible(self, visible: bool) -> None:
         """Show or hide the settings/conditions column. A host on a small

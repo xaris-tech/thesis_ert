@@ -22,14 +22,11 @@ from PyQt6.QtWidgets import (
 )
 
 
-def _keyboard_size():
-    from PyQt6.QtWidgets import QApplication
-    screen = QApplication.primaryScreen().geometry() if QApplication.instance() else None
-    if screen is None:
-        return 600, 240
-    w = max(440, min(int(screen.width() * 0.55), 760))
-    h = max(200, min(int(screen.height() * 0.28), 300))
-    return w, h
+def key_height_for(window_height):
+    """Key height for the window the keyboard docks into: as large as fits with
+    the field still visible above it. ~8% of the window: 38 px at 480 px,
+    48 px at 600 px, 56 px from ~700 px."""
+    return max(36, min(int(window_height * 0.08), 56))
 
 
 def _find_host(widget):
@@ -47,7 +44,7 @@ class VirtualKeyboard(QWidget):
     text_committed = pyqtSignal(str)
     text_cancelled = pyqtSignal()
 
-    def __init__(self, current_text="", is_dark_mode=False, presets=None, parent=None):
+    def __init__(self, current_text="", is_dark_mode=False, presets=None, parent=None, key_h=48):
         """Every key is written straight into ``target_edit``, which is always
         visible above the keyboard; Cancel restores the text it started with.
         No echo row: 480 px has no room for a second copy of the text."""
@@ -80,19 +77,21 @@ class VirtualKeyboard(QWidget):
 
         self.setStyleSheet(
             f"VirtualKeyboard {{ background-color: {bg}; border: 1px solid {preset_border}; border-radius: 8px; }}"
-            f"QPushButton#keyBtn {{ font-size: 17px; font-weight: 700; min-height: 40px; "
+            f"QPushButton#keyBtn {{ font-size: 20px; font-weight: 700; min-height: {key_h}px; "
             f"background-color: {btn_bg}; color: {text}; border: 1px solid {preset_border}; "
             f"border-radius: 5px; padding: 0px 0px 0px 0px; }}"
             f"QPushButton#keyBtn:pressed {{ background-color: {btn_pressed}; }}"
-            f"QPushButton#presetBtn {{ font-size: 13px; font-weight: 700; min-height: 40px; "
+            f"QPushButton#keyBtn[active=\"true\"] {{ background-color: #1e73be; color: #ffffff; "
+            f"border-color: #1e73be; }}"
+            f"QPushButton#presetBtn {{ font-size: 15px; font-weight: 700; min-height: {key_h - 6}px; "
             f"padding: 0px 8px 0px 8px; background-color: {preset_bg}; color: {preset_text}; "
             f"border: 1px solid {preset_border}; border-radius: 5px; }}"
             f"QPushButton#presetBtn:pressed {{ background-color: {btn_pressed}; }}"
-            f"QPushButton#doneBtn {{ font-size: 14px; font-weight: 700; min-height: 40px; "
+            f"QPushButton#doneBtn {{ font-size: 18px; font-weight: 800; min-height: {key_h}px; "
             f"background-color: #1e8e3e; color: #ffffff; border: 1px solid #1e8e3e; "
             f"border-radius: 5px; }}"
             f"QPushButton#doneBtn:pressed {{ background-color: #166b2e; }}"
-            f"QPushButton#cancelBtn {{ font-size: 14px; font-weight: 700; min-height: 40px; "
+            f"QPushButton#cancelBtn {{ font-size: 18px; font-weight: 800; min-height: {key_h}px; "
             f"background-color: #c53030; color: #ffffff; border: 1px solid #c53030; "
             f"border-radius: 5px; }}"
             f"QPushButton#cancelBtn:pressed {{ background-color: #9b2c2c; }}"
@@ -104,7 +103,7 @@ class VirtualKeyboard(QWidget):
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(6, 6, 6, 6)
-        layout.setSpacing(4)
+        layout.setSpacing(6)
 
         if self.presets:
             preset_row = QHBoxLayout()
@@ -125,7 +124,7 @@ class VirtualKeyboard(QWidget):
             layout.addLayout(preset_row)
 
         grid = QGridLayout()
-        grid.setSpacing(4)
+        grid.setSpacing(6)
         layout.addLayout(grid, stretch=1)
 
         keys = [
@@ -141,27 +140,39 @@ class VirtualKeyboard(QWidget):
                 btn = QPushButton(key)
                 btn.setObjectName("keyBtn")
                 btn.setCursor(Qt.CursorShape.PointingHandCursor)
-                btn.clicked.connect(lambda checked, k=key: self.key_pressed(k))
+                btn.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+                # Type on press, not release: a fingertip that slides off a
+                # key before lifting no longer loses the keystroke.
+                btn.pressed.connect(lambda k=key: self.key_pressed(k))
+                if key == "Bksp":
+                    btn.setAutoRepeat(True)  # hold to delete
+                    btn.setAutoRepeatDelay(450)
+                    btn.setAutoRepeatInterval(70)
+                if key == "Shift":
+                    self.btn_shift = btn  # lit while the next letter is upper case
                 grid.addWidget(btn, row_idx, col_offset, 1, 1)  # ten keys per row
                 col_offset += 1
 
         action_row = QHBoxLayout()
-        action_row.setSpacing(4)
+        action_row.setSpacing(6)
         self.btn_cancel = QPushButton("Cancel")
         self.btn_cancel.setObjectName("cancelBtn")
         self.btn_cancel.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.btn_cancel.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.btn_cancel.clicked.connect(self._on_cancel)
         action_row.addWidget(self.btn_cancel, stretch=1)
 
         self.btn_space = QPushButton("Space")
         self.btn_space.setObjectName("keyBtn")
         self.btn_space.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.btn_space.clicked.connect(lambda: self.key_pressed("Space"))
+        self.btn_space.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.btn_space.pressed.connect(lambda: self.key_pressed("Space"))
         action_row.addWidget(self.btn_space, stretch=3)
 
         self.btn_done = QPushButton("Done")
         self.btn_done.setObjectName("doneBtn")
         self.btn_done.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.btn_done.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.btn_done.setDefault(True)
         self.btn_done.clicked.connect(self._on_done)
         action_row.addWidget(self.btn_done, stretch=1)
@@ -185,6 +196,7 @@ class VirtualKeyboard(QWidget):
             self.text_value += " "
         elif key == "Shift":
             self.shift_active = not self.shift_active
+            self._light_shift()
             return
         else:
             if self.shift_active:
@@ -192,7 +204,13 @@ class VirtualKeyboard(QWidget):
             self.text_value += key
 
         self.shift_active = False
+        self._light_shift()
         self._write()
+
+    def _light_shift(self):
+        self.btn_shift.setProperty("active", self.shift_active)
+        self.btn_shift.style().unpolish(self.btn_shift)
+        self.btn_shift.style().polish(self.btn_shift)
 
     def _on_done(self):
         spin = _spin_box_of(self.target_edit)
@@ -280,7 +298,14 @@ def open_keyboard(edit, is_dark_mode=False, presets=()):
         start = ""  # "not recorded": start from an empty number
     else:
         start = spin.cleanText()  # the number without its unit suffix
-    vk = VirtualKeyboard(start, is_dark_mode, presets, parent=host)
+    # Size from the app window, not the dialog: a dialog is only as tall as
+    # its form until the keyboard arrives.
+    window = owner.window()
+    if isinstance(owner, QDialog) and owner.parentWidget() is not None:
+        window = owner.parentWidget().window()
+    vk = VirtualKeyboard(
+        start, is_dark_mode, presets, parent=host, key_h=key_height_for(window.height())
+    )
     vk._original = edit.text()
     vk.target_edit = edit
     vk.text_committed.connect(lambda _text: host.setVisible(False))

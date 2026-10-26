@@ -711,3 +711,86 @@ def frame_state(summary) -> str:
         # it will be dominated by rounding (ADR-0026).
         return "warn"
     return "ok"
+
+
+# -- touch (compact) mode -----------------------------------------------------
+# The window embedded on the Pi's 7" touchscreen (ADR-0072). Desktop sizes --
+# 17 px checkboxes, 19x17 px spin arrows, 9 pt tabs -- are below a fingertip.
+# Appended after STYLESHEET, so these rules win; the desktop window is unchanged.
+
+TOUCH_TARGET = 48
+"""Minimum touch target in px (~7.5 mm on a 7" 1024x600 panel)."""
+
+TOUCH_STYLESHEET = f"""
+QWidget {{
+    font-size: 12pt;
+}}
+
+QLineEdit, QSpinBox, QDoubleSpinBox, QComboBox {{
+    min-height: {TOUCH_TARGET - 14}px;
+    padding: 6px 12px;
+}}
+
+/* Spin boxes are typed via the on-screen keyboard; their arrows are removed
+   in code (NoButtons), so no padding is reserved for them. */
+QSpinBox, QDoubleSpinBox {{
+    padding-right: 12px;
+}}
+
+QComboBox::drop-down {{
+    width: {TOUCH_TARGET}px;
+}}
+
+QComboBox QAbstractItemView::item {{
+    min-height: {TOUCH_TARGET}px;
+    padding: 0 12px;
+}}
+
+QPushButton {{
+    min-height: {TOUCH_TARGET}px;
+    padding: 0 16px;
+    font-size: 12pt;
+}}
+
+QCheckBox {{
+    min-height: {TOUCH_TARGET}px;
+    spacing: 14px;
+}}
+
+QCheckBox::indicator {{
+    width: 28px;
+    height: 28px;
+}}
+
+QTabBar::tab {{
+    min-height: {TOUCH_TARGET - 16}px;
+    padding: 8px 18px;
+    font-size: 11pt;
+}}
+
+QScrollBar:vertical {{
+    width: 22px;
+}}
+"""
+
+
+def make_touch_scrollable(viewport) -> None:
+    """Drag-to-scroll that does not eat taps.
+
+    Qt's defaults hold every press back while deciding whether it is a drag and
+    turn a slightly moving fingertip into a scroll, so a tap on a field inside
+    the area often did nothing. Here the press goes through at once and only a
+    deliberate drag (8 mm) scrolls.
+    """
+    from PyQt6.QtWidgets import QScroller, QScrollerProperties
+
+    QScroller.grabGesture(viewport, QScroller.ScrollerGestureType.LeftMouseButtonGesture)
+    scroller = QScroller.scroller(viewport)
+    props = scroller.scrollerProperties()
+    metric = QScrollerProperties.ScrollMetric
+    props.setScrollMetric(metric.MousePressEventDelay, 0.0)
+    props.setScrollMetric(metric.DragStartDistance, 0.008)
+    off = QScrollerProperties.OvershootPolicy.OvershootAlwaysOff
+    props.setScrollMetric(metric.HorizontalOvershootPolicy, off)
+    props.setScrollMetric(metric.VerticalOvershootPolicy, off)
+    scroller.setScrollerProperties(props)

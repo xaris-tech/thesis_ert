@@ -101,7 +101,7 @@ class CaptureScreen(QWidget):
 
         top = QFrame()
         top.setObjectName("captureTop")
-        top.setFixedHeight(48)
+        top.setFixedHeight(theme.TOUCH_MIN + 10)
         top.setStyleSheet(
             f"QFrame#captureTop {{ background-color: {panel_bg}; "
             f"border-bottom: 1px solid {panel_border}; }}"
@@ -112,7 +112,7 @@ class CaptureScreen(QWidget):
         bar.setSpacing(8)
 
         btn_back = QPushButton("← Back")
-        btn_back.setFixedHeight(theme.TOUCH_MIN - 4)
+        btn_back.setFixedHeight(theme.TOUCH_MIN)
         btn_back.setStyleSheet(
             f"QPushButton {{ font-size: 15px; font-weight: 700; padding: 0 14px; "
             f"background-color: {neutral}; color: {text}; "
@@ -129,7 +129,7 @@ class CaptureScreen(QWidget):
         # Settings column toggle. The column hides itself when a capture
         # starts so the frames table and images get the full width.
         self.btn_settings = QPushButton("Hide settings")
-        self.btn_settings.setFixedHeight(theme.TOUCH_MIN - 4)
+        self.btn_settings.setFixedHeight(theme.TOUCH_MIN)
         self.btn_settings.setStyleSheet(
             f"QPushButton {{ font-size: 15px; font-weight: 700; padding: 0 14px; "
             f"background-color: {neutral}; color: {text}; "
@@ -139,7 +139,7 @@ class CaptureScreen(QWidget):
         bar.addWidget(self.btn_settings)
 
         self.btn_save = QPushButton("Save to tree")
-        self.btn_save.setFixedHeight(theme.TOUCH_MIN - 4)
+        self.btn_save.setFixedHeight(theme.TOUCH_MIN)
         self.btn_save.setEnabled(False)
         self.btn_save.setToolTip("Enabled once a run has been recorded")
         self.btn_save.setStyleSheet(

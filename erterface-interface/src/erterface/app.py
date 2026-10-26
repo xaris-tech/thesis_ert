@@ -21,7 +21,6 @@ from PyQt6.QtWidgets import (
     QMessageBox,
     QPushButton,
     QScrollArea,
-    QScroller,
     QSizePolicy,
     QStackedWidget,
     QVBoxLayout,
@@ -280,7 +279,7 @@ class CardApp(QMainWindow):
 
     def _build_breadcrumb_row(self, parent_layout):
         self.nav_container = QFrame()
-        self.nav_container.setFixedHeight(46)
+        self.nav_container.setFixedHeight(52)
         self.nav_layout = QHBoxLayout(self.nav_container)
         self.nav_layout.setContentsMargins(16, 0, 16, 0)
         self.nav_layout.setAlignment(Qt.AlignmentFlag.AlignVCenter | Qt.AlignmentFlag.AlignHCenter)
@@ -324,9 +323,7 @@ class CardApp(QMainWindow):
         self.scroll_area.setFrameShape(QFrame.Shape.NoFrame)
         self.scroll_area.setMinimumHeight(0)  # yields to the search keyboard
         self.scroll_area.setStyleSheet("QScrollArea { background-color: transparent; }")
-        QScroller.grabGesture(
-            self.scroll_area.viewport(), QScroller.ScrollerGestureType.LeftMouseButtonGesture
-        )
+        theme.make_touch_scrollable(self.scroll_area.viewport())
         self.scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
 
@@ -597,7 +594,7 @@ class CardApp(QMainWindow):
             return (
                 f"QPushButton {{ background-color: {bg}; border: 1px solid transparent; "
                 f"font-weight: 700; font-size: 15px; color: {text}; "
-                f"padding: 4px 14px 4px 14px; border-radius: 8px; min-height: 36px; }}"
+                f"padding: 4px 16px 4px 16px; border-radius: 8px; min-height: {theme.TOUCH_MIN}px; }}"
                 f"QPushButton:pressed {{ background-color: {hover}; }}"
             )
 
