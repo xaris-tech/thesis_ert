@@ -225,6 +225,30 @@ class RecalibrationTimingTests(unittest.TestCase):
         self.assertAlmostEqual(per_frame, 64.0, delta=2.0)
 
 
+class GateReciprocityApplicabilityTests(unittest.TestCase):
+    def frames(self, pattern):
+        from dataclasses import replace
+
+        from tree_ert.acquisition import DemoAcquisition
+        from tree_ert.settings import UiSettings
+
+        board = DemoAcquisition()
+        board.configure(replace(UiSettings.default(), pattern=pattern))
+        return [board.capture_frame() for _ in range(2)]
+
+    def test_opposite_is_not_refused_for_unmeasurable_reciprocity(self):
+        report = absolute.gate(self.frames("opposite"), None, None)
+        self.assertFalse(any("reciprocity" in r for r in report.reasons), report.reasons)
+        self.assertIn("absolute solve failed", report.reasons)
+
+    def test_adjacent_still_gates_reciprocity(self):
+        from unittest import mock
+
+        with mock.patch.object(absolute.capture_view, "reciprocity_summary", return_value=None):
+            report = absolute.gate(self.frames("adjacent"), None, None)
+        self.assertIn("reciprocity could not be measured (no reciprocal pairs)", report.reasons)
+
+
 class StopReasonTests(unittest.TestCase):
     def _r(self, recip):
         return absolute.GateReport(recip, None, None, ("x",))

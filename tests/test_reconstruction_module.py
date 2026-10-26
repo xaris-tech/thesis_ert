@@ -223,6 +223,15 @@ class ReconstructTests(unittest.TestCase):
         self.assertGreaterEqual(result.limit, 0.0)
 
 
+class PatternReciprocalsTests(unittest.TestCase):
+    def test_only_adjacent_drive_measures_reciprocal_pairs(self):
+        # Sensing is always on adjacent electrodes, so a reciprocal exists only
+        # when the drive pair is adjacent too (ADR-0073).
+        self.assertTrue(reconstruction.pattern_has_reciprocals("adjacent"))
+        for pattern in ("opposite", "skip-1", "skip-2"):
+            self.assertFalse(reconstruction.pattern_has_reciprocals(pattern), pattern)
+
+
 class ReciprocityGateTests(unittest.TestCase):
     """ADR-0030: no difference image from data that breaks reciprocity."""
 

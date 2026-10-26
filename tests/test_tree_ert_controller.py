@@ -595,3 +595,47 @@ class TestConfigureDeclaresCurrentRange(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class BootingSerial:
+    """Serial stub for a board still in setup(): '?' goes unanswered for the
+    first ``deaf_polls`` polls, then gets a STATUS line."""
+
+    def __init__(self, deaf_polls):
+        self.deaf_polls = deaf_polls
+        self.writes = []
+        self.pending = []
+
+    def write(self, payload):
+        self.writes.append(payload)
+        if payload == b"?\n":
+            if self.deaf_polls > 0:
+                self.deaf_polls -= 1
+            else:
+                self.pending.append(b"STATUS,2,MODE,ADJACENT\n")
+
+    def readline(self):
+        return self.pending.pop(0) if self.pending else b""
+
+    def reset_input_buffer(self):
+        pass
+
+
+class TestSerialWaitsForBoot(unittest.TestCase):
+    """2026-10-26: a mode command written while the board was booting was lost,
+    and an 'opposite' run was captured adjacent. connect() must not configure
+    until the board answers."""
+
+    def _acquisition(self, stub):
+        acq = SerialAcquisition()
+        acq._serial = stub
+        return acq
+
+    def test_waits_until_the_board_answers(self):
+        stub = BootingSerial(deaf_polls=2)
+        self.assertTrue(self._acquisition(stub)._wait_until_ready(timeout_s=5.0))
+        self.assertEqual(stub.writes, [b"?\n"] * 3)
+
+    def test_gives_up_quietly_on_a_board_that_never_answers(self):
+        stub = BootingSerial(deaf_polls=10**6)
+        self.assertFalse(self._acquisition(stub)._wait_until_ready(timeout_s=1.2))

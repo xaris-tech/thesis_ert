@@ -132,13 +132,38 @@ class DemoAcquisition:
         self.stop()
 
 
+BOOT_WAIT_S = 6.0
+"""How long connect() waits for the board to answer after the port opens:
+setup() takes 1.2 s plus USB re-enumeration after a reset."""
+
+
 class SerialAcquisition:
     def __init__(self) -> None:
         self._serial: serial.Serial | None = None
 
     def connect(self, settings: UiSettings) -> None:
         self._serial = serial.Serial(settings.port, settings.baud, timeout=1.0)
+        self._wait_until_ready()
+
+    def _wait_until_ready(self, timeout_s: float = BOOT_WAIT_S) -> bool:
+        """Poll ``?`` until the firmware answers with a STATUS line.
+
+        Opening the ESP32-S3's native USB port (/dev/ttyACM0 on the Pi) can
+        restart the board, and the sketch then spends 1.2 s in setup(). A
+        command written in that window is lost: on 2026-10-26 the mode command
+        vanished and a run requested as opposite was captured adjacent. Nothing
+        is configured until the board has replied. Returns False (and carries
+        on) if it never does, e.g. a flash without ``?``; the capture worker's
+        pattern check still refuses frames of the wrong pattern.
+        """
+        deadline = time.monotonic() + timeout_s
+        while time.monotonic() < deadline:
+            self._serial.reset_input_buffer()
+            if any(line.startswith("STATUS,") for line in self.send_command("?", reply_timeout=0.5)):
+                self._serial.reset_input_buffer()
+                return True
         self._serial.reset_input_buffer()
+        return False
 
     def configure(self, settings: UiSettings) -> None:
         if self._serial is None:

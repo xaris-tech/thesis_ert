@@ -584,6 +584,27 @@ class CaptureWorkerTests(QtTestCase):
         self.assertEqual(len(rows), 1)
         self.assertEqual(rows[0]["outcome"], "failed")
 
+    def test_frames_of_another_pattern_are_refused(self):
+        # 2026-10-26: the mode command was lost while the board booted, and a
+        # run requested as opposite was captured (and recorded) as adjacent.
+        class DeafBoard(DemoAcquisition):
+            def configure(self, settings):
+                super().configure(settings)
+                self.pattern = "adjacent"
+
+        request = CaptureRequest(
+            settings=demo_settings(pattern="opposite"),
+            conditions=Conditions(medium="saline tank", grounding="floating"),
+            label="deaf",
+            frames=3,
+            warmup_frames=1,
+        )
+        events = self.collect(CaptureWorker(DeafBoard(), request, self.log_dir))
+        self.assertEqual(events["frames"], [])
+        self.assertEqual(len(events["failed"]), 1)
+        self.assertIn("running the adjacent pattern but opposite", events["failed"][0])
+        self.assertEqual(run_record.read_index(self.log_dir)[0]["outcome"], "failed")
+
     def test_index_carries_the_headline_metrics(self):
         self.collect(self.make_worker(frames=3, warmup_frames=0))
         row = run_record.read_index(self.log_dir)[0]
@@ -778,6 +799,30 @@ class ReconstructionFlowTests(QtTestCase):
         self.assertEqual(len(events["images"]), 1)
         row = [r for r in run_record.read_index(self.log_dir) if "target" in r["run_id"]][0]
         self.assertEqual(row["reciprocity_gate"], "pass")
+
+    def test_opposite_images_without_a_reciprocity_gate(self):
+        # Opposite drive has no reciprocal pairs, so the gate could never pass
+        # (ADR-0073): the image is made and stamped instead of refused.
+        from tree_ert.settings import settings_to_dict
+
+        pattern = {"pattern": "opposite"}
+        baseline_events = self.capture(
+            self.make_worker(label="baseline", frames=4, settings=pattern)
+        )
+        baseline = SessionBaseline(
+            "baseline-run", baseline_events["frames"], settings_to_dict(demo_settings(**pattern))
+        )
+        events = self.capture(
+            self.make_worker(baseline=baseline, label="target", frames=4, settings=pattern)
+        )
+        self.assertEqual(len(events["images"]), 1)
+        run = [r for r in run_record.list_runs(self.log_dir) if "target" in r.name][0]
+        self.assertIn(
+            "RECIPROCITY NOT MEASURABLE",
+            (run / "reconstruction.txt").read_text(encoding="utf-8"),
+        )
+        row = [r for r in run_record.read_index(self.log_dir) if "target" in r["run_id"]][0]
+        self.assertEqual(row["reciprocity_gate"], "not applicable")
 
     def test_the_image_and_its_data_land_in_the_run_folder(self):
         from tree_ert.settings import settings_to_dict

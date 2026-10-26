@@ -19,6 +19,7 @@ Solver setup, protocol construction and the backprojection itself all come from
 
 from __future__ import annotations
 
+import functools
 import warnings
 from dataclasses import dataclass
 from pathlib import Path
@@ -233,6 +234,34 @@ def reconstruct(
         peak_xy=(peak_x, peak_y),
         peak_angle_deg=float(np.degrees(np.arctan2(peak_y, peak_x)) % 360.0),
         noise_floor_kohm=noise_floor_kohm,
+    )
+
+
+@functools.lru_cache(maxsize=None)
+def pattern_has_reciprocals(pattern: str) -> bool:
+    """Whether a drive pattern measures any pair together with its reciprocal.
+
+    Reciprocity compares (I:A,B / V:C,D) with (I:C,D / V:A,B). Every pattern
+    senses on adjacent electrodes, so the reciprocal of a measurement exists
+    only when the drive pair is adjacent too: adjacent drive has reciprocal
+    pairs, opposite / skip-1 / skip-2 have none, and for them reciprocity is
+    unmeasurable however good the contacts are (ADR-0073). Derived from the
+    protocol rather than listed, so a new pattern is classified correctly.
+    """
+    protocol, _ = unified.protocol_and_command(pattern)
+    pairs = {
+        (frozenset(int(e) for e in drive), frozenset(int(e) for e in sense))
+        for drive, senses in zip(protocol.ex_mat, protocol.meas_mat)
+        for sense in senses
+    }
+    return any((sense, drive) in pairs for drive, sense in pairs)
+
+
+def reciprocity_not_applicable_note(pattern: str) -> str:
+    """Stamp for an image whose pattern cannot measure reciprocity (ADR-0073)."""
+    return (
+        f"RECIPROCITY NOT MEASURABLE - {pattern} drive has no reciprocal pairs; "
+        "contact quality unverified by reciprocity"
     )
 
 

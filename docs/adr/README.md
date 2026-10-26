@@ -114,6 +114,7 @@ one costs a re-derivation.
 | [0067](0067-proceed-to-disc-06-with-e1-e2-excluded.md) | Proceed to disc-06 drilled defect (E5–E7) with E1/E2 excluded; E1–E3 sector declared blind | Accepted |
 | [0068](0068-embed-capture-session-as-farm-scan-screen.md) | Farm UI scan screen embeds the capture session (compact mode, `run_finished`); saved runs are UNCLASSIFIED, no ratio | Accepted |
 | [0069](0069-raspberry-pi-host-mesh-cache-and-port-default.md) | FEM mesh built once per process; serial port default chosen by OS | Accepted |
+| [0073](0073-reciprocity-gate-only-where-the-pattern-measures-it.md) | Reciprocity gate only for patterns that measure reciprocal pairs (adjacent); opposite/skip image with a NOT MEASURABLE stamp; host waits for board and refuses wrong-pattern frames | Accepted |
 | [0056](0056-correct-run-conditions-in-extra-never-overwrite.md) | Correct recorded conditions with a dated key in `extra`; original fields stay as written | Accepted |
 | [0055](0055-measure-the-lobe-not-a-window.md) | Lobe connected-component centroid, no angular window; window choice was worth 12.3 deg | Accepted |
 | [0054](0054-the-centroid-angle-estimator-has-a-measured-bias.md) | Centroid window validated against injected offsets; -0.45 deg bias documented, not corrected in code | Accepted |

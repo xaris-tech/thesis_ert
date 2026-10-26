@@ -219,6 +219,7 @@ class CaptureWorker(QObject):
             self._acquisition.connect(settings)
             self.progress.emit("Configuring instrument...")
             self._acquisition.configure(settings)
+            self._pattern = settings.pattern
 
             # The operator's settings first; with recalibration on, each later
             # attempt is chosen from the earlier results (ADR-0060).
@@ -250,6 +251,7 @@ class CaptureWorker(QObject):
                         f"(~{absolute.estimated_minutes(attempt_settings):.0f} min)"
                     )
                     self._acquisition.configure(attempt_settings)
+                    self._pattern = attempt_settings.pattern
                 self.attempt_started.emit(number, attempt_settings)
                 self._captured = []
                 self._last_absolute = None
@@ -342,6 +344,25 @@ class CaptureWorker(QObject):
 
     # -- internals -------------------------------------------------------
 
+    def _checked_frame(self):
+        """One frame, refused if the board is not running the requested pattern.
+
+        The pattern is recorded from the settings and the image is solved with
+        that pattern's model, so a frame of any other pattern would be recorded
+        and reconstructed as something it is not. On 2026-10-26 a run saved as
+        opposite came back adjacent: the mode command was lost while the board
+        was still booting after the port opened.
+        """
+        frame = self._acquisition.capture_frame()
+        expected = self._pattern
+        if frame.pattern.lower() != expected.lower():
+            raise RuntimeError(
+                f"The board is running the {frame.pattern} pattern but {expected} was "
+                "requested, so the frame was not recorded. Reconnect and try again; "
+                "if it persists, check the firmware accepts the pattern command."
+            )
+        return frame
+
     def _warm_up(self, count: int) -> None:
         """Capture and discard frames while the electrode double layer settles.
 
@@ -353,7 +374,7 @@ class CaptureWorker(QObject):
         for index in range(count):
             if self._cancel.is_set():
                 return
-            frame = self._acquisition.capture_frame()
+            frame = self._checked_frame()
             text = capture_view.format_frame_summary(capture_view.frame_summary(frame))
             self.warmup_frame.emit(index + 1, count, text)
 
@@ -412,6 +433,8 @@ class CaptureWorker(QObject):
         if not frames:
             self.reconstruction_skipped.emit("No frames were captured.")
             return None
+        override_note = ""
+        measurable = reconstruction.pattern_has_reciprocals(settings.pattern)
         failures = [
             f"{name}: {reason}"
             for name, reason in (
@@ -419,9 +442,14 @@ class CaptureWorker(QObject):
                 ("this run", reconstruction.reciprocity_gate(frames)),
             )
             if reason
-        ]
-        override_note = ""
-        if failures:
+        ] if measurable else []
+        if not measurable:
+            # Reciprocity cannot be measured with this pattern at all, so its
+            # gate would refuse every image (ADR-0073). Image, and say so.
+            self._reciprocity_gate = "not applicable"
+            override_note = reconstruction.reciprocity_not_applicable_note(settings.pattern)
+            self.progress.emit(override_note)
+        elif failures:
             detail = "; ".join(failures)
             if not self._request.override_reciprocity:
                 self._reciprocity_gate = "fail"
@@ -612,7 +640,7 @@ class CaptureWorker(QObject):
                     f"Cancelled after {len(frames)} frame(s); the run is kept."
                 )
                 break
-            frame = self._acquisition.capture_frame()
+            frame = self._checked_frame()
             index = recorder.write_frame(frame)
             frames.append(frame)
             text = capture_view.format_frame_summary(capture_view.frame_summary(frame))

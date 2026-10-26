@@ -40,7 +40,11 @@ from pyeit.eit.fem import EITForward
 import phase3a_reconstruct as base
 import phase3a_unified_reconstruct as unified
 from tree_ert import capture_view
-from tree_ert.reconstruction import RECIPROCITY_GATE_PERCENT, average_frame_vectors
+from tree_ert.reconstruction import (
+    RECIPROCITY_GATE_PERCENT,
+    average_frame_vectors,
+    pattern_has_reciprocals,
+)
 from tree_ert.settings import UiSettings
 
 SIGNIFICANCE_GATE = 2.0
@@ -463,7 +467,9 @@ def gate(
     reasons: list[str] = []
     recip = capture_view.reciprocity_summary(frames)
     noise_stats = capture_view.noise_summary(frames)
-    if recip is None:
+    if frames and not pattern_has_reciprocals(frames[0].pattern):
+        pass  # unmeasurable with this pattern: not a reason to refuse (ADR-0073)
+    elif recip is None:
         reasons.append("reciprocity could not be measured (no reciprocal pairs)")
     elif recip.median_error_percent > RECIPROCITY_GATE_PERCENT:
         reasons.append(
