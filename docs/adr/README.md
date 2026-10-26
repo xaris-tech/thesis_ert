@@ -120,6 +120,7 @@ one costs a re-derivation.
 | [0073](0073-reciprocity-gate-only-where-the-pattern-measures-it.md) | Reciprocity gate only for patterns that measure reciprocal pairs (adjacent); opposite/skip image with a NOT MEASURABLE stamp; host waits for board and refuses wrong-pattern frames | Accepted |
 | [0074](0074-screen-shows-the-tomogram-alone-figure-stays-the-record.md) | Field screen shows a tomogram-only display copy (`*-image.png`); full two-panel figure stays the record; captions to the log | Accepted |
 | [0075](0075-impedance-ratio-is-p90-over-p10-within-one-pattern.md) | Impedance ratio = p90/p10 of one scan's frame-averaged \|transfer R\|; compared only within one specimen and pattern; not a classification | Accepted |
+| [0076](0076-one-tomogram-style-rdbu-electrode-dots-no-markers.md) | One tomogram style for every saved figure: RdBu_r, electrode dots, no target markers | Accepted |
 | [0056](0056-correct-run-conditions-in-extra-never-overwrite.md) | Correct recorded conditions with a dated key in `extra`; original fields stay as written | Accepted |
 | [0055](0055-measure-the-lobe-not-a-window.md) | Lobe connected-component centroid, no angular window; window choice was worth 12.3 deg | Accepted |
 | [0054](0054-the-centroid-angle-estimator-has-a-measured-bias.md) | Centroid window validated against injected offsets; -0.45 deg bias documented, not corrected in code | Accepted |

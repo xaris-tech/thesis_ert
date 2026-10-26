@@ -661,7 +661,6 @@ def save_absolute(
         return
     protocol, _ = unified.protocol_and_command(attempt.settings.pattern)
     eit_mesh, _ = base.create_solver(protocol)
-    pts, tri = eit_mesh.node, eit_mesh.element
     noise = attempt.noise if attempt.noise is not None else np.zeros_like(result.sigma)
     image, noise_log, scale, clipped, noise_clipped = display_values(
         result.sigma, result.sigma0, noise
@@ -672,15 +671,8 @@ def save_absolute(
         (axes[0], image, "log10(sigma / sigma0) (image)"),
         (axes[1], noise_log, "split-half noise (control)"),
     ):
-        mappable = ax.tripcolor(
-            pts[:, 0], pts[:, 1], tri, values, shading="flat",
-            cmap="coolwarm", vmin=-scale, vmax=scale,
-        )
+        mappable = base.draw_tomogram(ax, eit_mesh, values, scale, label_size=8)
         ax.set_title(name)
-        ax.set_aspect("equal")
-        ax.axis("off")
-        for index, x, y in base.electrode_label_positions(eit_mesh):
-            ax.text(x, y, f"E{index + 1}", ha="center", va="center", fontsize=8)
     figure.colorbar(
         mappable, ax=axes, shrink=0.8, extend="both",
         label="log10(sigma / sigma0): blue less, red more conductive",

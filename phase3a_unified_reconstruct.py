@@ -1053,29 +1053,8 @@ def reconstruction_title(base_title: str, diameter_cm: float | None = None) -> s
 
 
 def _draw_reconstruction(ax, eit_mesh, values: np.ndarray, title: str, limit: float):
-    image = ax.tripcolor(
-        eit_mesh.node[:, 0],
-        eit_mesh.node[:, 1],
-        eit_mesh.element,
-        values,
-        shading="flat",
-        cmap="coolwarm",
-        vmin=-limit,
-        vmax=limit,
-    )
-    ax.set_aspect("equal")
+    image = base.draw_tomogram(ax, eit_mesh, values, limit)
     ax.set_title(title, fontsize=9)
-    ax.set_axis_off()
-    for index, x, y in base.electrode_label_positions(eit_mesh):
-        ax.text(
-            x,
-            y,
-            f"E{index + 1}",
-            ha="center",
-            va="center",
-            fontsize=6,
-            fontweight="bold",
-        )
     return image
 
 
