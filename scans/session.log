@@ -11871,3 +11871,101 @@
 2026-10-24 14:09:07  [D2 opposite] 20261024-134524-disc-01-d2-opposite-32fr
   absolute (all electrodes): misfit 12.1%, pass, trough -2.12 mS, lobe at 271 deg (touches E10: may be contact)
   difference vs 20261023-194906-disc-01-b3-opposite: resistive trough 271 deg (target ~120), significance 93.57
+
+------------------------------------------------------------------------
+2026-10-26 13:42:26  Session started (hardware)
+2026-10-26 13:42:26  Scans folder: /home/rantiche/thesis_ert/scans
+2026-10-26 13:42:26  656 scan(s) already recorded here.
+2026-10-26 13:42:26  Ready. Settings are saved on exit.
+2026-10-26 13:43:15  Connecting to /dev/ttyACM0...
+2026-10-26 13:43:16  Configuring instrument...
+
+------------------------------------------------------------------------
+2026-10-26 13:43:16  Run 20261026-134316-disc-05-hole-near-e1-e2
+2026-10-26 13:43:16  Conditions: medium=cut disc saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-26 13:43:16  Recording to /home/rantiche/thesis_ert/scans/runs/20261026-134316-disc-05-hole-near-e1-e2
+2026-10-26 13:44:00  [warmup 1/5] 192/192 OK | I med 471.6 uA (244.5-650.0) | R med 0.0159 kohm | dV med 2122 LSB
+2026-10-26 13:44:44  [warmup 2/5] 192/192 OK | I med 472.9 uA (244.4-651.2) | R med 0.0158 kohm | dV med 2095 LSB
+2026-10-26 13:45:27  [warmup 3/5] 192/192 OK | I med 472.5 uA (244.2-651.8) | R med 0.0167 kohm | dV med 2095 LSB
+2026-10-26 13:46:11  [warmup 4/5] 192/192 OK | I med 472.4 uA (243.8-652.7) | R med 0.0166 kohm | dV med 2102 LSB
+2026-10-26 13:46:54  [warmup 5/5] 192/192 OK | I med 473.0 uA (242.7-651.9) | R med 0.0170 kohm | dV med 2107 LSB
+2026-10-26 13:47:38  [frame 1] 192/192 OK | I med 474.2 uA (243.4-652.9) | R med 0.0174 kohm | dV med 2074 LSB
+2026-10-26 13:48:22  [frame 2] 192/192 OK | I med 474.2 uA (243.5-652.5) | R med 0.0176 kohm | dV med 2077 LSB
+2026-10-26 13:49:05  FAILED: ValueError: Malformed measurement record: M,P,FWD,I+,E6,I-,E12,V+,E10,V-,E11,V,,E4,V,48.480,I,473.378,Q,OK
+2026-10-26 13:49:05  Partial run kept at /home/rantiche/thesis_ert/scans/runs/20261026-134316-disc-05-hole-near-e1-e2
+2026-10-26 13:50:29  Connecting to /dev/ttyACM0...
+2026-10-26 13:50:30  Configuring instrument...
+
+------------------------------------------------------------------------
+2026-10-26 13:50:30  Run 20261026-135030-disc-05-hole-near-e1-e2
+2026-10-26 13:50:30  Conditions: medium=cut disc saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-26 13:50:30  Recording to /home/rantiche/thesis_ert/scans/runs/20261026-135030-disc-05-hole-near-e1-e2
+2026-10-26 13:51:13  [warmup 1/5] 192/192 OK | I med 473.2 uA (243.0-652.1) | R med 0.0146 kohm | dV med 2154 LSB
+2026-10-26 13:51:57  [warmup 2/5] 192/192 OK | I med 476.2 uA (243.1-653.4) | R med 0.0166 kohm | dV med 2110 LSB
+2026-10-26 13:52:41  [warmup 3/5] 192/192 OK | I med 475.6 uA (241.9-653.3) | R med 0.0165 kohm | dV med 2108 LSB
+2026-10-26 13:53:24  [warmup 4/5] 192/192 OK | I med 476.2 uA (241.2-653.5) | R med 0.0164 kohm | dV med 2109 LSB
+2026-10-26 13:54:08  [warmup 5/5] 192/192 OK | I med 475.7 uA (240.7-637.8) | R med 0.0163 kohm | dV med 2106 LSB
+2026-10-26 13:54:51  [frame 1] 192/192 OK | I med 476.0 uA (240.3-649.9) | R med 0.0160 kohm | dV med 1910 LSB
+2026-10-26 13:55:35  [frame 2] 192/192 OK | I med 475.7 uA (240.0-652.2) | R med 0.0158 kohm | dV med 1904 LSB
+2026-10-26 13:56:19  [frame 3] 192/192 OK | I med 476.1 uA (239.0-652.4) | R med 0.0155 kohm | dV med 1912 LSB
+2026-10-26 13:57:02  [frame 4] 192/192 OK | I med 475.9 uA (239.2-652.4) | R med 0.0159 kohm | dV med 1867 LSB
+2026-10-26 13:57:46  [frame 5] 192/192 OK | I med 475.4 uA (239.0-653.5) | R med 0.0179 kohm | dV med 1887 LSB
+2026-10-26 13:58:30  [frame 6] 192/192 OK | I med 474.8 uA (238.9-653.3) | R med 0.0185 kohm | dV med 1905 LSB
+2026-10-26 13:59:13  [frame 7] 192/192 OK | I med 474.5 uA (238.4-653.8) | R med 0.0188 kohm | dV med 1909 LSB
+2026-10-26 13:59:57  [frame 8] 192/192 OK | I med 474.8 uA (238.5-653.4) | R med 0.0188 kohm | dV med 1901 LSB
+2026-10-26 14:00:40  [frame 9] 192/192 OK | I med 474.3 uA (237.7-654.1) | R med 0.0188 kohm | dV med 1889 LSB
+2026-10-26 14:01:24  [frame 10] 192/192 OK | I med 474.8 uA (238.1-653.7) | R med 0.0188 kohm | dV med 1904 LSB
+2026-10-26 14:01:24  No reconstruction: This run is the session baseline; it has nothing to differ from.
+2026-10-26 14:01:25  Baseline control image saved to /home/rantiche/thesis_ert/scans/runs/20261026-135030-disc-05-hole-near-e1-e2/control.png
+2026-10-26 14:01:38  Absolute: REFUSED: model misfit 24.6% > 15%; significance 1.48 < 2.0
+2026-10-26 14:01:38  Absolute: REFUSED: model misfit 24.6% > 15%; significance 1.48 < 2.0  |  sigma0 6.51 mS  |  peak +645 at 316 deg  |  trough -6.4 mS, lobe at 252 deg (touches E10,E11: may be contact)  |  misfit 24.6%  |  significance 1.5x
+2026-10-26 14:01:38  This run is now the session baseline (20261026-135030-disc-05-hole-near-e1-e2).
+2026-10-26 14:01:38  Finished. Run saved to /home/rantiche/thesis_ert/scans/runs/20261026-135030-disc-05-hole-near-e1-e2
+2026-10-26 14:01:38    Frames captured: 10
+2026-10-26 14:01:38    Reciprocity: no reciprocal pairs captured
+2026-10-26 14:01:38    Noise floor: median pair sd 0.00028 kohm (2.15%)  max 0.08136 kohm over 96 pairs
+2026-10-26 14:01:38  Indexed in /home/rantiche/thesis_ert/scans/index.csv
+
+------------------------------------------------------------------------
+2026-10-26 14:03:05  Session ended
+
+------------------------------------------------------------------------
+2026-10-26 14:03:27  Session started (hardware)
+2026-10-26 14:03:27  Scans folder: /home/rantiche/thesis_ert/scans
+2026-10-26 14:03:27  658 scan(s) already recorded here.
+2026-10-26 14:03:27  Ready. Settings are saved on exit.
+2026-10-26 14:04:08  Connecting to /dev/ttyACM0...
+2026-10-26 14:04:09  Configuring instrument...
+
+------------------------------------------------------------------------
+2026-10-26 14:04:09  Run 20261026-140409-disc-05-hole-near-1-2
+2026-10-26 14:04:09  Conditions: medium=cut disc saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-26 14:04:09  Recording to /home/rantiche/thesis_ert/scans/runs/20261026-140409-disc-05-hole-near-1-2
+2026-10-26 14:04:48  [warmup 1/5] 192/192 OK | I med 528.6 uA (267.6-696.9) | R med 0.0178 kohm | dV med 2286 LSB
+2026-10-26 14:05:28  [warmup 2/5] 192/192 OK | I med 530.3 uA (267.1-694.3) | R med 0.0180 kohm | dV med 2276 LSB
+2026-10-26 14:06:08  [warmup 3/5] 192/192 OK | I med 530.7 uA (266.5-698.3) | R med 0.0178 kohm | dV med 2009 LSB
+2026-10-26 14:06:48  [warmup 4/5] 192/192 OK | I med 530.6 uA (266.0-697.3) | R med 0.0177 kohm | dV med 2000 LSB
+2026-10-26 14:07:27  [warmup 5/5] 192/192 OK | I med 531.4 uA (266.0-692.8) | R med 0.0176 kohm | dV med 1978 LSB
+2026-10-26 14:08:07  [frame 1] 192/192 OK | I med 531.4 uA (265.5-693.0) | R med 0.0177 kohm | dV med 1957 LSB
+2026-10-26 14:08:47  [frame 2] 192/192 OK | I med 532.2 uA (265.2-697.7) | R med 0.0176 kohm | dV med 1909 LSB
+2026-10-26 14:09:27  [frame 3] 192/192 OK | I med 532.6 uA (265.6-697.4) | R med 0.0176 kohm | dV med 1926 LSB
+2026-10-26 14:10:07  [frame 4] 192/192 OK | I med 532.7 uA (265.5-694.5) | R med 0.0176 kohm | dV med 1910 LSB
+2026-10-26 14:10:46  [frame 5] 192/192 OK | I med 533.3 uA (265.5-696.6) | R med 0.0175 kohm | dV med 1952 LSB
+2026-10-26 14:11:26  [frame 6] 192/192 OK | I med 533.5 uA (265.3-697.3) | R med 0.0177 kohm | dV med 1902 LSB
+2026-10-26 14:12:06  [frame 7] 192/192 OK | I med 533.1 uA (264.9-697.3) | R med 0.0184 kohm | dV med 1900 LSB
+2026-10-26 14:12:46  [frame 8] 192/192 OK | I med 533.7 uA (264.7-697.0) | R med 0.0184 kohm | dV med 1896 LSB
+2026-10-26 14:13:25  [frame 9] 192/192 OK | I med 534.1 uA (265.3-696.7) | R med 0.0184 kohm | dV med 1900 LSB
+2026-10-26 14:14:05  [frame 10] 192/192 OK | I med 534.1 uA (265.4-695.1) | R med 0.0184 kohm | dV med 1884 LSB
+2026-10-26 14:14:05  No reconstruction: This run is the session baseline; it has nothing to differ from.
+2026-10-26 14:14:06  Baseline control image saved to /home/rantiche/thesis_ert/scans/runs/20261026-140409-disc-05-hole-near-1-2/control.png
+2026-10-26 14:14:17  Absolute: REFUSED: model misfit 37.5% > 15%; significance 1.00 < 2.0
+2026-10-26 14:14:17  Absolute: REFUSED: model misfit 37.5% > 15%; significance 1.00 < 2.0  |  sigma0 6.77 mS  |  peak +670 at 308 deg  |  trough -6.65 mS, lobe at 247 deg (touches E11: may be contact)  |  misfit 37.5%  |  significance 1.0x
+2026-10-26 14:14:17  This run is now the session baseline (20261026-140409-disc-05-hole-near-1-2).
+2026-10-26 14:14:17  Finished. Run saved to /home/rantiche/thesis_ert/scans/runs/20261026-140409-disc-05-hole-near-1-2
+2026-10-26 14:14:17    Frames captured: 10
+2026-10-26 14:14:17    Reciprocity: no reciprocal pairs captured
+2026-10-26 14:14:17    Noise floor: median pair sd 0.00016 kohm (0.90%)  max 0.00706 kohm over 96 pairs
+2026-10-26 14:14:17  Indexed in /home/rantiche/thesis_ert/scans/index.csv
+
+------------------------------------------------------------------------
+2026-10-26 14:14:29  Session ended

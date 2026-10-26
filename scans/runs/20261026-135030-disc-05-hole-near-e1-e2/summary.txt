@@ -1,0 +1,4 @@
+Frames captured: 10
+Reciprocity: no reciprocal pairs captured
+Noise floor: median pair sd 0.00028 kohm (2.15%)  max 0.08136 kohm over 96 pairs
+absolute: REFUSED: model misfit 24.6% > 15%; significance 1.48 < 2.0
