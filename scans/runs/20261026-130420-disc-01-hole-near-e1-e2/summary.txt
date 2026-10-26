@@ -1,0 +1,4 @@
+Frames captured: 10
+Reciprocity: median 43.4%  max 97.4%  sign flips 9/54
+Noise floor: median pair sd 0.00008 kohm (2.39%)  max 0.00969 kohm over 108 pairs
+absolute: REFUSED: median reciprocity 43.4% > 15%; absolute solve failed

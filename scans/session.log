@@ -10891,3 +10891,96 @@
 2026-10-21 18:48:23  disc-05: no attempt passed after 1 acquisitions -- check contacts
 2026-10-21 18:48:23  disc-05: FAILED
 2026-10-21 18:48:23  Survey manifest: exports/absolute-session-20261021-184823/survey-manifest.csv
+
+------------------------------------------------------------------------
+2026-10-26 10:58:11  Session started (demo)
+2026-10-26 10:58:12  Scans folder: /home/rantiche/thesis_ert/scans
+2026-10-26 10:58:12  519 scan(s) already recorded here.
+2026-10-26 10:58:12  Ready. Settings are saved on exit.
+
+------------------------------------------------------------------------
+2026-10-26 10:58:19  Session ended
+
+------------------------------------------------------------------------
+2026-10-26 12:59:36  Session started (hardware)
+2026-10-26 12:59:36  Scans folder: /home/rantiche/thesis_ert/scans
+2026-10-26 12:59:36  519 scan(s) already recorded here.
+2026-10-26 12:59:36  Ready. Settings are saved on exit.
+
+------------------------------------------------------------------------
+2026-10-26 12:59:36  Session ended
+
+------------------------------------------------------------------------
+2026-10-26 12:59:36  Session started (hardware)
+2026-10-26 12:59:36  Scans folder: /home/rantiche/thesis_ert/scans
+2026-10-26 12:59:36  519 scan(s) already recorded here.
+2026-10-26 12:59:36  Ready. Settings are saved on exit.
+
+------------------------------------------------------------------------
+2026-10-26 12:59:37  Session ended
+
+------------------------------------------------------------------------
+2026-10-26 13:01:17  Session started (hardware)
+2026-10-26 13:01:17  Scans folder: /home/rantiche/thesis_ert/scans
+2026-10-26 13:01:17  519 scan(s) already recorded here.
+2026-10-26 13:01:17  Ready. Settings are saved on exit.
+
+------------------------------------------------------------------------
+2026-10-26 13:01:17  Session ended
+
+------------------------------------------------------------------------
+2026-10-26 13:01:17  Session started (hardware)
+2026-10-26 13:01:17  Scans folder: /home/rantiche/thesis_ert/scans
+2026-10-26 13:01:17  519 scan(s) already recorded here.
+2026-10-26 13:01:17  Ready. Settings are saved on exit.
+
+------------------------------------------------------------------------
+2026-10-26 13:01:18  Session ended
+
+------------------------------------------------------------------------
+2026-10-26 13:02:06  Session started (hardware)
+2026-10-26 13:02:06  Scans folder: /home/rantiche/thesis_ert/scans
+2026-10-26 13:02:06  519 scan(s) already recorded here.
+2026-10-26 13:02:06  Ready. Settings are saved on exit.
+
+------------------------------------------------------------------------
+2026-10-26 13:02:48  Session started (hardware)
+2026-10-26 13:02:48  Scans folder: /home/rantiche/thesis_ert/scans
+2026-10-26 13:02:48  519 scan(s) already recorded here.
+2026-10-26 13:02:48  Ready. Settings are saved on exit.
+2026-10-26 13:03:47  Connecting to COM7...
+2026-10-26 13:03:47  FAILED: SerialException: [Errno 2] could not open port COM7: [Errno 2] No such file or directory: 'COM7'
+2026-10-26 13:04:20  Connecting to /dev/ttyACM0...
+2026-10-26 13:04:20  Configuring instrument...
+
+------------------------------------------------------------------------
+2026-10-26 13:04:20  Run 20261026-130420-disc-01-hole-near-e1-e2
+2026-10-26 13:04:20  Conditions: medium=cut disc saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-26 13:04:20  Recording to /home/rantiche/thesis_ert/scans/runs/20261026-130420-disc-01-hole-near-e1-e2
+2026-10-26 13:05:09  [warmup 1/5] 216/216 OK | I med 457.9 uA (178.0-772.7) | R med 0.0037 kohm | dV med 413 LSB
+2026-10-26 13:05:58  [warmup 2/5] 216/216 OK | I med 462.3 uA (182.1-775.7) | R med 0.0043 kohm | dV med 402 LSB
+2026-10-26 13:06:47  [warmup 3/5] 216/216 OK | I med 465.7 uA (183.8-776.9) | R med 0.0044 kohm | dV med 409 LSB
+2026-10-26 13:07:36  [warmup 4/5] 216/216 OK | I med 467.8 uA (184.9-777.2) | R med 0.0042 kohm | dV med 407 LSB
+2026-10-26 13:08:25  [warmup 5/5] 216/216 OK | I med 469.4 uA (185.9-779.9) | R med 0.0040 kohm | dV med 409 LSB
+2026-10-26 13:09:14  [frame 1] 216/216 OK | I med 471.1 uA (186.6-782.0) | R med 0.0039 kohm | dV med 406 LSB
+2026-10-26 13:10:04  [frame 2] 216/216 OK | I med 472.5 uA (187.5-783.2) | R med 0.0038 kohm | dV med 404 LSB
+2026-10-26 13:10:53  [frame 3] 216/216 OK | I med 474.1 uA (188.1-784.5) | R med 0.0037 kohm | dV med 403 LSB
+2026-10-26 13:11:42  [frame 4] 216/216 OK | I med 474.9 uA (188.7-784.8) | R med 0.0037 kohm | dV med 402 LSB
+2026-10-26 13:12:31  [frame 5] 216/216 OK | I med 475.7 uA (189.1-784.7) | R med 0.0037 kohm | dV med 401 LSB
+2026-10-26 13:13:20  [frame 6] 216/216 OK | I med 476.5 uA (189.4-784.9) | R med 0.0036 kohm | dV med 404 LSB
+2026-10-26 13:14:09  [frame 7] 216/216 OK | I med 477.4 uA (190.0-784.8) | R med 0.0037 kohm | dV med 403 LSB
+2026-10-26 13:14:58  [frame 8] 216/216 OK | I med 478.3 uA (189.7-785.3) | R med 0.0037 kohm | dV med 406 LSB
+2026-10-26 13:15:47  [frame 9] 216/216 OK | I med 479.3 uA (190.8-785.1) | R med 0.0037 kohm | dV med 405 LSB
+2026-10-26 13:16:36  [frame 10] 216/216 OK | I med 480.2 uA (191.6-785.3) | R med 0.0037 kohm | dV med 411 LSB
+2026-10-26 13:16:36  No reconstruction: This run is the session baseline; it has nothing to differ from.
+2026-10-26 13:16:37  Baseline control image failed: ValueError: every measurement pair was unusable; nothing to reconstruct
+2026-10-26 13:16:37  Absolute: REFUSED: median reciprocity 43.4% > 15%; absolute solve failed
+2026-10-26 13:16:37  This run is now the session baseline (20261026-130420-disc-01-hole-near-e1-e2).
+2026-10-26 13:16:37  Finished. Run saved to /home/rantiche/thesis_ert/scans/runs/20261026-130420-disc-01-hole-near-e1-e2
+2026-10-26 13:16:37    Frames captured: 10
+2026-10-26 13:16:37    Reciprocity: median 43.4%  max 97.4%  sign flips 9/54
+2026-10-26 13:16:37    Noise floor: median pair sd 0.00008 kohm (2.39%)  max 0.00969 kohm over 108 pairs
+2026-10-26 13:16:37  Indexed in /home/rantiche/thesis_ert/scans/index.csv
+
+------------------------------------------------------------------------
+2026-10-26 13:17:42  Session ended

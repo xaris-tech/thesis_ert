@@ -1,11 +1,11 @@
 {
-  "port": "COM7",
+  "port": "/dev/ttyACM0",
   "baud": 115200,
   "pattern": "opposite",
   "current_range": "high",
-  "dac": 400,
+  "dac": 620,
   "settle_ms": 30,
-  "samples": 16,
+  "samples": 32,
   "warmup_frames": 5,
   "target_warmup_frames": 5,
   "baseline_frames": 5,
@@ -19,5 +19,6 @@
   "electrode_offset": 0,
   "electrode_reversed": false,
   "self_test_frames": 3,
-  "expected_shunt_ohms": null
+  "expected_shunt_ohms": null,
+  "absolute_exclude_electrodes": []
 }
