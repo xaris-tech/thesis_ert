@@ -216,7 +216,9 @@ class CardWidget(QFrame):
         pill.setFixedHeight(24)
         text.addWidget(pill)
         text.addWidget(_label(
-            f"Ratio {m.imp_ratio:.3f}" if m.imp_ratio is not None else "Capture run", "meta"
+            (f"Ratio {m.imp_ratio:.2f}" + (f" · {m.pattern}" if m.pattern else ""))
+            if m.imp_ratio is not None else "Capture run",
+            "meta",
         ))
         text.addStretch()
         info.addLayout(text, stretch=1)

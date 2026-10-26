@@ -360,6 +360,51 @@ class SessionSummaryTests(unittest.TestCase):
         self.assertIsNone(summary.noise)
 
 
+class ImpedanceRatioTests(unittest.TestCase):
+    """ADR-0075: p90/p10 of the frame-averaged |transfer resistance|."""
+
+    def demo_frames(self, pattern, count=3):
+        from dataclasses import replace
+
+        from tree_ert.acquisition import DemoAcquisition
+        from tree_ert.settings import UiSettings
+
+        board = DemoAcquisition()
+        board.configure(replace(UiSettings.default(), pattern=pattern))
+        return [board.capture_frame() for _ in range(count)]
+
+    def test_matches_numpy_percentiles(self):
+        import numpy as np
+
+        for pattern in ("adjacent", "opposite"):
+            frames = self.demo_frames(pattern)
+            values = np.abs(list(capture_view.average_pair_values(frames).values()))
+            expected = np.percentile(values, 90) / np.percentile(values, 10)
+            self.assertAlmostEqual(capture_view.impedance_ratio(frames), expected, places=9)
+
+    def test_one_wild_pair_does_not_set_it(self):
+        # The reason it is not max/min: one bad contact or near-zero pair.
+        frames = self.demo_frames("adjacent")
+        values = capture_view.average_pair_values(frames)
+        before = capture_view.impedance_ratio(frames)
+        key = next(iter(values))
+        from unittest import mock
+
+        wild = dict(values, **{})
+        wild[key] = values[key] * 1000.0
+        with mock.patch.object(capture_view, "average_pair_values", return_value=wild):
+            after = capture_view.impedance_ratio(frames)
+        self.assertLess(abs(after - before) / before, 0.25)
+
+    def test_too_few_pairs_gives_none(self):
+        from unittest import mock
+
+        with mock.patch.object(
+            capture_view, "average_pair_values", return_value={((0, 1), (2, 3)): 1.0}
+        ):
+            self.assertIsNone(capture_view.impedance_ratio([]))
+
+
 class FormattingTests(unittest.TestCase):
     def test_frame_line_reports_counts_current_and_resistance(self):
         line = capture_view.format_frame_summary(

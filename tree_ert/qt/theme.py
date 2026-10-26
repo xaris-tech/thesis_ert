@@ -146,17 +146,19 @@ def arrow_icon(direction: str, color: str) -> str:
     return resolved
 
 
-def stylesheet() -> str:
+def stylesheet(dark: bool = False) -> str:
     """The stylesheet with arrow icon paths resolved. Needs a QApplication."""
+    p = DARK if dark else LIGHT
     return (
-        STYLESHEET.replace("__ARROW_DOWN__", arrow_icon("down", TEXT_MUTED))
-        .replace("__ARROW_UP__", arrow_icon("up", TEXT_MUTED))
-        .replace("__ARROW_DOWN_DIM__", arrow_icon("down", TEXT_DIM))
-        .replace("__ARROW_UP_DIM__", arrow_icon("up", TEXT_DIM))
+        _STYLESHEET_TEMPLATE.format(**p, **_FIXED)
+        .replace("__ARROW_DOWN__", arrow_icon("down", p["TEXT_MUTED"]))
+        .replace("__ARROW_UP__", arrow_icon("up", p["TEXT_MUTED"]))
+        .replace("__ARROW_DOWN_DIM__", arrow_icon("down", p["TEXT_DIM"]))
+        .replace("__ARROW_UP_DIM__", arrow_icon("up", p["TEXT_DIM"]))
     )
 
 
-STYLESHEET = f"""
+_STYLESHEET_TEMPLATE = """
 QWidget {{
     background: {BG};
     color: {TEXT};
@@ -511,7 +513,7 @@ QPushButton#Inline:hover {{
 }}
 
 #StatusPill[state="busy"] {{
-    background: #e8f1fe;
+    background: {ACCENT_BG};
     border-color: {ACCENT};
     color: {ACCENT_PRESSED};
 }}
@@ -536,7 +538,7 @@ QTableWidget {{
     gridline-color: {BORDER};
     font-family: {MONO_FAMILY};
     font-size: 9pt;
-    selection-background-color: #dbe8fb;
+    selection-background-color: {SELECTION_BG};
     selection-color: {TEXT};
 }}
 
@@ -675,6 +677,51 @@ QToolTip {{
     border-radius: 4px;
 }}
 """
+"""str.format template: every colour is a palette name, so one stylesheet
+serves both themes."""
+
+_PALETTE_NAMES = (
+    "BG", "SURFACE", "SURFACE_RAISED", "SURFACE_SUNKEN", "BORDER", "BORDER_STRONG",
+    "TEXT", "TEXT_MUTED", "TEXT_DIM", "ACCENT", "ACCENT_HOVER", "ACCENT_PRESSED",
+    "OK", "WARN", "BAD", "INFO", "OK_BG", "WARN_BG", "BAD_BG",
+    "OK_BORDER", "WARN_BORDER", "BAD_BORDER",
+)
+
+LIGHT = {name: globals()[name] for name in _PALETTE_NAMES}
+LIGHT.update(ACCENT_BG="#e8f1fe", SELECTION_BG="#dbe8fb")
+
+DARK = {
+    "BG": "#121417", "SURFACE": "#1c1f24", "SURFACE_RAISED": "#23272e",
+    "SURFACE_SUNKEN": "#171a1e", "BORDER": "#30353d", "BORDER_STRONG": "#465061",
+    "TEXT": "#e8ecf2", "TEXT_MUTED": "#a3aebd", "TEXT_DIM": "#6b7685",
+    "ACCENT": "#3b84f2", "ACCENT_HOVER": "#5896f5", "ACCENT_PRESSED": "#2a6fd6",
+    "OK": "#4cc38a", "WARN": "#e0a84f", "BAD": "#f07a72", "INFO": "#a594f9",
+    "OK_BG": "#13291e", "WARN_BG": "#2e2412", "BAD_BG": "#331a19",
+    "OK_BORDER": "#2a6b4a", "WARN_BORDER": "#7a5a22", "BAD_BORDER": "#7d3532",
+    "ACCENT_BG": "#152338", "SELECTION_BG": "#1e3554",
+}
+"""Dark palette for the embedded field screen when the farm UI is dark. Status
+colours are lightened so they keep their contrast on dark surfaces."""
+
+_FIXED = {
+    "ARROW_WIDTH": ARROW_WIDTH, "ARROW_HEIGHT": ARROW_HEIGHT,
+    "MONO_FAMILY": MONO_FAMILY, "UI_FAMILY": UI_FAMILY,
+}
+
+STYLESHEET = _STYLESHEET_TEMPLATE.format(**LIGHT, **_FIXED)
+"""The light stylesheet, arrow placeholders unresolved."""
+
+
+def row_colors(dark: bool = False) -> dict[str, QColor]:
+    """Measurement-table row colours, set in code rather than by stylesheet."""
+    p = DARK if dark else LIGHT
+    return {
+        "flagged_bg": qcolor(p["BAD_BG"]),
+        "flagged_fg": qcolor(p["BAD"]),
+        "ok_fg": qcolor(p["TEXT"]),
+        "muted_fg": qcolor(p["TEXT_MUTED"]),
+    }
+
 
 
 def apply_state(widget, state: str | None) -> None:

@@ -873,8 +873,11 @@ class CardApp(QMainWindow):
     # ---------- scan view push/pop ----------
 
     def _rebuild_scan_view(self):
-        # Only the review screen follows the theme. The capture screen is
-        # left alone: rebuilding it would cancel a capture in progress.
+        # The capture screen restyles in place: rebuilding it would cancel a
+        # capture in progress. The review screen is simply rebuilt.
+        if isinstance(self._scan_view, CaptureScreen):
+            self._scan_view.set_dark_mode(self.is_dark_mode)
+            return
         if not isinstance(self._scan_view, ScanView):
             return
         self._push_screen(ScanView(

@@ -475,6 +475,7 @@ class MainWindow(QMainWindow):
     ) -> None:
         super().__init__()
         self._compact = compact
+        self._dark = False
         """For an 800x480 screen, embedded under a host's own header: no title
         header (the run status moves to the right column), Session and Log
         become tabs, and the images drop their 320 px minimum height."""
@@ -679,9 +680,10 @@ class MainWindow(QMainWindow):
         """Finger-sized controls for the embedded touchscreen view."""
         from PyQt6.QtWidgets import QAbstractSpinBox
 
-        self.setStyleSheet(theme.stylesheet() + theme.TOUCH_STYLESHEET)
+        self._restyle()
         # The tab panes (table, log) may shrink to nothing: on a 480-600 px
         # screen the on-screen keyboard needs the room while a field is typed.
+        self.tabs.tabBar().setFocusPolicy(Qt.FocusPolicy.NoFocus)  # no focus box on touch
         policy = self.tabs.sizePolicy()
         policy.setVerticalPolicy(QSizePolicy.Policy.Ignored)
         self.tabs.setSizePolicy(policy)
@@ -700,6 +702,22 @@ class MainWindow(QMainWindow):
         self._controls.setMinimumWidth(
             self._controls.widget().minimumSizeHint().width() + scrollbar + 4
         )
+
+    def set_dark_mode(self, dark: bool) -> None:
+        """Follow a host's light/dark theme (the farm UI). Restyles in place, so
+        a capture in progress is not disturbed."""
+        if dark == self._dark:
+            return
+        self._dark = dark
+        self._restyle()
+        if self._frames:
+            self._fill_table(self._frames[-1])
+
+    def _restyle(self) -> None:
+        sheet = theme.stylesheet(self._dark)
+        if self._compact:
+            sheet += theme.TOUCH_STYLESHEET
+        self.setStyleSheet(sheet)
 
     def set_controls_visible(self, visible: bool) -> None:
         """Show or hide the settings/conditions column. A host on a small
@@ -1224,13 +1242,14 @@ class MainWindow(QMainWindow):
                     )
                 else:
                     item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                colors = theme.row_colors(self._dark)
                 if not row.ok:
-                    item.setBackground(theme.ROW_FLAGGED_BG)
-                    item.setForeground(theme.ROW_FLAGGED_FG)
+                    item.setBackground(colors["flagged_bg"])
+                    item.setForeground(colors["flagged_fg"])
                 elif column in LABEL_COLUMNS:
-                    item.setForeground(theme.ROW_MUTED_FG)
+                    item.setForeground(colors["muted_fg"])
                 else:
-                    item.setForeground(theme.ROW_OK_FG)
+                    item.setForeground(colors["ok_fg"])
                 self.table.setItem(index, column, item)
 
     def _log(self, message: str) -> None:

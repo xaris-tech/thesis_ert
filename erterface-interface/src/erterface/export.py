@@ -17,6 +17,7 @@ CSV_COLUMNS = [
     "data_path",
     "image_path",
     "synced",
+    "pattern",
 ]
 
 
@@ -40,6 +41,7 @@ def export_measurements_csv(database, output_path):
                     "data_path": m.data_path,
                     "image_path": m.image_path,
                     "synced": m.synced,
+                    "pattern": m.pattern,
                 })
                 rows += 1
             f.flush()

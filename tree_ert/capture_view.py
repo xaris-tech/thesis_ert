@@ -389,6 +389,37 @@ def average_pair_values(
     return {key: statistics.fmean(values) for key, values in collected.items()}
 
 
+IMPEDANCE_RATIO_PERCENTILES = (90, 10)
+"""The within-specimen contrast metric (ADR-0075): the 90th over the 10th
+percentile of the frame-averaged |transfer resistance|. Max/min was the obvious
+choice and the worst: on repeat scans of one disc it varied 30-140 % (one
+near-zero opposite-drive pair or one bad contact sets it), p90/p10 mostly <7 %."""
+
+
+def impedance_ratio(frames: Sequence[unified.UnifiedFrame]) -> float | None:
+    """How far transfer resistances spread inside one scan (ADR-0075).
+
+    Compares a specimen only with itself, at the same drive pattern: specimen
+    size, moisture and temperature cancel, but the pattern does not (disc-08
+    reads ~15 adjacent, ~3-4 opposite). None if too few pairs to rank.
+    """
+    values = sorted(abs(v) for v in average_pair_values(frames).values())
+    if len(values) < 10:
+        return None
+    high, low = (_percentile(values, q) for q in IMPEDANCE_RATIO_PERCENTILES)
+    if low <= 0.0:
+        return None
+    return high / low
+
+
+def _percentile(ordered: Sequence[float], q: float) -> float:
+    """Linear-interpolated percentile of an already sorted sequence (numpy's default)."""
+    position = (len(ordered) - 1) * q / 100.0
+    below = int(position)
+    above = min(below + 1, len(ordered) - 1)
+    return ordered[below] + (ordered[above] - ordered[below]) * (position - below)
+
+
 def noise_summary(frames: Sequence[unified.UnifiedFrame]) -> NoiseSummary | None:
     """Per-pair standard deviation across frames. Needs at least two frames."""
     if len(frames) < 2:

@@ -1031,6 +1031,18 @@ class MainWindowTests(QtTestCase):
         self.assertTrue(window.start_button.isEnabled())
         self.assertFalse(window.stop_button.isEnabled())
 
+    def test_dark_mode_restyles_in_place(self):
+        # The farm UI's dark theme reaches the embedded capture session.
+        from tree_ert.qt import theme as qt_theme
+
+        window = MainWindow(log_dir=self.log_dir, demo=True, compact=True)
+        self.addCleanup(window.close)
+        window.set_dark_mode(True)
+        self.assertIn(qt_theme.DARK["BG"], window.styleSheet())
+        self.assertNotIn(qt_theme.LIGHT["BG"], window.styleSheet())
+        window.set_dark_mode(False)
+        self.assertIn(qt_theme.LIGHT["BG"], window.styleSheet())
+
     def test_left_pane_is_never_narrower_than_its_content_can_shrink_to(self):
         # Horizontal scrolling is off, so a pane below the content's MINIMUM
         # clips the fields at the divider instead of scrolling to them. Above

@@ -10,8 +10,12 @@ from PyQt6.QtCore import QDateTime, Qt
 
 
 class Measurement:
-    def __init__(self, imp_ratio, classification, timestamp, data_path="", image_path="", synced=False):
+    def __init__(self, imp_ratio, classification, timestamp, data_path="", image_path="",
+                 synced=False, pattern=""):
         self.imp_ratio = imp_ratio
+        # Drive pattern the ratio was measured with; ratios compare only within
+        # one pattern (ADR-0075). "" for measurements from before it was kept.
+        self.pattern = pattern
         self.classification = classification
         self.timestamp = timestamp
         self.data_path = data_path
@@ -27,6 +31,7 @@ class Measurement:
             "data_path": self.data_path,
             "image_path": self.image_path,
             "synced": self.synced,
+            "pattern": self.pattern,
         }
 
     @classmethod
@@ -42,6 +47,7 @@ class Measurement:
             data.get("data_path", ""),
             data.get("image_path", ""),
             data.get("synced", False),
+            data.get("pattern", ""),
         )
 
 

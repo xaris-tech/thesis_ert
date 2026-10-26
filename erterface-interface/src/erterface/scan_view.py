@@ -150,7 +150,8 @@ class ScanView(QWidget):
         timestamp = m.timestamp.toString("MM-dd HH:mm" if wide else "yyyy-MM-dd HH:mm:ss")
         rail.addWidget(self._readout("Timestamp", timestamp))
         rail.addWidget(self._readout(
-            "Impedance Ratio", "—" if m.imp_ratio is None else f"{m.imp_ratio:.4f}"
+            "Impedance ratio" + (f" ({m.pattern})" if m.pattern else ""),
+            "—" if m.imp_ratio is None else f"{m.imp_ratio:.2f}",
         ))
         if not wide:  # the pill already says it; the strip has no room to repeat it
             rail.addWidget(self._readout("Classification", m.classification))

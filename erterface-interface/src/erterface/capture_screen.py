@@ -73,6 +73,20 @@ def specimen_id_for(tree):
     return f"coconut-tree-{int(digits.group())}" if digits else ""
 
 
+def run_impedance_ratio(run_dir):
+    """(p90/p10 impedance ratio, drive pattern) of a recorded run (ADR-0075),
+    or (None, pattern) if it cannot be computed. Never raises: a ratio must not
+    stop a scan being saved."""
+    from tree_ert import capture_view, survey  # importable once the session is
+
+    try:
+        frames = survey.load_frames(Path(run_dir))
+        pattern = frames[0].pattern.lower() if frames else ""
+        return capture_view.impedance_ratio(frames), pattern
+    except Exception:  # noqa: BLE001
+        return None, ""
+
+
 def run_image(run_dir):
     for name in RUN_IMAGES:
         path = Path(run_dir) / name
@@ -92,9 +106,6 @@ class CaptureScreen(QWidget):
         self.is_dark_mode = is_dark_mode
         self._run_dir = None
 
-        c = theme.palette(is_dark_mode)
-        text, panel_bg, panel_border, neutral = c["text"], c["surface"], c["border"], c["neutral"]
-
         root = QVBoxLayout(self)
         root.setContentsMargins(0, 0, 0, 0)
         root.setSpacing(0)
@@ -102,39 +113,28 @@ class CaptureScreen(QWidget):
         top = QFrame()
         top.setObjectName("captureTop")
         top.setFixedHeight(theme.TOUCH_MIN + 10)
-        top.setStyleSheet(
-            f"QFrame#captureTop {{ background-color: {panel_bg}; "
-            f"border-bottom: 1px solid {panel_border}; }}"
-            f"QLabel {{ color: {text}; background: transparent; border: none; }}"
-        )
+        self._top = top
         bar = QHBoxLayout(top)
         bar.setContentsMargins(8, 4, 8, 4)
         bar.setSpacing(8)
 
         btn_back = QPushButton("← Back")
+        btn_back.setObjectName("headerBtn")
         btn_back.setFixedHeight(theme.TOUCH_MIN)
-        btn_back.setStyleSheet(
-            f"QPushButton {{ font-size: 15px; font-weight: 700; padding: 0 14px; "
-            f"background-color: {neutral}; color: {text}; "
-            f"border: 1px solid {panel_border}; border-radius: 8px; }}"
-        )
         btn_back.clicked.connect(self._on_back)
         bar.addWidget(btn_back)
 
         title = QLabel(f"Scan · {tree.name}")
-        title.setStyleSheet("font-size: 17px; font-weight: 700;")
+        self._title = title
+        title.setObjectName("headerTitle")
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
         bar.addWidget(title, stretch=1)
 
         # Settings column toggle. The column hides itself when a capture
         # starts so the frames table and images get the full width.
         self.btn_settings = QPushButton("Hide settings")
+        self.btn_settings.setObjectName("headerBtn")
         self.btn_settings.setFixedHeight(theme.TOUCH_MIN)
-        self.btn_settings.setStyleSheet(
-            f"QPushButton {{ font-size: 15px; font-weight: 700; padding: 0 14px; "
-            f"background-color: {neutral}; color: {text}; "
-            f"border: 1px solid {panel_border}; border-radius: 8px; }}"
-        )
         self.btn_settings.clicked.connect(lambda: self._show_controls(not self._controls_shown))
         bar.addWidget(self.btn_settings)
 
@@ -186,6 +186,28 @@ class CaptureScreen(QWidget):
             taps = KeyboardOnTap(parent=self.session)
             taps.watch(self.session)
         taps.is_dark_mode = is_dark_mode
+        self.set_dark_mode(is_dark_mode)
+
+    def set_dark_mode(self, dark):
+        """Theme the header and the embedded session together. In place: a
+        rebuild would hand the session back and stop a capture."""
+        self.is_dark_mode = dark
+        c = theme.palette(dark)
+        self._top.setStyleSheet(
+            f"QFrame#captureTop {{ background-color: {c['surface']}; "
+            f"border-bottom: 1px solid {c['border']}; }}"
+            f"QLabel#headerTitle {{ color: {c['text']}; font-size: 17px; font-weight: 700; "
+            f"background: transparent; border: none; }}"
+            f"QPushButton#headerBtn {{ font-size: 15px; font-weight: 700; padding: 0 14px; "
+            f"background-color: {c['neutral']}; color: {c['neutral_text']}; "
+            f"border: 1px solid {c['border']}; border-radius: 8px; }}"
+            f"QPushButton#headerBtn:pressed {{ background-color: {c['pressed']}; }}"
+        )
+        self.setStyleSheet(f"CaptureScreen {{ background-color: {c['bg']}; }}")
+        self.session.set_dark_mode(dark)
+        keyboard_taps = self.session.findChild(KeyboardOnTap)
+        if keyboard_taps is not None:
+            keyboard_taps.is_dark_mode = dark
 
     def _on_running_changed(self, running):
         if running:
@@ -198,17 +220,23 @@ class CaptureScreen(QWidget):
 
     def _on_run_finished(self, run_path):
         self._run_dir = run_path
+        self._ratio, self._pattern = run_impedance_ratio(run_path)
         self.btn_save.setEnabled(True)
+        if self._ratio is not None:
+            self._title.setText(
+                f"Scan · {self.tree.name} · ratio {self._ratio:.2f} ({self._pattern})"
+            )
 
     def _on_save(self):
         if self._run_dir is None:
             return
         m = Measurement(
-            None,
+            self._ratio,
             CLASSIFICATION_UNCLASSIFIED,
             QDateTime.currentDateTime(),
             data_path=self._run_dir,
             image_path=run_image(self._run_dir),
+            pattern=self._pattern,
         )
         self.measurement_created.emit(m)
         self._run_dir = None
