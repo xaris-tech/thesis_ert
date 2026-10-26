@@ -5,10 +5,12 @@ event chain. Size scales to the primary screen so it stays usable on
 any monitor. Optional preset buttons appear above the keys.
 """
 
-from PyQt6.QtCore import Qt, pyqtSignal
+from PyQt6.QtCore import QEvent, QObject, QTimer, Qt, pyqtSignal
 from PyQt6.QtGui import QFont
 from PyQt6.QtWidgets import (
+    QAbstractSpinBox,
     QDialog,
+    QScrollArea,
     QGridLayout,
     QHBoxLayout,
     QLabel,
@@ -130,7 +132,7 @@ class VirtualKeyboard(QWidget):
             ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"],
             ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
             ["a", "s", "d", "f", "g", "h", "j", "k", "l", "-"],
-            ["Shift", "z", "x", "c", "v", "b", "n", "m", "Bksp"],
+            ["Shift", "z", "x", "c", "v", "b", "n", "m", ".", "Bksp"],
         ]
 
         for row_idx, row in enumerate(keys):
@@ -140,13 +142,8 @@ class VirtualKeyboard(QWidget):
                 btn.setObjectName("keyBtn")
                 btn.setCursor(Qt.CursorShape.PointingHandCursor)
                 btn.clicked.connect(lambda checked, k=key: self.key_pressed(k))
-                if key == "Bksp":  # 9 keys + a double-width Bksp = 10 columns
-                    span = 2
-                    grid.addWidget(btn, row_idx, col_offset, 1, span)
-                    col_offset += span
-                else:
-                    grid.addWidget(btn, row_idx, col_offset, 1, 1)
-                    col_offset += 1
+                grid.addWidget(btn, row_idx, col_offset, 1, 1)  # ten keys per row
+                col_offset += 1
 
         action_row = QHBoxLayout()
         action_row.setSpacing(4)
@@ -177,6 +174,9 @@ class VirtualKeyboard(QWidget):
     def _write(self):
         if self.target_edit is not None:
             self.target_edit.setText(self.text_value)
+            # setText does not count as typing; hosts that track typing (the
+            # capture session's run label) listen for textEdited.
+            self.target_edit.textEdited.emit(self.text_value)
 
     def key_pressed(self, key):
         if key == "Bksp":
@@ -195,12 +195,24 @@ class VirtualKeyboard(QWidget):
         self._write()
 
     def _on_done(self):
+        spin = _spin_box_of(self.target_edit)
+        if spin is not None:
+            # The box shows a unit suffix (" g/L") the typed text lacks, so its
+            # own parser rejects it; set the number directly. Not a number:
+            # keep the old value and redraw it.
+            try:
+                spin.setValue(float(self.text_value))
+            except ValueError:
+                spin.setValue(spin.value())
         self.text_committed.emit(self.text_value)
         self.hide()
 
     def _on_cancel(self):
         if self.target_edit is not None:
             self.target_edit.setText(self._original)
+            spin = _spin_box_of(self.target_edit)
+            if spin is not None:
+                spin.setValue(spin.value())  # redraw the untouched value
         self.text_cancelled.emit()
         self.hide()
 
@@ -216,24 +228,74 @@ class TouchLineEdit(QLineEdit):
 
     def mousePressEvent(self, event):
         super().mousePressEvent(event)
-        owner = _find_host(self)
-        if owner is None:
-            return
+        open_keyboard(self, self.is_dark_mode, self._presets)
 
-        host = owner.keyboard_holder
-        while host.layout().count():
-            item = host.layout().takeAt(0)
-            if item.widget():
-                item.widget().deleteLater()
 
-        vk = VirtualKeyboard(
-            self.text(), self.is_dark_mode, self._presets, parent=host,
-        )
-        vk.target_edit = self
-        vk.text_committed.connect(lambda _text: host.setVisible(False))
-        vk.text_cancelled.connect(lambda: host.setVisible(False))
-        host.layout().addWidget(vk)
-        host.setVisible(True)
-        if isinstance(owner, QDialog):
-            owner.adjustSize()
+class KeyboardOnTap(QObject):
+    """Event filter that opens the on-screen keyboard when a plain QLineEdit
+    (or a spin box's line edit) it watches is tapped, for widgets this app
+    does not own, such as the embedded capture session's forms."""
 
+    def __init__(self, is_dark_mode=False, parent=None):
+        super().__init__(parent)
+        self.is_dark_mode = is_dark_mode
+
+    def watch(self, root):
+        for edit in root.findChildren(QLineEdit):
+            if not isinstance(edit, TouchLineEdit):
+                edit.installEventFilter(self)
+
+    def eventFilter(self, obj, event):
+        if (
+            event.type() == QEvent.Type.MouseButtonRelease
+            and isinstance(obj, QLineEdit)
+            and obj.isEnabled()
+            and not obj.isReadOnly()
+        ):
+            open_keyboard(obj, self.is_dark_mode)
+        return False
+
+
+def _spin_box_of(edit):
+    parent = edit.parent() if edit is not None else None
+    return parent if isinstance(parent, QAbstractSpinBox) else None
+
+
+def open_keyboard(edit, is_dark_mode=False, presets=()):
+    """Dock a VirtualKeyboard for ``edit`` into its nearest keyboard_holder."""
+    owner = _find_host(edit)
+    if owner is None:
+        return
+
+    host = owner.keyboard_holder
+    while host.layout().count():
+        item = host.layout().takeAt(0)
+        if item.widget():
+            item.widget().deleteLater()
+
+    spin = _spin_box_of(edit)
+    if spin is None:
+        start = edit.text()
+    elif spin.specialValueText() and spin.text() == spin.specialValueText():
+        start = ""  # "not recorded": start from an empty number
+    else:
+        start = spin.cleanText()  # the number without its unit suffix
+    vk = VirtualKeyboard(start, is_dark_mode, presets, parent=host)
+    vk._original = edit.text()
+    vk.target_edit = edit
+    vk.text_committed.connect(lambda _text: host.setVisible(False))
+    vk.text_cancelled.connect(lambda: host.setVisible(False))
+    host.layout().addWidget(vk)
+    host.setVisible(True)
+    if isinstance(owner, QDialog):
+        owner.adjustSize()
+    # The keyboard takes the bottom of the screen; keep the field in view.
+    QTimer.singleShot(0, lambda: _reveal(edit))
+
+
+def _reveal(edit):
+    parent = edit.parent()
+    while parent is not None and not isinstance(parent, QScrollArea):
+        parent = parent.parent()
+    if parent is not None:
+        parent.ensureWidgetVisible(edit, 0, 40)

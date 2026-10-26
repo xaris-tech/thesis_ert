@@ -28,6 +28,7 @@ from PyQt6.QtWidgets import (
 
 from . import theme
 from .models import Measurement
+from .widgets.keyboard import KeyboardOnTap
 from .paths import CLASSIFICATION_UNCLASSIFIED, THESIS_ROOT
 
 SCANS_DIR = THESIS_ROOT / "scans"
@@ -171,6 +172,20 @@ class CaptureScreen(QWidget):
         self.session.setProperty("farm_prefill", specimen_id_for(tree))
         root.addWidget(self.session, stretch=1)
         self.session.show()
+
+        # On-screen keyboard for the session's own text and number fields
+        # (specimen, target, label, saline...): they are plain QLineEdits, so
+        # on a touchscreen with no keyboard they could not be typed into.
+        self.keyboard_holder = QWidget()
+        self.keyboard_holder.setVisible(False)
+        kb_layout = QVBoxLayout(self.keyboard_holder)
+        kb_layout.setContentsMargins(6, 2, 6, 4)
+        root.addWidget(self.keyboard_holder)
+        taps = self.session.findChild(KeyboardOnTap)
+        if taps is None:
+            taps = KeyboardOnTap(parent=self.session)
+            taps.watch(self.session)
+        taps.is_dark_mode = is_dark_mode
 
     def _on_running_changed(self, running):
         if running:
