@@ -15,8 +15,9 @@ Every run folder is considered, not only index.csv rows: some runs never got
 an index row, and runs stopped early still hold real frames. A run is imported
 if it has at least one complete frame. Each becomes an UNCLASSIFIED
 measurement with its impedance ratio and pattern (ADR-0075), its run folder,
-and a display image holding only the tomogram (ADR-0074) - rendered here into
-data/views/ from the run's saved .npz for runs older than the display copy.
+and a display image holding only the tomogram (ADR-0074) - for runs older than
+the display copy, the left panel cut out of the run's saved figure into
+data/views/ (never redrawn from the .npz: that has no mesh, see run_view).
 Runs that are neither a saline position nor a disc are left out and counted.
 """
 
@@ -96,63 +97,132 @@ def read_conditions(run_dir):
 # -- display image: the tomogram alone ---------------------------------------
 
 def run_view(run_dir):
-    """Path of a tomogram-only image for this run, rendering one if needed.
+    """Path of a tomogram-only image for this run, making one if needed.
 
-    The run's own display copy (ADR-0074) when it has one; otherwise rendered
-    from its .npz into data/views/ (derived, git-ignored), so the recorded run
-    folder is never written to. Difference image first, else absolute.
+    The run's own display copy (ADR-0074) when it has one. Otherwise the left
+    panel is cut out of the run's saved figure into data/views/ (derived,
+    git-ignored; the run folder is never written to). It is cut, not redrawn:
+    the .npz holds one value per mesh element but not the mesh, and a mesh
+    rebuilt today orders its elements differently, which scrambled the image.
+    Difference image first, else absolute.
     """
     for name in ("reconstruction-image.png", "absolute-image.png"):
         if (run_dir / name).is_file():
             return str(run_dir / name)
-    for kind, render in (("reconstruction", _render_difference), ("absolute", _render_absolute)):
-        npz = run_dir / f"{kind}.npz"
-        if not npz.is_file():
+    label = run_dir.name.split("-", 2)[-1]
+    for kind, title in (("reconstruction", f"{label} vs baseline"), ("absolute", f"{label} (absolute)")):
+        figure = run_dir / f"{kind}.png"
+        if not figure.is_file():
             continue
-        target = VIEWS / f"{run_dir.name}-{kind}.png"
         view = VIEWS / f"{run_dir.name}-{kind}-image.png"
         if not view.is_file():
             try:
-                render(npz, target, run_dir.name)
-            except Exception as exc:  # noqa: BLE001 - one bad file must not stop the import
-                print(f"  could not render {npz}: {exc}")
-                continue
+                left_panel(figure, view, title)
+            except Exception as exc:  # noqa: BLE001 - one odd figure must not stop the import
+                # An early figure style with no colour to find: show it whole.
+                print(f"  could not cut {figure} ({exc}); showing the full figure")
+                return str(figure)
         if view.is_file():
             return str(view)
     return ""
 
 
-def _mesh(pattern):
-    import phase3a_reconstruct as base
-    import phase3a_unified_reconstruct as unified
+def left_panel(figure, out, title):
+    """Cut the left tomogram out of a two-panel run figure, keep its pixels
+    exactly, blank everything outside the disc and redraw E1..E12 and a title.
 
-    protocol, _ = unified.protocol_and_command(str(pattern))
-    eit_mesh, _ = base.create_solver(protocol)
-    return eit_mesh
+    The labels are redrawn rather than cut because the panel title touches the
+    E4 label. Every recorded run uses the default electrode mapping (offset 0,
+    not reversed), so the labels sit where the mesh's el_pos puts them: E1 at
+    180 degrees, clockwise on screen, radius 1.12 (electrode_label_positions).
+    """
+    import math
 
-
-def _render_difference(npz, target, run_id):
     import numpy as np
-    from tree_ert.reconstruction import save_view
+    from PyQt6.QtCore import QRectF
+    from PyQt6.QtGui import QColor, QFont, QFontMetrics, QGuiApplication, QImage, QPainter
 
-    data = np.load(npz)
-    values = data["values"]
-    # Same colour limit as the full figure: image and control share one scale.
-    limit = float(np.max(np.abs(values)))
-    if "control_values" in data.files:
-        limit = max(limit, float(np.max(np.abs(data["control_values"]))))
-    label = run_id.split("-", 2)[-1]
-    save_view(_mesh(data["pattern"]), values, f"{label} vs baseline", limit or 1.0, target)
+    app = QGuiApplication.instance() or QGuiApplication(sys.argv[:1])  # noqa: F841
+    img = QImage(str(figure)).convertToFormat(QImage.Format.Format_RGB888)
+    w, h = img.width(), img.height()
+    a = np.frombuffer(img.constBits().asstring(img.sizeInBytes()), np.uint8)
+    a = a.reshape(h, img.bytesPerLine())[:, : w * 3].reshape(h, w, 3).astype(int)
 
+    colour = (a.max(2) - a.min(2)) > 40  # coolwarm pixels, not text or grey
+    # The left disc is the first band of columns holding colour; in some
+    # figures the right panel starts before the halfway line.
+    cols = np.flatnonzero(colour.sum(0) > 2)
+    if cols.size == 0:
+        raise ValueError("no tomogram found")
+    breaks = np.flatnonzero(np.diff(cols) > 12)
+    last_col = cols[breaks[0]] if breaks.size else cols[-1]
+    colour[:, last_col + 1:] = False
+    colour[:, : cols[0]] = False
+    ys, xs = np.nonzero(colour)
+    if ys.size < 500:
+        raise ValueError("no tomogram found in the left half")
+    xlo, xhi = np.percentile(xs, [0.2, 99.8])
+    ylo, yhi = np.percentile(ys, [0.2, 99.8])
+    cx, cy = (xlo + xhi) / 2, (ylo + yhi) / 2
+    r0 = max(xhi - xlo, yhi - ylo) / 2
 
-def _render_absolute(npz, target, run_id):
-    from tree_ert.absolute import display_values
-    from tree_ert.reconstruction import save_view
-    import numpy as np
+    # Disc edge along 180 rays: outward to the first white run. Rays that run
+    # into a label can only overestimate, so take a low percentile.
+    disc = (a.min(2) < 246) & (a.max(2) > 140)  # the tomogram incl. its grey
+    edges = []
+    for t in np.linspace(0, 2 * math.pi, 180, endpoint=False):
+        last, white = None, 0
+        for r in np.arange(0.8 * r0, 1.15 * r0, 0.5):
+            x, y = int(round(cx + r * math.cos(t))), int(round(cy + r * math.sin(t)))
+            if not (0 <= x < w and 0 <= y < h):
+                break
+            if disc[y, x]:
+                last, white = r, 0
+            else:
+                white += 1
+                if white >= 3:
+                    break
+        if last:
+            edges.append(last)
+    radius = float(np.percentile(edges, 30))
 
-    data = np.load(npz)
-    image, _, scale, _, _ = display_values(data["sigma"], float(data["sigma0"]), data["noise"])
-    save_view(_mesh(data["pattern"]), image, f"{run_id} (absolute)", scale, target)
+    pad, band = int(radius * 0.30), int(radius * 0.30)
+    size = int(2 * radius) + 2 * pad
+    out_a = np.full((size + band, size, 3), 255, np.uint8)
+    yy, xx = np.mgrid[0:h, 0:w]
+    keep_y, keep_x = np.nonzero((xx - cx) ** 2 + (yy - cy) ** 2 <= (radius - 1.5) ** 2)
+    x0, y0 = int(cx - radius) - pad, int(cy - radius) - pad
+    inside = (keep_y - y0 + band < size + band) & (keep_x - x0 < size) & (keep_x - x0 >= 0)
+    out_a[keep_y[inside] - y0 + band, keep_x[inside] - x0] = a[keep_y[inside], keep_x[inside]]
+    canvas = QImage(out_a.tobytes(), size, size + band, size * 3, QImage.Format.Format_RGB888).copy()
+
+    painter = QPainter(canvas)
+    painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+    font = QFont()
+    font.setPixelSize(int(radius * 0.11))
+    font.setBold(True)
+    painter.setFont(font)
+    painter.setPen(QColor("black"))
+    ccx, ccy = cx - x0, cy - y0 + band
+    for i in range(12):
+        t = math.radians(180 - 30 * i)
+        lx, ly = ccx + 1.14 * radius * math.cos(t), ccy - 1.14 * radius * math.sin(t)
+        painter.drawText(
+            QRectF(lx - radius * 0.15, ly - radius * 0.08, radius * 0.3, radius * 0.16),
+            Qt.AlignmentFlag.AlignCenter, f"E{i + 1}",
+        )
+    font = QFont()
+    pixel = int(band * 0.42)
+    font.setPixelSize(pixel)
+    while pixel > 8 and QFontMetrics(font).horizontalAdvance(title) > size * 0.94:
+        pixel -= 1  # long run names shrink to fit rather than being cut off
+        font.setPixelSize(pixel)
+    painter.setFont(font)
+    painter.drawText(QRectF(0, 0, size, band), Qt.AlignmentFlag.AlignCenter, title)
+    painter.end()
+    Path(out).parent.mkdir(parents=True, exist_ok=True)
+    if not canvas.save(str(out)):
+        raise OSError(f"could not write {out}")
 
 
 # -- import --------------------------------------------------------------------
