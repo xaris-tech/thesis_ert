@@ -112,6 +112,18 @@ class CaptureScreen(QWidget):
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
         bar.addWidget(title, stretch=1)
 
+        # Settings column toggle. The column hides itself when a capture
+        # starts so the frames table and images get the full width.
+        self.btn_settings = QPushButton("Hide settings")
+        self.btn_settings.setFixedHeight(theme.TOUCH_MIN - 4)
+        self.btn_settings.setStyleSheet(
+            f"QPushButton {{ font-size: 15px; font-weight: 700; padding: 0 14px; "
+            f"background-color: {neutral}; color: {text}; "
+            f"border: 1px solid {panel_border}; border-radius: 8px; }}"
+        )
+        self.btn_settings.clicked.connect(lambda: self._show_controls(not self._controls_shown))
+        bar.addWidget(self.btn_settings)
+
         self.btn_save = QPushButton("Save to tree")
         self.btn_save.setFixedHeight(theme.TOUCH_MIN - 4)
         self.btn_save.setEnabled(False)
@@ -124,7 +136,7 @@ class CaptureScreen(QWidget):
         self.btn_save.clicked.connect(self._on_save)
         bar.addWidget(self.btn_save)
 
-        for btn in self.findChildren(QPushButton):  # touch UI: no focus rectangles
+        for btn in top.findChildren(QPushButton):  # touch UI: no focus rectangles
             btn.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         root.addWidget(top)
 
@@ -134,10 +146,19 @@ class CaptureScreen(QWidget):
         )
         self.session.setWindowFlags(Qt.WindowType.Widget)
         self.session.run_finished.connect(self._on_run_finished)
+        self.session.running_changed.connect(
+            lambda running: running and self._show_controls(False)
+        )
+        self._controls_shown = True
         panel = self.session.conditions_panel
         if not panel.specimen_id.text().strip():
             panel.specimen_id.setText(specimen_id_for(tree))
         root.addWidget(self.session, stretch=1)
+
+    def _show_controls(self, shown):
+        self._controls_shown = shown
+        self.session.set_controls_visible(shown)
+        self.btn_settings.setText("Hide settings" if shown else "Settings")
 
     def _on_run_finished(self, run_path):
         self._run_dir = run_path

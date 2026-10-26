@@ -28,6 +28,34 @@ from . import theme
 from .paths import resolve_data_file
 
 
+class _FitImage(QLabel):
+    """Shows a pixmap scaled to fit, rescaled on its own resize: scaling from
+    the parent's resizeEvent used the label's size before the layout had
+    updated it, which cropped the image."""
+
+    def __init__(self):
+        super().__init__()
+        self._source = None
+        self.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Ignored)
+
+    def set_source(self, pixmap):
+        self._source = pixmap
+        self._fit()
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self._fit()
+
+    def _fit(self):
+        if self._source is not None and self.width() > 0 and self.height() > 0:
+            self.setPixmap(self._source.scaled(
+                self.size(),
+                Qt.AspectRatioMode.KeepAspectRatio,
+                Qt.TransformationMode.SmoothTransformation,
+            ))
+
+
 class ScanView(QWidget):
     back_requested = pyqtSignal()
     # Kept so CardApp can wire every pushed screen the same way.
@@ -103,33 +131,42 @@ class ScanView(QWidget):
         plot_layout.setContentsMargins(4, 4, 4, 4)
         plot_layout.addWidget(self._build_image())
 
-        main = QHBoxLayout()
-        main.setSpacing(8)
-        main.addWidget(plot_frame, stretch=1)
-
-        rail = QVBoxLayout()
+        # A capture run's image is a wide two-panel figure (image beside its
+        # noise control, ADR-0027): give it the full width and put the
+        # readouts in a strip above. A square .npy tomogram keeps the side rail.
+        wide = self._pixmap is not None
+        main = QVBoxLayout() if wide else QHBoxLayout()
+        main.setSpacing(6 if wide else 8)
+        rail = QHBoxLayout() if wide else QVBoxLayout()
         rail.setContentsMargins(0, 0, 0, 0)
         rail.setSpacing(6)
         pill = QLabel(m.classification)
         pill.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        pill.setFixedHeight(34)
+        pill.setMinimumHeight(34)
         pill.setStyleSheet(theme.status_pill_style(m.classification, self.is_dark_mode))
         rail.addWidget(pill)
-        rail.addWidget(self._readout("Timestamp", m.timestamp.toString("yyyy-MM-dd HH:mm:ss")))
+        timestamp = m.timestamp.toString("MM-dd HH:mm" if wide else "yyyy-MM-dd HH:mm:ss")
+        rail.addWidget(self._readout("Timestamp", timestamp))
         rail.addWidget(self._readout(
             "Impedance Ratio", "—" if m.imp_ratio is None else f"{m.imp_ratio:.4f}"
         ))
-        rail.addWidget(self._readout("Classification", m.classification))
+        if not wide:  # the pill already says it; the strip has no room to repeat it
+            rail.addWidget(self._readout("Classification", m.classification))
         rail.addWidget(self._readout(
             "Sync Status",
-            "Synced to Drive" if m.synced else "Not synced yet",
+            ("Synced" if wide else "Synced to Drive") if m.synced else "Not synced",
             theme.STATUS_HEALTHY if m.synced else theme.STATUS_AT_RISK,
         ))
-        rail.addStretch()
         self.rail_widget = QWidget()
-        self.rail_widget.setFixedWidth(220)
         self.rail_widget.setLayout(rail)
-        main.addWidget(self.rail_widget)
+        if wide:
+            main.addWidget(self.rail_widget)
+            main.addWidget(plot_frame, stretch=1)
+        else:
+            rail.addStretch()
+            self.rail_widget.setFixedWidth(220)
+            main.addWidget(plot_frame, stretch=1)
+            main.addWidget(self.rail_widget)
         root.addLayout(main, stretch=1)
 
         self.btn_back = QPushButton("Back")
@@ -163,28 +200,17 @@ class ScanView(QWidget):
                 plot.plot_data(matrix)
                 return plot
 
-        label = QLabel()
-        label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        label.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Ignored)
+        label = _FitImage()
         image_path = resolve_data_file(m.image_path)
         pixmap = QPixmap(image_path) if image_path else None
         if pixmap is not None and not pixmap.isNull():
             self._pixmap = pixmap
-            self._image_label = label
+            label.set_source(pixmap)
         else:
             self.btn_fullscreen.setEnabled(False)
             label.setText("No tomogram saved for this measurement")
             label.setStyleSheet("color: #888; font-size: 14px;")
         return label
-
-    def resizeEvent(self, event):
-        super().resizeEvent(event)
-        if self._pixmap is not None:
-            self._image_label.setPixmap(self._pixmap.scaled(
-                self._image_label.size(),
-                Qt.AspectRatioMode.KeepAspectRatio,
-                Qt.TransformationMode.SmoothTransformation,
-            ))
 
     def _readout(self, label_text, value, value_color=None):
         sub, text, panel_bg, panel_border = self._colors

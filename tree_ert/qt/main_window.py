@@ -16,7 +16,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from PyQt6.QtCore import Qt, QThread, pyqtSignal
+from PyQt6.QtCore import Qt, QThread, QTimer, pyqtSignal
 from PyQt6.QtWidgets import (
     QCheckBox,
     QComboBox,
@@ -465,6 +465,8 @@ def parse_electrode_list(text: str) -> tuple[int, ...]:
 
 class MainWindow(QMainWindow):
     run_finished = pyqtSignal(str)
+    running_changed = pyqtSignal(bool)
+    """True when a capture starts, False when its thread ends."""
     """Path of a run that completed and was recorded. Lets a host that embeds
     this window (the erterface farm UI) pick the run up without reaching into
     the worker."""
@@ -671,7 +673,16 @@ class MainWindow(QMainWindow):
         # 520px the panel starts crowding the measurement table for no gain.
         self._left_width = max(floor, min(preferred, 520))
         scroll.setMinimumWidth(floor)
+        self._controls = scroll
         return scroll
+
+    def set_controls_visible(self, visible: bool) -> None:
+        """Show or hide the settings/conditions column. A host on a small
+        screen hides it during and after a run so the images get the width."""
+        self._controls.setVisible(visible)
+        # The image labels change width without this window resizing; rescale
+        # once the layout has settled.
+        QTimer.singleShot(0, self._render_image)
 
     def _build_right_column(self) -> QWidget:
         self.frame_status = QLabel("No frames captured yet")
@@ -774,8 +785,14 @@ class MainWindow(QMainWindow):
             for label in (self.image_label, self.absolute_label):
                 label.setMinimumSize(0, 0)
                 label.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Ignored)
-            layout.addWidget(self.run_status)
-            layout.addWidget(self.frame_status)
+            # One status row, and the image captions hidden until there is
+            # something to say: every line here comes out of the tomogram's height.
+            status_row = QHBoxLayout()
+            status_row.addWidget(self.run_status)
+            status_row.addWidget(self.frame_status, stretch=1)
+            layout.addLayout(status_row)
+            self.image_status.setVisible(False)
+            self.absolute_status.setVisible(False)
             layout.addWidget(self.tabs, stretch=1)
             self.tabs.addTab(self.session_status, "Session")
             self.tabs.addTab(self.log, "Log")
@@ -917,6 +934,7 @@ class MainWindow(QMainWindow):
         self.label.setEnabled(not running)
         if running:
             self._set_run_status("Capturing", "busy")
+        self.running_changed.emit(running)
 
     def _set_run_status(self, text: str, state: str = "") -> None:
         self.run_status.setText(text)
@@ -977,6 +995,7 @@ class MainWindow(QMainWindow):
                 message += f"  |  {ratio:.1f}x the noise image"
                 state = "ok"
         self.image_status.setText(message)
+        self.image_status.setVisible(True)
         theme.apply_state(self.image_status, state)
         self._log(f"Reconstruction: {message}")
         self.tabs.setCurrentIndex(1)
@@ -1008,6 +1027,7 @@ class MainWindow(QMainWindow):
             message = "REFUSED: " + "; ".join(report.reasons) + "  |  " + message
             state = "bad"
         self.absolute_status.setText(message)
+        self.absolute_status.setVisible(True)
         theme.apply_state(self.absolute_status, state)
         self._log(f"Absolute: {message}")
         if self._baseline is None or report.passed:
@@ -1015,6 +1035,7 @@ class MainWindow(QMainWindow):
 
     def _on_reconstruction_skipped(self, reason: str) -> None:
         self.image_status.setText(reason)
+        self.image_status.setVisible(True)
         theme.apply_state(
             self.image_status,
             "bad" if "reciprocity" in reason.lower()
@@ -1038,7 +1059,7 @@ class MainWindow(QMainWindow):
                 continue
             label.setPixmap(
                 pixmap.scaled(
-                    label.size(),
+                    label.contentsRect().size(),
                     Qt.AspectRatioMode.KeepAspectRatio,
                     Qt.TransformationMode.SmoothTransformation,
                 )
