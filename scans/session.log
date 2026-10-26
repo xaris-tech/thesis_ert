@@ -12021,3 +12021,52 @@
 
 ------------------------------------------------------------------------
 2026-10-26 15:01:20  Session ended
+
+------------------------------------------------------------------------
+2026-10-26 15:08:27  Session started (hardware)
+2026-10-26 15:08:27  Scans folder: /home/rantiche/thesis_ert/scans
+2026-10-26 15:08:27  660 scan(s) already recorded here.
+2026-10-26 15:08:27  Ready. Settings are saved on exit.
+2026-10-26 15:08:50  Naming warnings: medium must be one of: cut disc, standing tree, resistor belt, saline tank, dummy load (got 'unknown')
+2026-10-26 15:08:51  Connecting to /dev/ttyACM0...
+2026-10-26 15:08:52  Configuring instrument...
+
+------------------------------------------------------------------------
+2026-10-26 15:08:53  Run 20261026-150852-coconut-dsc-5
+2026-10-26 15:08:53  Conditions: medium=unknown saline=None g/L grounding=unknown fill=None mm temp=None C
+2026-10-26 15:08:53  Recording to /home/rantiche/thesis_ert/scans/runs/20261026-150852-coconut-dsc-5
+2026-10-26 15:09:32  [warmup 1/5] 192/192 OK | I med 539.1 uA (272.0-686.1) | R med 0.0187 kohm | dV med 2406 LSB
+2026-10-26 15:10:12  [warmup 2/5] 192/192 OK | I med 539.6 uA (275.4-682.9) | R med 0.0187 kohm | dV med 2464 LSB
+2026-10-26 15:10:52  [warmup 3/5] 192/192 OK | I med 539.6 uA (276.1-682.9) | R med 0.0188 kohm | dV med 2461 LSB
+2026-10-26 15:11:32  [warmup 4/5] 192/192 OK | I med 539.8 uA (276.0-681.9) | R med 0.0190 kohm | dV med 2458 LSB
+2026-10-26 15:12:11  [warmup 5/5] 192/192 OK | I med 540.0 uA (275.8-683.4) | R med 0.0190 kohm | dV med 2453 LSB
+2026-10-26 15:12:51  [frame 1] 192/192 OK | I med 540.0 uA (276.0-683.3) | R med 0.0191 kohm | dV med 2421 LSB
+2026-10-26 15:13:31  [frame 2] 192/192 OK | I med 539.6 uA (275.3-683.6) | R med 0.0192 kohm | dV med 2429 LSB
+2026-10-26 15:14:11  Corrupted frame discarded and re-requested (1/2): Malformed measurement record: M,P,FWD,I+,E6,I-,E12,V+,11,V,96.254,I,498.476,Q,OK
+2026-10-26 15:14:51  [frame 3] 192/192 OK | I med 539.9 uA (276.8-685.0) | R med 0.0194 kohm | dV med 2417 LSB
+2026-10-26 15:15:30  Corrupted frame discarded and re-requested (1/2): Malformed measurement record: 3,V,-3.102,I,621.170,Q,OK
+2026-10-26 15:16:10  [frame 4] 192/192 OK | I med 541.9 uA (276.7-686.3) | R med 0.0195 kohm | dV med 2411 LSB
+2026-10-26 15:16:50  Corrupted frame discarded and re-requested (1/2): Malformed measurement record: -,E4,V,-24.156,I,488.620,Q,OK
+2026-10-26 15:17:30  [frame 5] 192/192 OK | I med 541.6 uA (276.9-686.1) | R med 0.0196 kohm | dV med 2355 LSB
+2026-10-26 15:18:10  Corrupted frame discarded and re-requested (1/2): Malformed measurement record: M,P,FWD,I+,E3,V,-3.516,I,621.888,Q,OK
+2026-10-26 15:18:49  [frame 6] 192/192 OK | I med 542.3 uA (277.3-687.1) | R med 0.0193 kohm | dV med 2340 LSB
+2026-10-26 15:19:29  Corrupted frame discarded and re-requested (1/2): Malformed measurement record: -,E3,V,-3.223,I,622.686,Q,OK
+2026-10-26 15:20:09  [frame 7] 192/192 OK | I med 543.1 uA (277.5-687.6) | R med 0.0194 kohm | dV med 2346 LSB
+2026-10-26 15:20:49  Corrupted frame discarded and re-requested (1/2): Malformed measurement record: M,P,FWD,I+,E6,I-,E12,V+,E4,V-,E5,V,74.613,I,477.249,,E3,V,-3.168,I,623.324,Q,OK
+2026-10-26 15:21:29  [frame 8] 192/192 OK | I med 543.3 uA (276.5-686.6) | R med 0.0194 kohm | dV med 2345 LSB
+2026-10-26 15:22:09  Corrupted frame discarded and re-requested (1/2): Electrode out of range: E14
+2026-10-26 15:22:48  [frame 9] 192/192 OK | I med 542.5 uA (276.8-687.4) | R med 0.0198 kohm | dV med 2334 LSB
+2026-10-26 15:23:28  [frame 10] 192/192 OK | I med 542.9 uA (276.8-687.7) | R med 0.0198 kohm | dV med 2338 LSB
+2026-10-26 15:23:49  No reconstruction: This run is the session baseline; it has nothing to differ from.
+2026-10-26 15:23:51  Baseline control image saved to /home/rantiche/thesis_ert/scans/runs/20261026-150852-coconut-dsc-5/control.png
+2026-10-26 15:23:59  Absolute: REFUSED: model misfit 81.0% > 15%; significance 1.01 < 2.0
+2026-10-26 15:24:00  Absolute: REFUSED: model misfit 81.0% > 15%; significance 1.01 < 2.0  |  sigma0 13.6 mS  |  peak +1.35e+03 at 294 deg  |  trough -13.5 mS, lobe at 300 deg (touches E9: may be contact)  |  misfit 81.0%  |  significance 1.0x
+2026-10-26 15:24:00  This run is now the session baseline (20261026-150852-coconut-dsc-5).
+2026-10-26 15:24:00  Finished. Run saved to /home/rantiche/thesis_ert/scans/runs/20261026-150852-coconut-dsc-5
+2026-10-26 15:24:00    Frames captured: 10
+2026-10-26 15:24:00    Reciprocity: no reciprocal pairs captured
+2026-10-26 15:24:00    Noise floor: median pair sd 0.00030 kohm (1.64%)  max 0.02136 kohm over 96 pairs
+2026-10-26 15:24:00  Indexed in /home/rantiche/thesis_ert/scans/index.csv
+
+------------------------------------------------------------------------
+2026-10-26 15:25:18  Session ended
