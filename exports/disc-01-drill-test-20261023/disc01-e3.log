@@ -1,0 +1,15 @@
+8 runs
+[1/8] adjacent dac400  st10  n16  I med 154 uA | REFUSED: median reciprocity 26.2% > 15%; model misfit 53.3% > 15% | s0 1.56 peak 227 deg | 6.1 min | 20261024-115644-disc-01-matrix-e3hole-adjacent-dac400-st10-n16
+[2/8] adjacent dac400  st30  n16  I med 153 uA | REFUSED: median reciprocity 23.4% > 15%; model misfit 48.9% > 15% | s0 1.56 peak 346 deg | 7.3 min | 20261024-120314-disc-01-matrix-e3hole-adjacent-dac400-st30-n16
+[3/8] adjacent dac620  st10  n16  I med 224 uA | REFUSED: median reciprocity 19.5% > 15%; model misfit 30.2% > 15% | s0 1.56 peak 227 deg | 6.2 min | 20261024-121008-disc-01-matrix-e3hole-adjacent-dac620-st10-n16
+[4/8] adjacent dac620  st30  n16  I med 222 uA | REFUSED: median reciprocity 15.6% > 15%; model misfit 31.3% > 15% | s0 1.55 peak 227 deg | 7.7 min | 20261024-121641-disc-01-matrix-e3hole-adjacent-dac620-st30-n16
+[5/8] opposite dac400  st10  n16  I med 146 uA | REFUSED: reciprocity could not be measured (no reciprocal pairs); model misfit 21.5% > 15% | s0 2.15 peak 238 deg | 5.5 min | 20261024-122349-disc-01-matrix-e3hole-opposite-dac400-st10-n16
+[6/8] opposite dac400  st30  n16  I med 145 uA | REFUSED: reciprocity could not be measured (no reciprocal pairs); model misfit 22.0% > 15% | s0 2.14 peak 238 deg | 6.9 min | 20261024-122936-disc-01-matrix-e3hole-opposite-dac400-st30-n16
+[7/8] opposite dac620  st10  n16  I med 201 uA | REFUSED: reciprocity could not be measured (no reciprocal pairs) | s0 2.19 peak 227 deg | 5.7 min | 20261024-123609-disc-01-matrix-e3hole-opposite-dac620-st10-n16
+[8/8] opposite dac620  st30  n16  I med 200 uA | REFUSED: reciprocity could not be measured (no reciprocal pairs) | s0 2.17 peak 227 deg | 6.6 min | 20261024-124207-disc-01-matrix-e3hole-opposite-dac620-st30-n16
+[D1 adjacent] 20261024-125044-disc-01-d1-adjacent-10fr
+  absolute (all electrodes): misfit 33.1%, median reciprocity 16.1% > 15%; model misfit 33.1% > 15%, trough -1.52 mS, lobe at 271 deg (touches E10: may be contact)
+  difference vs 20261023-193702-disc-01-b3-adjacent: resistive trough 271 deg (target ~120), significance 14.58
+[D1 opposite] 20261024-130256-disc-01-d1-opposite-10fr
+  absolute (all electrodes): misfit 12.0%, pass, trough -2.13 mS, lobe at 271 deg (touches E10: may be contact)
+  difference vs 20261023-194906-disc-01-b3-opposite: resistive trough 271 deg (target ~120), significance 88.29

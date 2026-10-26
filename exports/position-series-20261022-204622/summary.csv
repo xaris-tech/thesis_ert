@@ -1,0 +1,4 @@
+position,repeat,run_id,headline,blind,unexcluded_gate,unexcluded_misfit_percent,sweep_best,sweep_best_misfit_percent,excluded,excluded_gate,excluded_misfit_percent,excluded_sigma0_ms,absolute_trough_deg,absolute_trough_error_deg,absolute_trough_electrodes,baseline_run_id,difference_trough_deg,difference_trough_error_deg,difference_significance,located
+e2,1,20261022-204822-saline-pos-e2,difference,yes,model misfit 41.7% > 15%,41.74,E2,12.10,E2,pass,12.10,3.43,183.09,33.09,E1,20261022-134226-saline-pos-empty-first,148.79,1.21,1.05,no (below noise)
+e2,2,20261022-205621-saline-pos-e2,difference,yes,model misfit 41.6% > 15%,41.57,E2,12.03,E2,pass,12.03,3.43,183.09,33.09,E1,20261022-134226-saline-pos-empty-first,148.79,1.21,1.05,no (below noise)
+e2,3,20261022-210421-saline-pos-e2,difference,yes,model misfit 41.6% > 15%,41.58,E2,12.00,E2,pass,12.00,3.42,183.09,33.09,E1,20261022-134226-saline-pos-empty-first,148.79,1.21,1.05,no (below noise)

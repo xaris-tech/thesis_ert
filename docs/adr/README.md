@@ -112,8 +112,11 @@ one costs a re-derivation.
 | [0065](0065-absolute-colour-matches-difference-images.md) | Absolute images use the difference-image colours: blue less, red more conductive | Accepted |
 | [0066](0066-accept-residual-e10-e12-board-leak.md) | Accept the residual ~10 µA E10–E12 board leak; open-circuit check every session; no specimens under ~300 µA | Accepted |
 | [0067](0067-proceed-to-disc-06-with-e1-e2-excluded.md) | Proceed to disc-06 drilled defect (E5–E7) with E1/E2 excluded; E1–E3 sector declared blind | Accepted |
-| [0068](0068-embed-capture-session-as-farm-scan-screen.md) | Farm UI scan screen embeds the capture session (compact mode, `run_finished`); saved runs are UNCLASSIFIED, no ratio | Accepted |
+| [0068](0068-disc-hole-detection-needs-difference-absolute-and-sham.md) | Disc hole detected only if difference, gated absolute and empty sham all agree | Accepted |
 | [0069](0069-raspberry-pi-host-mesh-cache-and-port-default.md) | FEM mesh built once per process; serial port default chosen by OS | Accepted |
+| [0070](0070-solve-unexcluded-first-then-justify-each-exclusion.md) | Solve with no electrodes excluded first; every exclusion justified by a leave-one-out sweep | Accepted |
+| [0071](0071-saline-position-series-absolute-where-visible-difference-where-blind.md) | Saline position series: absolute where visible, difference against empty tank where blind (E1–E3) | Accepted |
+| [0072](0072-embed-capture-session-as-farm-scan-screen.md) | Farm UI scan screen embeds the capture session (compact mode, `run_finished`); saved runs are UNCLASSIFIED, no ratio | Accepted |
 | [0073](0073-reciprocity-gate-only-where-the-pattern-measures-it.md) | Reciprocity gate only for patterns that measure reciprocal pairs (adjacent); opposite/skip image with a NOT MEASURABLE stamp; host waits for board and refuses wrong-pattern frames | Accepted |
 | [0056](0056-correct-run-conditions-in-extra-never-overwrite.md) | Correct recorded conditions with a dated key in `extra`; original fields stay as written | Accepted |
 | [0055](0055-measure-the-lobe-not-a-window.md) | Lobe connected-component centroid, no angular window; window choice was worth 12.3 deg | Accepted |
@@ -126,3 +129,5 @@ one costs a re-derivation.
 | [0048](0048-ssim-scoring-against-block-masks.md) | SSIM scored on the resistive lobe against block masks; 0.2 R blur; per-block ±45° wedge for angle error | Accepted |
 
 **Renumbering, 2026-10-07.** ADR-0044 to ADR-0048 were first written on branch `new` as 0041 to 0045. `main` had meanwhile accepted different ADRs under 0041 to 0043 (absolute reconstruction), so the `new` ADRs were renumbered when the branches were merged. Their content did not change. Commit messages from before the merge cite the old numbers; to translate, add 3 (old 0041 → 0044, ..., old 0045 → 0048). ADR-0049 to ADR-0055 were written on branch `ssim` as 0046 to 0052 and renumbered by the same +3 when `main` was merged into it; ssim commit messages before that merge cite the old numbers.
+
+**Renumbering, 2026-10-26.** ADR-0072 (farm UI embeds the capture session) was written on branch `rpi` as 0068 while branch `new` accepted a different ADR-0068 (disc hole detection). It was renumbered when `new` was merged into `rpi`; its content did not change. `rpi` commit messages before that merge cite it as ADR-0068.

@@ -1,0 +1,4 @@
+position,repeat,run_id,headline,blind,unexcluded_gate,unexcluded_misfit_percent,sweep_best,sweep_best_misfit_percent,excluded,excluded_gate,excluded_misfit_percent,excluded_sigma0_ms,absolute_trough_deg,absolute_trough_error_deg,absolute_trough_electrodes,baseline_run_id,difference_trough_deg,difference_trough_error_deg,difference_significance,located
+e1+e7,1,20261023-163554-saline-pos-e1-e7,absolute,no,median reciprocity 16.6% > 15%; model misfit 66.5% > 15%,66.49,E2,14.55,E2,pass,14.55,4.83,4.05,4.05,,20261023-161004-saline-pos-empty-last,0.48,0.48,62.12,yes
+e1+e7,2,20261023-164354-saline-pos-e1-e7,absolute,no,model misfit 66.3% > 15%,66.33,E2,14.61,E2,pass,14.61,4.83,4.16,4.16,,20261023-161004-saline-pos-empty-last,0.48,0.48,62.74,yes
+e1+e7,3,20261023-165154-saline-pos-e1-e7,absolute,no,model misfit 66.4% > 15%,66.38,E2,14.71,E2,pass,14.71,4.84,4.19,4.19,,20261023-161004-saline-pos-empty-last,0.48,0.48,62.62,yes

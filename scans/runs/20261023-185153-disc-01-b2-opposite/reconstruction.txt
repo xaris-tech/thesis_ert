@@ -1,0 +1,2 @@
+baseline: 20261023-182757-disc-01-b1-opposite
+target: before drilling (existing holes near E4-E7)

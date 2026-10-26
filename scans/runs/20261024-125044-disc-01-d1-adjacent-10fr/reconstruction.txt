@@ -1,0 +1,2 @@
+baseline: 20261023-193702-disc-01-b3-adjacent
+target: after drilling new hole at E3 (~120 deg), through
