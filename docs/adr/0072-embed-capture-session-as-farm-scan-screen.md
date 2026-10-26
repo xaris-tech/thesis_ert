@@ -1,4 +1,4 @@
-# ADR-0068: Embed the capture session as the farm UI's scan screen
+# ADR-0072: Embed the capture session as the farm UI's scan screen
 
 - **Status:** Accepted
 - **Date:** 2026-10-25
