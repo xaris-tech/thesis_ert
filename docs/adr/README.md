@@ -123,7 +123,8 @@ one costs a re-derivation.
 | [0076](0076-one-tomogram-style-rdbu-electrode-dots-no-markers.md) | One tomogram style for every saved figure: RdBu_r, electrode dots, no target markers | Accepted |
 | [0077](0077-tomograms-shaded-smoothly-from-area-weighted-node-values.md) | Tomograms shaded smoothly (Gouraud) from area-weighted node values; numbers stay per element | Accepted |
 | [0078](0078-joint-pattern-solve-and-before-after-absolute-comparison.md) | Joint adjacent+opposite absolute solve; before/after comparison of absolute maps finds the disc-08 hole; consensus and cross-disc fingerprint do not | Accepted |
-| [0079](0079-e11-moved-from-mux-c10-to-c12.md) | E11 moved from leaking mux channel C10 to spare C12 on all four muxes; one electrode-to-channel table in firmware | Accepted |
+| [0079](0079-e11-moved-from-mux-c10-to-c12.md) | E11 moved from leaking mux channel C10 to spare C12 on all four muxes; one electrode-to-channel table in firmware | Superseded by 0080 (table only) |
+| [0080](0080-e11-on-c11-e12-on-c12-c10-unused.md) | Electrode map corrected to the actual wiring: E11 on C11, E12 on C12, leaking C10 unused | Accepted |
 | [0056](0056-correct-run-conditions-in-extra-never-overwrite.md) | Correct recorded conditions with a dated key in `extra`; original fields stay as written | Accepted |
 | [0055](0055-measure-the-lobe-not-a-window.md) | Lobe connected-component centroid, no angular window; window choice was worth 12.3 deg | Accepted |
 | [0054](0054-the-centroid-angle-estimator-has-a-measured-bias.md) | Centroid window validated against injected offsets; -0.45 deg bias documented, not corrected in code | Accepted |

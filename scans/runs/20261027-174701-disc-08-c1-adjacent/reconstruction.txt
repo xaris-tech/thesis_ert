@@ -1,0 +1,2 @@
+baseline: 20261027-142229-disc-08-d1-adjacent
+target: holes near E10 and E5 (drilled 2026-10-27)

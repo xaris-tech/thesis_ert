@@ -39,10 +39,10 @@ class TestUnifiedFirmwareSource(unittest.TestCase):
         self.assertIn("MUX_VP = {15, 16, 17, 18, 39}", self.source)
         self.assertIn("MUX_VN = {36, 35, 41, 42, 40}", self.source)
 
-    def test_e11_is_wired_to_c12_and_every_mux_write_goes_through_the_map(self):
-        """ADR-0079: E11 moved off the leaking C10 onto spare C12, all four muxes."""
+    def test_c10_is_unused_and_every_mux_write_goes_through_the_map(self):
+        """ADR-0080: E11 on C11, E12 on C12, leaking C10 unused, all four muxes."""
         self.assertIn(
-            "ELECTRODE_CHANNEL[ELECTRODE_COUNT] = {\n  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 12, 11\n}",
+            "ELECTRODE_CHANNEL[ELECTRODE_COUNT] = {\n  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 12\n}",
             self.source,
         )
         function = re.search(
