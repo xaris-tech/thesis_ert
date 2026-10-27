@@ -39,6 +39,21 @@ class TestUnifiedFirmwareSource(unittest.TestCase):
         self.assertIn("MUX_VP = {15, 16, 17, 18, 39}", self.source)
         self.assertIn("MUX_VN = {36, 35, 41, 42, 40}", self.source)
 
+    def test_e11_is_wired_to_c12_and_every_mux_write_goes_through_the_map(self):
+        """ADR-0079: E11 moved off the leaking C10 onto spare C12, all four muxes."""
+        self.assertIn(
+            "ELECTRODE_CHANNEL[ELECTRODE_COUNT] = {\n  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 12, 11\n}",
+            self.source,
+        )
+        function = re.search(
+            r"void configureDriveAndSense\([^)]*\)\s*\{(?P<body>.*?)\n\}", self.source, re.DOTALL
+        )
+        body = function.group("body")
+        for mux, index in (("MUX_I_SRC", "iSrc"), ("MUX_I_RET", "iRet"), ("MUX_VP", "vp"), ("MUX_VN", "vn")):
+            self.assertIn(f"writeMuxAddress({mux}, ELECTRODE_CHANNEL[{index}])", body)
+        # The only other write is the boot-time reset to channel 0.
+        self.assertEqual(self.source.count("writeMuxAddress("), 6)
+
     def test_reads_voltage_and_current_from_separate_ads_pairs(self):
         self.assertIn("readADC_Differential_0_1", self.source)
         self.assertIn("readADC_Differential_2_3", self.source)

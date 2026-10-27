@@ -111,6 +111,14 @@ const char* ELECTRODES[ELECTRODE_COUNT] = {
   "E7", "E8", "E9", "E10", "E11", "E12"
 };
 
+// Mux channel wired to each electrode, the same on all four muxes (ADR-0079).
+// E11 moved from C10 to C12 on 2026-10-27: C10 leaked to its neighbours
+// (E10-E11 140 kohm, E11-E12 360 kohm against ~7 Mohm elsewhere). Every
+// electrode index is translated here and only here, in configureDriveAndSense.
+constexpr uint8_t ELECTRODE_CHANNEL[ELECTRODE_COUNT] = {
+  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 12, 11
+};
+
 enum class DrivePattern {
   ADJACENT,
   SKIP_1,
@@ -222,10 +230,10 @@ void configureDriveAndSense(
   delay(1);
   disableAllMuxes();
 
-  writeMuxAddress(MUX_I_SRC, iSrc);
-  writeMuxAddress(MUX_I_RET, iRet);
-  writeMuxAddress(MUX_VP, vp);
-  writeMuxAddress(MUX_VN, vn);
+  writeMuxAddress(MUX_I_SRC, ELECTRODE_CHANNEL[iSrc]);
+  writeMuxAddress(MUX_I_RET, ELECTRODE_CHANNEL[iRet]);
+  writeMuxAddress(MUX_VP, ELECTRODE_CHANNEL[vp]);
+  writeMuxAddress(MUX_VN, ELECTRODE_CHANNEL[vn]);
 
   enableMux(MUX_I_RET, true);
   enableMux(MUX_I_SRC, true);
