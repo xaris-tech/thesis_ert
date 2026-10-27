@@ -1,0 +1,9 @@
+Frames captured: 10
+Reciprocity: median 5.5%  max 98.0%  sign flips 1/54
+Check electrode contact: E9 18%, E2 17% (all pairs median 6%)
+Noise floor: median pair sd 0.00012 kohm (0.76%)  max 0.00380 kohm over 108 pairs
+absolute: misfit 24.0%, model misfit 24.0% > 15%, trough -1.32 mS, lobe at 156 deg (touches E2: may be contact)
+  sectors 0:-0.571 30:-0.840 60:-0.393 90:-0.753 120:-1.526 150:-1.569 180:-1.032 210:-0.195 240:-0.869 270:-1.499 300:-1.082 330:-1.025
+  leave-one-out misfit %: E1:16 E2:17 E3:25 E4:24 E5:28 E6:27 E7:26 E8:18 E9:6 E10:19 E11:24 E12:27
+difference vs 20261027-130413-disc-08-b1b-adjacent: resistive trough 219 deg, significance 1.39
+  sectors 0:-0.001 30:-0.002 60:-0.002 90:-0.005 120:-0.009 150:-0.011 180:-0.013 210:-0.013 240:-0.012 270:-0.010 300:-0.003 330:-0.002

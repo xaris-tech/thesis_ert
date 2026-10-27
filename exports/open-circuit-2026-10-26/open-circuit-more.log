@@ -1,0 +1,75 @@
+round1 dac620 frame1 med     0.7 uA  max   986.0  nonOK 180 | E0:0 E1:0 E2:0 E3:2 E4:2 E5:1 E6:1 E7:1 E8:2 E9:491 E10:498 E11:7
+round1 dac620 frame2 med     0.6 uA  max   974.5  nonOK 180 | E0:0 E1:0 E2:0 E3:2 E4:2 E5:1 E6:1 E7:1 E8:2 E9:485 E10:491 E11:7
+round1 dac620 frame3 med     0.6 uA  max   965.5  nonOK 180 | E0:0 E1:0 E2:0 E3:2 E4:2 E5:1 E6:0 E7:1 E8:2 E9:479 E10:486 E11:6
+round1 dac100 frame1 med     0.4 uA  max   308.2  nonOK 198 | E0:0 E1:0 E2:0 E3:1 E4:1 E5:0 E6:0 E7:0 E8:0 E9:152 E10:154 E11:2
+round1 dac100 frame2 med     0.4 uA  max   313.1  nonOK 198 | E0:0 E1:0 E2:0 E3:1 E4:1 E5:0 E6:0 E7:1 E8:0 E9:154 E10:156 E11:2
+round1 dac100 frame3 med     0.4 uA  max   315.5  nonOK 198 | E0:0 E1:0 E2:0 E3:1 E4:1 E5:0 E6:0 E7:0 E8:1 E9:154 E10:157 E11:2
+round2 dac620 frame1 med     0.6 uA  max   967.7  nonOK 180 | E0:0 E1:0 E2:0 E3:2 E4:2 E5:1 E6:0 E7:1 E8:2 E9:481 E10:487 E11:6
+round2 dac620 frame2 med     0.6 uA  max   965.3  nonOK 180 | E0:0 E1:0 E2:0 E3:2 E4:2 E5:0 E6:0 E7:1 E8:1 E9:480 E10:487 E11:6
+round2 dac620 frame3 med     0.6 uA  max   963.0  nonOK 180 | E0:0 E1:0 E2:0 E3:2 E4:2 E5:1 E6:0 E7:1 E8:1 E9:478 E10:485 E11:6
+round2 dac100 frame1 med     0.3 uA  max   308.9  nonOK 198 | E0:0 E1:0 E2:0 E3:1 E4:0 E5:0 E6:0 E7:0 E8:0 E9:151 E10:153 E11:2
+round2 dac100 frame2 med     0.4 uA  max   315.7  nonOK 192 | E0:0 E1:0 E2:0 E3:1 E4:1 E5:0 E6:0 E7:0 E8:1 E9:154 E10:156 E11:5
+round2 dac100 frame3 med     0.3 uA  max   366.8  nonOK 195 | E0:0 E1:0 E2:0 E3:0 E4:0 E5:0 E6:0 E7:0 E8:0 E9:145 E10:177 E11:1
+round3 dac620 frame1 med     0.6 uA  max   865.8  nonOK 198 | E0:0 E1:0 E2:0 E3:1 E4:1 E5:0 E6:0 E7:1 E8:1 E9:432 E10:436 E11:4
+round3 dac620 frame2 med     0.5 uA  max   865.3  nonOK 198 | E0:0 E1:0 E2:0 E3:1 E4:1 E5:0 E6:0 E7:0 E8:1 E9:432 E10:436 E11:4
+round3 dac620 frame3 med     0.5 uA  max   865.4  nonOK 198 | E0:0 E1:0 E2:0 E3:1 E4:1 E5:1 E6:0 E7:1 E8:1 E9:433 E10:436 E11:4
+round3 dac100 frame1 med     0.3 uA  max   273.2  nonOK 198 | E0:0 E1:0 E2:0 E3:0 E4:0 E5:0 E6:0 E7:0 E8:0 E9:136 E10:137 E11:1
+round3 dac100 frame2 med     0.3 uA  max   281.1  nonOK 198 | E0:0 E1:0 E2:0 E3:0 E4:0 E5:0 E6:0 E7:0 E8:0 E9:140 E10:141 E11:1
+round3 dac100 frame3 med     0.3 uA  max   309.8  nonOK 194 | E0:0 E1:0 E2:0 E3:0 E4:0 E5:1 E6:0 E7:0 E8:0 E9:144 E10:174 E11:1
+round4 dac620 frame1 med     0.5 uA  max   861.3  nonOK 198 | E0:0 E1:0 E2:0 E3:1 E4:1 E5:0 E6:0 E7:1 E8:1 E9:430 E10:434 E11:4
+round4 dac620 frame2 med     0.5 uA  max   860.7  nonOK 198 | E0:0 E1:0 E2:0 E3:1 E4:1 E5:1 E6:0 E7:1 E8:1 E9:430 E10:434 E11:4
+round4 dac620 frame3 med     0.5 uA  max   860.3  nonOK 198 | E0:0 E1:0 E2:0 E3:1 E4:1 E5:0 E6:0 E7:1 E8:1 E9:430 E10:434 E11:4
+round4 dac100 frame1 med     0.3 uA  max   269.3  nonOK 198 | E0:0 E1:0 E2:0 E3:0 E4:0 E5:0 E6:0 E7:0 E8:0 E9:134 E10:135 E11:1
+round4 dac100 frame2 med     0.3 uA  max   269.6  nonOK 198 | E0:0 E1:0 E2:0 E3:0 E4:0 E5:0 E6:0 E7:0 E8:0 E9:135 E10:136 E11:1
+round4 dac100 frame3 med     0.3 uA  max   269.9  nonOK 198 | E0:0 E1:0 E2:0 E3:0 E4:0 E5:0 E6:0 E7:0 E8:0 E9:135 E10:136 E11:1
+round5 dac620 frame1 med     0.5 uA  max   862.4  nonOK 198 | E0:0 E1:0 E2:0 E3:1 E4:1 E5:1 E6:0 E7:1 E8:1 E9:431 E10:435 E11:4
+round5 dac620 frame2 med     0.4 uA  max   862.6  nonOK 198 | E0:0 E1:0 E2:0 E3:1 E4:1 E5:1 E6:0 E7:0 E8:1 E9:431 E10:435 E11:4
+round5 dac620 frame3 med     0.5 uA  max   862.1  nonOK 198 | E0:0 E1:0 E2:0 E3:1 E4:1 E5:0 E6:0 E7:0 E8:1 E9:431 E10:435 E11:4
+round5 dac100 frame1 med     0.3 uA  max   269.6  nonOK 198 | E0:0 E1:0 E2:0 E3:0 E4:0 E5:0 E6:0 E7:0 E8:0 E9:134 E10:136 E11:1
+round5 dac100 frame2 med     0.3 uA  max   270.2  nonOK 198 | E0:0 E1:0 E2:0 E3:0 E4:0 E5:0 E6:0 E7:0 E8:0 E9:135 E10:136 E11:1
+round5 dac100 frame3 med     0.2 uA  max   270.1  nonOK 198 | E0:0 E1:0 E2:0 E3:0 E4:0 E5:0 E6:0 E7:0 E8:0 E9:135 E10:136 E11:1
+round6 dac620 frame1 med     0.6 uA  max   862.8  nonOK 198 | E0:0 E1:0 E2:0 E3:1 E4:1 E5:1 E6:0 E7:0 E8:1 E9:431 E10:435 E11:4
+round6 dac620 frame2 med     0.5 uA  max   862.6  nonOK 198 | E0:0 E1:0 E2:0 E3:1 E4:1 E5:0 E6:0 E7:0 E8:1 E9:431 E10:435 E11:4
+round6 dac620 frame3 med     0.6 uA  max   862.2  nonOK 198 | E0:0 E1:0 E2:0 E3:1 E4:1 E5:1 E6:0 E7:1 E8:1 E9:431 E10:435 E11:4
+round6 dac100 frame1 med     0.3 uA  max   269.8  nonOK 198 | E0:0 E1:0 E2:0 E3:0 E4:0 E5:0 E6:0 E7:0 E8:0 E9:135 E10:136 E11:1
+round6 dac100 frame2 med     0.3 uA  max   269.8  nonOK 198 | E0:0 E1:0 E2:0 E3:0 E4:0 E5:0 E6:0 E7:0 E8:0 E9:135 E10:136 E11:1
+round6 dac100 frame3 med     0.3 uA  max   269.9  nonOK 198 | E0:0 E1:0 E2:0 E3:0 E4:0 E5:0 E6:0 E7:0 E8:0 E9:135 E10:136 E11:1
+round7 dac620 frame1 med     0.5 uA  max   864.7  nonOK 198 | E0:0 E1:0 E2:0 E3:1 E4:1 E5:1 E6:0 E7:1 E8:1 E9:431 E10:435 E11:4
+round7 dac620 frame2 med     0.4 uA  max   868.6  nonOK 198 | E0:0 E1:0 E2:0 E3:1 E4:1 E5:0 E6:0 E7:1 E8:1 E9:434 E10:438 E11:4
+round7 dac620 frame3 med     0.4 uA  max   867.8  nonOK 198 | E0:0 E1:0 E2:0 E3:1 E4:1 E5:0 E6:0 E7:1 E8:1 E9:434 E10:437 E11:4
+round7 dac100 frame1 med     0.3 uA  max   271.8  nonOK 198 | E0:0 E1:0 E2:0 E3:0 E4:0 E5:0 E6:0 E7:0 E8:0 E9:135 E10:137 E11:1
+round7 dac100 frame2 med     0.3 uA  max   272.4  nonOK 198 | E0:0 E1:0 E2:0 E3:0 E4:0 E5:0 E6:0 E7:0 E8:0 E9:136 E10:137 E11:1
+round7 dac100 frame3 med     0.3 uA  max   271.4  nonOK 198 | E0:0 E1:0 E2:0 E3:0 E4:0 E5:0 E6:0 E7:0 E8:0 E9:136 E10:137 E11:1
+round8 dac620 frame1 med     0.4 uA  max   869.2  nonOK 198 | E0:0 E1:0 E2:0 E3:1 E4:1 E5:0 E6:0 E7:1 E8:1 E9:434 E10:438 E11:4
+round8 dac620 frame2 med     0.5 uA  max   869.1  nonOK 198 | E0:0 E1:0 E2:0 E3:1 E4:1 E5:1 E6:0 E7:1 E8:1 E9:434 E10:438 E11:4
+round8 dac620 frame3 med     0.4 uA  max   869.0  nonOK 198 | E0:0 E1:0 E2:0 E3:1 E4:1 E5:0 E6:0 E7:1 E8:1 E9:434 E10:438 E11:4
+Traceback (most recent call last):
+  File "D:\Here\asd\exports\open-circuit-2026-10-20\open_circuit_check.py", line 16, in <module>
+    f = acq.capture_frame()
+  File "D:\Here\asd\tree_ert\acquisition.py", line 159, in capture_frame
+    return unified.request_frame(self._serial)
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "D:\Here\asd\phase3a_unified_reconstruct.py", line 1237, in request_frame
+    return read_one_v2_frame(ser)
+  File "D:\Here\asd\phase3a_unified_reconstruct.py", line 1186, in read_one_v2_frame
+    line = ser.readline().decode(errors="ignore").strip()
+           ~~~~~~~~~~~~^^
+  File "D:\Here\asd\.venv\Lib\site-packages\serial\serialwin32.py", line 275, in read
+    raise SerialException("ClearCommError failed ({!r})".format(ctypes.WinError()))
+serial.serialutil.SerialException: ClearCommError failed (PermissionError(13, 'The device does not recognize the command.', None, 22))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\Here\asd\exports\open-circuit-2026-10-20\open_circuit_check.py", line 26, in <module>
+    acq.close()
+    ~~~~~~~~~^^
+  File "D:\Here\asd\tree_ert\acquisition.py", line 225, in close
+    self.stop()
+    ~~~~~~~~~^^
+  File "D:\Here\asd\tree_ert\acquisition.py", line 220, in stop
+    self._serial.write(b"x\n")
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "D:\Here\asd\.venv\Lib\site-packages\serial\serialwin32.py", line 317, in write
+    raise SerialException("WriteFile failed ({!r})".format(ctypes.WinError()))
+serial.serialutil.SerialException: WriteFile failed (PermissionError(13, 'The device does not recognize the command.', None, 22))

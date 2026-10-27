@@ -1,0 +1,2 @@
+baseline: 20261027-131740-disc-08-b2b-adjacent
+target: hole near E10 (sham: re-clipped after disc-05, not drilled)

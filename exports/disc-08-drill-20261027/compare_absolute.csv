@@ -1,0 +1,10 @@
+step,solve,trough_deg,hole60_vs_rest
+D1,adjacent,68,1.47
+D1,opposite,68,1.30
+D1,joint,68,3.34
+D2,adjacent,68,1.67
+D2,opposite,246,0.15
+D2,joint,293,0.46
+D3,adjacent,166,0.14
+D3,opposite,294,0.88
+D3,joint,166,0.15

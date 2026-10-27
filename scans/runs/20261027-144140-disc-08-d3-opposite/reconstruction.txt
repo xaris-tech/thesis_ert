@@ -1,0 +1,2 @@
+baseline: 20261027-134523-disc-08-s1-opposite
+target: holes near E10 and new drilled hole at E5 (60 deg)

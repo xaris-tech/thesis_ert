@@ -1,0 +1,12 @@
+round1 dac620 frame1 med     0.4 uA  max    27.5  nonOK 178 | E0:0 E1:0 E2:0 E3:1 E4:1 E5:0 E6:0 E7:1 E8:1 E9:13 E10:19 E11:5
+round1 dac620 frame2 med     0.4 uA  max    26.3  nonOK 185 | E0:0 E1:0 E2:0 E3:1 E4:1 E5:0 E6:0 E7:0 E8:1 E9:13 E10:18 E11:5
+round1 dac620 frame3 med     0.5 uA  max    25.9  nonOK 192 | E0:0 E1:0 E2:0 E3:1 E4:1 E5:0 E6:0 E7:1 E8:1 E9:13 E10:18 E11:5
+round1 dac100 frame1 med     0.3 uA  max     8.1  nonOK 216 | E0:0 E1:0 E2:0 E3:0 E4:0 E5:0 E6:0 E7:0 E8:0 E9:4 E10:5 E11:2
+round1 dac100 frame2 med     0.3 uA  max     8.1  nonOK 216 | E0:0 E1:0 E2:0 E3:0 E4:1 E5:0 E6:0 E7:0 E8:0 E9:4 E10:5 E11:2
+round1 dac100 frame3 med     0.3 uA  max     8.5  nonOK 216 | E0:0 E1:0 E2:0 E3:0 E4:0 E5:0 E6:0 E7:0 E8:0 E9:4 E10:5 E11:2
+round2 dac620 frame1 med     0.5 uA  max    26.0  nonOK 189 | E0:0 E1:0 E2:0 E3:1 E4:1 E5:0 E6:0 E7:1 E8:1 E9:12 E10:18 E11:5
+round2 dac620 frame2 med     0.5 uA  max    25.4  nonOK 196 | E0:0 E1:0 E2:0 E3:1 E4:1 E5:0 E6:0 E7:1 E8:1 E9:12 E10:17 E11:5
+round2 dac620 frame3 med     0.5 uA  max    25.5  nonOK 197 | E0:0 E1:0 E2:0 E3:1 E4:1 E5:0 E6:0 E7:1 E8:1 E9:12 E10:17 E11:5
+round2 dac100 frame1 med     0.3 uA  max     7.9  nonOK 216 | E0:0 E1:0 E2:0 E3:0 E4:0 E5:0 E6:0 E7:0 E8:0 E9:4 E10:5 E11:2
+round2 dac100 frame2 med     0.3 uA  max     8.1  nonOK 216 | E0:0 E1:0 E2:0 E3:0 E4:0 E5:0 E6:0 E7:0 E8:0 E9:4 E10:5 E11:2
+round2 dac100 frame3 med     0.3 uA  max     8.0  nonOK 216 | E0:0 E1:0 E2:0 E3:0 E4:0 E5:0 E6:0 E7:0 E8:0 E9:4 E10:5 E11:2

@@ -1,0 +1,6 @@
+Frames captured: 10
+Reciprocity: no reciprocal pairs captured
+Noise floor: median pair sd 0.00023 kohm (0.28%)  max 0.39075 kohm over 96 pairs
+absolute: misfit 15.8%, model misfit 15.8% > 15%; significance 0.31 < 2.0, trough -2.24 mS, lobe at 270 deg (touches E10: may be contact)
+  sectors 0:-1.221 30:-1.259 60:-0.569 90:-1.403 120:-1.453 150:-1.576 180:-1.464 210:-0.776 240:-1.678 270:-2.373 300:-1.952 330:-1.920
+  leave-one-out misfit %: E1:17 E2:15 E3:8 E4:16 E5:17 E6:11 E7:11 E8:16 E9:6 E10:17 E11:18 E12:17
