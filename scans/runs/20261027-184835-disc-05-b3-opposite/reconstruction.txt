@@ -1,0 +1,2 @@
+baseline: 20261027-181845-disc-05-b2-opposite
+target: hole near E1 (and E2)

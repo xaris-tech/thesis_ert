@@ -1,0 +1,2 @@
+baseline: 20261027-133642-disc-05-b1-adjacent
+target: hole near E1 (and E2)
