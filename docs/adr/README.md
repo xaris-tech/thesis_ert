@@ -121,6 +121,8 @@ one costs a re-derivation.
 | [0074](0074-screen-shows-the-tomogram-alone-figure-stays-the-record.md) | Field screen shows a tomogram-only display copy (`*-image.png`); full two-panel figure stays the record; captions to the log | Accepted |
 | [0075](0075-impedance-ratio-is-p90-over-p10-within-one-pattern.md) | Impedance ratio = p90/p10 of one scan's frame-averaged \|transfer R\|; compared only within one specimen and pattern; not a classification | Accepted |
 | [0076](0076-one-tomogram-style-rdbu-electrode-dots-no-markers.md) | One tomogram style for every saved figure: RdBu_r, electrode dots, no target markers | Accepted |
+| [0077](0077-tomograms-shaded-smoothly-from-area-weighted-node-values.md) | Tomograms shaded smoothly (Gouraud) from area-weighted node values; numbers stay per element | Accepted |
+| [0078](0078-joint-pattern-solve-and-before-after-absolute-comparison.md) | Joint adjacent+opposite absolute solve; before/after comparison of absolute maps finds the disc-08 hole; consensus and cross-disc fingerprint do not | Accepted |
 | [0056](0056-correct-run-conditions-in-extra-never-overwrite.md) | Correct recorded conditions with a dated key in `extra`; original fields stay as written | Accepted |
 | [0055](0055-measure-the-lobe-not-a-window.md) | Lobe connected-component centroid, no angular window; window choice was worth 12.3 deg | Accepted |
 | [0054](0054-the-centroid-angle-estimator-has-a-measured-bias.md) | Centroid window validated against injected offsets; -0.45 deg bias documented, not corrected in code | Accepted |

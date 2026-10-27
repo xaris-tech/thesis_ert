@@ -78,6 +78,69 @@ class SolveAbsoluteTests(unittest.TestCase):
             absolute.solve_absolute(np.full_like(v, np.nan), protocol)
 
 
+def _synthetic_pattern(pattern, perm_fn):
+    protocol, _ = unified.protocol_and_command(pattern)
+    eit_mesh, _ = base.create_solver(protocol)
+    centres = np.mean(eit_mesh.node[eit_mesh.element], axis=1)
+    return protocol, centres, np.real(EITForward(eit_mesh, protocol).solve_eit(perm=perm_fn(centres)))
+
+
+class JointSolveTests(unittest.TestCase):
+    def test_homogeneous_is_recovered_from_two_patterns(self):
+        pa, _, va = _synthetic_pattern("adjacent", lambda c: np.full(len(c), 2.5))
+        po, _, vo = _synthetic_pattern("opposite", lambda c: np.full(len(c), 2.5))
+        result = absolute.solve_absolute_joint([va, vo], [pa, po])
+        self.assertAlmostEqual(result.sigma0, 2.5, places=6)
+        self.assertLess(result.residual_percent, 0.1)
+        self.assertEqual(result.total_pairs, va.size + vo.size)
+
+    def test_one_pattern_matches_the_single_solve(self):
+        def perm(c):
+            p = np.full(len(c), 2.0)
+            p[np.hypot(c[:, 0] - 0.4, c[:, 1]) < 0.3] = 1.0
+            return p
+
+        protocol, _, v = _synthetic_pattern("adjacent", perm)
+        single = absolute.solve_absolute(v, protocol)
+        joint = absolute.solve_absolute_joint([v], [protocol])
+        self.assertTrue(np.allclose(single.sigma, joint.sigma))
+
+    def test_inclusion_located_from_two_patterns(self):
+        def perm(c):
+            p = np.full(len(c), 2.0)
+            p[np.hypot(c[:, 0] - 0.5, c[:, 1]) < 0.3] = 1.0
+            return p
+
+        pa, _, va = _synthetic_pattern("adjacent", perm)
+        po, _, vo = _synthetic_pattern("opposite", perm)
+        result = absolute.solve_absolute_joint([va, vo], [pa, po])
+        angle = result.trough_angle_deg
+        self.assertLess(min(angle, 360.0 - angle), 30.0)
+
+
+class CompareAndConsensusTests(unittest.TestCase):
+    def test_compare_finds_what_changed_between_two_solves(self):
+        def before(c):
+            return np.full(len(c), 2.0)
+
+        def after(c):
+            p = before(c)
+            p[np.hypot(c[:, 0], c[:, 1] - 0.5) < 0.3] = 1.0  # new void at 90 deg
+            return p
+
+        protocol, centres, vb = _synthetic(before)
+        _, _, va = _synthetic(after)
+        change = absolute.compare_absolute(
+            absolute.solve_absolute(vb, protocol), absolute.solve_absolute(va, protocol)
+        )
+        x, y = centres[int(np.argmin(change))][:2]
+        self.assertLess(abs(np.degrees(np.arctan2(y, x)) % 360.0 - 90.0), 30.0)
+
+    def test_consensus_keeps_only_shared_sign(self):
+        out = absolute.consensus([np.array([-1.0, -0.5, 0.4, 0.3]), np.array([-0.2, 0.6, 0.9, -0.1])])
+        self.assertTrue(np.allclose(out, [-0.2, 0.0, 0.4, 0.0]))
+
+
 class TroughLobeTests(unittest.TestCase):
     """ADR-0062: the trough is a connected lobe, and says which electrodes it touches."""
 

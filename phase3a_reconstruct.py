@@ -337,17 +337,37 @@ TOMOGRAM_CMAP = "RdBu_r"
 """Blue = less conductive, red = more, white = no change (ADR-0076)."""
 
 
-def draw_tomogram(ax, eit_mesh, values, limit=None, label_size=6):
-    """Draw one tomogram in the house style (ADR-0076).
+def element_to_node(eit_mesh, values):
+    """Per-element values averaged onto the mesh nodes, weighted by element area.
 
-    Flat triangles in RdBu_r on a symmetric scale, a dot at each electrode
+    Display only (ADR-0077): the solver's answer is one value per element; the
+    node values exist so the figure can be shaded smoothly. Saved arrays and
+    every number reported stay per element.
+    """
+    values = np.asarray(values, dtype=float)
+    corners = eit_mesh.node[eit_mesh.element][:, :, :2]
+    edge1, edge2 = corners[:, 1] - corners[:, 0], corners[:, 2] - corners[:, 0]
+    area = 0.5 * np.abs(edge1[:, 0] * edge2[:, 1] - edge1[:, 1] * edge2[:, 0])
+    total = np.zeros(len(eit_mesh.node))
+    weight = np.zeros(len(eit_mesh.node))
+    for k in range(3):
+        np.add.at(total, eit_mesh.element[:, k], values * area)
+        np.add.at(weight, eit_mesh.element[:, k], area)
+    return total / np.where(weight > 0, weight, 1.0)
+
+
+def draw_tomogram(ax, eit_mesh, values, limit=None, label_size=6):
+    """Draw one tomogram in the house style (ADR-0076, ADR-0077).
+
+    Smoothly shaded in RdBu_r on a symmetric scale, a dot at each electrode
     node and its E-label just outside the boundary. Saved figures, the
     ERTerface screen copy and the absolute figure all go through here.
     """
     vmin, vmax = (None, None) if limit is None else (-limit, limit)
     image = ax.tripcolor(
-        eit_mesh.node[:, 0], eit_mesh.node[:, 1], eit_mesh.element, values,
-        shading="flat", cmap=TOMOGRAM_CMAP, vmin=vmin, vmax=vmax,
+        eit_mesh.node[:, 0], eit_mesh.node[:, 1], eit_mesh.element,
+        element_to_node(eit_mesh, values),
+        shading="gouraud", cmap=TOMOGRAM_CMAP, vmin=vmin, vmax=vmax,
     )
     ax.set_aspect("equal")
     ax.set_axis_off()

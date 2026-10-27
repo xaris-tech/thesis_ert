@@ -316,21 +316,73 @@ def solve_absolute(
     The solve is in log-conductance so the result stays positive, and NaN rows
     are excluded from the misfit rather than substituted (ADR-0002).
     """
-    vector = np.asarray(vector, dtype=float)
-    kept = ~np.isnan(vector)
-    if not kept.any():
-        raise ValueError("every measurement pair was unusable; nothing to reconstruct")
-    eit_mesh, _ = base.create_solver(protocol)
-    forward = EITForward(eit_mesh, protocol)
+    return solve_absolute_joint([vector], [protocol], max_iter, regularisation)
 
-    unit = np.real(forward.solve_eit(perm=1.0))
-    projection = float(np.dot(unit[kept], vector[kept]))
-    if projection == 0.0:
-        raise ValueError("measurement is orthogonal to the homogeneous model")
-    sign = 1 if projection > 0 else -1
-    measured = sign * vector
-    # v(c * sigma) = v(sigma) / c, so the least-squares homogeneous fit is closed form.
-    sigma0 = float(np.dot(unit[kept], unit[kept]) / abs(projection))
+
+def solve_absolute_joint(
+    vectors: Sequence[np.ndarray],
+    protocols: Sequence,
+    max_iter: int = GN_MAX_ITER,
+    regularisation: float = GN_REGULARISATION,
+) -> AbsoluteResult:
+    """One conductivity fitted to several drive patterns of the same specimen (ADR-0078).
+
+    Each pattern keeps its own polarity sign and is weighted by 1 / RMS of its
+    own measurement, so a pattern with larger voltages does not outvote the
+    others and every pattern's misfit counts in percent, as for one pattern.
+    With a single pattern this is exactly the one-pattern solve. Reported
+    ``dropped_indexes``/``kept_pairs``/``total_pairs`` count rows over all
+    patterns in the order given; ``sign`` is the first pattern's.
+    """
+    if not vectors or len(vectors) != len(protocols):
+        raise ValueError("need one protocol per measurement vector")
+    eit_mesh, _ = base.create_solver(protocols[0])
+    forwards, measured_parts, kept_parts, weights, signs = [], [], [], [], []
+    uu = um = 0.0
+    for vector, protocol in zip(vectors, protocols):
+        vector = np.asarray(vector, dtype=float)
+        kept_i = ~np.isnan(vector)
+        if not kept_i.any():
+            continue
+        forward = EITForward(eit_mesh, protocol)
+        unit = np.real(forward.solve_eit(perm=1.0))
+        projection = float(np.dot(unit[kept_i], vector[kept_i]))
+        if projection == 0.0:
+            raise ValueError("measurement is orthogonal to the homogeneous model")
+        sign_i = 1 if projection > 0 else -1
+        measured_i = sign_i * vector
+        weight = 1.0 / float(np.sqrt(np.mean(measured_i[kept_i] ** 2)))
+        # v(c * sigma) = v(sigma) / c: the weighted least-squares homogeneous fit is closed form.
+        uu += weight**2 * float(np.dot(unit[kept_i], unit[kept_i]))
+        um += weight**2 * abs(projection)
+        forwards.append(forward)
+        measured_parts.append(measured_i)
+        kept_parts.append(kept_i)
+        weights.append(np.full(vector.size, weight))
+        signs.append(sign_i)
+    if not forwards:
+        raise ValueError("every measurement pair was unusable; nothing to reconstruct")
+    sign = signs[0]
+    kept = np.concatenate(kept_parts)
+    measured = np.concatenate(measured_parts)
+    row_weight = np.concatenate(weights)
+    sigma0 = uu / um
+
+    class _Stacked:
+        """The patterns' forward models as one, rows in the order given."""
+
+        @staticmethod
+        def solve_eit(perm):
+            return np.concatenate([np.real(f.solve_eit(perm=perm)) for f in forwards])
+
+        @staticmethod
+        def compute_jac(perm):
+            parts = [f.compute_jac(perm=perm) for f in forwards]
+            return (np.vstack([np.real(j) for j, _ in parts]),
+                    np.concatenate([np.real(v) for _, v in parts]))
+
+    forward = _Stacked()
+    measured = measured * row_weight
 
     log_prior = np.full(eit_mesh.n_elems, np.log(sigma0))
     log_sigma = log_prior.copy()
@@ -340,8 +392,8 @@ def solve_absolute(
         jac, simulated = forward.compute_jac(perm=np.exp(log_sigma))
         # pyeit's compute_jac returns -dV/dsigma (checked against a finite
         # difference); the chain rule into log-sigma adds the sigma factor.
-        jac = -np.real(jac)[kept] * np.exp(log_sigma)[None, :]
-        residual = measured[kept] - np.real(simulated)[kept]
+        jac = -np.real(jac)[kept] * row_weight[kept, None] * np.exp(log_sigma)[None, :]
+        residual = measured[kept] - (np.real(simulated) * row_weight)[kept]
         normal = jac.T @ jac
         if lam is None:
             # Fixed from the homogeneous Jacobian so the objective does not move
@@ -361,7 +413,7 @@ def solve_absolute(
                 log_prior - LOG_SIGMA_BOUND,
                 log_prior + LOG_SIGMA_BOUND,
             )
-            trial_v = np.real(forward.solve_eit(perm=np.exp(trial)))[kept]
+            trial_v = (np.real(forward.solve_eit(perm=np.exp(trial))) * row_weight)[kept]
             trial_r = measured[kept] - trial_v
             trial_obj = float(trial_r @ trial_r + lam * np.sum((trial - log_prior) ** 2))
             if np.isfinite(trial_obj) and trial_obj < objective:
@@ -373,7 +425,7 @@ def solve_absolute(
         if np.max(np.abs(scale * step)) < 1e-4 or objective - trial_obj < 1e-6 * objective:
             break
 
-    final = np.real(forward.solve_eit(perm=np.exp(log_sigma)))
+    final = np.real(forward.solve_eit(perm=np.exp(log_sigma))) * row_weight
     misfit = measured[kept] - final[kept]
     rms_measured = float(np.sqrt(np.mean(measured[kept] ** 2)))
     residual_percent = float(np.sqrt(np.mean(misfit**2)) / rms_measured * 100.0)
@@ -386,7 +438,7 @@ def solve_absolute(
         iterations=iterations,
         dropped_indexes=[int(i) for i in np.flatnonzero(~kept)],
         kept_pairs=int(kept.sum()),
-        total_pairs=int(vector.size),
+        total_pairs=int(kept.size),
         centres=np.mean(eit_mesh.node[eit_mesh.element], axis=1),
         nodes=np.asarray(eit_mesh.node),
         elements=np.asarray(eit_mesh.element),
@@ -425,6 +477,52 @@ def reconstruct_absolute(
     frames = exclude_electrodes(frames, settings.absolute_exclude_electrodes)
     protocol, _ = unified.protocol_and_command(settings.pattern)
     return solve_absolute(average_frame_vectors(frames, protocol, settings), protocol)
+
+
+def reconstruct_absolute_joint(
+    runs: Sequence[tuple[Sequence[unified.UnifiedFrame], UiSettings]],
+) -> AbsoluteResult:
+    """One absolute image from several runs of the same mounting, one per pattern (ADR-0078)."""
+    vectors, protocols = [], []
+    for frames, settings in runs:
+        frames = exclude_electrodes(frames, settings.absolute_exclude_electrodes)
+        protocol, _ = unified.protocol_and_command(settings.pattern)
+        vectors.append(average_frame_vectors(frames, protocol, settings))
+        protocols.append(protocol)
+    return solve_absolute_joint(vectors, protocols)
+
+
+def compare_absolute(before: AbsoluteResult, after: AbsoluteResult) -> np.ndarray:
+    """Per-element log(sigma_after / sigma_before): negative = less conductive after (ADR-0078).
+
+    Unlike a difference image this compares two solved maps, so it is in real
+    units (a ratio) and needs both runs to be trustworthy absolute fits.
+    Distortions present in both runs (contacts, wiring, model error) largely
+    cancel. Both results must be on the same mesh.
+    """
+    if before.sigma.shape != after.sigma.shape:
+        raise ValueError("absolute results are on different meshes")
+    return np.log(after.sigma / before.sigma)
+
+
+def consensus(images: Sequence[np.ndarray]) -> np.ndarray:
+    """Keep only what every image agrees on (ADR-0078).
+
+    Each input is a per-element log(sigma/sigma0) image of the same specimen
+    and mounting from an independent solve (e.g. adjacent and opposite drive).
+    Where all are below zero, the least negative value survives; where all are
+    above, the least positive; anywhere they disagree in sign, zero. A
+    feature produced by one drive pattern's particular errors does not survive;
+    one the patterns share does. No reference scan is needed, which is the
+    case for a standing tree.
+    """
+    stack = np.vstack([np.asarray(image, dtype=float) for image in images])
+    out = np.zeros(stack.shape[1])
+    low = np.all(stack < 0.0, axis=0)
+    high = np.all(stack > 0.0, axis=0)
+    out[low] = stack[:, low].max(axis=0)
+    out[high] = stack[:, high].min(axis=0)
+    return out
 
 
 def split_half_noise(

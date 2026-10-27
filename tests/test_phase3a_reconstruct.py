@@ -55,6 +55,18 @@ class TestPhase3AProtocol(unittest.TestCase):
         self.assertTrue(np.array_equal(protocol.meas_mat[0][0], np.array([2, 1])))
 
 
+class TestElementToNode(unittest.TestCase):
+    def test_constant_field_stays_constant_and_range_is_not_exceeded(self):
+        eit_mesh, _ = phase3a.create_solver(phase3a.build_adjacent_protocol())
+        n = len(eit_mesh.element)
+        self.assertTrue(np.allclose(phase3a.element_to_node(eit_mesh, np.full(n, 2.5)), 2.5))
+        values = np.linspace(-1.0, 1.0, n)
+        nodes = phase3a.element_to_node(eit_mesh, values)
+        self.assertEqual(len(nodes), len(eit_mesh.node))
+        self.assertGreaterEqual(nodes.min(), -1.0)
+        self.assertLessEqual(nodes.max(), 1.0)
+
+
 class TestPhase3AParsing(unittest.TestCase):
     def test_parse_frame_records_maps_values_to_protocol_order(self):
         lines = [
