@@ -1,0 +1,9 @@
+RECIPROCITY NOT MEASURABLE - opposite drive has no reciprocal pairs; contact quality unverified by reciprocity
+CROSS-SPECIMEN BASELINE (disc-03 -> disc-05) - shows specimen difference, not only defects
+peak -2.451e-01 at 183 deg (x=-0.67, y=-0.04)
+colour scale +/-2.451e-01  (auto-scaled to this image)
+pairs 96/96 kept  [ok]
+measurement noise floor 0.00010 kohm - a change below this is not a detection
+control peak +5.428e-03
+significance 45.16x the noise image
+baseline run: 20261028-132400-disc-03-baseline
