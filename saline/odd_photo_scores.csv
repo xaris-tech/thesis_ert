@@ -1,0 +1,16 @@
+photo,run,baseline,block,true_epos_target_convention,true_r,recon_r,centroid_angle_err_deg,ssim_raw,ssim_blurred,dice
+wood8,20261022-171934-saline-pos-e8,20261022-134226-saline-pos-empty-first,E8,7.97,0.65,0.39,-8.0,0.108,0.298,0.486
+wood8,20261022-172734-saline-pos-e8,20261022-134226-saline-pos-empty-first,E8,7.97,0.65,0.39,-8.0,0.108,0.295,0.486
+wood8,20261022-173534-saline-pos-e8,20261022-134226-saline-pos-empty-first,E8,7.97,0.65,0.39,-8.0,0.108,0.297,0.486
+wood8,20261014-191430-saline-e8-adjacent-dac400-st10-n16,20261014-200326-saline-empty-adjacent-dac400-st10-n16,E8,7.97,0.65,0.51,-0.3,0.143,0.553,0.671
+wood8,20261014-191843-saline-e8-adjacent-dac400-st10-n16,20261014-200739-saline-empty-adjacent-dac400-st10-n16,E8,7.97,0.65,0.51,0.0,0.143,0.559,0.671
+wood8,20261014-192257-saline-e8-adjacent-dac400-st10-n16,20261014-201151-saline-empty-adjacent-dac400-st10-n16,E8,7.97,0.65,0.51,-0.3,0.142,0.561,0.671
+wood8,20261002-150425-ssim-saline,20261002-143242-ssim-saline,E8,7.97,0.65,0.51,-2.6,0.134,0.51,0.688
+wood5&11,20261023-145649-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,E5,4.88,0.69,0.45,-2.6,0.121,0.363,0.68
+wood5&11,20261023-145649-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,E11,10.85,0.66,0.49,-16.2,0.121,0.363,0.68
+wood5&11,20261023-150449-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,E5,4.88,0.69,0.45,-2.6,0.123,0.36,0.68
+wood5&11,20261023-150449-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,E11,10.85,0.66,0.49,-16.8,0.123,0.36,0.68
+wood5&11,20261023-151249-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,E5,4.88,0.69,0.44,-2.6,0.125,0.358,0.68
+wood5&11,20261023-151249-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,E11,10.85,0.66,0.5,-15.2,0.125,0.358,0.68
+wood5&11,20261002-175516-ssim-saline,20261002-170541-ssim-saline,E5,4.88,0.69,0.49,-5.0,0.149,0.315,0.547
+wood5&11,20261002-175516-ssim-saline,20261002-170541-ssim-saline,E11,10.85,0.66,0.45,-6.8,0.149,0.315,0.547

@@ -1,0 +1,200 @@
+[
+ {
+  "photo": "center",
+  "target": "centre",
+  "radius": 0.027,
+  "electrode_pos": 11.16,
+  "angle_err_deg": null,
+  "ring_aspect": 1.022,
+  "tip_radius_sd": 0.05
+ },
+ {
+  "photo": "wood1",
+  "target": "E1",
+  "radius": 0.53,
+  "electrode_pos": 1.13,
+  "angle_err_deg": 3.8,
+  "ring_aspect": 1.009,
+  "tip_radius_sd": 0.045
+ },
+ {
+  "photo": "wood2",
+  "target": "E2",
+  "radius": 0.521,
+  "electrode_pos": 2.52,
+  "angle_err_deg": 15.7,
+  "ring_aspect": 1.04,
+  "tip_radius_sd": 0.048
+ },
+ {
+  "photo": "wood3",
+  "target": "E3",
+  "radius": 0.51,
+  "electrode_pos": 3.74,
+  "angle_err_deg": 22.1,
+  "ring_aspect": 1.029,
+  "tip_radius_sd": 0.046
+ },
+ {
+  "photo": "wood4",
+  "target": "E4",
+  "radius": 0.572,
+  "electrode_pos": 4.38,
+  "angle_err_deg": 11.3,
+  "ring_aspect": 1.014,
+  "tip_radius_sd": 0.048
+ },
+ {
+  "photo": "wood5",
+  "target": "E5",
+  "radius": 0.642,
+  "electrode_pos": 5.04,
+  "angle_err_deg": 1.1,
+  "ring_aspect": 1.04,
+  "tip_radius_sd": 0.058
+ },
+ {
+  "photo": "wood6",
+  "target": "E6",
+  "radius": 0.566,
+  "electrode_pos": 5.89,
+  "angle_err_deg": -3.4,
+  "ring_aspect": 1.024,
+  "tip_radius_sd": 0.055
+ },
+ {
+  "photo": "wood7",
+  "target": "E7",
+  "radius": 0.49,
+  "electrode_pos": 6.91,
+  "angle_err_deg": -2.6,
+  "ring_aspect": 1.031,
+  "tip_radius_sd": 0.045
+ },
+ {
+  "photo": "wood9",
+  "target": "E9",
+  "radius": 0.631,
+  "electrode_pos": 9.16,
+  "angle_err_deg": 4.7,
+  "ring_aspect": 1.07,
+  "tip_radius_sd": 0.031
+ },
+ {
+  "photo": "wood10",
+  "target": "E10",
+  "radius": 0.659,
+  "electrode_pos": 9.45,
+  "angle_err_deg": -16.6,
+  "ring_aspect": 1.039,
+  "tip_radius_sd": 0.052
+ },
+ {
+  "photo": "wood11",
+  "target": "E11",
+  "radius": 0.456,
+  "electrode_pos": 11.12,
+  "angle_err_deg": 3.7,
+  "ring_aspect": 1.008,
+  "tip_radius_sd": 0.046
+ },
+ {
+  "photo": "wood12",
+  "target": "E12",
+  "radius": 0.615,
+  "electrode_pos": 12.25,
+  "angle_err_deg": 7.4,
+  "ring_aspect": 1.034,
+  "tip_radius_sd": 0.057
+ },
+ {
+  "photo": "wood1&7",
+  "target": "E1",
+  "radius": 0.684,
+  "electrode_pos": 12.94,
+  "angle_err_deg": -1.9,
+  "ring_aspect": 1.02,
+  "tip_radius_sd": 0.031
+ },
+ {
+  "photo": "wood1&7",
+  "target": "E7",
+  "radius": 0.644,
+  "electrode_pos": 7.08,
+  "angle_err_deg": 2.4,
+  "ring_aspect": 1.02,
+  "tip_radius_sd": 0.031
+ },
+ {
+  "photo": "wood2&8",
+  "target": "E2",
+  "radius": 0.676,
+  "electrode_pos": 2.17,
+  "angle_err_deg": 5.2,
+  "ring_aspect": 1.044,
+  "tip_radius_sd": 0.06
+ },
+ {
+  "photo": "wood2&8",
+  "target": "E8",
+  "radius": 0.819,
+  "electrode_pos": 7.94,
+  "angle_err_deg": -1.7,
+  "ring_aspect": 1.044,
+  "tip_radius_sd": 0.06
+ },
+ {
+  "photo": "wood3&9",
+  "target": "E3",
+  "radius": 0.56,
+  "electrode_pos": 3.14,
+  "angle_err_deg": 4.1,
+  "ring_aspect": 1.039,
+  "tip_radius_sd": 0.046
+ },
+ {
+  "photo": "wood3&9",
+  "target": "E9",
+  "radius": 0.695,
+  "electrode_pos": 8.66,
+  "angle_err_deg": -10.2,
+  "ring_aspect": 1.039,
+  "tip_radius_sd": 0.046
+ },
+ {
+  "photo": "wood4&10",
+  "target": "E4",
+  "radius": 0.707,
+  "electrode_pos": 3.96,
+  "angle_err_deg": -1.2,
+  "ring_aspect": 1.04,
+  "tip_radius_sd": 0.05
+ },
+ {
+  "photo": "wood4&10",
+  "target": "E10",
+  "radius": 0.641,
+  "electrode_pos": 9.79,
+  "angle_err_deg": -6.4,
+  "ring_aspect": 1.04,
+  "tip_radius_sd": 0.05
+ },
+ {
+  "photo": "wood6&12",
+  "target": "E6",
+  "radius": 0.782,
+  "electrode_pos": 5.97,
+  "angle_err_deg": -1.0,
+  "ring_aspect": 1.018,
+  "tip_radius_sd": 0.055
+ },
+ {
+  "photo": "wood6&12",
+  "target": "E12",
+  "radius": 0.696,
+  "electrode_pos": 12.1,
+  "angle_err_deg": 2.9,
+  "ring_aspect": 1.018,
+  "tip_radius_sd": 0.055
+ }
+]

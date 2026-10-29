@@ -1,0 +1,191 @@
+photo,run,position,size_txr,ncc,control
+center,20261022-194908-saline-pos-centre,measured,23x22 (code),0.942,-0.252
+center,20261022-194908-saline-pos-centre,measured,30x22,0.94,-0.254
+center,20261022-194908-saline-pos-centre,measured,22x30,0.912,-0.258
+center,20261022-194908-saline-pos-centre,measured,23x30,0.917,-0.254
+center,20261022-194908-saline-pos-centre,measured,30x23,0.928,-0.251
+center,20261022-194908-saline-pos-centre,nominal,23x22 (code),0.942,-0.252
+center,20261022-194908-saline-pos-centre,nominal,30x22,0.94,-0.254
+center,20261022-194908-saline-pos-centre,nominal,22x30,0.912,-0.258
+center,20261022-194908-saline-pos-centre,nominal,23x30,0.917,-0.254
+center,20261022-194908-saline-pos-centre,nominal,30x23,0.928,-0.251
+wood1,20261022-202044-saline-pos-e1,measured,23x22 (code),0.958,-0.069
+wood1,20261022-202044-saline-pos-e1,measured,30x22,0.938,-0.051
+wood1,20261022-202044-saline-pos-e1,measured,22x30,0.919,-0.038
+wood1,20261022-202044-saline-pos-e1,measured,23x30,0.919,-0.038
+wood1,20261022-202044-saline-pos-e1,measured,30x23,0.938,-0.051
+wood1,20261022-202044-saline-pos-e1,nominal,23x22 (code),0.884,0.015
+wood1,20261022-202044-saline-pos-e1,nominal,30x22,0.843,0.042
+wood1,20261022-202044-saline-pos-e1,nominal,22x30,0.851,0.027
+wood1,20261022-202044-saline-pos-e1,nominal,23x30,0.875,0.008
+wood1,20261022-202044-saline-pos-e1,nominal,30x23,0.841,0.04
+wood2,20261022-204822-saline-pos-e2,measured,23x22 (code),0.79,-0.011
+wood2,20261022-204822-saline-pos-e2,measured,30x22,0.789,-0.025
+wood2,20261022-204822-saline-pos-e2,measured,22x30,0.723,0.082
+wood2,20261022-204822-saline-pos-e2,measured,23x30,0.723,0.082
+wood2,20261022-204822-saline-pos-e2,measured,30x23,0.789,-0.025
+wood2,20261022-204822-saline-pos-e2,nominal,23x22 (code),0.87,-0.186
+wood2,20261022-204822-saline-pos-e2,nominal,30x22,0.805,-0.143
+wood2,20261022-204822-saline-pos-e2,nominal,22x30,0.814,-0.165
+wood2,20261022-204822-saline-pos-e2,nominal,23x30,0.843,-0.171
+wood2,20261022-204822-saline-pos-e2,nominal,30x23,0.805,-0.143
+wood3,20261022-145332-saline-pos-e3,measured,23x22 (code),0.539,0.066
+wood3,20261022-145332-saline-pos-e3,measured,30x22,0.505,0.105
+wood3,20261022-145332-saline-pos-e3,measured,22x30,0.504,0.114
+wood3,20261022-145332-saline-pos-e3,measured,23x30,0.464,0.131
+wood3,20261022-145332-saline-pos-e3,measured,30x23,0.505,0.105
+wood3,20261022-145332-saline-pos-e3,nominal,23x22 (code),0.444,0.382
+wood3,20261022-145332-saline-pos-e3,nominal,30x22,0.477,0.355
+wood3,20261022-145332-saline-pos-e3,nominal,22x30,0.467,0.356
+wood3,20261022-145332-saline-pos-e3,nominal,23x30,0.452,0.379
+wood3,20261022-145332-saline-pos-e3,nominal,30x23,0.523,0.31
+wood4,20261022-152458-saline-pos-e4,measured,23x22 (code),0.383,0.026
+wood4,20261022-152458-saline-pos-e4,measured,30x22,0.421,0.041
+wood4,20261022-152458-saline-pos-e4,measured,22x30,0.379,0.031
+wood4,20261022-152458-saline-pos-e4,measured,23x30,0.354,0.062
+wood4,20261022-152458-saline-pos-e4,measured,30x23,0.421,0.041
+wood4,20261022-152458-saline-pos-e4,nominal,23x22 (code),0.545,0.137
+wood4,20261022-152458-saline-pos-e4,nominal,30x22,0.54,0.115
+wood4,20261022-152458-saline-pos-e4,nominal,22x30,0.478,0.199
+wood4,20261022-152458-saline-pos-e4,nominal,23x30,0.478,0.199
+wood4,20261022-152458-saline-pos-e4,nominal,30x23,0.54,0.115
+wood5,20261022-155259-saline-pos-e5,measured,23x22 (code),0.499,-0.004
+wood5,20261022-155259-saline-pos-e5,measured,30x22,0.52,-0.006
+wood5,20261022-155259-saline-pos-e5,measured,22x30,0.504,-0.006
+wood5,20261022-155259-saline-pos-e5,measured,23x30,0.452,-0.002
+wood5,20261022-155259-saline-pos-e5,measured,30x23,0.52,-0.006
+wood5,20261022-155259-saline-pos-e5,nominal,23x22 (code),0.732,-0.053
+wood5,20261022-155259-saline-pos-e5,nominal,30x22,0.706,-0.038
+wood5,20261022-155259-saline-pos-e5,nominal,22x30,0.749,-0.052
+wood5,20261022-155259-saline-pos-e5,nominal,23x30,0.716,-0.043
+wood5,20261022-155259-saline-pos-e5,nominal,30x23,0.666,-0.027
+wood6,20261022-162115-saline-pos-e6,measured,23x22 (code),0.908,0.066
+wood6,20261022-162115-saline-pos-e6,measured,30x22,0.927,0.051
+wood6,20261022-162115-saline-pos-e6,measured,22x30,0.838,0.075
+wood6,20261022-162115-saline-pos-e6,measured,23x30,0.838,0.075
+wood6,20261022-162115-saline-pos-e6,measured,30x23,0.927,0.051
+wood6,20261022-162115-saline-pos-e6,nominal,23x22 (code),0.908,0.066
+wood6,20261022-162115-saline-pos-e6,nominal,30x22,0.883,0.063
+wood6,20261022-162115-saline-pos-e6,nominal,22x30,0.913,0.058
+wood6,20261022-162115-saline-pos-e6,nominal,23x30,0.902,0.064
+wood6,20261022-162115-saline-pos-e6,nominal,30x23,0.883,0.063
+wood7,20261022-165009-saline-pos-e7,measured,23x22 (code),0.821,-0.014
+wood7,20261022-165009-saline-pos-e7,measured,30x22,0.796,-0.024
+wood7,20261022-165009-saline-pos-e7,measured,22x30,0.824,-0.018
+wood7,20261022-165009-saline-pos-e7,measured,23x30,0.824,-0.018
+wood7,20261022-165009-saline-pos-e7,measured,30x23,0.807,-0.024
+wood7,20261022-165009-saline-pos-e7,nominal,23x22 (code),0.716,-0.015
+wood7,20261022-165009-saline-pos-e7,nominal,30x22,0.669,-0.025
+wood7,20261022-165009-saline-pos-e7,nominal,22x30,0.608,-0.027
+wood7,20261022-165009-saline-pos-e7,nominal,23x30,0.626,-0.021
+wood7,20261022-165009-saline-pos-e7,nominal,30x23,0.69,-0.027
+wood9,20261022-174654-saline-pos-e9,measured,23x22 (code),0.67,-0.133
+wood9,20261022-174654-saline-pos-e9,measured,30x22,0.629,-0.133
+wood9,20261022-174654-saline-pos-e9,measured,22x30,0.67,-0.133
+wood9,20261022-174654-saline-pos-e9,measured,23x30,0.67,-0.133
+wood9,20261022-174654-saline-pos-e9,measured,30x23,0.629,-0.133
+wood9,20261022-174654-saline-pos-e9,nominal,23x22 (code),0.862,-0.161
+wood9,20261022-174654-saline-pos-e9,nominal,30x22,0.857,-0.159
+wood9,20261022-174654-saline-pos-e9,nominal,22x30,0.854,-0.164
+wood9,20261022-174654-saline-pos-e9,nominal,23x30,0.854,-0.164
+wood9,20261022-174654-saline-pos-e9,nominal,30x23,0.857,-0.159
+wood10,20261022-181616-saline-pos-e10,measured,23x22 (code),0.483,-0.14
+wood10,20261022-181616-saline-pos-e10,measured,30x22,0.494,-0.14
+wood10,20261022-181616-saline-pos-e10,measured,22x30,0.367,-0.127
+wood10,20261022-181616-saline-pos-e10,measured,23x30,0.367,-0.127
+wood10,20261022-181616-saline-pos-e10,measured,30x23,0.494,-0.14
+wood10,20261022-181616-saline-pos-e10,nominal,23x22 (code),0.817,-0.128
+wood10,20261022-181616-saline-pos-e10,nominal,30x22,0.783,-0.136
+wood10,20261022-181616-saline-pos-e10,nominal,22x30,0.763,-0.13
+wood10,20261022-181616-saline-pos-e10,nominal,23x30,0.768,-0.129
+wood10,20261022-181616-saline-pos-e10,nominal,30x23,0.783,-0.136
+wood11,20261022-184618-saline-pos-e11,measured,23x22 (code),0.889,-0.062
+wood11,20261022-184618-saline-pos-e11,measured,30x22,0.897,-0.065
+wood11,20261022-184618-saline-pos-e11,measured,22x30,0.905,-0.068
+wood11,20261022-184618-saline-pos-e11,measured,23x30,0.905,-0.068
+wood11,20261022-184618-saline-pos-e11,measured,30x23,0.921,-0.064
+wood11,20261022-184618-saline-pos-e11,nominal,23x22 (code),0.708,-0.064
+wood11,20261022-184618-saline-pos-e11,nominal,30x22,0.741,-0.062
+wood11,20261022-184618-saline-pos-e11,nominal,22x30,0.726,-0.055
+wood11,20261022-184618-saline-pos-e11,nominal,23x30,0.683,-0.058
+wood11,20261022-184618-saline-pos-e11,nominal,30x23,0.707,-0.061
+wood12,20261022-191543-saline-pos-e12,measured,23x22 (code),0.6,0.114
+wood12,20261022-191543-saline-pos-e12,measured,30x22,0.636,0.113
+wood12,20261022-191543-saline-pos-e12,measured,22x30,0.64,0.104
+wood12,20261022-191543-saline-pos-e12,measured,23x30,0.632,0.111
+wood12,20261022-191543-saline-pos-e12,measured,30x23,0.636,0.113
+wood12,20261022-191543-saline-pos-e12,nominal,23x22 (code),0.78,0.058
+wood12,20261022-191543-saline-pos-e12,nominal,30x22,0.82,0.051
+wood12,20261022-191543-saline-pos-e12,nominal,22x30,0.763,0.065
+wood12,20261022-191543-saline-pos-e12,nominal,23x30,0.763,0.065
+wood12,20261022-191543-saline-pos-e12,nominal,30x23,0.774,0.052
+wood1&7,20261023-163554-saline-pos-e1-e7,measured,23x22 (code),0.407,0.082
+wood1&7,20261023-163554-saline-pos-e1-e7,measured,30x22,0.4,0.088
+wood1&7,20261023-163554-saline-pos-e1-e7,measured,22x30,0.352,0.085
+wood1&7,20261023-163554-saline-pos-e1-e7,measured,23x30,0.371,0.069
+wood1&7,20261023-163554-saline-pos-e1-e7,measured,30x23,0.4,0.088
+wood1&7,20261023-163554-saline-pos-e1-e7,nominal,23x22 (code),0.754,-0.038
+wood1&7,20261023-163554-saline-pos-e1-e7,nominal,30x22,0.721,-0.061
+wood1&7,20261023-163554-saline-pos-e1-e7,nominal,22x30,0.671,-0.018
+wood1&7,20261023-163554-saline-pos-e1-e7,nominal,23x30,0.696,-0.03
+wood1&7,20261023-163554-saline-pos-e1-e7,nominal,30x23,0.72,-0.047
+wood2&8,20261023-133050-saline-pos-e2-e8,measured,23x22 (code),0.524,0.035
+wood2&8,20261023-133050-saline-pos-e2-e8,measured,30x22,0.558,0.126
+wood2&8,20261023-133050-saline-pos-e2-e8,measured,22x30,0.507,0.031
+wood2&8,20261023-133050-saline-pos-e2-e8,measured,23x30,0.507,0.031
+wood2&8,20261023-133050-saline-pos-e2-e8,measured,30x23,0.559,0.103
+wood2&8,20261023-133050-saline-pos-e2-e8,nominal,23x22 (code),0.722,-0.023
+wood2&8,20261023-133050-saline-pos-e2-e8,nominal,30x22,0.711,0.055
+wood2&8,20261023-133050-saline-pos-e2-e8,nominal,22x30,0.72,0.035
+wood2&8,20261023-133050-saline-pos-e2-e8,nominal,23x30,0.734,-0.004
+wood2&8,20261023-133050-saline-pos-e2-e8,nominal,30x23,0.739,0.024
+wood3&9,20261023-135919-saline-pos-e3-e9,measured,23x22 (code),0.548,-0.096
+wood3&9,20261023-135919-saline-pos-e3-e9,measured,30x22,0.565,-0.114
+wood3&9,20261023-135919-saline-pos-e3-e9,measured,22x30,0.466,-0.114
+wood3&9,20261023-135919-saline-pos-e3-e9,measured,23x30,0.509,-0.098
+wood3&9,20261023-135919-saline-pos-e3-e9,measured,30x23,0.565,-0.114
+wood3&9,20261023-135919-saline-pos-e3-e9,nominal,23x22 (code),0.662,-0.046
+wood3&9,20261023-135919-saline-pos-e3-e9,nominal,30x22,0.683,-0.093
+wood3&9,20261023-135919-saline-pos-e3-e9,nominal,22x30,0.67,-0.041
+wood3&9,20261023-135919-saline-pos-e3-e9,nominal,23x30,0.668,-0.031
+wood3&9,20261023-135919-saline-pos-e3-e9,nominal,30x23,0.692,-0.101
+wood4&10,20261023-142712-saline-pos-e4-e10,measured,23x22 (code),0.503,-0.169
+wood4&10,20261023-142712-saline-pos-e4-e10,measured,30x22,0.529,-0.175
+wood4&10,20261023-142712-saline-pos-e4-e10,measured,22x30,0.441,-0.141
+wood4&10,20261023-142712-saline-pos-e4-e10,measured,23x30,0.453,-0.158
+wood4&10,20261023-142712-saline-pos-e4-e10,measured,30x23,0.529,-0.175
+wood4&10,20261023-142712-saline-pos-e4-e10,nominal,23x22 (code),0.73,-0.225
+wood4&10,20261023-142712-saline-pos-e4-e10,nominal,30x22,0.72,-0.236
+wood4&10,20261023-142712-saline-pos-e4-e10,nominal,22x30,0.707,-0.221
+wood4&10,20261023-142712-saline-pos-e4-e10,nominal,23x30,0.709,-0.223
+wood4&10,20261023-142712-saline-pos-e4-e10,nominal,30x23,0.72,-0.236
+wood6&12,20261023-153233-saline-pos-e6-e12,measured,23x22 (code),0.395,0.005
+wood6&12,20261023-153233-saline-pos-e6-e12,measured,30x22,0.379,0.119
+wood6&12,20261023-153233-saline-pos-e6-e12,measured,22x30,0.37,0.046
+wood6&12,20261023-153233-saline-pos-e6-e12,measured,23x30,0.382,0.101
+wood6&12,20261023-153233-saline-pos-e6-e12,measured,30x23,0.377,0.107
+wood6&12,20261023-153233-saline-pos-e6-e12,nominal,23x22 (code),0.773,-0.03
+wood6&12,20261023-153233-saline-pos-e6-e12,nominal,30x22,0.768,-0.047
+wood6&12,20261023-153233-saline-pos-e6-e12,nominal,22x30,0.706,0.047
+wood6&12,20261023-153233-saline-pos-e6-e12,nominal,23x30,0.726,0.033
+wood6&12,20261023-153233-saline-pos-e6-e12,nominal,30x23,0.741,-0.011
+wood8,20261014-191430-saline-e8-adjacent-dac400-st10-n16,measured,23x22 (code),0.824,
+wood8,20261014-191430-saline-e8-adjacent-dac400-st10-n16,measured,30x22,0.843,
+wood8,20261014-191430-saline-e8-adjacent-dac400-st10-n16,measured,22x30,0.876,
+wood8,20261014-191430-saline-e8-adjacent-dac400-st10-n16,measured,23x30,0.876,
+wood8,20261014-191430-saline-e8-adjacent-dac400-st10-n16,measured,30x23,0.874,
+wood8,20261014-191430-saline-e8-adjacent-dac400-st10-n16,nominal,23x22 (code),0.963,
+wood8,20261014-191430-saline-e8-adjacent-dac400-st10-n16,nominal,30x22,0.977,
+wood8,20261014-191430-saline-e8-adjacent-dac400-st10-n16,nominal,22x30,0.976,
+wood8,20261014-191430-saline-e8-adjacent-dac400-st10-n16,nominal,23x30,0.958,
+wood8,20261014-191430-saline-e8-adjacent-dac400-st10-n16,nominal,30x23,0.965,
+wood5&11,20261023-145649-saline-pos-e5-e11,measured,23x22 (code),0.525,-0.184
+wood5&11,20261023-145649-saline-pos-e5-e11,measured,30x22,0.546,-0.195
+wood5&11,20261023-145649-saline-pos-e5-e11,measured,22x30,0.498,-0.168
+wood5&11,20261023-145649-saline-pos-e5-e11,measured,23x30,0.498,-0.168
+wood5&11,20261023-145649-saline-pos-e5-e11,measured,30x23,0.548,-0.199
+wood5&11,20261023-145649-saline-pos-e5-e11,nominal,23x22 (code),0.778,-0.237
+wood5&11,20261023-145649-saline-pos-e5-e11,nominal,30x22,0.78,-0.238
+wood5&11,20261023-145649-saline-pos-e5-e11,nominal,22x30,0.785,-0.233
+wood5&11,20261023-145649-saline-pos-e5-e11,nominal,23x30,0.755,-0.219
+wood5&11,20261023-145649-saline-pos-e5-e11,nominal,30x23,0.758,-0.226

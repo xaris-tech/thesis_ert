@@ -1,0 +1,1111 @@
+photo,run,baseline,spot,size,ncc
+center,20261022-194908-saline-pos-centre,20261022-134226-saline-pos-empty-first,measured,23x22,0.924
+center,20261022-194908-saline-pos-centre,20261022-134226-saline-pos-empty-first,measured,30x22,0.906
+center,20261022-194908-saline-pos-centre,20261022-134226-saline-pos-empty-first,measured,22x30,0.911
+center,20261022-194908-saline-pos-centre,20261022-134226-saline-pos-empty-first,measured,23x30,0.916
+center,20261022-194908-saline-pos-centre,20261022-134226-saline-pos-empty-first,measured,30x23,0.912
+center,20261022-194908-saline-pos-centre,20261022-134226-saline-pos-empty-first,assumed,23x22,0.924
+center,20261022-194908-saline-pos-centre,20261022-134226-saline-pos-empty-first,assumed,30x22,0.906
+center,20261022-194908-saline-pos-centre,20261022-134226-saline-pos-empty-first,assumed,22x30,0.911
+center,20261022-194908-saline-pos-centre,20261022-134226-saline-pos-empty-first,assumed,23x30,0.916
+center,20261022-194908-saline-pos-centre,20261022-134226-saline-pos-empty-first,assumed,30x23,0.912
+center,20261022-194908-saline-pos-centre,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x22,0.924
+center,20261022-194908-saline-pos-centre,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x22,0.906
+center,20261022-194908-saline-pos-centre,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,22x30,0.911
+center,20261022-194908-saline-pos-centre,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x30,0.916
+center,20261022-194908-saline-pos-centre,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x23,0.912
+center,20261022-195708-saline-pos-centre,20261022-134226-saline-pos-empty-first,measured,23x22,0.931
+center,20261022-195708-saline-pos-centre,20261022-134226-saline-pos-empty-first,measured,30x22,0.914
+center,20261022-195708-saline-pos-centre,20261022-134226-saline-pos-empty-first,measured,22x30,0.919
+center,20261022-195708-saline-pos-centre,20261022-134226-saline-pos-empty-first,measured,23x30,0.923
+center,20261022-195708-saline-pos-centre,20261022-134226-saline-pos-empty-first,measured,30x23,0.92
+center,20261022-195708-saline-pos-centre,20261022-134226-saline-pos-empty-first,assumed,23x22,0.931
+center,20261022-195708-saline-pos-centre,20261022-134226-saline-pos-empty-first,assumed,30x22,0.914
+center,20261022-195708-saline-pos-centre,20261022-134226-saline-pos-empty-first,assumed,22x30,0.919
+center,20261022-195708-saline-pos-centre,20261022-134226-saline-pos-empty-first,assumed,23x30,0.923
+center,20261022-195708-saline-pos-centre,20261022-134226-saline-pos-empty-first,assumed,30x23,0.92
+center,20261022-195708-saline-pos-centre,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x22,0.931
+center,20261022-195708-saline-pos-centre,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x22,0.914
+center,20261022-195708-saline-pos-centre,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,22x30,0.919
+center,20261022-195708-saline-pos-centre,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x30,0.923
+center,20261022-195708-saline-pos-centre,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x23,0.92
+center,20261022-200508-saline-pos-centre,20261022-134226-saline-pos-empty-first,measured,23x22,0.934
+center,20261022-200508-saline-pos-centre,20261022-134226-saline-pos-empty-first,measured,30x22,0.916
+center,20261022-200508-saline-pos-centre,20261022-134226-saline-pos-empty-first,measured,22x30,0.922
+center,20261022-200508-saline-pos-centre,20261022-134226-saline-pos-empty-first,measured,23x30,0.926
+center,20261022-200508-saline-pos-centre,20261022-134226-saline-pos-empty-first,measured,30x23,0.922
+center,20261022-200508-saline-pos-centre,20261022-134226-saline-pos-empty-first,assumed,23x22,0.934
+center,20261022-200508-saline-pos-centre,20261022-134226-saline-pos-empty-first,assumed,30x22,0.916
+center,20261022-200508-saline-pos-centre,20261022-134226-saline-pos-empty-first,assumed,22x30,0.922
+center,20261022-200508-saline-pos-centre,20261022-134226-saline-pos-empty-first,assumed,23x30,0.926
+center,20261022-200508-saline-pos-centre,20261022-134226-saline-pos-empty-first,assumed,30x23,0.922
+center,20261022-200508-saline-pos-centre,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x22,0.934
+center,20261022-200508-saline-pos-centre,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x22,0.916
+center,20261022-200508-saline-pos-centre,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,22x30,0.922
+center,20261022-200508-saline-pos-centre,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x30,0.926
+center,20261022-200508-saline-pos-centre,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x23,0.922
+wood1,20261022-121417-saline-pos-e1,20261022-115906-saline-pos-empty-first,measured,23x22,0.062
+wood1,20261022-121417-saline-pos-e1,20261022-115906-saline-pos-empty-first,measured,30x22,0.045
+wood1,20261022-121417-saline-pos-e1,20261022-115906-saline-pos-empty-first,measured,22x30,0.041
+wood1,20261022-121417-saline-pos-e1,20261022-115906-saline-pos-empty-first,measured,23x30,0.041
+wood1,20261022-121417-saline-pos-e1,20261022-115906-saline-pos-empty-first,measured,30x23,0.045
+wood1,20261022-121417-saline-pos-e1,20261022-115906-saline-pos-empty-first,assumed,23x22,-0.029
+wood1,20261022-121417-saline-pos-e1,20261022-115906-saline-pos-empty-first,assumed,30x22,-0.003
+wood1,20261022-121417-saline-pos-e1,20261022-115906-saline-pos-empty-first,assumed,22x30,-0.03
+wood1,20261022-121417-saline-pos-e1,20261022-115906-saline-pos-empty-first,assumed,23x30,-0.033
+wood1,20261022-121417-saline-pos-e1,20261022-115906-saline-pos-empty-first,assumed,30x23,-0.014
+wood1,20261022-121417-saline-pos-e1,20261022-115906-saline-pos-empty-first,photo angle + assumed radius,23x22,0.054
+wood1,20261022-121417-saline-pos-e1,20261022-115906-saline-pos-empty-first,photo angle + assumed radius,30x22,0.054
+wood1,20261022-121417-saline-pos-e1,20261022-115906-saline-pos-empty-first,photo angle + assumed radius,22x30,0.015
+wood1,20261022-121417-saline-pos-e1,20261022-115906-saline-pos-empty-first,photo angle + assumed radius,23x30,0.012
+wood1,20261022-121417-saline-pos-e1,20261022-115906-saline-pos-empty-first,photo angle + assumed radius,30x23,0.051
+wood1,20261022-122232-saline-pos-e1,20261022-115906-saline-pos-empty-first,measured,23x22,0.101
+wood1,20261022-122232-saline-pos-e1,20261022-115906-saline-pos-empty-first,measured,30x22,0.079
+wood1,20261022-122232-saline-pos-e1,20261022-115906-saline-pos-empty-first,measured,22x30,0.076
+wood1,20261022-122232-saline-pos-e1,20261022-115906-saline-pos-empty-first,measured,23x30,0.077
+wood1,20261022-122232-saline-pos-e1,20261022-115906-saline-pos-empty-first,measured,30x23,0.079
+wood1,20261022-122232-saline-pos-e1,20261022-115906-saline-pos-empty-first,assumed,23x22,0.0
+wood1,20261022-122232-saline-pos-e1,20261022-115906-saline-pos-empty-first,assumed,30x22,0.025
+wood1,20261022-122232-saline-pos-e1,20261022-115906-saline-pos-empty-first,assumed,22x30,-0.002
+wood1,20261022-122232-saline-pos-e1,20261022-115906-saline-pos-empty-first,assumed,23x30,-0.005
+wood1,20261022-122232-saline-pos-e1,20261022-115906-saline-pos-empty-first,assumed,30x23,0.014
+wood1,20261022-122232-saline-pos-e1,20261022-115906-saline-pos-empty-first,photo angle + assumed radius,23x22,0.086
+wood1,20261022-122232-saline-pos-e1,20261022-115906-saline-pos-empty-first,photo angle + assumed radius,30x22,0.083
+wood1,20261022-122232-saline-pos-e1,20261022-115906-saline-pos-empty-first,photo angle + assumed radius,22x30,0.048
+wood1,20261022-122232-saline-pos-e1,20261022-115906-saline-pos-empty-first,photo angle + assumed radius,23x30,0.047
+wood1,20261022-122232-saline-pos-e1,20261022-115906-saline-pos-empty-first,photo angle + assumed radius,30x23,0.081
+wood1,20261022-122955-saline-pos-e1,20261022-115906-saline-pos-empty-first,measured,23x22,0.124
+wood1,20261022-122955-saline-pos-e1,20261022-115906-saline-pos-empty-first,measured,30x22,0.099
+wood1,20261022-122955-saline-pos-e1,20261022-115906-saline-pos-empty-first,measured,22x30,0.097
+wood1,20261022-122955-saline-pos-e1,20261022-115906-saline-pos-empty-first,measured,23x30,0.099
+wood1,20261022-122955-saline-pos-e1,20261022-115906-saline-pos-empty-first,measured,30x23,0.099
+wood1,20261022-122955-saline-pos-e1,20261022-115906-saline-pos-empty-first,assumed,23x22,0.019
+wood1,20261022-122955-saline-pos-e1,20261022-115906-saline-pos-empty-first,assumed,30x22,0.041
+wood1,20261022-122955-saline-pos-e1,20261022-115906-saline-pos-empty-first,assumed,22x30,0.016
+wood1,20261022-122955-saline-pos-e1,20261022-115906-saline-pos-empty-first,assumed,23x30,0.012
+wood1,20261022-122955-saline-pos-e1,20261022-115906-saline-pos-empty-first,assumed,30x23,0.03
+wood1,20261022-122955-saline-pos-e1,20261022-115906-saline-pos-empty-first,photo angle + assumed radius,23x22,0.104
+wood1,20261022-122955-saline-pos-e1,20261022-115906-saline-pos-empty-first,photo angle + assumed radius,30x22,0.1
+wood1,20261022-122955-saline-pos-e1,20261022-115906-saline-pos-empty-first,photo angle + assumed radius,22x30,0.068
+wood1,20261022-122955-saline-pos-e1,20261022-115906-saline-pos-empty-first,photo angle + assumed radius,23x30,0.067
+wood1,20261022-122955-saline-pos-e1,20261022-115906-saline-pos-empty-first,photo angle + assumed radius,30x23,0.099
+wood1,20261022-135625-saline-pos-e1,20261022-134226-saline-pos-empty-first,measured,23x22,0.921
+wood1,20261022-135625-saline-pos-e1,20261022-134226-saline-pos-empty-first,measured,30x22,0.937
+wood1,20261022-135625-saline-pos-e1,20261022-134226-saline-pos-empty-first,measured,22x30,0.911
+wood1,20261022-135625-saline-pos-e1,20261022-134226-saline-pos-empty-first,measured,23x30,0.915
+wood1,20261022-135625-saline-pos-e1,20261022-134226-saline-pos-empty-first,measured,30x23,0.941
+wood1,20261022-135625-saline-pos-e1,20261022-134226-saline-pos-empty-first,assumed,23x22,0.897
+wood1,20261022-135625-saline-pos-e1,20261022-134226-saline-pos-empty-first,assumed,30x22,0.862
+wood1,20261022-135625-saline-pos-e1,20261022-134226-saline-pos-empty-first,assumed,22x30,0.799
+wood1,20261022-135625-saline-pos-e1,20261022-134226-saline-pos-empty-first,assumed,23x30,0.798
+wood1,20261022-135625-saline-pos-e1,20261022-134226-saline-pos-empty-first,assumed,30x23,0.865
+wood1,20261022-135625-saline-pos-e1,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x22,0.875
+wood1,20261022-135625-saline-pos-e1,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x22,0.897
+wood1,20261022-135625-saline-pos-e1,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,22x30,0.812
+wood1,20261022-135625-saline-pos-e1,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x30,0.823
+wood1,20261022-135625-saline-pos-e1,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x23,0.903
+wood1,20261022-140455-saline-pos-e1,20261022-134226-saline-pos-empty-first,measured,23x22,0.685
+wood1,20261022-140455-saline-pos-e1,20261022-134226-saline-pos-empty-first,measured,30x22,0.737
+wood1,20261022-140455-saline-pos-e1,20261022-134226-saline-pos-empty-first,measured,22x30,0.702
+wood1,20261022-140455-saline-pos-e1,20261022-134226-saline-pos-empty-first,measured,23x30,0.7
+wood1,20261022-140455-saline-pos-e1,20261022-134226-saline-pos-empty-first,measured,30x23,0.738
+wood1,20261022-140455-saline-pos-e1,20261022-134226-saline-pos-empty-first,assumed,23x22,0.714
+wood1,20261022-140455-saline-pos-e1,20261022-134226-saline-pos-empty-first,assumed,30x22,0.71
+wood1,20261022-140455-saline-pos-e1,20261022-134226-saline-pos-empty-first,assumed,22x30,0.65
+wood1,20261022-140455-saline-pos-e1,20261022-134226-saline-pos-empty-first,assumed,23x30,0.651
+wood1,20261022-140455-saline-pos-e1,20261022-134226-saline-pos-empty-first,assumed,30x23,0.718
+wood1,20261022-140455-saline-pos-e1,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x22,0.693
+wood1,20261022-140455-saline-pos-e1,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x22,0.732
+wood1,20261022-140455-saline-pos-e1,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,22x30,0.627
+wood1,20261022-140455-saline-pos-e1,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x30,0.632
+wood1,20261022-140455-saline-pos-e1,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x23,0.735
+wood1,20261022-141330-saline-pos-e1,20261022-134226-saline-pos-empty-first,measured,23x22,0.891
+wood1,20261022-141330-saline-pos-e1,20261022-134226-saline-pos-empty-first,measured,30x22,0.905
+wood1,20261022-141330-saline-pos-e1,20261022-134226-saline-pos-empty-first,measured,22x30,0.886
+wood1,20261022-141330-saline-pos-e1,20261022-134226-saline-pos-empty-first,measured,23x30,0.891
+wood1,20261022-141330-saline-pos-e1,20261022-134226-saline-pos-empty-first,measured,30x23,0.91
+wood1,20261022-141330-saline-pos-e1,20261022-134226-saline-pos-empty-first,assumed,23x22,0.908
+wood1,20261022-141330-saline-pos-e1,20261022-134226-saline-pos-empty-first,assumed,30x22,0.859
+wood1,20261022-141330-saline-pos-e1,20261022-134226-saline-pos-empty-first,assumed,22x30,0.813
+wood1,20261022-141330-saline-pos-e1,20261022-134226-saline-pos-empty-first,assumed,23x30,0.814
+wood1,20261022-141330-saline-pos-e1,20261022-134226-saline-pos-empty-first,assumed,30x23,0.864
+wood1,20261022-141330-saline-pos-e1,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x22,0.846
+wood1,20261022-141330-saline-pos-e1,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x22,0.862
+wood1,20261022-141330-saline-pos-e1,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,22x30,0.808
+wood1,20261022-141330-saline-pos-e1,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x30,0.821
+wood1,20261022-141330-saline-pos-e1,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x23,0.868
+wood1,20261022-202044-saline-pos-e1,20261022-134226-saline-pos-empty-first,measured,23x22,0.9
+wood1,20261022-202044-saline-pos-e1,20261022-134226-saline-pos-empty-first,measured,30x22,0.889
+wood1,20261022-202044-saline-pos-e1,20261022-134226-saline-pos-empty-first,measured,22x30,0.873
+wood1,20261022-202044-saline-pos-e1,20261022-134226-saline-pos-empty-first,measured,23x30,0.881
+wood1,20261022-202044-saline-pos-e1,20261022-134226-saline-pos-empty-first,measured,30x23,0.894
+wood1,20261022-202044-saline-pos-e1,20261022-134226-saline-pos-empty-first,assumed,23x22,0.855
+wood1,20261022-202044-saline-pos-e1,20261022-134226-saline-pos-empty-first,assumed,30x22,0.806
+wood1,20261022-202044-saline-pos-e1,20261022-134226-saline-pos-empty-first,assumed,22x30,0.762
+wood1,20261022-202044-saline-pos-e1,20261022-134226-saline-pos-empty-first,assumed,23x30,0.761
+wood1,20261022-202044-saline-pos-e1,20261022-134226-saline-pos-empty-first,assumed,30x23,0.806
+wood1,20261022-202044-saline-pos-e1,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x22,0.827
+wood1,20261022-202044-saline-pos-e1,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x22,0.835
+wood1,20261022-202044-saline-pos-e1,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,22x30,0.793
+wood1,20261022-202044-saline-pos-e1,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x30,0.807
+wood1,20261022-202044-saline-pos-e1,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x23,0.841
+wood1,20261022-202844-saline-pos-e1,20261022-134226-saline-pos-empty-first,measured,23x22,0.902
+wood1,20261022-202844-saline-pos-e1,20261022-134226-saline-pos-empty-first,measured,30x22,0.893
+wood1,20261022-202844-saline-pos-e1,20261022-134226-saline-pos-empty-first,measured,22x30,0.877
+wood1,20261022-202844-saline-pos-e1,20261022-134226-saline-pos-empty-first,measured,23x30,0.884
+wood1,20261022-202844-saline-pos-e1,20261022-134226-saline-pos-empty-first,measured,30x23,0.898
+wood1,20261022-202844-saline-pos-e1,20261022-134226-saline-pos-empty-first,assumed,23x22,0.861
+wood1,20261022-202844-saline-pos-e1,20261022-134226-saline-pos-empty-first,assumed,30x22,0.812
+wood1,20261022-202844-saline-pos-e1,20261022-134226-saline-pos-empty-first,assumed,22x30,0.767
+wood1,20261022-202844-saline-pos-e1,20261022-134226-saline-pos-empty-first,assumed,23x30,0.766
+wood1,20261022-202844-saline-pos-e1,20261022-134226-saline-pos-empty-first,assumed,30x23,0.811
+wood1,20261022-202844-saline-pos-e1,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x22,0.83
+wood1,20261022-202844-saline-pos-e1,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x22,0.839
+wood1,20261022-202844-saline-pos-e1,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,22x30,0.796
+wood1,20261022-202844-saline-pos-e1,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x30,0.81
+wood1,20261022-202844-saline-pos-e1,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x23,0.845
+wood1,20261022-203644-saline-pos-e1,20261022-134226-saline-pos-empty-first,measured,23x22,0.903
+wood1,20261022-203644-saline-pos-e1,20261022-134226-saline-pos-empty-first,measured,30x22,0.893
+wood1,20261022-203644-saline-pos-e1,20261022-134226-saline-pos-empty-first,measured,22x30,0.877
+wood1,20261022-203644-saline-pos-e1,20261022-134226-saline-pos-empty-first,measured,23x30,0.885
+wood1,20261022-203644-saline-pos-e1,20261022-134226-saline-pos-empty-first,measured,30x23,0.898
+wood1,20261022-203644-saline-pos-e1,20261022-134226-saline-pos-empty-first,assumed,23x22,0.861
+wood1,20261022-203644-saline-pos-e1,20261022-134226-saline-pos-empty-first,assumed,30x22,0.812
+wood1,20261022-203644-saline-pos-e1,20261022-134226-saline-pos-empty-first,assumed,22x30,0.768
+wood1,20261022-203644-saline-pos-e1,20261022-134226-saline-pos-empty-first,assumed,23x30,0.767
+wood1,20261022-203644-saline-pos-e1,20261022-134226-saline-pos-empty-first,assumed,30x23,0.812
+wood1,20261022-203644-saline-pos-e1,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x22,0.831
+wood1,20261022-203644-saline-pos-e1,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x22,0.839
+wood1,20261022-203644-saline-pos-e1,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,22x30,0.797
+wood1,20261022-203644-saline-pos-e1,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x30,0.811
+wood1,20261022-203644-saline-pos-e1,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x23,0.845
+wood2,20261022-143050-saline-pos-e2,20261022-134226-saline-pos-empty-first,measured,23x22,0.582
+wood2,20261022-143050-saline-pos-e2,20261022-134226-saline-pos-empty-first,measured,30x22,0.552
+wood2,20261022-143050-saline-pos-e2,20261022-134226-saline-pos-empty-first,measured,22x30,0.48
+wood2,20261022-143050-saline-pos-e2,20261022-134226-saline-pos-empty-first,measured,23x30,0.444
+wood2,20261022-143050-saline-pos-e2,20261022-134226-saline-pos-empty-first,measured,30x23,0.552
+wood2,20261022-143050-saline-pos-e2,20261022-134226-saline-pos-empty-first,assumed,23x22,0.618
+wood2,20261022-143050-saline-pos-e2,20261022-134226-saline-pos-empty-first,assumed,30x22,0.613
+wood2,20261022-143050-saline-pos-e2,20261022-134226-saline-pos-empty-first,assumed,22x30,0.564
+wood2,20261022-143050-saline-pos-e2,20261022-134226-saline-pos-empty-first,assumed,23x30,0.551
+wood2,20261022-143050-saline-pos-e2,20261022-134226-saline-pos-empty-first,assumed,30x23,0.62
+wood2,20261022-143050-saline-pos-e2,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x22,0.44
+wood2,20261022-143050-saline-pos-e2,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x22,0.444
+wood2,20261022-143050-saline-pos-e2,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,22x30,0.366
+wood2,20261022-143050-saline-pos-e2,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x30,0.346
+wood2,20261022-143050-saline-pos-e2,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x23,0.433
+wood2,20261022-143536-saline-pos-e2,20261022-134226-saline-pos-empty-first,measured,23x22,0.587
+wood2,20261022-143536-saline-pos-e2,20261022-134226-saline-pos-empty-first,measured,30x22,0.556
+wood2,20261022-143536-saline-pos-e2,20261022-134226-saline-pos-empty-first,measured,22x30,0.487
+wood2,20261022-143536-saline-pos-e2,20261022-134226-saline-pos-empty-first,measured,23x30,0.453
+wood2,20261022-143536-saline-pos-e2,20261022-134226-saline-pos-empty-first,measured,30x23,0.556
+wood2,20261022-143536-saline-pos-e2,20261022-134226-saline-pos-empty-first,assumed,23x22,0.665
+wood2,20261022-143536-saline-pos-e2,20261022-134226-saline-pos-empty-first,assumed,30x22,0.663
+wood2,20261022-143536-saline-pos-e2,20261022-134226-saline-pos-empty-first,assumed,22x30,0.623
+wood2,20261022-143536-saline-pos-e2,20261022-134226-saline-pos-empty-first,assumed,23x30,0.616
+wood2,20261022-143536-saline-pos-e2,20261022-134226-saline-pos-empty-first,assumed,30x23,0.67
+wood2,20261022-143536-saline-pos-e2,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x22,0.454
+wood2,20261022-143536-saline-pos-e2,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x22,0.456
+wood2,20261022-143536-saline-pos-e2,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,22x30,0.378
+wood2,20261022-143536-saline-pos-e2,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x30,0.36
+wood2,20261022-143536-saline-pos-e2,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x23,0.444
+wood2,20261022-144001-saline-pos-e2,20261022-134226-saline-pos-empty-first,measured,23x22,0.583
+wood2,20261022-144001-saline-pos-e2,20261022-134226-saline-pos-empty-first,measured,30x22,0.552
+wood2,20261022-144001-saline-pos-e2,20261022-134226-saline-pos-empty-first,measured,22x30,0.482
+wood2,20261022-144001-saline-pos-e2,20261022-134226-saline-pos-empty-first,measured,23x30,0.447
+wood2,20261022-144001-saline-pos-e2,20261022-134226-saline-pos-empty-first,measured,30x23,0.552
+wood2,20261022-144001-saline-pos-e2,20261022-134226-saline-pos-empty-first,assumed,23x22,0.654
+wood2,20261022-144001-saline-pos-e2,20261022-134226-saline-pos-empty-first,assumed,30x22,0.653
+wood2,20261022-144001-saline-pos-e2,20261022-134226-saline-pos-empty-first,assumed,22x30,0.612
+wood2,20261022-144001-saline-pos-e2,20261022-134226-saline-pos-empty-first,assumed,23x30,0.605
+wood2,20261022-144001-saline-pos-e2,20261022-134226-saline-pos-empty-first,assumed,30x23,0.66
+wood2,20261022-144001-saline-pos-e2,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x22,0.448
+wood2,20261022-144001-saline-pos-e2,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x22,0.451
+wood2,20261022-144001-saline-pos-e2,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,22x30,0.372
+wood2,20261022-144001-saline-pos-e2,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x30,0.354
+wood2,20261022-144001-saline-pos-e2,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x23,0.439
+wood2,20261022-204822-saline-pos-e2,20261022-134226-saline-pos-empty-first,measured,23x22,0.739
+wood2,20261022-204822-saline-pos-e2,20261022-134226-saline-pos-empty-first,measured,30x22,0.709
+wood2,20261022-204822-saline-pos-e2,20261022-134226-saline-pos-empty-first,measured,22x30,0.643
+wood2,20261022-204822-saline-pos-e2,20261022-134226-saline-pos-empty-first,measured,23x30,0.608
+wood2,20261022-204822-saline-pos-e2,20261022-134226-saline-pos-empty-first,measured,30x23,0.709
+wood2,20261022-204822-saline-pos-e2,20261022-134226-saline-pos-empty-first,assumed,23x22,0.773
+wood2,20261022-204822-saline-pos-e2,20261022-134226-saline-pos-empty-first,assumed,30x22,0.773
+wood2,20261022-204822-saline-pos-e2,20261022-134226-saline-pos-empty-first,assumed,22x30,0.729
+wood2,20261022-204822-saline-pos-e2,20261022-134226-saline-pos-empty-first,assumed,23x30,0.716
+wood2,20261022-204822-saline-pos-e2,20261022-134226-saline-pos-empty-first,assumed,30x23,0.78
+wood2,20261022-204822-saline-pos-e2,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x22,0.612
+wood2,20261022-204822-saline-pos-e2,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x22,0.613
+wood2,20261022-204822-saline-pos-e2,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,22x30,0.534
+wood2,20261022-204822-saline-pos-e2,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x30,0.515
+wood2,20261022-204822-saline-pos-e2,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x23,0.602
+wood2,20261022-205621-saline-pos-e2,20261022-134226-saline-pos-empty-first,measured,23x22,0.743
+wood2,20261022-205621-saline-pos-e2,20261022-134226-saline-pos-empty-first,measured,30x22,0.714
+wood2,20261022-205621-saline-pos-e2,20261022-134226-saline-pos-empty-first,measured,22x30,0.648
+wood2,20261022-205621-saline-pos-e2,20261022-134226-saline-pos-empty-first,measured,23x30,0.613
+wood2,20261022-205621-saline-pos-e2,20261022-134226-saline-pos-empty-first,measured,30x23,0.714
+wood2,20261022-205621-saline-pos-e2,20261022-134226-saline-pos-empty-first,assumed,23x22,0.773
+wood2,20261022-205621-saline-pos-e2,20261022-134226-saline-pos-empty-first,assumed,30x22,0.773
+wood2,20261022-205621-saline-pos-e2,20261022-134226-saline-pos-empty-first,assumed,22x30,0.728
+wood2,20261022-205621-saline-pos-e2,20261022-134226-saline-pos-empty-first,assumed,23x30,0.716
+wood2,20261022-205621-saline-pos-e2,20261022-134226-saline-pos-empty-first,assumed,30x23,0.78
+wood2,20261022-205621-saline-pos-e2,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x22,0.616
+wood2,20261022-205621-saline-pos-e2,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x22,0.618
+wood2,20261022-205621-saline-pos-e2,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,22x30,0.539
+wood2,20261022-205621-saline-pos-e2,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x30,0.52
+wood2,20261022-205621-saline-pos-e2,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x23,0.607
+wood2,20261022-210421-saline-pos-e2,20261022-134226-saline-pos-empty-first,measured,23x22,0.743
+wood2,20261022-210421-saline-pos-e2,20261022-134226-saline-pos-empty-first,measured,30x22,0.713
+wood2,20261022-210421-saline-pos-e2,20261022-134226-saline-pos-empty-first,measured,22x30,0.648
+wood2,20261022-210421-saline-pos-e2,20261022-134226-saline-pos-empty-first,measured,23x30,0.612
+wood2,20261022-210421-saline-pos-e2,20261022-134226-saline-pos-empty-first,measured,30x23,0.713
+wood2,20261022-210421-saline-pos-e2,20261022-134226-saline-pos-empty-first,assumed,23x22,0.772
+wood2,20261022-210421-saline-pos-e2,20261022-134226-saline-pos-empty-first,assumed,30x22,0.772
+wood2,20261022-210421-saline-pos-e2,20261022-134226-saline-pos-empty-first,assumed,22x30,0.727
+wood2,20261022-210421-saline-pos-e2,20261022-134226-saline-pos-empty-first,assumed,23x30,0.714
+wood2,20261022-210421-saline-pos-e2,20261022-134226-saline-pos-empty-first,assumed,30x23,0.779
+wood2,20261022-210421-saline-pos-e2,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x22,0.616
+wood2,20261022-210421-saline-pos-e2,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x22,0.617
+wood2,20261022-210421-saline-pos-e2,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,22x30,0.538
+wood2,20261022-210421-saline-pos-e2,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x30,0.519
+wood2,20261022-210421-saline-pos-e2,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x23,0.606
+wood3,20261022-145332-saline-pos-e3,20261022-134226-saline-pos-empty-first,measured,23x22,0.43
+wood3,20261022-145332-saline-pos-e3,20261022-134226-saline-pos-empty-first,measured,30x22,0.414
+wood3,20261022-145332-saline-pos-e3,20261022-134226-saline-pos-empty-first,measured,22x30,0.382
+wood3,20261022-145332-saline-pos-e3,20261022-134226-saline-pos-empty-first,measured,23x30,0.383
+wood3,20261022-145332-saline-pos-e3,20261022-134226-saline-pos-empty-first,measured,30x23,0.414
+wood3,20261022-145332-saline-pos-e3,20261022-134226-saline-pos-empty-first,assumed,23x22,0.419
+wood3,20261022-145332-saline-pos-e3,20261022-134226-saline-pos-empty-first,assumed,30x22,0.379
+wood3,20261022-145332-saline-pos-e3,20261022-134226-saline-pos-empty-first,assumed,22x30,0.271
+wood3,20261022-145332-saline-pos-e3,20261022-134226-saline-pos-empty-first,assumed,23x30,0.272
+wood3,20261022-145332-saline-pos-e3,20261022-134226-saline-pos-empty-first,assumed,30x23,0.359
+wood3,20261022-145332-saline-pos-e3,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x22,0.339
+wood3,20261022-145332-saline-pos-e3,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x22,0.344
+wood3,20261022-145332-saline-pos-e3,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,22x30,0.211
+wood3,20261022-145332-saline-pos-e3,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x30,0.216
+wood3,20261022-145332-saline-pos-e3,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x23,0.344
+wood3,20261022-150131-saline-pos-e3,20261022-134226-saline-pos-empty-first,measured,23x22,0.44
+wood3,20261022-150131-saline-pos-e3,20261022-134226-saline-pos-empty-first,measured,30x22,0.424
+wood3,20261022-150131-saline-pos-e3,20261022-134226-saline-pos-empty-first,measured,22x30,0.392
+wood3,20261022-150131-saline-pos-e3,20261022-134226-saline-pos-empty-first,measured,23x30,0.393
+wood3,20261022-150131-saline-pos-e3,20261022-134226-saline-pos-empty-first,measured,30x23,0.424
+wood3,20261022-150131-saline-pos-e3,20261022-134226-saline-pos-empty-first,assumed,23x22,0.427
+wood3,20261022-150131-saline-pos-e3,20261022-134226-saline-pos-empty-first,assumed,30x22,0.387
+wood3,20261022-150131-saline-pos-e3,20261022-134226-saline-pos-empty-first,assumed,22x30,0.279
+wood3,20261022-150131-saline-pos-e3,20261022-134226-saline-pos-empty-first,assumed,23x30,0.28
+wood3,20261022-150131-saline-pos-e3,20261022-134226-saline-pos-empty-first,assumed,30x23,0.367
+wood3,20261022-150131-saline-pos-e3,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x22,0.349
+wood3,20261022-150131-saline-pos-e3,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x22,0.354
+wood3,20261022-150131-saline-pos-e3,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,22x30,0.22
+wood3,20261022-150131-saline-pos-e3,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x30,0.226
+wood3,20261022-150131-saline-pos-e3,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x23,0.354
+wood3,20261022-150931-saline-pos-e3,20261022-134226-saline-pos-empty-first,measured,23x22,0.45
+wood3,20261022-150931-saline-pos-e3,20261022-134226-saline-pos-empty-first,measured,30x22,0.434
+wood3,20261022-150931-saline-pos-e3,20261022-134226-saline-pos-empty-first,measured,22x30,0.401
+wood3,20261022-150931-saline-pos-e3,20261022-134226-saline-pos-empty-first,measured,23x30,0.402
+wood3,20261022-150931-saline-pos-e3,20261022-134226-saline-pos-empty-first,measured,30x23,0.434
+wood3,20261022-150931-saline-pos-e3,20261022-134226-saline-pos-empty-first,assumed,23x22,0.433
+wood3,20261022-150931-saline-pos-e3,20261022-134226-saline-pos-empty-first,assumed,30x22,0.393
+wood3,20261022-150931-saline-pos-e3,20261022-134226-saline-pos-empty-first,assumed,22x30,0.285
+wood3,20261022-150931-saline-pos-e3,20261022-134226-saline-pos-empty-first,assumed,23x30,0.286
+wood3,20261022-150931-saline-pos-e3,20261022-134226-saline-pos-empty-first,assumed,30x23,0.374
+wood3,20261022-150931-saline-pos-e3,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x22,0.358
+wood3,20261022-150931-saline-pos-e3,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x22,0.363
+wood3,20261022-150931-saline-pos-e3,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,22x30,0.228
+wood3,20261022-150931-saline-pos-e3,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x30,0.234
+wood3,20261022-150931-saline-pos-e3,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x23,0.363
+wood4,20261022-152458-saline-pos-e4,20261022-134226-saline-pos-empty-first,measured,23x22,0.304
+wood4,20261022-152458-saline-pos-e4,20261022-134226-saline-pos-empty-first,measured,30x22,0.267
+wood4,20261022-152458-saline-pos-e4,20261022-134226-saline-pos-empty-first,measured,22x30,0.284
+wood4,20261022-152458-saline-pos-e4,20261022-134226-saline-pos-empty-first,measured,23x30,0.277
+wood4,20261022-152458-saline-pos-e4,20261022-134226-saline-pos-empty-first,measured,30x23,0.267
+wood4,20261022-152458-saline-pos-e4,20261022-134226-saline-pos-empty-first,assumed,23x22,0.455
+wood4,20261022-152458-saline-pos-e4,20261022-134226-saline-pos-empty-first,assumed,30x22,0.404
+wood4,20261022-152458-saline-pos-e4,20261022-134226-saline-pos-empty-first,assumed,22x30,0.359
+wood4,20261022-152458-saline-pos-e4,20261022-134226-saline-pos-empty-first,assumed,23x30,0.385
+wood4,20261022-152458-saline-pos-e4,20261022-134226-saline-pos-empty-first,assumed,30x23,0.414
+wood4,20261022-152458-saline-pos-e4,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x22,0.374
+wood4,20261022-152458-saline-pos-e4,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x22,0.364
+wood4,20261022-152458-saline-pos-e4,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,22x30,0.298
+wood4,20261022-152458-saline-pos-e4,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x30,0.291
+wood4,20261022-152458-saline-pos-e4,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x23,0.267
+wood4,20261022-153258-saline-pos-e4,20261022-134226-saline-pos-empty-first,measured,23x22,0.312
+wood4,20261022-153258-saline-pos-e4,20261022-134226-saline-pos-empty-first,measured,30x22,0.274
+wood4,20261022-153258-saline-pos-e4,20261022-134226-saline-pos-empty-first,measured,22x30,0.291
+wood4,20261022-153258-saline-pos-e4,20261022-134226-saline-pos-empty-first,measured,23x30,0.284
+wood4,20261022-153258-saline-pos-e4,20261022-134226-saline-pos-empty-first,measured,30x23,0.274
+wood4,20261022-153258-saline-pos-e4,20261022-134226-saline-pos-empty-first,assumed,23x22,0.464
+wood4,20261022-153258-saline-pos-e4,20261022-134226-saline-pos-empty-first,assumed,30x22,0.414
+wood4,20261022-153258-saline-pos-e4,20261022-134226-saline-pos-empty-first,assumed,22x30,0.369
+wood4,20261022-153258-saline-pos-e4,20261022-134226-saline-pos-empty-first,assumed,23x30,0.395
+wood4,20261022-153258-saline-pos-e4,20261022-134226-saline-pos-empty-first,assumed,30x23,0.424
+wood4,20261022-153258-saline-pos-e4,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x22,0.38
+wood4,20261022-153258-saline-pos-e4,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x22,0.37
+wood4,20261022-153258-saline-pos-e4,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,22x30,0.304
+wood4,20261022-153258-saline-pos-e4,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x30,0.298
+wood4,20261022-153258-saline-pos-e4,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x23,0.274
+wood4,20261022-154057-saline-pos-e4,20261022-134226-saline-pos-empty-first,measured,23x22,0.305
+wood4,20261022-154057-saline-pos-e4,20261022-134226-saline-pos-empty-first,measured,30x22,0.267
+wood4,20261022-154057-saline-pos-e4,20261022-134226-saline-pos-empty-first,measured,22x30,0.285
+wood4,20261022-154057-saline-pos-e4,20261022-134226-saline-pos-empty-first,measured,23x30,0.278
+wood4,20261022-154057-saline-pos-e4,20261022-134226-saline-pos-empty-first,measured,30x23,0.267
+wood4,20261022-154057-saline-pos-e4,20261022-134226-saline-pos-empty-first,assumed,23x22,0.458
+wood4,20261022-154057-saline-pos-e4,20261022-134226-saline-pos-empty-first,assumed,30x22,0.408
+wood4,20261022-154057-saline-pos-e4,20261022-134226-saline-pos-empty-first,assumed,22x30,0.363
+wood4,20261022-154057-saline-pos-e4,20261022-134226-saline-pos-empty-first,assumed,23x30,0.389
+wood4,20261022-154057-saline-pos-e4,20261022-134226-saline-pos-empty-first,assumed,30x23,0.418
+wood4,20261022-154057-saline-pos-e4,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x22,0.373
+wood4,20261022-154057-saline-pos-e4,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x22,0.363
+wood4,20261022-154057-saline-pos-e4,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,22x30,0.298
+wood4,20261022-154057-saline-pos-e4,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x30,0.292
+wood4,20261022-154057-saline-pos-e4,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x23,0.267
+wood5,20261022-155259-saline-pos-e5,20261022-134226-saline-pos-empty-first,measured,23x22,0.456
+wood5,20261022-155259-saline-pos-e5,20261022-134226-saline-pos-empty-first,measured,30x22,0.439
+wood5,20261022-155259-saline-pos-e5,20261022-134226-saline-pos-empty-first,measured,22x30,0.364
+wood5,20261022-155259-saline-pos-e5,20261022-134226-saline-pos-empty-first,measured,23x30,0.365
+wood5,20261022-155259-saline-pos-e5,20261022-134226-saline-pos-empty-first,measured,30x23,0.439
+wood5,20261022-155259-saline-pos-e5,20261022-134226-saline-pos-empty-first,assumed,23x22,0.679
+wood5,20261022-155259-saline-pos-e5,20261022-134226-saline-pos-empty-first,assumed,30x22,0.637
+wood5,20261022-155259-saline-pos-e5,20261022-134226-saline-pos-empty-first,assumed,22x30,0.575
+wood5,20261022-155259-saline-pos-e5,20261022-134226-saline-pos-empty-first,assumed,23x30,0.553
+wood5,20261022-155259-saline-pos-e5,20261022-134226-saline-pos-empty-first,assumed,30x23,0.622
+wood5,20261022-155259-saline-pos-e5,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x22,0.682
+wood5,20261022-155259-saline-pos-e5,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x22,0.62
+wood5,20261022-155259-saline-pos-e5,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,22x30,0.557
+wood5,20261022-155259-saline-pos-e5,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x30,0.563
+wood5,20261022-155259-saline-pos-e5,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x23,0.596
+wood5,20261022-160059-saline-pos-e5,20261022-134226-saline-pos-empty-first,measured,23x22,0.465
+wood5,20261022-160059-saline-pos-e5,20261022-134226-saline-pos-empty-first,measured,30x22,0.448
+wood5,20261022-160059-saline-pos-e5,20261022-134226-saline-pos-empty-first,measured,22x30,0.372
+wood5,20261022-160059-saline-pos-e5,20261022-134226-saline-pos-empty-first,measured,23x30,0.374
+wood5,20261022-160059-saline-pos-e5,20261022-134226-saline-pos-empty-first,measured,30x23,0.448
+wood5,20261022-160059-saline-pos-e5,20261022-134226-saline-pos-empty-first,assumed,23x22,0.691
+wood5,20261022-160059-saline-pos-e5,20261022-134226-saline-pos-empty-first,assumed,30x22,0.649
+wood5,20261022-160059-saline-pos-e5,20261022-134226-saline-pos-empty-first,assumed,22x30,0.585
+wood5,20261022-160059-saline-pos-e5,20261022-134226-saline-pos-empty-first,assumed,23x30,0.563
+wood5,20261022-160059-saline-pos-e5,20261022-134226-saline-pos-empty-first,assumed,30x23,0.633
+wood5,20261022-160059-saline-pos-e5,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x22,0.694
+wood5,20261022-160059-saline-pos-e5,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x22,0.631
+wood5,20261022-160059-saline-pos-e5,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,22x30,0.568
+wood5,20261022-160059-saline-pos-e5,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x30,0.573
+wood5,20261022-160059-saline-pos-e5,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x23,0.608
+wood5,20261022-160858-saline-pos-e5,20261022-134226-saline-pos-empty-first,measured,23x22,0.662
+wood5,20261022-160858-saline-pos-e5,20261022-134226-saline-pos-empty-first,measured,30x22,0.65
+wood5,20261022-160858-saline-pos-e5,20261022-134226-saline-pos-empty-first,measured,22x30,0.57
+wood5,20261022-160858-saline-pos-e5,20261022-134226-saline-pos-empty-first,measured,23x30,0.574
+wood5,20261022-160858-saline-pos-e5,20261022-134226-saline-pos-empty-first,measured,30x23,0.65
+wood5,20261022-160858-saline-pos-e5,20261022-134226-saline-pos-empty-first,assumed,23x22,0.882
+wood5,20261022-160858-saline-pos-e5,20261022-134226-saline-pos-empty-first,assumed,30x22,0.844
+wood5,20261022-160858-saline-pos-e5,20261022-134226-saline-pos-empty-first,assumed,22x30,0.78
+wood5,20261022-160858-saline-pos-e5,20261022-134226-saline-pos-empty-first,assumed,23x30,0.757
+wood5,20261022-160858-saline-pos-e5,20261022-134226-saline-pos-empty-first,assumed,30x23,0.837
+wood5,20261022-160858-saline-pos-e5,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x22,0.897
+wood5,20261022-160858-saline-pos-e5,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x22,0.851
+wood5,20261022-160858-saline-pos-e5,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,22x30,0.768
+wood5,20261022-160858-saline-pos-e5,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x30,0.783
+wood5,20261022-160858-saline-pos-e5,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x23,0.828
+wood6,20261022-162115-saline-pos-e6,20261022-134226-saline-pos-empty-first,measured,23x22,0.872
+wood6,20261022-162115-saline-pos-e6,20261022-134226-saline-pos-empty-first,measured,30x22,0.83
+wood6,20261022-162115-saline-pos-e6,20261022-134226-saline-pos-empty-first,measured,22x30,0.753
+wood6,20261022-162115-saline-pos-e6,20261022-134226-saline-pos-empty-first,measured,23x30,0.755
+wood6,20261022-162115-saline-pos-e6,20261022-134226-saline-pos-empty-first,measured,30x23,0.793
+wood6,20261022-162115-saline-pos-e6,20261022-134226-saline-pos-empty-first,assumed,23x22,0.826
+wood6,20261022-162115-saline-pos-e6,20261022-134226-saline-pos-empty-first,assumed,30x22,0.832
+wood6,20261022-162115-saline-pos-e6,20261022-134226-saline-pos-empty-first,assumed,22x30,0.812
+wood6,20261022-162115-saline-pos-e6,20261022-134226-saline-pos-empty-first,assumed,23x30,0.784
+wood6,20261022-162115-saline-pos-e6,20261022-134226-saline-pos-empty-first,assumed,30x23,0.832
+wood6,20261022-162115-saline-pos-e6,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x22,0.872
+wood6,20261022-162115-saline-pos-e6,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x22,0.83
+wood6,20261022-162115-saline-pos-e6,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,22x30,0.789
+wood6,20261022-162115-saline-pos-e6,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x30,0.792
+wood6,20261022-162115-saline-pos-e6,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x23,0.793
+wood6,20261022-162914-saline-pos-e6,20261022-134226-saline-pos-empty-first,measured,23x22,0.863
+wood6,20261022-162914-saline-pos-e6,20261022-134226-saline-pos-empty-first,measured,30x22,0.82
+wood6,20261022-162914-saline-pos-e6,20261022-134226-saline-pos-empty-first,measured,22x30,0.742
+wood6,20261022-162914-saline-pos-e6,20261022-134226-saline-pos-empty-first,measured,23x30,0.744
+wood6,20261022-162914-saline-pos-e6,20261022-134226-saline-pos-empty-first,measured,30x23,0.783
+wood6,20261022-162914-saline-pos-e6,20261022-134226-saline-pos-empty-first,assumed,23x22,0.814
+wood6,20261022-162914-saline-pos-e6,20261022-134226-saline-pos-empty-first,assumed,30x22,0.82
+wood6,20261022-162914-saline-pos-e6,20261022-134226-saline-pos-empty-first,assumed,22x30,0.8
+wood6,20261022-162914-saline-pos-e6,20261022-134226-saline-pos-empty-first,assumed,23x30,0.773
+wood6,20261022-162914-saline-pos-e6,20261022-134226-saline-pos-empty-first,assumed,30x23,0.82
+wood6,20261022-162914-saline-pos-e6,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x22,0.863
+wood6,20261022-162914-saline-pos-e6,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x22,0.82
+wood6,20261022-162914-saline-pos-e6,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,22x30,0.779
+wood6,20261022-162914-saline-pos-e6,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x30,0.782
+wood6,20261022-162914-saline-pos-e6,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x23,0.783
+wood6,20261022-163714-saline-pos-e6,20261022-134226-saline-pos-empty-first,measured,23x22,0.855
+wood6,20261022-163714-saline-pos-e6,20261022-134226-saline-pos-empty-first,measured,30x22,0.811
+wood6,20261022-163714-saline-pos-e6,20261022-134226-saline-pos-empty-first,measured,22x30,0.733
+wood6,20261022-163714-saline-pos-e6,20261022-134226-saline-pos-empty-first,measured,23x30,0.736
+wood6,20261022-163714-saline-pos-e6,20261022-134226-saline-pos-empty-first,measured,30x23,0.774
+wood6,20261022-163714-saline-pos-e6,20261022-134226-saline-pos-empty-first,assumed,23x22,0.805
+wood6,20261022-163714-saline-pos-e6,20261022-134226-saline-pos-empty-first,assumed,30x22,0.81
+wood6,20261022-163714-saline-pos-e6,20261022-134226-saline-pos-empty-first,assumed,22x30,0.791
+wood6,20261022-163714-saline-pos-e6,20261022-134226-saline-pos-empty-first,assumed,23x30,0.764
+wood6,20261022-163714-saline-pos-e6,20261022-134226-saline-pos-empty-first,assumed,30x23,0.81
+wood6,20261022-163714-saline-pos-e6,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x22,0.855
+wood6,20261022-163714-saline-pos-e6,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x22,0.811
+wood6,20261022-163714-saline-pos-e6,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,22x30,0.77
+wood6,20261022-163714-saline-pos-e6,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x30,0.773
+wood6,20261022-163714-saline-pos-e6,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x23,0.774
+wood7,20261022-165009-saline-pos-e7,20261022-134226-saline-pos-empty-first,measured,23x22,0.798
+wood7,20261022-165009-saline-pos-e7,20261022-134226-saline-pos-empty-first,measured,30x22,0.77
+wood7,20261022-165009-saline-pos-e7,20261022-134226-saline-pos-empty-first,measured,22x30,0.717
+wood7,20261022-165009-saline-pos-e7,20261022-134226-saline-pos-empty-first,measured,23x30,0.724
+wood7,20261022-165009-saline-pos-e7,20261022-134226-saline-pos-empty-first,measured,30x23,0.752
+wood7,20261022-165009-saline-pos-e7,20261022-134226-saline-pos-empty-first,assumed,23x22,0.582
+wood7,20261022-165009-saline-pos-e7,20261022-134226-saline-pos-empty-first,assumed,30x22,0.565
+wood7,20261022-165009-saline-pos-e7,20261022-134226-saline-pos-empty-first,assumed,22x30,0.468
+wood7,20261022-165009-saline-pos-e7,20261022-134226-saline-pos-empty-first,assumed,23x30,0.475
+wood7,20261022-165009-saline-pos-e7,20261022-134226-saline-pos-empty-first,assumed,30x23,0.575
+wood7,20261022-165009-saline-pos-e7,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x22,0.595
+wood7,20261022-165009-saline-pos-e7,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x22,0.567
+wood7,20261022-165009-saline-pos-e7,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,22x30,0.485
+wood7,20261022-165009-saline-pos-e7,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x30,0.511
+wood7,20261022-165009-saline-pos-e7,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x23,0.568
+wood7,20261022-165809-saline-pos-e7,20261022-134226-saline-pos-empty-first,measured,23x22,0.796
+wood7,20261022-165809-saline-pos-e7,20261022-134226-saline-pos-empty-first,measured,30x22,0.768
+wood7,20261022-165809-saline-pos-e7,20261022-134226-saline-pos-empty-first,measured,22x30,0.715
+wood7,20261022-165809-saline-pos-e7,20261022-134226-saline-pos-empty-first,measured,23x30,0.722
+wood7,20261022-165809-saline-pos-e7,20261022-134226-saline-pos-empty-first,measured,30x23,0.75
+wood7,20261022-165809-saline-pos-e7,20261022-134226-saline-pos-empty-first,assumed,23x22,0.58
+wood7,20261022-165809-saline-pos-e7,20261022-134226-saline-pos-empty-first,assumed,30x22,0.563
+wood7,20261022-165809-saline-pos-e7,20261022-134226-saline-pos-empty-first,assumed,22x30,0.466
+wood7,20261022-165809-saline-pos-e7,20261022-134226-saline-pos-empty-first,assumed,23x30,0.473
+wood7,20261022-165809-saline-pos-e7,20261022-134226-saline-pos-empty-first,assumed,30x23,0.573
+wood7,20261022-165809-saline-pos-e7,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x22,0.592
+wood7,20261022-165809-saline-pos-e7,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x22,0.564
+wood7,20261022-165809-saline-pos-e7,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,22x30,0.483
+wood7,20261022-165809-saline-pos-e7,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x30,0.509
+wood7,20261022-165809-saline-pos-e7,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x23,0.566
+wood7,20261022-170608-saline-pos-e7,20261022-134226-saline-pos-empty-first,measured,23x22,0.795
+wood7,20261022-170608-saline-pos-e7,20261022-134226-saline-pos-empty-first,measured,30x22,0.767
+wood7,20261022-170608-saline-pos-e7,20261022-134226-saline-pos-empty-first,measured,22x30,0.713
+wood7,20261022-170608-saline-pos-e7,20261022-134226-saline-pos-empty-first,measured,23x30,0.721
+wood7,20261022-170608-saline-pos-e7,20261022-134226-saline-pos-empty-first,measured,30x23,0.749
+wood7,20261022-170608-saline-pos-e7,20261022-134226-saline-pos-empty-first,assumed,23x22,0.579
+wood7,20261022-170608-saline-pos-e7,20261022-134226-saline-pos-empty-first,assumed,30x22,0.561
+wood7,20261022-170608-saline-pos-e7,20261022-134226-saline-pos-empty-first,assumed,22x30,0.464
+wood7,20261022-170608-saline-pos-e7,20261022-134226-saline-pos-empty-first,assumed,23x30,0.471
+wood7,20261022-170608-saline-pos-e7,20261022-134226-saline-pos-empty-first,assumed,30x23,0.571
+wood7,20261022-170608-saline-pos-e7,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x22,0.591
+wood7,20261022-170608-saline-pos-e7,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x22,0.563
+wood7,20261022-170608-saline-pos-e7,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,22x30,0.481
+wood7,20261022-170608-saline-pos-e7,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x30,0.507
+wood7,20261022-170608-saline-pos-e7,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x23,0.565
+wood9,20261022-174654-saline-pos-e9,20261022-134226-saline-pos-empty-first,measured,23x22,0.597
+wood9,20261022-174654-saline-pos-e9,20261022-134226-saline-pos-empty-first,measured,30x22,0.569
+wood9,20261022-174654-saline-pos-e9,20261022-134226-saline-pos-empty-first,measured,22x30,0.569
+wood9,20261022-174654-saline-pos-e9,20261022-134226-saline-pos-empty-first,measured,23x30,0.508
+wood9,20261022-174654-saline-pos-e9,20261022-134226-saline-pos-empty-first,measured,30x23,0.58
+wood9,20261022-174654-saline-pos-e9,20261022-134226-saline-pos-empty-first,assumed,23x22,0.801
+wood9,20261022-174654-saline-pos-e9,20261022-134226-saline-pos-empty-first,assumed,30x22,0.829
+wood9,20261022-174654-saline-pos-e9,20261022-134226-saline-pos-empty-first,assumed,22x30,0.766
+wood9,20261022-174654-saline-pos-e9,20261022-134226-saline-pos-empty-first,assumed,23x30,0.752
+wood9,20261022-174654-saline-pos-e9,20261022-134226-saline-pos-empty-first,assumed,30x23,0.829
+wood9,20261022-174654-saline-pos-e9,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x22,0.786
+wood9,20261022-174654-saline-pos-e9,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x22,0.75
+wood9,20261022-174654-saline-pos-e9,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,22x30,0.768
+wood9,20261022-174654-saline-pos-e9,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x30,0.764
+wood9,20261022-174654-saline-pos-e9,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x23,0.759
+wood9,20261022-175455-saline-pos-e9,20261022-134226-saline-pos-empty-first,measured,23x22,0.595
+wood9,20261022-175455-saline-pos-e9,20261022-134226-saline-pos-empty-first,measured,30x22,0.566
+wood9,20261022-175455-saline-pos-e9,20261022-134226-saline-pos-empty-first,measured,22x30,0.567
+wood9,20261022-175455-saline-pos-e9,20261022-134226-saline-pos-empty-first,measured,23x30,0.506
+wood9,20261022-175455-saline-pos-e9,20261022-134226-saline-pos-empty-first,measured,30x23,0.578
+wood9,20261022-175455-saline-pos-e9,20261022-134226-saline-pos-empty-first,assumed,23x22,0.799
+wood9,20261022-175455-saline-pos-e9,20261022-134226-saline-pos-empty-first,assumed,30x22,0.827
+wood9,20261022-175455-saline-pos-e9,20261022-134226-saline-pos-empty-first,assumed,22x30,0.764
+wood9,20261022-175455-saline-pos-e9,20261022-134226-saline-pos-empty-first,assumed,23x30,0.749
+wood9,20261022-175455-saline-pos-e9,20261022-134226-saline-pos-empty-first,assumed,30x23,0.827
+wood9,20261022-175455-saline-pos-e9,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x22,0.784
+wood9,20261022-175455-saline-pos-e9,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x22,0.748
+wood9,20261022-175455-saline-pos-e9,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,22x30,0.766
+wood9,20261022-175455-saline-pos-e9,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x30,0.762
+wood9,20261022-175455-saline-pos-e9,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x23,0.757
+wood9,20261022-180255-saline-pos-e9,20261022-134226-saline-pos-empty-first,measured,23x22,0.6
+wood9,20261022-180255-saline-pos-e9,20261022-134226-saline-pos-empty-first,measured,30x22,0.572
+wood9,20261022-180255-saline-pos-e9,20261022-134226-saline-pos-empty-first,measured,22x30,0.572
+wood9,20261022-180255-saline-pos-e9,20261022-134226-saline-pos-empty-first,measured,23x30,0.512
+wood9,20261022-180255-saline-pos-e9,20261022-134226-saline-pos-empty-first,measured,30x23,0.583
+wood9,20261022-180255-saline-pos-e9,20261022-134226-saline-pos-empty-first,assumed,23x22,0.804
+wood9,20261022-180255-saline-pos-e9,20261022-134226-saline-pos-empty-first,assumed,30x22,0.832
+wood9,20261022-180255-saline-pos-e9,20261022-134226-saline-pos-empty-first,assumed,22x30,0.769
+wood9,20261022-180255-saline-pos-e9,20261022-134226-saline-pos-empty-first,assumed,23x30,0.755
+wood9,20261022-180255-saline-pos-e9,20261022-134226-saline-pos-empty-first,assumed,30x23,0.832
+wood9,20261022-180255-saline-pos-e9,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x22,0.789
+wood9,20261022-180255-saline-pos-e9,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x22,0.753
+wood9,20261022-180255-saline-pos-e9,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,22x30,0.771
+wood9,20261022-180255-saline-pos-e9,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x30,0.767
+wood9,20261022-180255-saline-pos-e9,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x23,0.762
+wood10,20261022-181616-saline-pos-e10,20261022-134226-saline-pos-empty-first,measured,23x22,0.317
+wood10,20261022-181616-saline-pos-e10,20261022-134226-saline-pos-empty-first,measured,30x22,0.312
+wood10,20261022-181616-saline-pos-e10,20261022-134226-saline-pos-empty-first,measured,22x30,0.191
+wood10,20261022-181616-saline-pos-e10,20261022-134226-saline-pos-empty-first,measured,23x30,0.193
+wood10,20261022-181616-saline-pos-e10,20261022-134226-saline-pos-empty-first,measured,30x23,0.325
+wood10,20261022-181616-saline-pos-e10,20261022-134226-saline-pos-empty-first,assumed,23x22,0.714
+wood10,20261022-181616-saline-pos-e10,20261022-134226-saline-pos-empty-first,assumed,30x22,0.687
+wood10,20261022-181616-saline-pos-e10,20261022-134226-saline-pos-empty-first,assumed,22x30,0.685
+wood10,20261022-181616-saline-pos-e10,20261022-134226-saline-pos-empty-first,assumed,23x30,0.693
+wood10,20261022-181616-saline-pos-e10,20261022-134226-saline-pos-empty-first,assumed,30x23,0.694
+wood10,20261022-181616-saline-pos-e10,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x22,0.645
+wood10,20261022-181616-saline-pos-e10,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x22,0.639
+wood10,20261022-181616-saline-pos-e10,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,22x30,0.531
+wood10,20261022-181616-saline-pos-e10,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x30,0.535
+wood10,20261022-181616-saline-pos-e10,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x23,0.538
+wood10,20261022-182415-saline-pos-e10,20261022-134226-saline-pos-empty-first,measured,23x22,0.318
+wood10,20261022-182415-saline-pos-e10,20261022-134226-saline-pos-empty-first,measured,30x22,0.313
+wood10,20261022-182415-saline-pos-e10,20261022-134226-saline-pos-empty-first,measured,22x30,0.191
+wood10,20261022-182415-saline-pos-e10,20261022-134226-saline-pos-empty-first,measured,23x30,0.194
+wood10,20261022-182415-saline-pos-e10,20261022-134226-saline-pos-empty-first,measured,30x23,0.326
+wood10,20261022-182415-saline-pos-e10,20261022-134226-saline-pos-empty-first,assumed,23x22,0.715
+wood10,20261022-182415-saline-pos-e10,20261022-134226-saline-pos-empty-first,assumed,30x22,0.688
+wood10,20261022-182415-saline-pos-e10,20261022-134226-saline-pos-empty-first,assumed,22x30,0.686
+wood10,20261022-182415-saline-pos-e10,20261022-134226-saline-pos-empty-first,assumed,23x30,0.694
+wood10,20261022-182415-saline-pos-e10,20261022-134226-saline-pos-empty-first,assumed,30x23,0.696
+wood10,20261022-182415-saline-pos-e10,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x22,0.647
+wood10,20261022-182415-saline-pos-e10,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x22,0.641
+wood10,20261022-182415-saline-pos-e10,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,22x30,0.533
+wood10,20261022-182415-saline-pos-e10,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x30,0.537
+wood10,20261022-182415-saline-pos-e10,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x23,0.539
+wood10,20261022-183215-saline-pos-e10,20261022-134226-saline-pos-empty-first,measured,23x22,0.324
+wood10,20261022-183215-saline-pos-e10,20261022-134226-saline-pos-empty-first,measured,30x22,0.32
+wood10,20261022-183215-saline-pos-e10,20261022-134226-saline-pos-empty-first,measured,22x30,0.196
+wood10,20261022-183215-saline-pos-e10,20261022-134226-saline-pos-empty-first,measured,23x30,0.198
+wood10,20261022-183215-saline-pos-e10,20261022-134226-saline-pos-empty-first,measured,30x23,0.332
+wood10,20261022-183215-saline-pos-e10,20261022-134226-saline-pos-empty-first,assumed,23x22,0.723
+wood10,20261022-183215-saline-pos-e10,20261022-134226-saline-pos-empty-first,assumed,30x22,0.696
+wood10,20261022-183215-saline-pos-e10,20261022-134226-saline-pos-empty-first,assumed,22x30,0.694
+wood10,20261022-183215-saline-pos-e10,20261022-134226-saline-pos-empty-first,assumed,23x30,0.702
+wood10,20261022-183215-saline-pos-e10,20261022-134226-saline-pos-empty-first,assumed,30x23,0.704
+wood10,20261022-183215-saline-pos-e10,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x22,0.653
+wood10,20261022-183215-saline-pos-e10,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x22,0.647
+wood10,20261022-183215-saline-pos-e10,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,22x30,0.539
+wood10,20261022-183215-saline-pos-e10,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x30,0.543
+wood10,20261022-183215-saline-pos-e10,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x23,0.546
+wood11,20261022-184618-saline-pos-e11,20261022-134226-saline-pos-empty-first,measured,23x22,0.88
+wood11,20261022-184618-saline-pos-e11,20261022-134226-saline-pos-empty-first,measured,30x22,0.866
+wood11,20261022-184618-saline-pos-e11,20261022-134226-saline-pos-empty-first,measured,22x30,0.851
+wood11,20261022-184618-saline-pos-e11,20261022-134226-saline-pos-empty-first,measured,23x30,0.852
+wood11,20261022-184618-saline-pos-e11,20261022-134226-saline-pos-empty-first,measured,30x23,0.872
+wood11,20261022-184618-saline-pos-e11,20261022-134226-saline-pos-empty-first,assumed,23x22,0.674
+wood11,20261022-184618-saline-pos-e11,20261022-134226-saline-pos-empty-first,assumed,30x22,0.607
+wood11,20261022-184618-saline-pos-e11,20261022-134226-saline-pos-empty-first,assumed,22x30,0.575
+wood11,20261022-184618-saline-pos-e11,20261022-134226-saline-pos-empty-first,assumed,23x30,0.58
+wood11,20261022-184618-saline-pos-e11,20261022-134226-saline-pos-empty-first,assumed,30x23,0.654
+wood11,20261022-184618-saline-pos-e11,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x22,0.704
+wood11,20261022-184618-saline-pos-e11,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x22,0.692
+wood11,20261022-184618-saline-pos-e11,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,22x30,0.601
+wood11,20261022-184618-saline-pos-e11,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x30,0.613
+wood11,20261022-184618-saline-pos-e11,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x23,0.692
+wood11,20261022-185417-saline-pos-e11,20261022-134226-saline-pos-empty-first,measured,23x22,0.887
+wood11,20261022-185417-saline-pos-e11,20261022-134226-saline-pos-empty-first,measured,30x22,0.874
+wood11,20261022-185417-saline-pos-e11,20261022-134226-saline-pos-empty-first,measured,22x30,0.859
+wood11,20261022-185417-saline-pos-e11,20261022-134226-saline-pos-empty-first,measured,23x30,0.86
+wood11,20261022-185417-saline-pos-e11,20261022-134226-saline-pos-empty-first,measured,30x23,0.88
+wood11,20261022-185417-saline-pos-e11,20261022-134226-saline-pos-empty-first,assumed,23x22,0.684
+wood11,20261022-185417-saline-pos-e11,20261022-134226-saline-pos-empty-first,assumed,30x22,0.617
+wood11,20261022-185417-saline-pos-e11,20261022-134226-saline-pos-empty-first,assumed,22x30,0.585
+wood11,20261022-185417-saline-pos-e11,20261022-134226-saline-pos-empty-first,assumed,23x30,0.59
+wood11,20261022-185417-saline-pos-e11,20261022-134226-saline-pos-empty-first,assumed,30x23,0.663
+wood11,20261022-185417-saline-pos-e11,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x22,0.713
+wood11,20261022-185417-saline-pos-e11,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x22,0.702
+wood11,20261022-185417-saline-pos-e11,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,22x30,0.611
+wood11,20261022-185417-saline-pos-e11,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x30,0.623
+wood11,20261022-185417-saline-pos-e11,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x23,0.701
+wood11,20261022-190217-saline-pos-e11,20261022-134226-saline-pos-empty-first,measured,23x22,0.887
+wood11,20261022-190217-saline-pos-e11,20261022-134226-saline-pos-empty-first,measured,30x22,0.873
+wood11,20261022-190217-saline-pos-e11,20261022-134226-saline-pos-empty-first,measured,22x30,0.858
+wood11,20261022-190217-saline-pos-e11,20261022-134226-saline-pos-empty-first,measured,23x30,0.859
+wood11,20261022-190217-saline-pos-e11,20261022-134226-saline-pos-empty-first,measured,30x23,0.88
+wood11,20261022-190217-saline-pos-e11,20261022-134226-saline-pos-empty-first,assumed,23x22,0.682
+wood11,20261022-190217-saline-pos-e11,20261022-134226-saline-pos-empty-first,assumed,30x22,0.616
+wood11,20261022-190217-saline-pos-e11,20261022-134226-saline-pos-empty-first,assumed,22x30,0.583
+wood11,20261022-190217-saline-pos-e11,20261022-134226-saline-pos-empty-first,assumed,23x30,0.588
+wood11,20261022-190217-saline-pos-e11,20261022-134226-saline-pos-empty-first,assumed,30x23,0.662
+wood11,20261022-190217-saline-pos-e11,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x22,0.712
+wood11,20261022-190217-saline-pos-e11,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x22,0.701
+wood11,20261022-190217-saline-pos-e11,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,22x30,0.609
+wood11,20261022-190217-saline-pos-e11,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x30,0.621
+wood11,20261022-190217-saline-pos-e11,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x23,0.701
+wood12,20261022-191543-saline-pos-e12,20261022-134226-saline-pos-empty-first,measured,23x22,0.574
+wood12,20261022-191543-saline-pos-e12,20261022-134226-saline-pos-empty-first,measured,30x22,0.53
+wood12,20261022-191543-saline-pos-e12,20261022-134226-saline-pos-empty-first,measured,22x30,0.576
+wood12,20261022-191543-saline-pos-e12,20261022-134226-saline-pos-empty-first,measured,23x30,0.523
+wood12,20261022-191543-saline-pos-e12,20261022-134226-saline-pos-empty-first,measured,30x23,0.505
+wood12,20261022-191543-saline-pos-e12,20261022-134226-saline-pos-empty-first,assumed,23x22,0.766
+wood12,20261022-191543-saline-pos-e12,20261022-134226-saline-pos-empty-first,assumed,30x22,0.754
+wood12,20261022-191543-saline-pos-e12,20261022-134226-saline-pos-empty-first,assumed,22x30,0.601
+wood12,20261022-191543-saline-pos-e12,20261022-134226-saline-pos-empty-first,assumed,23x30,0.617
+wood12,20261022-191543-saline-pos-e12,20261022-134226-saline-pos-empty-first,assumed,30x23,0.717
+wood12,20261022-191543-saline-pos-e12,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x22,0.739
+wood12,20261022-191543-saline-pos-e12,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x22,0.741
+wood12,20261022-191543-saline-pos-e12,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,22x30,0.653
+wood12,20261022-191543-saline-pos-e12,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x30,0.648
+wood12,20261022-191543-saline-pos-e12,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x23,0.706
+wood12,20261022-192343-saline-pos-e12,20261022-134226-saline-pos-empty-first,measured,23x22,0.586
+wood12,20261022-192343-saline-pos-e12,20261022-134226-saline-pos-empty-first,measured,30x22,0.541
+wood12,20261022-192343-saline-pos-e12,20261022-134226-saline-pos-empty-first,measured,22x30,0.588
+wood12,20261022-192343-saline-pos-e12,20261022-134226-saline-pos-empty-first,measured,23x30,0.535
+wood12,20261022-192343-saline-pos-e12,20261022-134226-saline-pos-empty-first,measured,30x23,0.516
+wood12,20261022-192343-saline-pos-e12,20261022-134226-saline-pos-empty-first,assumed,23x22,0.778
+wood12,20261022-192343-saline-pos-e12,20261022-134226-saline-pos-empty-first,assumed,30x22,0.766
+wood12,20261022-192343-saline-pos-e12,20261022-134226-saline-pos-empty-first,assumed,22x30,0.614
+wood12,20261022-192343-saline-pos-e12,20261022-134226-saline-pos-empty-first,assumed,23x30,0.63
+wood12,20261022-192343-saline-pos-e12,20261022-134226-saline-pos-empty-first,assumed,30x23,0.729
+wood12,20261022-192343-saline-pos-e12,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x22,0.749
+wood12,20261022-192343-saline-pos-e12,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x22,0.751
+wood12,20261022-192343-saline-pos-e12,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,22x30,0.664
+wood12,20261022-192343-saline-pos-e12,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x30,0.659
+wood12,20261022-192343-saline-pos-e12,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x23,0.715
+wood12,20261022-193143-saline-pos-e12,20261022-134226-saline-pos-empty-first,measured,23x22,0.587
+wood12,20261022-193143-saline-pos-e12,20261022-134226-saline-pos-empty-first,measured,30x22,0.542
+wood12,20261022-193143-saline-pos-e12,20261022-134226-saline-pos-empty-first,measured,22x30,0.589
+wood12,20261022-193143-saline-pos-e12,20261022-134226-saline-pos-empty-first,measured,23x30,0.536
+wood12,20261022-193143-saline-pos-e12,20261022-134226-saline-pos-empty-first,measured,30x23,0.518
+wood12,20261022-193143-saline-pos-e12,20261022-134226-saline-pos-empty-first,assumed,23x22,0.779
+wood12,20261022-193143-saline-pos-e12,20261022-134226-saline-pos-empty-first,assumed,30x22,0.767
+wood12,20261022-193143-saline-pos-e12,20261022-134226-saline-pos-empty-first,assumed,22x30,0.615
+wood12,20261022-193143-saline-pos-e12,20261022-134226-saline-pos-empty-first,assumed,23x30,0.631
+wood12,20261022-193143-saline-pos-e12,20261022-134226-saline-pos-empty-first,assumed,30x23,0.73
+wood12,20261022-193143-saline-pos-e12,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x22,0.75
+wood12,20261022-193143-saline-pos-e12,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x22,0.752
+wood12,20261022-193143-saline-pos-e12,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,22x30,0.665
+wood12,20261022-193143-saline-pos-e12,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x30,0.66
+wood12,20261022-193143-saline-pos-e12,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x23,0.717
+wood1&7,20261023-130204-saline-pos-e1-e7,20261023-123841-saline-pos-empty-first,measured,23x22,0.344
+wood1&7,20261023-130204-saline-pos-e1-e7,20261023-123841-saline-pos-empty-first,measured,30x22,0.334
+wood1&7,20261023-130204-saline-pos-e1-e7,20261023-123841-saline-pos-empty-first,measured,22x30,0.287
+wood1&7,20261023-130204-saline-pos-e1-e7,20261023-123841-saline-pos-empty-first,measured,23x30,0.279
+wood1&7,20261023-130204-saline-pos-e1-e7,20261023-123841-saline-pos-empty-first,measured,30x23,0.328
+wood1&7,20261023-130204-saline-pos-e1-e7,20261023-123841-saline-pos-empty-first,assumed,23x22,0.504
+wood1&7,20261023-130204-saline-pos-e1-e7,20261023-123841-saline-pos-empty-first,assumed,30x22,0.502
+wood1&7,20261023-130204-saline-pos-e1-e7,20261023-123841-saline-pos-empty-first,assumed,22x30,0.417
+wood1&7,20261023-130204-saline-pos-e1-e7,20261023-123841-saline-pos-empty-first,assumed,23x30,0.42
+wood1&7,20261023-130204-saline-pos-e1-e7,20261023-123841-saline-pos-empty-first,assumed,30x23,0.503
+wood1&7,20261023-130204-saline-pos-e1-e7,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,23x22,0.524
+wood1&7,20261023-130204-saline-pos-e1-e7,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,30x22,0.52
+wood1&7,20261023-130204-saline-pos-e1-e7,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,22x30,0.445
+wood1&7,20261023-130204-saline-pos-e1-e7,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,23x30,0.439
+wood1&7,20261023-130204-saline-pos-e1-e7,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,30x23,0.506
+wood1&7,20261023-131003-saline-pos-e1-e7,20261023-123841-saline-pos-empty-first,measured,23x22,0.422
+wood1&7,20261023-131003-saline-pos-e1-e7,20261023-123841-saline-pos-empty-first,measured,30x22,0.416
+wood1&7,20261023-131003-saline-pos-e1-e7,20261023-123841-saline-pos-empty-first,measured,22x30,0.363
+wood1&7,20261023-131003-saline-pos-e1-e7,20261023-123841-saline-pos-empty-first,measured,23x30,0.355
+wood1&7,20261023-131003-saline-pos-e1-e7,20261023-123841-saline-pos-empty-first,measured,30x23,0.413
+wood1&7,20261023-131003-saline-pos-e1-e7,20261023-123841-saline-pos-empty-first,assumed,23x22,0.572
+wood1&7,20261023-131003-saline-pos-e1-e7,20261023-123841-saline-pos-empty-first,assumed,30x22,0.574
+wood1&7,20261023-131003-saline-pos-e1-e7,20261023-123841-saline-pos-empty-first,assumed,22x30,0.491
+wood1&7,20261023-131003-saline-pos-e1-e7,20261023-123841-saline-pos-empty-first,assumed,23x30,0.495
+wood1&7,20261023-131003-saline-pos-e1-e7,20261023-123841-saline-pos-empty-first,assumed,30x23,0.578
+wood1&7,20261023-131003-saline-pos-e1-e7,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,23x22,0.602
+wood1&7,20261023-131003-saline-pos-e1-e7,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,30x22,0.592
+wood1&7,20261023-131003-saline-pos-e1-e7,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,22x30,0.522
+wood1&7,20261023-131003-saline-pos-e1-e7,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,23x30,0.516
+wood1&7,20261023-131003-saline-pos-e1-e7,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,30x23,0.583
+wood1&7,20261023-131803-saline-pos-e1-e7,20261023-123841-saline-pos-empty-first,measured,23x22,0.435
+wood1&7,20261023-131803-saline-pos-e1-e7,20261023-123841-saline-pos-empty-first,measured,30x22,0.429
+wood1&7,20261023-131803-saline-pos-e1-e7,20261023-123841-saline-pos-empty-first,measured,22x30,0.376
+wood1&7,20261023-131803-saline-pos-e1-e7,20261023-123841-saline-pos-empty-first,measured,23x30,0.367
+wood1&7,20261023-131803-saline-pos-e1-e7,20261023-123841-saline-pos-empty-first,measured,30x23,0.426
+wood1&7,20261023-131803-saline-pos-e1-e7,20261023-123841-saline-pos-empty-first,assumed,23x22,0.59
+wood1&7,20261023-131803-saline-pos-e1-e7,20261023-123841-saline-pos-empty-first,assumed,30x22,0.591
+wood1&7,20261023-131803-saline-pos-e1-e7,20261023-123841-saline-pos-empty-first,assumed,22x30,0.507
+wood1&7,20261023-131803-saline-pos-e1-e7,20261023-123841-saline-pos-empty-first,assumed,23x30,0.512
+wood1&7,20261023-131803-saline-pos-e1-e7,20261023-123841-saline-pos-empty-first,assumed,30x23,0.594
+wood1&7,20261023-131803-saline-pos-e1-e7,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,23x22,0.618
+wood1&7,20261023-131803-saline-pos-e1-e7,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,30x22,0.608
+wood1&7,20261023-131803-saline-pos-e1-e7,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,22x30,0.538
+wood1&7,20261023-131803-saline-pos-e1-e7,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,23x30,0.531
+wood1&7,20261023-131803-saline-pos-e1-e7,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,30x23,0.599
+wood1&7,20261023-163554-saline-pos-e1-e7,20261023-161004-saline-pos-empty-last,measured,23x22,0.343
+wood1&7,20261023-163554-saline-pos-e1-e7,20261023-161004-saline-pos-empty-last,measured,30x22,0.321
+wood1&7,20261023-163554-saline-pos-e1-e7,20261023-161004-saline-pos-empty-last,measured,22x30,0.264
+wood1&7,20261023-163554-saline-pos-e1-e7,20261023-161004-saline-pos-empty-last,measured,23x30,0.254
+wood1&7,20261023-163554-saline-pos-e1-e7,20261023-161004-saline-pos-empty-last,measured,30x23,0.313
+wood1&7,20261023-163554-saline-pos-e1-e7,20261023-161004-saline-pos-empty-last,assumed,23x22,0.643
+wood1&7,20261023-163554-saline-pos-e1-e7,20261023-161004-saline-pos-empty-last,assumed,30x22,0.613
+wood1&7,20261023-163554-saline-pos-e1-e7,20261023-161004-saline-pos-empty-last,assumed,22x30,0.498
+wood1&7,20261023-163554-saline-pos-e1-e7,20261023-161004-saline-pos-empty-last,assumed,23x30,0.503
+wood1&7,20261023-163554-saline-pos-e1-e7,20261023-161004-saline-pos-empty-last,assumed,30x23,0.62
+wood1&7,20261023-163554-saline-pos-e1-e7,20261023-161004-saline-pos-empty-last,photo angle + assumed radius,23x22,0.645
+wood1&7,20261023-163554-saline-pos-e1-e7,20261023-161004-saline-pos-empty-last,photo angle + assumed radius,30x22,0.644
+wood1&7,20261023-163554-saline-pos-e1-e7,20261023-161004-saline-pos-empty-last,photo angle + assumed radius,22x30,0.533
+wood1&7,20261023-163554-saline-pos-e1-e7,20261023-161004-saline-pos-empty-last,photo angle + assumed radius,23x30,0.513
+wood1&7,20261023-163554-saline-pos-e1-e7,20261023-161004-saline-pos-empty-last,photo angle + assumed radius,30x23,0.618
+wood1&7,20261023-164354-saline-pos-e1-e7,20261023-161004-saline-pos-empty-last,measured,23x22,0.371
+wood1&7,20261023-164354-saline-pos-e1-e7,20261023-161004-saline-pos-empty-last,measured,30x22,0.351
+wood1&7,20261023-164354-saline-pos-e1-e7,20261023-161004-saline-pos-empty-last,measured,22x30,0.293
+wood1&7,20261023-164354-saline-pos-e1-e7,20261023-161004-saline-pos-empty-last,measured,23x30,0.283
+wood1&7,20261023-164354-saline-pos-e1-e7,20261023-161004-saline-pos-empty-last,measured,30x23,0.345
+wood1&7,20261023-164354-saline-pos-e1-e7,20261023-161004-saline-pos-empty-last,assumed,23x22,0.668
+wood1&7,20261023-164354-saline-pos-e1-e7,20261023-161004-saline-pos-empty-last,assumed,30x22,0.64
+wood1&7,20261023-164354-saline-pos-e1-e7,20261023-161004-saline-pos-empty-last,assumed,22x30,0.526
+wood1&7,20261023-164354-saline-pos-e1-e7,20261023-161004-saline-pos-empty-last,assumed,23x30,0.531
+wood1&7,20261023-164354-saline-pos-e1-e7,20261023-161004-saline-pos-empty-last,assumed,30x23,0.648
+wood1&7,20261023-164354-saline-pos-e1-e7,20261023-161004-saline-pos-empty-last,photo angle + assumed radius,23x22,0.674
+wood1&7,20261023-164354-saline-pos-e1-e7,20261023-161004-saline-pos-empty-last,photo angle + assumed radius,30x22,0.67
+wood1&7,20261023-164354-saline-pos-e1-e7,20261023-161004-saline-pos-empty-last,photo angle + assumed radius,22x30,0.563
+wood1&7,20261023-164354-saline-pos-e1-e7,20261023-161004-saline-pos-empty-last,photo angle + assumed radius,23x30,0.542
+wood1&7,20261023-164354-saline-pos-e1-e7,20261023-161004-saline-pos-empty-last,photo angle + assumed radius,30x23,0.647
+wood1&7,20261023-165154-saline-pos-e1-e7,20261023-161004-saline-pos-empty-last,measured,23x22,0.381
+wood1&7,20261023-165154-saline-pos-e1-e7,20261023-161004-saline-pos-empty-last,measured,30x22,0.361
+wood1&7,20261023-165154-saline-pos-e1-e7,20261023-161004-saline-pos-empty-last,measured,22x30,0.303
+wood1&7,20261023-165154-saline-pos-e1-e7,20261023-161004-saline-pos-empty-last,measured,23x30,0.292
+wood1&7,20261023-165154-saline-pos-e1-e7,20261023-161004-saline-pos-empty-last,measured,30x23,0.355
+wood1&7,20261023-165154-saline-pos-e1-e7,20261023-161004-saline-pos-empty-last,assumed,23x22,0.676
+wood1&7,20261023-165154-saline-pos-e1-e7,20261023-161004-saline-pos-empty-last,assumed,30x22,0.649
+wood1&7,20261023-165154-saline-pos-e1-e7,20261023-161004-saline-pos-empty-last,assumed,22x30,0.536
+wood1&7,20261023-165154-saline-pos-e1-e7,20261023-161004-saline-pos-empty-last,assumed,23x30,0.541
+wood1&7,20261023-165154-saline-pos-e1-e7,20261023-161004-saline-pos-empty-last,assumed,30x23,0.657
+wood1&7,20261023-165154-saline-pos-e1-e7,20261023-161004-saline-pos-empty-last,photo angle + assumed radius,23x22,0.683
+wood1&7,20261023-165154-saline-pos-e1-e7,20261023-161004-saline-pos-empty-last,photo angle + assumed radius,30x22,0.678
+wood1&7,20261023-165154-saline-pos-e1-e7,20261023-161004-saline-pos-empty-last,photo angle + assumed radius,22x30,0.571
+wood1&7,20261023-165154-saline-pos-e1-e7,20261023-161004-saline-pos-empty-last,photo angle + assumed radius,23x30,0.551
+wood1&7,20261023-165154-saline-pos-e1-e7,20261023-161004-saline-pos-empty-last,photo angle + assumed radius,30x23,0.656
+wood2&8,20261023-133050-saline-pos-e2-e8,20261023-123841-saline-pos-empty-first,measured,23x22,0.51
+wood2&8,20261023-133050-saline-pos-e2-e8,20261023-123841-saline-pos-empty-first,measured,30x22,0.483
+wood2&8,20261023-133050-saline-pos-e2-e8,20261023-123841-saline-pos-empty-first,measured,22x30,0.473
+wood2&8,20261023-133050-saline-pos-e2-e8,20261023-123841-saline-pos-empty-first,measured,23x30,0.477
+wood2&8,20261023-133050-saline-pos-e2-e8,20261023-123841-saline-pos-empty-first,measured,30x23,0.464
+wood2&8,20261023-133050-saline-pos-e2-e8,20261023-123841-saline-pos-empty-first,assumed,23x22,0.733
+wood2&8,20261023-133050-saline-pos-e2-e8,20261023-123841-saline-pos-empty-first,assumed,30x22,0.734
+wood2&8,20261023-133050-saline-pos-e2-e8,20261023-123841-saline-pos-empty-first,assumed,22x30,0.686
+wood2&8,20261023-133050-saline-pos-e2-e8,20261023-123841-saline-pos-empty-first,assumed,23x30,0.67
+wood2&8,20261023-133050-saline-pos-e2-e8,20261023-123841-saline-pos-empty-first,assumed,30x23,0.738
+wood2&8,20261023-133050-saline-pos-e2-e8,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,23x22,0.754
+wood2&8,20261023-133050-saline-pos-e2-e8,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,30x22,0.749
+wood2&8,20261023-133050-saline-pos-e2-e8,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,22x30,0.693
+wood2&8,20261023-133050-saline-pos-e2-e8,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,23x30,0.697
+wood2&8,20261023-133050-saline-pos-e2-e8,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,30x23,0.765
+wood2&8,20261023-133850-saline-pos-e2-e8,20261023-123841-saline-pos-empty-first,measured,23x22,0.51
+wood2&8,20261023-133850-saline-pos-e2-e8,20261023-123841-saline-pos-empty-first,measured,30x22,0.49
+wood2&8,20261023-133850-saline-pos-e2-e8,20261023-123841-saline-pos-empty-first,measured,22x30,0.478
+wood2&8,20261023-133850-saline-pos-e2-e8,20261023-123841-saline-pos-empty-first,measured,23x30,0.482
+wood2&8,20261023-133850-saline-pos-e2-e8,20261023-123841-saline-pos-empty-first,measured,30x23,0.473
+wood2&8,20261023-133850-saline-pos-e2-e8,20261023-123841-saline-pos-empty-first,assumed,23x22,0.724
+wood2&8,20261023-133850-saline-pos-e2-e8,20261023-123841-saline-pos-empty-first,assumed,30x22,0.724
+wood2&8,20261023-133850-saline-pos-e2-e8,20261023-123841-saline-pos-empty-first,assumed,22x30,0.677
+wood2&8,20261023-133850-saline-pos-e2-e8,20261023-123841-saline-pos-empty-first,assumed,23x30,0.661
+wood2&8,20261023-133850-saline-pos-e2-e8,20261023-123841-saline-pos-empty-first,assumed,30x23,0.728
+wood2&8,20261023-133850-saline-pos-e2-e8,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,23x22,0.747
+wood2&8,20261023-133850-saline-pos-e2-e8,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,30x22,0.743
+wood2&8,20261023-133850-saline-pos-e2-e8,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,22x30,0.689
+wood2&8,20261023-133850-saline-pos-e2-e8,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,23x30,0.692
+wood2&8,20261023-133850-saline-pos-e2-e8,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,30x23,0.759
+wood2&8,20261023-134649-saline-pos-e2-e8,20261023-123841-saline-pos-empty-first,measured,23x22,0.511
+wood2&8,20261023-134649-saline-pos-e2-e8,20261023-123841-saline-pos-empty-first,measured,30x22,0.492
+wood2&8,20261023-134649-saline-pos-e2-e8,20261023-123841-saline-pos-empty-first,measured,22x30,0.479
+wood2&8,20261023-134649-saline-pos-e2-e8,20261023-123841-saline-pos-empty-first,measured,23x30,0.483
+wood2&8,20261023-134649-saline-pos-e2-e8,20261023-123841-saline-pos-empty-first,measured,30x23,0.474
+wood2&8,20261023-134649-saline-pos-e2-e8,20261023-123841-saline-pos-empty-first,assumed,23x22,0.724
+wood2&8,20261023-134649-saline-pos-e2-e8,20261023-123841-saline-pos-empty-first,assumed,30x22,0.724
+wood2&8,20261023-134649-saline-pos-e2-e8,20261023-123841-saline-pos-empty-first,assumed,22x30,0.677
+wood2&8,20261023-134649-saline-pos-e2-e8,20261023-123841-saline-pos-empty-first,assumed,23x30,0.661
+wood2&8,20261023-134649-saline-pos-e2-e8,20261023-123841-saline-pos-empty-first,assumed,30x23,0.728
+wood2&8,20261023-134649-saline-pos-e2-e8,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,23x22,0.747
+wood2&8,20261023-134649-saline-pos-e2-e8,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,30x22,0.743
+wood2&8,20261023-134649-saline-pos-e2-e8,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,22x30,0.689
+wood2&8,20261023-134649-saline-pos-e2-e8,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,23x30,0.693
+wood2&8,20261023-134649-saline-pos-e2-e8,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,30x23,0.76
+wood3&9,20261023-135919-saline-pos-e3-e9,20261023-123841-saline-pos-empty-first,measured,23x22,0.49
+wood3&9,20261023-135919-saline-pos-e3-e9,20261023-123841-saline-pos-empty-first,measured,30x22,0.487
+wood3&9,20261023-135919-saline-pos-e3-e9,20261023-123841-saline-pos-empty-first,measured,22x30,0.267
+wood3&9,20261023-135919-saline-pos-e3-e9,20261023-123841-saline-pos-empty-first,measured,23x30,0.355
+wood3&9,20261023-135919-saline-pos-e3-e9,20261023-123841-saline-pos-empty-first,measured,30x23,0.447
+wood3&9,20261023-135919-saline-pos-e3-e9,20261023-123841-saline-pos-empty-first,assumed,23x22,0.655
+wood3&9,20261023-135919-saline-pos-e3-e9,20261023-123841-saline-pos-empty-first,assumed,30x22,0.645
+wood3&9,20261023-135919-saline-pos-e3-e9,20261023-123841-saline-pos-empty-first,assumed,22x30,0.583
+wood3&9,20261023-135919-saline-pos-e3-e9,20261023-123841-saline-pos-empty-first,assumed,23x30,0.58
+wood3&9,20261023-135919-saline-pos-e3-e9,20261023-123841-saline-pos-empty-first,assumed,30x23,0.649
+wood3&9,20261023-135919-saline-pos-e3-e9,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,23x22,0.656
+wood3&9,20261023-135919-saline-pos-e3-e9,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,30x22,0.658
+wood3&9,20261023-135919-saline-pos-e3-e9,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,22x30,0.578
+wood3&9,20261023-135919-saline-pos-e3-e9,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,23x30,0.584
+wood3&9,20261023-135919-saline-pos-e3-e9,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,30x23,0.662
+wood3&9,20261023-140719-saline-pos-e3-e9,20261023-123841-saline-pos-empty-first,measured,23x22,0.491
+wood3&9,20261023-140719-saline-pos-e3-e9,20261023-123841-saline-pos-empty-first,measured,30x22,0.487
+wood3&9,20261023-140719-saline-pos-e3-e9,20261023-123841-saline-pos-empty-first,measured,22x30,0.267
+wood3&9,20261023-140719-saline-pos-e3-e9,20261023-123841-saline-pos-empty-first,measured,23x30,0.356
+wood3&9,20261023-140719-saline-pos-e3-e9,20261023-123841-saline-pos-empty-first,measured,30x23,0.448
+wood3&9,20261023-140719-saline-pos-e3-e9,20261023-123841-saline-pos-empty-first,assumed,23x22,0.655
+wood3&9,20261023-140719-saline-pos-e3-e9,20261023-123841-saline-pos-empty-first,assumed,30x22,0.646
+wood3&9,20261023-140719-saline-pos-e3-e9,20261023-123841-saline-pos-empty-first,assumed,22x30,0.583
+wood3&9,20261023-140719-saline-pos-e3-e9,20261023-123841-saline-pos-empty-first,assumed,23x30,0.581
+wood3&9,20261023-140719-saline-pos-e3-e9,20261023-123841-saline-pos-empty-first,assumed,30x23,0.649
+wood3&9,20261023-140719-saline-pos-e3-e9,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,23x22,0.656
+wood3&9,20261023-140719-saline-pos-e3-e9,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,30x22,0.658
+wood3&9,20261023-140719-saline-pos-e3-e9,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,22x30,0.578
+wood3&9,20261023-140719-saline-pos-e3-e9,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,23x30,0.584
+wood3&9,20261023-140719-saline-pos-e3-e9,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,30x23,0.662
+wood3&9,20261023-141518-saline-pos-e3-e9,20261023-123841-saline-pos-empty-first,measured,23x22,0.491
+wood3&9,20261023-141518-saline-pos-e3-e9,20261023-123841-saline-pos-empty-first,measured,30x22,0.487
+wood3&9,20261023-141518-saline-pos-e3-e9,20261023-123841-saline-pos-empty-first,measured,22x30,0.268
+wood3&9,20261023-141518-saline-pos-e3-e9,20261023-123841-saline-pos-empty-first,measured,23x30,0.356
+wood3&9,20261023-141518-saline-pos-e3-e9,20261023-123841-saline-pos-empty-first,measured,30x23,0.448
+wood3&9,20261023-141518-saline-pos-e3-e9,20261023-123841-saline-pos-empty-first,assumed,23x22,0.655
+wood3&9,20261023-141518-saline-pos-e3-e9,20261023-123841-saline-pos-empty-first,assumed,30x22,0.646
+wood3&9,20261023-141518-saline-pos-e3-e9,20261023-123841-saline-pos-empty-first,assumed,22x30,0.583
+wood3&9,20261023-141518-saline-pos-e3-e9,20261023-123841-saline-pos-empty-first,assumed,23x30,0.581
+wood3&9,20261023-141518-saline-pos-e3-e9,20261023-123841-saline-pos-empty-first,assumed,30x23,0.649
+wood3&9,20261023-141518-saline-pos-e3-e9,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,23x22,0.657
+wood3&9,20261023-141518-saline-pos-e3-e9,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,30x22,0.658
+wood3&9,20261023-141518-saline-pos-e3-e9,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,22x30,0.578
+wood3&9,20261023-141518-saline-pos-e3-e9,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,23x30,0.584
+wood3&9,20261023-141518-saline-pos-e3-e9,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,30x23,0.662
+wood4&10,20261023-142712-saline-pos-e4-e10,20261023-123841-saline-pos-empty-first,measured,23x22,0.484
+wood4&10,20261023-142712-saline-pos-e4-e10,20261023-123841-saline-pos-empty-first,measured,30x22,0.444
+wood4&10,20261023-142712-saline-pos-e4-e10,20261023-123841-saline-pos-empty-first,measured,22x30,0.355
+wood4&10,20261023-142712-saline-pos-e4-e10,20261023-123841-saline-pos-empty-first,measured,23x30,0.389
+wood4&10,20261023-142712-saline-pos-e4-e10,20261023-123841-saline-pos-empty-first,measured,30x23,0.45
+wood4&10,20261023-142712-saline-pos-e4-e10,20261023-123841-saline-pos-empty-first,assumed,23x22,0.695
+wood4&10,20261023-142712-saline-pos-e4-e10,20261023-123841-saline-pos-empty-first,assumed,30x22,0.689
+wood4&10,20261023-142712-saline-pos-e4-e10,20261023-123841-saline-pos-empty-first,assumed,22x30,0.636
+wood4&10,20261023-142712-saline-pos-e4-e10,20261023-123841-saline-pos-empty-first,assumed,23x30,0.65
+wood4&10,20261023-142712-saline-pos-e4-e10,20261023-123841-saline-pos-empty-first,assumed,30x23,0.695
+wood4&10,20261023-142712-saline-pos-e4-e10,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,23x22,0.708
+wood4&10,20261023-142712-saline-pos-e4-e10,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,30x22,0.711
+wood4&10,20261023-142712-saline-pos-e4-e10,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,22x30,0.621
+wood4&10,20261023-142712-saline-pos-e4-e10,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,23x30,0.634
+wood4&10,20261023-142712-saline-pos-e4-e10,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,30x23,0.694
+wood4&10,20261023-143512-saline-pos-e4-e10,20261023-123841-saline-pos-empty-first,measured,23x22,0.489
+wood4&10,20261023-143512-saline-pos-e4-e10,20261023-123841-saline-pos-empty-first,measured,30x22,0.444
+wood4&10,20261023-143512-saline-pos-e4-e10,20261023-123841-saline-pos-empty-first,measured,22x30,0.36
+wood4&10,20261023-143512-saline-pos-e4-e10,20261023-123841-saline-pos-empty-first,measured,23x30,0.391
+wood4&10,20261023-143512-saline-pos-e4-e10,20261023-123841-saline-pos-empty-first,measured,30x23,0.45
+wood4&10,20261023-143512-saline-pos-e4-e10,20261023-123841-saline-pos-empty-first,assumed,23x22,0.705
+wood4&10,20261023-143512-saline-pos-e4-e10,20261023-123841-saline-pos-empty-first,assumed,30x22,0.702
+wood4&10,20261023-143512-saline-pos-e4-e10,20261023-123841-saline-pos-empty-first,assumed,22x30,0.647
+wood4&10,20261023-143512-saline-pos-e4-e10,20261023-123841-saline-pos-empty-first,assumed,23x30,0.661
+wood4&10,20261023-143512-saline-pos-e4-e10,20261023-123841-saline-pos-empty-first,assumed,30x23,0.707
+wood4&10,20261023-143512-saline-pos-e4-e10,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,23x22,0.712
+wood4&10,20261023-143512-saline-pos-e4-e10,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,30x22,0.714
+wood4&10,20261023-143512-saline-pos-e4-e10,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,22x30,0.628
+wood4&10,20261023-143512-saline-pos-e4-e10,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,23x30,0.641
+wood4&10,20261023-143512-saline-pos-e4-e10,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,30x23,0.698
+wood4&10,20261023-144311-saline-pos-e4-e10,20261023-123841-saline-pos-empty-first,measured,23x22,0.448
+wood4&10,20261023-144311-saline-pos-e4-e10,20261023-123841-saline-pos-empty-first,measured,30x22,0.396
+wood4&10,20261023-144311-saline-pos-e4-e10,20261023-123841-saline-pos-empty-first,measured,22x30,0.331
+wood4&10,20261023-144311-saline-pos-e4-e10,20261023-123841-saline-pos-empty-first,measured,23x30,0.355
+wood4&10,20261023-144311-saline-pos-e4-e10,20261023-123841-saline-pos-empty-first,measured,30x23,0.401
+wood4&10,20261023-144311-saline-pos-e4-e10,20261023-123841-saline-pos-empty-first,assumed,23x22,0.671
+wood4&10,20261023-144311-saline-pos-e4-e10,20261023-123841-saline-pos-empty-first,assumed,30x22,0.67
+wood4&10,20261023-144311-saline-pos-e4-e10,20261023-123841-saline-pos-empty-first,assumed,22x30,0.614
+wood4&10,20261023-144311-saline-pos-e4-e10,20261023-123841-saline-pos-empty-first,assumed,23x30,0.628
+wood4&10,20261023-144311-saline-pos-e4-e10,20261023-123841-saline-pos-empty-first,assumed,30x23,0.674
+wood4&10,20261023-144311-saline-pos-e4-e10,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,23x22,0.66
+wood4&10,20261023-144311-saline-pos-e4-e10,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,30x22,0.659
+wood4&10,20261023-144311-saline-pos-e4-e10,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,22x30,0.586
+wood4&10,20261023-144311-saline-pos-e4-e10,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,23x30,0.598
+wood4&10,20261023-144311-saline-pos-e4-e10,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,30x23,0.647
+wood6&12,20261023-153233-saline-pos-e6-e12,20261023-123841-saline-pos-empty-first,measured,23x22,0.348
+wood6&12,20261023-153233-saline-pos-e6-e12,20261023-123841-saline-pos-empty-first,measured,30x22,0.315
+wood6&12,20261023-153233-saline-pos-e6-e12,20261023-123841-saline-pos-empty-first,measured,22x30,0.335
+wood6&12,20261023-153233-saline-pos-e6-e12,20261023-123841-saline-pos-empty-first,measured,23x30,0.309
+wood6&12,20261023-153233-saline-pos-e6-e12,20261023-123841-saline-pos-empty-first,measured,30x23,0.253
+wood6&12,20261023-153233-saline-pos-e6-e12,20261023-123841-saline-pos-empty-first,assumed,23x22,0.734
+wood6&12,20261023-153233-saline-pos-e6-e12,20261023-123841-saline-pos-empty-first,assumed,30x22,0.744
+wood6&12,20261023-153233-saline-pos-e6-e12,20261023-123841-saline-pos-empty-first,assumed,22x30,0.629
+wood6&12,20261023-153233-saline-pos-e6-e12,20261023-123841-saline-pos-empty-first,assumed,23x30,0.627
+wood6&12,20261023-153233-saline-pos-e6-e12,20261023-123841-saline-pos-empty-first,assumed,30x23,0.725
+wood6&12,20261023-153233-saline-pos-e6-e12,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,23x22,0.686
+wood6&12,20261023-153233-saline-pos-e6-e12,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,30x22,0.731
+wood6&12,20261023-153233-saline-pos-e6-e12,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,22x30,0.636
+wood6&12,20261023-153233-saline-pos-e6-e12,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,23x30,0.617
+wood6&12,20261023-153233-saline-pos-e6-e12,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,30x23,0.717
+wood6&12,20261023-154032-saline-pos-e6-e12,20261023-123841-saline-pos-empty-first,measured,23x22,0.351
+wood6&12,20261023-154032-saline-pos-e6-e12,20261023-123841-saline-pos-empty-first,measured,30x22,0.319
+wood6&12,20261023-154032-saline-pos-e6-e12,20261023-123841-saline-pos-empty-first,measured,22x30,0.338
+wood6&12,20261023-154032-saline-pos-e6-e12,20261023-123841-saline-pos-empty-first,measured,23x30,0.312
+wood6&12,20261023-154032-saline-pos-e6-e12,20261023-123841-saline-pos-empty-first,measured,30x23,0.255
+wood6&12,20261023-154032-saline-pos-e6-e12,20261023-123841-saline-pos-empty-first,assumed,23x22,0.74
+wood6&12,20261023-154032-saline-pos-e6-e12,20261023-123841-saline-pos-empty-first,assumed,30x22,0.751
+wood6&12,20261023-154032-saline-pos-e6-e12,20261023-123841-saline-pos-empty-first,assumed,22x30,0.634
+wood6&12,20261023-154032-saline-pos-e6-e12,20261023-123841-saline-pos-empty-first,assumed,23x30,0.633
+wood6&12,20261023-154032-saline-pos-e6-e12,20261023-123841-saline-pos-empty-first,assumed,30x23,0.732
+wood6&12,20261023-154032-saline-pos-e6-e12,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,23x22,0.693
+wood6&12,20261023-154032-saline-pos-e6-e12,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,30x22,0.738
+wood6&12,20261023-154032-saline-pos-e6-e12,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,22x30,0.641
+wood6&12,20261023-154032-saline-pos-e6-e12,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,23x30,0.623
+wood6&12,20261023-154032-saline-pos-e6-e12,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,30x23,0.724
+wood6&12,20261023-154832-saline-pos-e6-e12,20261023-123841-saline-pos-empty-first,measured,23x22,0.347
+wood6&12,20261023-154832-saline-pos-e6-e12,20261023-123841-saline-pos-empty-first,measured,30x22,0.315
+wood6&12,20261023-154832-saline-pos-e6-e12,20261023-123841-saline-pos-empty-first,measured,22x30,0.335
+wood6&12,20261023-154832-saline-pos-e6-e12,20261023-123841-saline-pos-empty-first,measured,23x30,0.308
+wood6&12,20261023-154832-saline-pos-e6-e12,20261023-123841-saline-pos-empty-first,measured,30x23,0.252
+wood6&12,20261023-154832-saline-pos-e6-e12,20261023-123841-saline-pos-empty-first,assumed,23x22,0.741
+wood6&12,20261023-154832-saline-pos-e6-e12,20261023-123841-saline-pos-empty-first,assumed,30x22,0.752
+wood6&12,20261023-154832-saline-pos-e6-e12,20261023-123841-saline-pos-empty-first,assumed,22x30,0.634
+wood6&12,20261023-154832-saline-pos-e6-e12,20261023-123841-saline-pos-empty-first,assumed,23x30,0.632
+wood6&12,20261023-154832-saline-pos-e6-e12,20261023-123841-saline-pos-empty-first,assumed,30x23,0.733
+wood6&12,20261023-154832-saline-pos-e6-e12,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,23x22,0.694
+wood6&12,20261023-154832-saline-pos-e6-e12,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,30x22,0.738
+wood6&12,20261023-154832-saline-pos-e6-e12,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,22x30,0.641
+wood6&12,20261023-154832-saline-pos-e6-e12,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,23x30,0.622
+wood6&12,20261023-154832-saline-pos-e6-e12,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,30x23,0.725
+wood8,20261022-171934-saline-pos-e8,20261022-134226-saline-pos-empty-first,measured,23x22,0.564
+wood8,20261022-171934-saline-pos-e8,20261022-134226-saline-pos-empty-first,measured,30x22,0.559
+wood8,20261022-171934-saline-pos-e8,20261022-134226-saline-pos-empty-first,measured,22x30,0.49
+wood8,20261022-171934-saline-pos-e8,20261022-134226-saline-pos-empty-first,measured,23x30,0.495
+wood8,20261022-171934-saline-pos-e8,20261022-134226-saline-pos-empty-first,measured,30x23,0.529
+wood8,20261022-171934-saline-pos-e8,20261022-134226-saline-pos-empty-first,assumed,23x22,0.802
+wood8,20261022-171934-saline-pos-e8,20261022-134226-saline-pos-empty-first,assumed,30x22,0.798
+wood8,20261022-171934-saline-pos-e8,20261022-134226-saline-pos-empty-first,assumed,22x30,0.703
+wood8,20261022-171934-saline-pos-e8,20261022-134226-saline-pos-empty-first,assumed,23x30,0.712
+wood8,20261022-171934-saline-pos-e8,20261022-134226-saline-pos-empty-first,assumed,30x23,0.807
+wood8,20261022-171934-saline-pos-e8,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x22,0.802
+wood8,20261022-171934-saline-pos-e8,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x22,0.761
+wood8,20261022-171934-saline-pos-e8,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,22x30,0.71
+wood8,20261022-171934-saline-pos-e8,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x30,0.712
+wood8,20261022-171934-saline-pos-e8,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x23,0.799
+wood8,20261022-172734-saline-pos-e8,20261022-134226-saline-pos-empty-first,measured,23x22,0.562
+wood8,20261022-172734-saline-pos-e8,20261022-134226-saline-pos-empty-first,measured,30x22,0.558
+wood8,20261022-172734-saline-pos-e8,20261022-134226-saline-pos-empty-first,measured,22x30,0.489
+wood8,20261022-172734-saline-pos-e8,20261022-134226-saline-pos-empty-first,measured,23x30,0.493
+wood8,20261022-172734-saline-pos-e8,20261022-134226-saline-pos-empty-first,measured,30x23,0.528
+wood8,20261022-172734-saline-pos-e8,20261022-134226-saline-pos-empty-first,assumed,23x22,0.8
+wood8,20261022-172734-saline-pos-e8,20261022-134226-saline-pos-empty-first,assumed,30x22,0.796
+wood8,20261022-172734-saline-pos-e8,20261022-134226-saline-pos-empty-first,assumed,22x30,0.702
+wood8,20261022-172734-saline-pos-e8,20261022-134226-saline-pos-empty-first,assumed,23x30,0.711
+wood8,20261022-172734-saline-pos-e8,20261022-134226-saline-pos-empty-first,assumed,30x23,0.805
+wood8,20261022-172734-saline-pos-e8,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x22,0.8
+wood8,20261022-172734-saline-pos-e8,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x22,0.759
+wood8,20261022-172734-saline-pos-e8,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,22x30,0.708
+wood8,20261022-172734-saline-pos-e8,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x30,0.711
+wood8,20261022-172734-saline-pos-e8,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x23,0.798
+wood8,20261022-173534-saline-pos-e8,20261022-134226-saline-pos-empty-first,measured,23x22,0.566
+wood8,20261022-173534-saline-pos-e8,20261022-134226-saline-pos-empty-first,measured,30x22,0.561
+wood8,20261022-173534-saline-pos-e8,20261022-134226-saline-pos-empty-first,measured,22x30,0.492
+wood8,20261022-173534-saline-pos-e8,20261022-134226-saline-pos-empty-first,measured,23x30,0.497
+wood8,20261022-173534-saline-pos-e8,20261022-134226-saline-pos-empty-first,measured,30x23,0.531
+wood8,20261022-173534-saline-pos-e8,20261022-134226-saline-pos-empty-first,assumed,23x22,0.804
+wood8,20261022-173534-saline-pos-e8,20261022-134226-saline-pos-empty-first,assumed,30x22,0.8
+wood8,20261022-173534-saline-pos-e8,20261022-134226-saline-pos-empty-first,assumed,22x30,0.705
+wood8,20261022-173534-saline-pos-e8,20261022-134226-saline-pos-empty-first,assumed,23x30,0.714
+wood8,20261022-173534-saline-pos-e8,20261022-134226-saline-pos-empty-first,assumed,30x23,0.809
+wood8,20261022-173534-saline-pos-e8,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x22,0.804
+wood8,20261022-173534-saline-pos-e8,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x22,0.763
+wood8,20261022-173534-saline-pos-e8,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,22x30,0.712
+wood8,20261022-173534-saline-pos-e8,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,23x30,0.714
+wood8,20261022-173534-saline-pos-e8,20261022-134226-saline-pos-empty-first,photo angle + assumed radius,30x23,0.801
+wood8,20261014-191430-saline-e8-adjacent-dac400-st10-n16,20261014-200326-saline-empty-adjacent-dac400-st10-n16,measured,23x22,0.777
+wood8,20261014-191430-saline-e8-adjacent-dac400-st10-n16,20261014-200326-saline-empty-adjacent-dac400-st10-n16,measured,30x22,0.775
+wood8,20261014-191430-saline-e8-adjacent-dac400-st10-n16,20261014-200326-saline-empty-adjacent-dac400-st10-n16,measured,22x30,0.698
+wood8,20261014-191430-saline-e8-adjacent-dac400-st10-n16,20261014-200326-saline-empty-adjacent-dac400-st10-n16,measured,23x30,0.703
+wood8,20261014-191430-saline-e8-adjacent-dac400-st10-n16,20261014-200326-saline-empty-adjacent-dac400-st10-n16,measured,30x23,0.747
+wood8,20261014-191430-saline-e8-adjacent-dac400-st10-n16,20261014-200326-saline-empty-adjacent-dac400-st10-n16,assumed,23x22,0.94
+wood8,20261014-191430-saline-e8-adjacent-dac400-st10-n16,20261014-200326-saline-empty-adjacent-dac400-st10-n16,assumed,30x22,0.938
+wood8,20261014-191430-saline-e8-adjacent-dac400-st10-n16,20261014-200326-saline-empty-adjacent-dac400-st10-n16,assumed,22x30,0.887
+wood8,20261014-191430-saline-e8-adjacent-dac400-st10-n16,20261014-200326-saline-empty-adjacent-dac400-st10-n16,assumed,23x30,0.892
+wood8,20261014-191430-saline-e8-adjacent-dac400-st10-n16,20261014-200326-saline-empty-adjacent-dac400-st10-n16,assumed,30x23,0.944
+wood8,20261014-191430-saline-e8-adjacent-dac400-st10-n16,20261014-200326-saline-empty-adjacent-dac400-st10-n16,photo angle + assumed radius,23x22,0.94
+wood8,20261014-191430-saline-e8-adjacent-dac400-st10-n16,20261014-200326-saline-empty-adjacent-dac400-st10-n16,photo angle + assumed radius,30x22,0.921
+wood8,20261014-191430-saline-e8-adjacent-dac400-st10-n16,20261014-200326-saline-empty-adjacent-dac400-st10-n16,photo angle + assumed radius,22x30,0.896
+wood8,20261014-191430-saline-e8-adjacent-dac400-st10-n16,20261014-200326-saline-empty-adjacent-dac400-st10-n16,photo angle + assumed radius,23x30,0.892
+wood8,20261014-191430-saline-e8-adjacent-dac400-st10-n16,20261014-200326-saline-empty-adjacent-dac400-st10-n16,photo angle + assumed radius,30x23,0.942
+wood8,20261014-191843-saline-e8-adjacent-dac400-st10-n16,20261014-200739-saline-empty-adjacent-dac400-st10-n16,measured,23x22,0.781
+wood8,20261014-191843-saline-e8-adjacent-dac400-st10-n16,20261014-200739-saline-empty-adjacent-dac400-st10-n16,measured,30x22,0.78
+wood8,20261014-191843-saline-e8-adjacent-dac400-st10-n16,20261014-200739-saline-empty-adjacent-dac400-st10-n16,measured,22x30,0.703
+wood8,20261014-191843-saline-e8-adjacent-dac400-st10-n16,20261014-200739-saline-empty-adjacent-dac400-st10-n16,measured,23x30,0.707
+wood8,20261014-191843-saline-e8-adjacent-dac400-st10-n16,20261014-200739-saline-empty-adjacent-dac400-st10-n16,measured,30x23,0.752
+wood8,20261014-191843-saline-e8-adjacent-dac400-st10-n16,20261014-200739-saline-empty-adjacent-dac400-st10-n16,assumed,23x22,0.943
+wood8,20261014-191843-saline-e8-adjacent-dac400-st10-n16,20261014-200739-saline-empty-adjacent-dac400-st10-n16,assumed,30x22,0.942
+wood8,20261014-191843-saline-e8-adjacent-dac400-st10-n16,20261014-200739-saline-empty-adjacent-dac400-st10-n16,assumed,22x30,0.891
+wood8,20261014-191843-saline-e8-adjacent-dac400-st10-n16,20261014-200739-saline-empty-adjacent-dac400-st10-n16,assumed,23x30,0.895
+wood8,20261014-191843-saline-e8-adjacent-dac400-st10-n16,20261014-200739-saline-empty-adjacent-dac400-st10-n16,assumed,30x23,0.947
+wood8,20261014-191843-saline-e8-adjacent-dac400-st10-n16,20261014-200739-saline-empty-adjacent-dac400-st10-n16,photo angle + assumed radius,23x22,0.943
+wood8,20261014-191843-saline-e8-adjacent-dac400-st10-n16,20261014-200739-saline-empty-adjacent-dac400-st10-n16,photo angle + assumed radius,30x22,0.925
+wood8,20261014-191843-saline-e8-adjacent-dac400-st10-n16,20261014-200739-saline-empty-adjacent-dac400-st10-n16,photo angle + assumed radius,22x30,0.9
+wood8,20261014-191843-saline-e8-adjacent-dac400-st10-n16,20261014-200739-saline-empty-adjacent-dac400-st10-n16,photo angle + assumed radius,23x30,0.895
+wood8,20261014-191843-saline-e8-adjacent-dac400-st10-n16,20261014-200739-saline-empty-adjacent-dac400-st10-n16,photo angle + assumed radius,30x23,0.946
+wood8,20261014-192257-saline-e8-adjacent-dac400-st10-n16,20261014-201151-saline-empty-adjacent-dac400-st10-n16,measured,23x22,0.782
+wood8,20261014-192257-saline-e8-adjacent-dac400-st10-n16,20261014-201151-saline-empty-adjacent-dac400-st10-n16,measured,30x22,0.78
+wood8,20261014-192257-saline-e8-adjacent-dac400-st10-n16,20261014-201151-saline-empty-adjacent-dac400-st10-n16,measured,22x30,0.703
+wood8,20261014-192257-saline-e8-adjacent-dac400-st10-n16,20261014-201151-saline-empty-adjacent-dac400-st10-n16,measured,23x30,0.708
+wood8,20261014-192257-saline-e8-adjacent-dac400-st10-n16,20261014-201151-saline-empty-adjacent-dac400-st10-n16,measured,30x23,0.753
+wood8,20261014-192257-saline-e8-adjacent-dac400-st10-n16,20261014-201151-saline-empty-adjacent-dac400-st10-n16,assumed,23x22,0.943
+wood8,20261014-192257-saline-e8-adjacent-dac400-st10-n16,20261014-201151-saline-empty-adjacent-dac400-st10-n16,assumed,30x22,0.942
+wood8,20261014-192257-saline-e8-adjacent-dac400-st10-n16,20261014-201151-saline-empty-adjacent-dac400-st10-n16,assumed,22x30,0.891
+wood8,20261014-192257-saline-e8-adjacent-dac400-st10-n16,20261014-201151-saline-empty-adjacent-dac400-st10-n16,assumed,23x30,0.896
+wood8,20261014-192257-saline-e8-adjacent-dac400-st10-n16,20261014-201151-saline-empty-adjacent-dac400-st10-n16,assumed,30x23,0.948
+wood8,20261014-192257-saline-e8-adjacent-dac400-st10-n16,20261014-201151-saline-empty-adjacent-dac400-st10-n16,photo angle + assumed radius,23x22,0.943
+wood8,20261014-192257-saline-e8-adjacent-dac400-st10-n16,20261014-201151-saline-empty-adjacent-dac400-st10-n16,photo angle + assumed radius,30x22,0.926
+wood8,20261014-192257-saline-e8-adjacent-dac400-st10-n16,20261014-201151-saline-empty-adjacent-dac400-st10-n16,photo angle + assumed radius,22x30,0.9
+wood8,20261014-192257-saline-e8-adjacent-dac400-st10-n16,20261014-201151-saline-empty-adjacent-dac400-st10-n16,photo angle + assumed radius,23x30,0.896
+wood8,20261014-192257-saline-e8-adjacent-dac400-st10-n16,20261014-201151-saline-empty-adjacent-dac400-st10-n16,photo angle + assumed radius,30x23,0.946
+wood8,20261002-150425-ssim-saline,20261002-143242-ssim-saline,measured,23x22,0.753
+wood8,20261002-150425-ssim-saline,20261002-143242-ssim-saline,measured,30x22,0.758
+wood8,20261002-150425-ssim-saline,20261002-143242-ssim-saline,measured,22x30,0.665
+wood8,20261002-150425-ssim-saline,20261002-143242-ssim-saline,measured,23x30,0.673
+wood8,20261002-150425-ssim-saline,20261002-143242-ssim-saline,measured,30x23,0.728
+wood8,20261002-150425-ssim-saline,20261002-143242-ssim-saline,assumed,23x22,0.933
+wood8,20261002-150425-ssim-saline,20261002-143242-ssim-saline,assumed,30x22,0.94
+wood8,20261002-150425-ssim-saline,20261002-143242-ssim-saline,assumed,22x30,0.858
+wood8,20261002-150425-ssim-saline,20261002-143242-ssim-saline,assumed,23x30,0.864
+wood8,20261002-150425-ssim-saline,20261002-143242-ssim-saline,assumed,30x23,0.945
+wood8,20261002-150425-ssim-saline,20261002-143242-ssim-saline,photo angle + assumed radius,23x22,0.933
+wood8,20261002-150425-ssim-saline,20261002-143242-ssim-saline,photo angle + assumed radius,30x22,0.919
+wood8,20261002-150425-ssim-saline,20261002-143242-ssim-saline,photo angle + assumed radius,22x30,0.863
+wood8,20261002-150425-ssim-saline,20261002-143242-ssim-saline,photo angle + assumed radius,23x30,0.864
+wood8,20261002-150425-ssim-saline,20261002-143242-ssim-saline,photo angle + assumed radius,30x23,0.941
+wood5&11,20261023-145649-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,measured,23x22,0.489
+wood5&11,20261023-145649-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,measured,30x22,0.471
+wood5&11,20261023-145649-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,measured,22x30,0.346
+wood5&11,20261023-145649-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,measured,23x30,0.346
+wood5&11,20261023-145649-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,measured,30x23,0.465
+wood5&11,20261023-145649-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,assumed,23x22,0.76
+wood5&11,20261023-145649-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,assumed,30x22,0.725
+wood5&11,20261023-145649-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,assumed,22x30,0.66
+wood5&11,20261023-145649-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,assumed,23x30,0.654
+wood5&11,20261023-145649-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,assumed,30x23,0.733
+wood5&11,20261023-145649-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,23x22,0.72
+wood5&11,20261023-145649-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,30x22,0.704
+wood5&11,20261023-145649-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,22x30,0.636
+wood5&11,20261023-145649-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,23x30,0.647
+wood5&11,20261023-145649-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,30x23,0.7
+wood5&11,20261023-150449-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,measured,23x22,0.489
+wood5&11,20261023-150449-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,measured,30x22,0.471
+wood5&11,20261023-150449-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,measured,22x30,0.347
+wood5&11,20261023-150449-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,measured,23x30,0.347
+wood5&11,20261023-150449-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,measured,30x23,0.466
+wood5&11,20261023-150449-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,assumed,23x22,0.762
+wood5&11,20261023-150449-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,assumed,30x22,0.727
+wood5&11,20261023-150449-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,assumed,22x30,0.661
+wood5&11,20261023-150449-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,assumed,23x30,0.655
+wood5&11,20261023-150449-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,assumed,30x23,0.735
+wood5&11,20261023-150449-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,23x22,0.72
+wood5&11,20261023-150449-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,30x22,0.704
+wood5&11,20261023-150449-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,22x30,0.637
+wood5&11,20261023-150449-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,23x30,0.649
+wood5&11,20261023-150449-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,30x23,0.701
+wood5&11,20261023-151249-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,measured,23x22,0.491
+wood5&11,20261023-151249-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,measured,30x22,0.472
+wood5&11,20261023-151249-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,measured,22x30,0.35
+wood5&11,20261023-151249-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,measured,23x30,0.35
+wood5&11,20261023-151249-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,measured,30x23,0.467
+wood5&11,20261023-151249-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,assumed,23x22,0.765
+wood5&11,20261023-151249-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,assumed,30x22,0.73
+wood5&11,20261023-151249-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,assumed,22x30,0.664
+wood5&11,20261023-151249-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,assumed,23x30,0.657
+wood5&11,20261023-151249-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,assumed,30x23,0.738
+wood5&11,20261023-151249-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,23x22,0.722
+wood5&11,20261023-151249-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,30x22,0.706
+wood5&11,20261023-151249-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,22x30,0.639
+wood5&11,20261023-151249-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,23x30,0.651
+wood5&11,20261023-151249-saline-pos-e5-e11,20261023-123841-saline-pos-empty-first,photo angle + assumed radius,30x23,0.703
+wood5&11,20261002-175516-ssim-saline,20261002-170541-ssim-saline,measured,23x22,0.558
+wood5&11,20261002-175516-ssim-saline,20261002-170541-ssim-saline,measured,30x22,0.511
+wood5&11,20261002-175516-ssim-saline,20261002-170541-ssim-saline,measured,22x30,0.481
+wood5&11,20261002-175516-ssim-saline,20261002-170541-ssim-saline,measured,23x30,0.481
+wood5&11,20261002-175516-ssim-saline,20261002-170541-ssim-saline,measured,30x23,0.498
+wood5&11,20261002-175516-ssim-saline,20261002-170541-ssim-saline,assumed,23x22,0.884
+wood5&11,20261002-175516-ssim-saline,20261002-170541-ssim-saline,assumed,30x22,0.85
+wood5&11,20261002-175516-ssim-saline,20261002-170541-ssim-saline,assumed,22x30,0.78
+wood5&11,20261002-175516-ssim-saline,20261002-170541-ssim-saline,assumed,23x30,0.776
+wood5&11,20261002-175516-ssim-saline,20261002-170541-ssim-saline,assumed,30x23,0.869
+wood5&11,20261002-175516-ssim-saline,20261002-170541-ssim-saline,photo angle + assumed radius,23x22,0.868
+wood5&11,20261002-175516-ssim-saline,20261002-170541-ssim-saline,photo angle + assumed radius,30x22,0.812
+wood5&11,20261002-175516-ssim-saline,20261002-170541-ssim-saline,photo angle + assumed radius,22x30,0.749
+wood5&11,20261002-175516-ssim-saline,20261002-170541-ssim-saline,photo angle + assumed radius,23x30,0.757
+wood5&11,20261002-175516-ssim-saline,20261002-170541-ssim-saline,photo angle + assumed radius,30x23,0.802
