@@ -26,7 +26,7 @@ PyQt6 desktop frontend for an ERT (electrical resistivity tomography) device tha
   - `export.py` — `export_measurements_csv(database, path)` (one row per measurement)
   - `drive_sync.py` — `DriveClient` + `sync_unsynced()` (OAuth / local / off modes), `online()`, `can_sync_unattended()`. `CardApp.auto_sync` uploads in a background thread after each saved scan and every 5 min (ADR-0084)
   - `battery.py` — Waveshare UPS HAT (E) at I2C 0x2D: `decode()` (pure), `read_battery()` (None without the HAT), `needs_shutdown()` (shared with the root service)
-- `pi/` — `ups_shutdown.py` + `erterface-ups.service` + `install_ups_service.sh`: root service that powers off cleanly on a flat pack, publishing the countdown at `/run/erterface-ups/shutdown-at` for the UI (ADR-0085)
+- `pi/` — `SETUP.md` (Pi setup runbook: follow it in order), `ups_shutdown.py` + `erterface-ups.service` + `install_ups_service.sh`: root service that powers off cleanly on a flat pack, publishing the countdown at `/run/erterface-ups/shutdown-at` for the UI (ADR-0085)
   - `widgets/card.py` — `CardWidget` (generic card, measurement variant with thumbnail + pill)
   - `widgets/keyboard.py` — `TouchLineEdit` + `VirtualKeyboard`
   - `widgets/plot.py` — `TomogramPlot`
