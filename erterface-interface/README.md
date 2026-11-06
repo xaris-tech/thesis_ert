@@ -45,6 +45,8 @@ python app.py
 
 ## Battery and auto-sync (Pi)
 
+Step-by-step Pi setup with checks: [`pi/SETUP.md`](pi/SETUP.md). Summary:
+
 - Battery: Waveshare UPS HAT (E). Enable I2C (`sudo raspi-config` → Interface → I2C),
   `pip install smbus2` (or `sudo apt install python3-smbus`), check `i2cdetect -y 1` shows `2d`.
   The top bar then shows charge, time to empty, and a bolt while charging. Without the HAT
