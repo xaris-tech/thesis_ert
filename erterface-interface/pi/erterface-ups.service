@@ -1,0 +1,12 @@
+[Unit]
+Description=ERTERFACE clean poweroff on flat UPS HAT (E) battery (ADR-0085)
+After=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 @ERTERFACE_DIR@/pi/ups_shutdown.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

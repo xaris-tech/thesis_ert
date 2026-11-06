@@ -24,7 +24,9 @@ PyQt6 desktop frontend for an ERT (electrical resistivity tomography) device tha
   - `dialogs.py` — `AddEntityDialog` + `make_entity()` factory
   - `scan_view.py` — `ScanView(QWidget)` (read-only review of one saved measurement, opened by tapping a measurement card)
   - `export.py` — `export_measurements_csv(database, path)` (one row per measurement)
-  - `drive_sync.py` — `DriveClient` + `sync_unsynced()` (OAuth / local / off modes)
+  - `drive_sync.py` — `DriveClient` + `sync_unsynced()` (OAuth / local / off modes), `online()`, `can_sync_unattended()`. `CardApp.auto_sync` uploads in a background thread after each saved scan and every 5 min (ADR-0084)
+  - `battery.py` — Waveshare UPS HAT (E) at I2C 0x2D: `decode()` (pure), `read_battery()` (None without the HAT), `needs_shutdown()` (shared with the root service)
+- `pi/` — `ups_shutdown.py` + `erterface-ups.service` + `install_ups_service.sh`: root service that powers off cleanly on a flat pack, publishing the countdown at `/run/erterface-ups/shutdown-at` for the UI (ADR-0085)
   - `widgets/card.py` — `CardWidget` (generic card, measurement variant with thumbnail + pill)
   - `widgets/keyboard.py` — `TouchLineEdit` + `VirtualKeyboard`
   - `widgets/plot.py` — `TomogramPlot`
@@ -53,7 +55,7 @@ Hierarchy: `Plantation > Tree > Measurement` (the Zone level was removed 2026-10
 
 - `CardApp` is a `QMainWindow` with a `QStackedWidget` that holds the index page and one pushed screen (`CaptureScreen` or `ScanView`).
 - `CardApp.refresh_ui()` is the single rebuild entry point: breadcrumbs + clear cards + populate + FAB visibility. After any state change, call `refresh_ui()` (and `save_data()` for mutations). Don't mutate widgets in place.
-- Top bar: time | storage | status | Export CSV | Sync Drive | theme toggle | Exit. Min height 48px.
+- Top bar: time | storage | battery (UPS HAT (E), `battery.py`, hidden without the HAT) | status | Export CSV | Sync Drive | theme toggle | Exit. Min height 48px.
 - Breadcrumb row, search + sort row, then scrollable card grid (3 cols, 230x160, 15px spacing, 20/10/20/20 margins) with a 60x60 "+" FAB bottom-right. `QScroller` for touch scroll, both bars off.
 - Reorder arrows (`◀`/`▶`) on `CardWidget` only when `reorder_enabled` (sort = Manual Order, search empty).
 - Tree cards get a "Scan" button alongside Edit / Delete that pushes the `CaptureScreen` for that tree.

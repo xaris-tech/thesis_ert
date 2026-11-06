@@ -8,7 +8,7 @@ import shutil
 import threading
 import time
 
-from PyQt6.QtCore import QDateTime, QEvent, Qt, QTimer
+from PyQt6.QtCore import QDateTime, QEvent, Qt, QTimer, pyqtSignal
 from PyQt6.QtWidgets import (
     QLayout,
     QComboBox,
@@ -28,7 +28,7 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from . import export, paths, theme
+from . import battery, drive_sync, export, paths, theme
 from .dialogs import AddEntityDialog, make_entity
 from .drive_setup import DriveSetupDialog
 from .drive_sync import DriveClient, sync_unsynced
@@ -40,6 +40,13 @@ from .widgets.card import CARD_W, CardWidget, card_stylesheet
 from .widgets.keyboard import TouchLineEdit
 
 
+AUTO_SYNC_INTERVAL_MS = 5 * 60 * 1000
+"""How often the Pi retries pending uploads in the background (ADR-0084)."""
+
+BATTERY_POLL_TICKS = 10
+"""Clock ticks (1 s) between UPS HAT reads."""
+
+
 EMPTY_STATE = {
     "Plantation": "No plantations yet.\nTap + to add one.",
     "Tree": "No trees in this plantation.\nTap + to add one.",
@@ -47,9 +54,47 @@ EMPTY_STATE = {
 }
 
 
+def battery_pixmap(percent, color, charging, width=30, height=16):
+    """Battery outline filled to ``percent``, with a bolt when charging.
+    Painted rather than an emoji: the Pi's fonts lack the battery glyphs."""
+    from PyQt6.QtCore import QPointF, QRectF
+    from PyQt6.QtGui import QColor, QPainter, QPen, QPixmap, QPolygonF
+
+    pixmap = QPixmap(width, height)
+    pixmap.fill(Qt.GlobalColor.transparent)
+    painter = QPainter(pixmap)
+    painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+    ink = QColor(color)
+    body = QRectF(1, 1, width - 5, height - 2)
+    painter.setPen(QPen(ink, 1.5))
+    painter.setBrush(Qt.BrushStyle.NoBrush)
+    painter.drawRoundedRect(body, 2.5, 2.5)
+    painter.setPen(Qt.PenStyle.NoPen)
+    painter.setBrush(ink)
+    painter.drawRect(QRectF(width - 3.5, height * 0.3, 2.5, height * 0.4))  # terminal
+    fill = (body.width() - 4) * max(0, min(100, percent)) / 100
+    painter.drawRect(QRectF(body.left() + 2, body.top() + 2, fill, body.height() - 4))
+    if charging:
+        cx, cy = body.center().x(), body.center().y()
+        bolt = QPolygonF([QPointF(cx + 1, cy - 6), QPointF(cx - 4, cy + 1), QPointF(cx, cy + 1),
+                          QPointF(cx - 1, cy + 6), QPointF(cx + 4, cy - 1), QPointF(cx, cy - 1)])
+        painter.setPen(QPen(QColor("#ffffff"), 1))
+        painter.setBrush(QColor("#f5b400"))
+        painter.drawPolygon(bolt)
+    painter.end()
+    return pixmap
+
+
 class CardApp(QMainWindow):
+    auto_sync_done = pyqtSignal(object)
+    """(uploaded, failed, skipped), or None when offline; emitted from the
+    sync thread, delivered on the GUI thread."""
+
     def __init__(self):
         super().__init__()
+        self._sync_busy = False
+        self._battery_ticks = 0
+        self._battery_warned = False
         self.setWindowTitle("ERTERFACE — Coconut Health Field Interface")
         self.resize(800, 480)
 
@@ -77,6 +122,12 @@ class CardApp(QMainWindow):
         self.timer.timeout.connect(self.update_time_label)
         self.timer.start(1000)
         self.update_time_label()
+
+        self.auto_sync_done.connect(self._on_auto_sync_done)
+        self.auto_sync_timer = QTimer(self)
+        self.auto_sync_timer.timeout.connect(self.auto_sync)
+        self.auto_sync_timer.start(AUTO_SYNC_INTERVAL_MS)
+        QTimer.singleShot(5000, self.auto_sync)
 
         # The first Scan tap imports the capture session (~0.6 s on a Pi 5).
         # Do that import on a background thread while the operator is still
@@ -222,6 +273,19 @@ class CardApp(QMainWindow):
         left_cluster.setSpacing(14)
         left_cluster.addWidget(self.lbl_time)
         left_cluster.addWidget(self.lbl_storage)
+
+        # Waveshare UPS HAT (E). Hidden until a read succeeds, so a desktop
+        # without the HAT shows nothing rather than an error.
+        self.lbl_battery = QLabel()
+        self.lbl_battery.setStyleSheet("font-size: 13px; font-weight: 700;")
+        self.lbl_battery.setVisible(False)
+        self.lbl_battery_icon = QLabel()
+        self.lbl_battery_icon.setVisible(False)
+        battery_box = QHBoxLayout()
+        battery_box.setSpacing(4)
+        battery_box.addWidget(self.lbl_battery_icon)
+        battery_box.addWidget(self.lbl_battery)
+        left_cluster.addLayout(battery_box)
 
         left_wrap = QWidget()
         left_wrap.setStyleSheet("background: transparent; border: none;")
@@ -425,6 +489,10 @@ class CardApp(QMainWindow):
             free_gb = free // (2 ** 30)
             pct = (free / total) * 100 if total > 0 else 0
             self.lbl_storage.setText(f"{free_gb} GB free ({pct:.0f}%)")
+            self.update_shutdown_warning()
+            if self._battery_ticks % BATTERY_POLL_TICKS == 0:
+                self.update_battery_label()
+            self._battery_ticks += 1
         except (RuntimeError, AttributeError):
             pass
         except Exception:
@@ -432,6 +500,42 @@ class CardApp(QMainWindow):
                 self.lbl_storage.setText("Storage n/a")
             except RuntimeError:
                 pass
+
+    def update_battery_label(self, status=None):
+        if status is None:
+            status = battery.read_battery()
+        if status is None:
+            self.lbl_battery.setVisible(False)
+            self.lbl_battery_icon.setVisible(False)
+            return
+        color = "#DA3633" if status.low else ("#1e8e3e" if status.charging else "#5a6b7e")
+        self.lbl_battery_icon.setPixmap(battery_pixmap(status.percent, color, status.charging))
+        self.lbl_battery.setText(battery.format_battery(status))
+        tip = battery.battery_tooltip(status)
+        self.lbl_battery.setToolTip(tip)
+        self.lbl_battery_icon.setToolTip(tip)
+        self.lbl_battery.setStyleSheet(f"font-size: 13px; font-weight: 700; color: {color};")
+        self.lbl_battery.setVisible(True)
+        self.lbl_battery_icon.setVisible(True)
+        if status.low and not self._battery_warned:
+            self._battery_warned = True
+            status_toast(self, f"Battery low ({status.percent}%). Plug in USB-C power.", "warn")
+        elif not status.low:
+            self._battery_warned = False
+
+    def update_shutdown_warning(self):
+        """Countdown from the root ``erterface-ups`` service (ADR-0085)."""
+        deadline = battery.planned_shutdown()
+        if deadline is None:
+            if getattr(self, "_shutdown_shown", False):
+                self._shutdown_shown = False
+                status_toast(self, "Charger connected. Shutdown cancelled.", "info")
+            return
+        if not getattr(self, "_shutdown_shown", False):
+            self.save_data()  # once, atomic: nothing is lost when power goes
+        self._shutdown_shown = True
+        left = max(0, int(deadline - time.time()))
+        status_toast(self, f"Battery flat: Pi powers off in {left} s. Plug in USB-C to cancel.", "error")
 
     def toggle_theme(self):
         self.is_dark_mode = not self.is_dark_mode
@@ -916,6 +1020,7 @@ class CardApp(QMainWindow):
         self._scan_view.tree.measurements.append(m)
         self.save_data()
         status_toast(self, "Scan saved to the tree.", "info")
+        QTimer.singleShot(2000, self.auto_sync)
 
     # ---------- export / sync ----------
 
@@ -965,7 +1070,82 @@ class CardApp(QMainWindow):
             )
         return True, "", mode
 
+    def auto_sync(self):
+        """Background upload when online, silent unless something fails: no
+        OAuth prompt (``can_sync_unattended``), no toast when offline or idle."""
+        if self._sync_busy or not drive_sync.can_sync_unattended():
+            return
+        if self._count_unsynced() == 0:
+            return
+        self._start_sync(manual=False)
+
+    def _start_sync(self, manual):
+        """Upload on a worker thread; the result comes back through
+        ``auto_sync_done`` on the GUI thread, which saves and reports."""
+        self._sync_busy = True
+        self._sync_manual = manual
+        self.btn_sync.setEnabled(False)
+        self.set_sync_indicator("syncing")
+        local = drive_sync._mode() == "local"
+
+        def work():
+            try:
+                if local or drive_sync.online():
+                    result = sync_unsynced(self.database, client=DriveClient())
+                else:
+                    result = None
+            except Exception as exc:  # e.g. FileNotFoundError, revoked token
+                result = exc
+            self.auto_sync_done.emit(result)
+
+        threading.Thread(target=work, daemon=True).start()
+
+    def _on_auto_sync_done(self, result):
+        self._sync_busy = False
+        self.btn_sync.setEnabled(True)
+        manual = getattr(self, "_sync_manual", False)
+        local = drive_sync._mode() == "local"
+        if result is None:
+            self.set_sync_indicator("idle")
+            waiting = self._count_unsynced()
+            self.sync_indicator.setToolTip(f"Offline: {waiting} measurement(s) waiting for Drive")
+            if manual:
+                status_toast(self, f"Offline. {waiting} measurement(s) will upload when online.", "warn")
+            return
+        if isinstance(result, FileNotFoundError):
+            self.set_sync_indicator("idle")
+            QMessageBox.warning(
+                self,
+                "Drive setup required",
+                f"{result}\n\nPlace your OAuth Desktop client JSON at:\n"
+                f"{paths.DRIVE_CLIENT_SECRET_FILE}\n\nThen click Sync again.",
+            )
+            return
+        if isinstance(result, Exception):
+            self.set_sync_indicator("error")
+            status_toast(self, f"Sync failed: {result}", "error")
+            return
+        uploaded, failed, skipped = result
+        self.save_data()
+        where = "staged locally" if local else "on Drive"
+        if failed:
+            self.set_sync_indicator("error")
+            status_toast(
+                self,
+                f"Sync finished with errors. ↑{uploaded} up · ✗{failed} failed · ={skipped}. Will retry.",
+                "error",
+            )
+        else:
+            self.set_sync_indicator("ok")
+            if manual:
+                status_toast(self, f"Sync done. ↑{uploaded} up · ={skipped} already {where}.", "info")
+            elif uploaded:
+                status_toast(self, f"Auto-synced {uploaded} measurement(s) {where}.", "info")
+
     def sync_drive(self):
+        if self._sync_busy:
+            status_toast(self, "Sync already running.", "info")
+            return
         ok, reason, mode = self._drive_preflight()
         if not ok:
             if "OAuth not configured" in reason:
@@ -975,53 +1155,19 @@ class CardApp(QMainWindow):
                 status_toast(self, reason, "warn")
             self.set_sync_indicator("idle")
             return
-
-        if self._drive_mode != "local" and mode != "local":
-            pending = self._count_unsynced()
-            if pending == 0:
-                status_toast(self, "Nothing to sync — all measurements already on Drive.", "info")
-                self.set_sync_indicator("ok")
-                return
-            self.set_sync_indicator("syncing")
-            status_toast(self, f"Syncing {pending} measurement{'s' if pending != 1 else ''} to Drive…", "info")
-        else:
-            self.set_sync_indicator("syncing")
-            status_toast(self, "Syncing to local staging…", "info")
-        try:
-            client = DriveClient()
-            uploaded, failed, skipped = sync_unsynced(self.database, client=client)
-            self.save_data()
-            if failed == 0:
-                self.set_sync_indicator("ok")
-                if self._drive_mode == "local" or mode == "local":
-                    status_toast(
-                        self,
-                        f"Saved locally. ↑{uploaded} up · ={skipped} already staged.",
-                        "info",
-                    )
-                else:
-                    status_toast(
-                        self,
-                        f"Sync done. ↑{uploaded} up · ={skipped} already on Drive.",
-                        "info",
-                    )
-            else:
-                self.set_sync_indicator("error")
-                status_toast(
-                    self,
-                    f"Sync finished with errors. ↑{uploaded} up · ✗{failed} failed · ={skipped}.",
-                    "error",
-                )
-        except FileNotFoundError as e:
-            self.set_sync_indicator("idle")
-            QMessageBox.warning(
-                self,
-                "Drive setup required",
-                f"{e}\n\nPlace your OAuth Desktop client JSON at:\n{paths.DRIVE_CLIENT_SECRET_FILE}\n\nThen click Sync again.",
-            )
-        except Exception as e:
-            self.set_sync_indicator("error")
-            status_toast(self, f"Sync failed: {e}", "error")
+        if mode != "local" and not os.path.exists(paths.DRIVE_CREDENTIALS_FILE):
+            # First sign-in opens a browser: keep it on the GUI thread, where
+            # the setup dialog already handles it, rather than a worker.
+            status_toast(self, "Sign in to Google Drive first.", "warn")
+            self._open_drive_setup()
+            return
+        if mode != "local" and self._count_unsynced() == 0:
+            status_toast(self, "Nothing to sync — all measurements already on Drive.", "info")
+            self.set_sync_indicator("ok")
+            return
+        pending = self._count_unsynced()
+        status_toast(self, f"Syncing {pending} measurement{'s' if pending != 1 else ''}…", "info")
+        self._start_sync(manual=True)
 
     def set_status(self, text):
         self.lbl_status.setText(text)
@@ -1100,8 +1246,12 @@ class CardApp(QMainWindow):
 
         try:
             ok, reason, mode = self._drive_preflight()
-            if not ok:
+            if self._sync_busy:
+                pass  # a worker is uploading; whatever it misses goes next session
+            elif not ok or not drive_sync.can_sync_unattended():
                 self.set_sync_indicator("idle")
+            elif mode != "local" and not drive_sync.online():
+                self.set_sync_indicator("idle")  # offline: pending scans wait
             elif self._count_unsynced() == 0:
                 self.set_sync_indicator("ok")
                 status_toast(self, "Auto-sync: nothing new to upload.", "info")

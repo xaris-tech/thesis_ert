@@ -182,6 +182,28 @@ class DriveClient:
         self._service.files().create(body=meta, media_body=media, fields="id").execute()
 
 
+def online(host="www.googleapis.com", port=443, timeout=3.0):
+    """True if Google's API host is reachable. Field Wi-Fi comes and goes;
+    the background sync checks this first so an offline Pi fails quietly
+    instead of logging one upload error per measurement."""
+    import socket
+
+    try:
+        with socket.create_connection((host, port), timeout=timeout):
+            return True
+    except OSError:
+        return False
+
+
+def can_sync_unattended():
+    """Background sync may only run where no prompt can appear: 'oauth' mode
+    with a stored token (a missing token would open the browser), or 'local'."""
+    mode = _mode()
+    if mode == "local":
+        return True
+    return mode == "oauth" and os.path.exists(paths.DRIVE_CREDENTIALS_FILE)
+
+
 def sync_unsynced(database, client=None, progress_cb=None, cancel_check=None):
     """Walk the tree, find unsynced measurements, upload each.
     Returns (uploaded, failed, skipped) counts.

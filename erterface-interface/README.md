@@ -42,3 +42,18 @@ python app.py
 
 - `SPEC.md` — full spec (objective, architecture, boundaries)
 - `AGENTS.md` — repo-local agent instructions
+
+## Battery and auto-sync (Pi)
+
+- Battery: Waveshare UPS HAT (E). Enable I2C (`sudo raspi-config` → Interface → I2C),
+  `pip install smbus2` (or `sudo apt install python3-smbus`), check `i2cdetect -y 1` shows `2d`.
+  The top bar then shows charge, time to empty, and a bolt while charging. Without the HAT
+  it shows nothing.
+- Auto-sync: once Drive is signed in (Sync → setup), new scans upload in the background
+  after saving and every 5 minutes whenever the Pi is online. Offline scans wait and go up
+  later; the sync dot's tooltip says how many are waiting. See ADR-0084.
+- Clean poweroff on a flat pack: `sudo pi/install_ups_service.sh` once per Pi. When a cell
+  stays under 3150 mV for 60 s without charging, the Pi shuts down cleanly and powers back
+  on when USB-C is plugged in. The top bar counts down first; plugging in cancels it.
+  Logs: `journalctl -u erterface-ups -f`. See ADR-0085.
+- Sync (button or automatic) never freezes the screen; it uploads in the background.

@@ -125,6 +125,8 @@ one costs a re-derivation.
 | [0078](0078-joint-pattern-solve-and-before-after-absolute-comparison.md) | Joint adjacent+opposite absolute solve; before/after comparison of absolute maps finds the disc-08 hole; consensus and cross-disc fingerprint do not | Accepted |
 | [0079](0079-e11-moved-from-mux-c10-to-c12.md) | E11 moved from leaking mux channel C10 to spare C12 on all four muxes; one electrode-to-channel table in firmware | Superseded by 0080 (table only) |
 | [0080](0080-e11-on-c11-e12-on-c12-c10-unused.md) | Electrode map corrected to the actual wiring: E11 on C11, E12 on C12, leaking C10 unused | Accepted |
+| [0084](0084-pi-ups-battery-and-background-drive-sync.md) | Farm UI reads the Waveshare UPS HAT (E) over I2C for a battery icon, and uploads to Drive in the background when online, never prompting for OAuth | Accepted |
+| [0085](0085-pi-clean-poweroff-and-non-blocking-sync.md) | Root systemd service powers the Pi off cleanly when a UPS cell stays under 3150 mV for 60 s (UI shows the countdown); manual Sync moves off the GUI thread | Accepted |
 | [0056](0056-correct-run-conditions-in-extra-never-overwrite.md) | Correct recorded conditions with a dated key in `extra`; original fields stay as written | Accepted |
 | [0055](0055-measure-the-lobe-not-a-window.md) | Lobe connected-component centroid, no angular window; window choice was worth 12.3 deg | Accepted |
 | [0054](0054-the-centroid-angle-estimator-has-a-measured-bias.md) | Centroid window validated against injected offsets; -0.45 deg bias documented, not corrected in code | Accepted |
